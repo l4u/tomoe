@@ -70,8 +70,15 @@ struct _metric
 
 static dictionary *g_dict = NULL;
 
-static void load_dictionaries (void);
-static void dictionary_free_contents(dictionary *dct);
+static void load_dictionaries        (void);
+static void dictionary_free_contents (dictionary *dct);
+
+static void candidate_init           (candidate *cand);
+static void candidate_free_contents  (candidate *cand);
+
+static void candidates_init             (candidates *cands);
+static void candidates_free_contents    (candidates *cands);
+static void candidates_append_candidate (candidates *cands, candidate *cand);
 
 /* 
  * Initialize tomoe 
@@ -95,7 +102,29 @@ int
 tomoe_get_matched (glyph *input, candidates **matched)
 {
   int matched_num = 0;
+  int i;
   candidates *cands = NULL;
+
+  cands = (candidates *) calloc (1, sizeof(candidates));
+  candidates_init(cands);
+  
+  if (!g_dict) return 0;
+  
+  for (i = 0; i < g_dict->letter_num; i++)
+  {
+    candidate *cand = NULL;
+    /* check the number of stroke */
+    if (input->stroke_num > g_dict->letters[i].c_glyph->stroke_num)
+    {
+      continue;
+    }
+
+    /* append a candidate to candidate list */
+    cand = (candidate *) calloc (1, sizeof(candidate));
+    candidate_init(cand);
+    cand->letter = strdup (g_dict->letters[i].character);
+    candidates_append_candidate(cands, cand);
+  }
 
   *matched = cands;
   /* Not implemented yet*/
@@ -118,7 +147,7 @@ tomoe_free_matched (candidates *matched)
 tomoe_bool
 tomoe_data_register (glyph *input, char *data)
 {
-  tomoe_bool ret = TRUE;
+  tomoe_bool ret = FALSE;
   /* Not implemented yet*/
   return ret;
 }
@@ -179,25 +208,30 @@ stroke_free_contents (stroke *strk)
   }
 }
 
-static metric 
-stroke_calculate_metrics (stroke *strk)
+static int 
+stroke_calculate_metrics (stroke *strk, metric **met)
 {
   int i = 0;
   point *p = &strk->points[0];
   point *q;
-  metric m[strk->point_num - 1];
+
+  if (!strk) return 0;
+
+  *met = (metric *) calloc (strk->point_num - 1, sizeof(metric));
+ 
   for (i = 0; i < strk->point_num - 1; i++, p++)
   {
+    metric m = *met[i];
     q = p + 1;
-    m[i].a = q->x - p->x;
-    m[i].b = q->y - p->y;
-    m[i].c = q->x * p->y - q->y * p->x;
-    m[i].d = sqrt(m->a * m->a + m->b * m->b);
-    m[i].e = m->a * p->x + m->b * p->y;
-    m[i].angle = atan2(q->y - p->y, q->x - p->x);
+    m.a = q->x - p->x;
+    m.b = q->y - p->y;
+    m.c = q->x * p->y - q->y * p->x;
+    m.d = sqrt(m.a * m.a + m.b * m.b);
+    m.e = m.a * p->x + m.b * p->y;
+    m.angle = atan2(q->y - p->y, q->x - p->x);
   }
   
-  return m[0];
+  return strk->point_num - 1;
 }
 
 /*
@@ -253,6 +287,8 @@ static void
 dictionary_free_contents(dictionary *dct)
 {
   int i;
+
+  if (!dct) return;
 
   if (dct->letters != NULL)
   {
@@ -331,6 +367,23 @@ candidates_free_contents(candidates *cands)
   }
 }
 
+static void
+candidates_append_candidate (candidates *cands, candidate *cand)
+{
+  int old_cands_num = cands->candidate_num;
+  candidate *old_cands = cands->candidates;
+  cands->candidate_num++;
+  cands->candidates =
+    (candidate *)calloc(cands->candidate_num, sizeof(candidate));
+  if (old_cands != NULL)
+  {
+    memcpy(cands->candidates, old_cands,
+	   old_cands_num * sizeof(candidate));
+    free(old_cands);
+  }
+  /* Ownership transfers from right hand side to left hand side. */
+  cands->candidates[cands->candidate_num - 1] = *cand;
+}
 /*
  * ***********************
  *  data load functions.
@@ -351,6 +404,8 @@ load_dictionaries (void)
   stroke *strk = NULL;
   point *pnt = NULL;
   char line_buf[LINE_BUF_SIZE];
+
+  if (g_dict) return;
 
   g_dict = calloc (1, sizeof(dictionary));
   dictionary_alloc_contents (g_dict, DICT_LETTER_INITIAL_SIZE);
@@ -405,7 +460,8 @@ load_dictionaries (void)
 	      sscanf(p, " (%d %d)", &pnt->x, &pnt->y);
 	      p = strchr(p, ')') + 1;
 	    }
-	  stroke_calculate_metrics(strk);
+	  
+	  /* stroke_calculate_metrics(strk); */
 	}
 
     }
@@ -587,7 +643,7 @@ match_dict_to_input(stroke *dict_stroke, stroke *input_stroke)
   return TRUE;
 }
 
-#if 0
+#if 1
 static candidates
 get_candidates(stroke *input_stroke, candidates cands)
 {
@@ -814,8 +870,8 @@ get_matched_char_index()
   candidate *cand = NULL;
   int pre_char = -1;
   int letter_index = 0;
-  candidates cands = match_char();
   int_array *adapted = NULL;
+  candidates cands = match_char();
 
   int_array_init(&matched);
   for (i = 0; i < cands.candidate_num; i++)
@@ -853,3 +909,6 @@ timeval_minus(struct timeval *tv1, struct timeval *tv2, struct timeval *diff)
     }
 }
 
+/*
+vi:ts=2:ai:expandtab
+*/
