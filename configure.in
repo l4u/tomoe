@@ -1,0 +1,97 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_PREREQ(2.57)
+
+AC_INIT(tomoe, 0.1.1)
+AM_INIT_AUTOMAKE(1.6)
+AM_CONFIG_HEADER(config.h)
+
+AC_ENABLE_SHARED(yes)
+AC_ENABLE_STATIC(no)
+AM_PROG_LIBTOOL
+
+
+dnl **************************************************************
+dnl Checks for programs.
+dnl **************************************************************
+AC_PROG_CXX
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_AWK
+
+
+if test "x$GCC" = "xyes"; then
+  case " $CFLAGS " in
+  *[\ \	]-Wall[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wall" ;;
+  esac
+
+  case " $CFLAGS " in
+  *[\ \	]-Wmissing-declarations[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wmissing-declarations" ;;
+  esac
+
+  case " $CFLAGS " in
+  *[\ \	]-Wmissing-prototypes[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wmissing-prototypes" ;;
+  esac
+
+  case " $CFLAGS " in
+  *[\ \	]-Wpointer-arith[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wpointer-arith" ;;
+  esac
+
+  case " $CFLAGS " in
+  *[\ \	]-Wcast-align[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wcast-align" ;;
+  esac
+
+  if test "x$enable_ansi" = "xyes"; then
+    case " $CFLAGS " in
+    *[\ \	]-ansi[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -ansi" ;;
+    esac
+
+    case " $CFLAGS " in
+    *[\ \	]-pedantic[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -pedantic" ;;
+    esac
+  fi
+fi
+
+dnl **************************************************************
+dnl Checks for libraries.
+dnl **************************************************************
+# FIXME: Replace `main' with a function in `-le':
+AC_CHECK_LIB([e], [main])
+# FIXME: Replace `main' with a function in `-links':
+AC_CHECK_LIB([inks], [main])
+
+
+dnl **************************************************************
+dnl Checks for header files.
+dnl **************************************************************
+AC_HEADER_STDC
+AC_CHECK_HEADERS([fcntl.h libintl.h stdlib.h string.h unistd.h])
+
+
+dnl **************************************************************
+dnl Checks for typedefs, structures, and compiler characteristics.
+dnl **************************************************************
+AC_C_CONST
+
+
+dnl **************************************************************
+dnl Checks for library functions.
+dnl **************************************************************
+AC_CHECK_FUNCS([setlocale strchr strtol uname memmove strerror])
+
+AC_CONFIG_FILES([
+Makefile
+src/Makefile
+data/Makefile
+])
+
+AC_OUTPUT
