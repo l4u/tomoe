@@ -104,11 +104,12 @@ tomoe_get_matched (glyph *input, candidates **matched)
   int matched_num = 0;
   int i;
   candidates *cands = NULL;
+  
+  if (!input) return 0;
+  if (!g_dict) return 0;
 
   cands = (candidates *) calloc (1, sizeof(candidates));
   candidates_init(cands);
-  
-  if (!g_dict) return 0;
   
   for (i = 0; i < g_dict->letter_num; i++)
   {
@@ -140,6 +141,8 @@ tomoe_get_matched (glyph *input, candidates **matched)
 void
 tomoe_free_matched (candidates *matched)
 {
+  candidates_free_contents (matched);
+  free (matched);
   /* Not implemented yet*/
 }
 
