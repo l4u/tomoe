@@ -4,7 +4,7 @@ AM_CPPFLAGS = \
 	-DSYSCONFDIR=\""$(sysconfdir)"\" \
 	-DDATADIR=\""$(datadir)"\" \
 	-DTOMOESYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\" \
-	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"
+	-DTOMOEDATADIR=\""$(top_srcdir)"/data\"
 
 INCLUDES = \
 	-I$(top_srcdir)/src \
