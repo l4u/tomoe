@@ -1,0 +1,9 @@
+2004-12-27  Hiroaki Nakamura  <hnakamur@desktop>
+
+	* Fixed AM_INIT_AUTOMAKE in confiugre.in.
+
+2004-12-15  Hiroaki Nakamura  <hnakamur@desktop>
+
+	* Fixed indentation.
+	* src/match.c (load_data): Fixed to expand data structure and continue
+	loading even if the dictionary is larder than assumed size.
