@@ -71,7 +71,7 @@ struct _candidate
 struct _candidates
 {
   int candidate_num;
-  candidate *cand;
+  candidate *candidates;
 };
 
 /* Initialize tomoe */
