@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2004 Hiroyuki Komatsu <komatsu@taiyaki.org>
+ *  Copyright (C) 2000 - 2004 Hiroyuki Komatsu <komatsu@taiyaki.org>
  *  Copyright (C) 2004 Hiroaki Nakamura <hnakamur@good-day.co.jp>
  *
  *  This library is free software; you can redistribute it and/or
