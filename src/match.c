@@ -37,6 +37,7 @@
 
 #define LINE_BUF_SIZE 4096
 #define DICT_LETTER_INITIAL_SIZE 3049
+#define DICT_LETTER_EXPAND_SIZE 10
 #define LIMIT_LENGTH ((300 * 0.25) * (300 * 0.25))
 
 typedef struct dictionary_ dictionary;
@@ -172,7 +173,7 @@ stroke_calculate_metrics(stroke *strk)
       q = p + 1;
       m->a = q->x - p->x;
       m->b = q->y - p->y;
-      m->c = q->y * p->x - q->x * p->y;
+      m->c = q->x * p->y - q->y * p->x;
       m->d = sqrt(m->a * m->a + m->b * m->b);
       m->e = m->a * p->x + m->b * p->y;
       m->angle = atan2(q->y - p->y, q->x - p->x);
@@ -239,6 +240,20 @@ dictionary_alloc_contents(dictionary *dct, int letter_num)
 {
   dct->letter_num = letter_num;
   dct->letters = (letter *)calloc(letter_num, sizeof(letter));
+}
+
+static void
+dictionary_expand_to(dictionary *dct, int letter_num)
+{
+  dictionary old_dct = *dct;
+  dct->letter_num = letter_num;
+  dct->letters = (letter *)calloc(letter_num, sizeof(letter));
+  if (old_dct.letters != NULL)
+    {
+      memcpy(dct->letters, old_dct.letters,
+	     old_dct.letter_num * sizeof(letter));
+      free(old_dct.letters);
+    }
 }
 
 static void
@@ -324,11 +339,13 @@ int_array_copy(int_array *src_array, int_array *dest_array)
   if (src_array->data == NULL)
     {
       dest_array->data = NULL;
-    } else {
-    dest_array->data = (int *)calloc(src_array->num, sizeof(int));
-    memcpy(dest_array->data, src_array->data,
-	   src_array->num * sizeof(int));
-  }
+    }
+  else
+    {
+      dest_array->data = (int *)calloc(src_array->num, sizeof(int));
+      memcpy(dest_array->data, src_array->data,
+	     src_array->num * sizeof(int));
+    }
 }
 
 static int
@@ -543,8 +560,8 @@ load_data ()
       ++letter_num;
       if (letter_num > dict.letter_num)
 	{
-	  fprintf(stderr, "Abort. This case is not yet implemented.\n");
-	  exit(1);
+	  dictionary_expand_to(&dict,
+			       dict.letter_num + DICT_LETTER_EXPAND_SIZE);
 	}
 
       i = letter_num - 1;
@@ -703,7 +720,7 @@ match_input_to_dict(stroke *input_stroke, stroke *dict_stroke)
 		  /* 各特徴点と線分との距離 */
 		  r = d_me->a * i_pt->x + d_me->b * i_pt->y - d_me->e;
 		  if (0 <= r && r <= d_me->d * d_me->d &&
-		      d_me->a * i_pt->y - d_me->b * i_pt->x - d_me->c <
+		      dabs(d_me->a * i_pt->y - d_me->b * i_pt->x - d_me->c) <
 		      LIMIT_LENGTH * d_me->d &&
 		      dabs(i_me->angle - d_me->angle) < M_PI_2)
 		    {
@@ -785,7 +802,7 @@ match_dict_to_input(stroke *dict_stroke, stroke *input_stroke)
 		  /* 各特徴点と線分との距離 */
 		  r = i_me->a * d_pt->x + i_me->b * d_pt->y - i_me->e;
 		  if (0 <= r && r <= i_me->d * i_me->d &&
-		      i_me->a * d_pt->y - i_me->b * d_pt->x - i_me->c <
+		      dabs(i_me->a * d_pt->y - i_me->b * d_pt->x - i_me->c) <
 		      LIMIT_LENGTH * i_me->d &&
 		      dabs(d_me->angle - i_me->angle) < M_PI_2)
 		    {
@@ -1122,11 +1139,12 @@ main (int argc, char *argv[])
 	  gettimeofday(&tv2, &tz2);
 	}
       print_matched_characters(&matched);
-      if (verbose) {
-	timeval_minus(&tv2, &tv1, &diff);
-	printf("elapsed time(seconds)=%d.%06d\n",
-	       (int)diff.tv_sec, (int)diff.tv_usec);
-      }
+      if (verbose)
+	{
+	  timeval_minus(&tv2, &tv1, &diff);
+	  printf("elapsed time(seconds)=%d.%06d\n",
+		 (int)diff.tv_sec, (int)diff.tv_usec);
+	}
 
       letter_free_contents(&input);
     }
