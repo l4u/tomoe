@@ -643,7 +643,7 @@ match_dict_to_input(stroke *dict_stroke, stroke *input_stroke)
   return TRUE;
 }
 
-#if 1
+#if 0
 static candidates
 get_candidates(stroke *input_stroke, candidates cands)
 {
