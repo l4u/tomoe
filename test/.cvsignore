@@ -1,0 +1,12 @@
+Makefile
+Makefile.in
+.deps
+.libs
+*.o
+*.lo
+*.la
+*.bak
+*~
+*.rej
+*.orig
+testtomoe

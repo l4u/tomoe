@@ -1,3 +1,8 @@
+2005-03-04 Hiroyuki Ikezoe <poincare@ikezoe.net>
+
+	* test/testtomoe.c:
+	Added a program for testing tomoe library.
+
 2005-03-03 Hiroyuki Ikezoe <poincare@ikezoe.net>
 
 	* starting librarization. 
