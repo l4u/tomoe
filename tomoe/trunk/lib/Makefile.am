@@ -6,18 +6,12 @@ AM_CPPFLAGS = \
 	-DTOMOESYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\" \
 	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"
 
-INCLUDES = \
-	-I$(top_srcdir)/lib \
-	-I$(top_builddir)/lib
+INCLUDES =
 
-bin_PROGRAMS = \
-	tomoe
+lib_LIBRARIES = libtomoe.a
 
-tomoe_SOURCES = \
-	match.c
-tomoe_LDADD = \
-	$(top_builddir)/lib/libtomoe.a \
+libtomoe_a_SOURCES = \
+	tomoe.h tomoe.c
+
+libtomoe_a_LD_ADD = \
 	-lm
-
-EXTRA_DIST = \
-	match.rb

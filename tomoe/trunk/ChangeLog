@@ -1,3 +1,10 @@
+2005-03-06 Hiroyuki Ikezoe <poincare@ikezoe.net>
+
+	* Reconstruction of directory trees.
+	./lib : tomoe library
+	./src : source codes for a program to use tomoe library with standard
+	input/output.
+
 2005-03-04 Hiroyuki Ikezoe <poincare@ikezoe.net>
 
 	* test/testtomoe.c:
