@@ -24,6 +24,10 @@
 #ifndef __TOMOE_H__
 #define __TOMOE_H__
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 #ifndef FALSE
 #define FALSE 0
 #endif
@@ -111,5 +115,9 @@ extern tomoe_bool tomoe_data_register (glyph *input, char *data);
 
 /* finalize tomoe */
 extern void tomoe_term (void);
+
+#ifdef	__cplusplus
+}
+#endif
 
 #endif /* __TOMOE_H__ */
