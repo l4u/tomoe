@@ -32,14 +32,16 @@
 #define TRUE 1
 #endif
 
-typedef struct _letter letter;
+typedef struct _glyph glyph;
 typedef struct _stroke stroke;
 typedef struct _point point;
-typedef struct _metric metric;
+typedef struct _candidate candidate;
+typedef struct _candidates candidates;
 
-struct _letter
+typedef int tomoe_bool;
+
+struct _glyph
 {
-  char *character;
   int stroke_num;
   stroke *strokes;
 };
@@ -48,7 +50,6 @@ struct _stroke
 {
   int point_num;
   point *points;
-  metric *metrics;
 };
 
 struct _point
@@ -57,18 +58,31 @@ struct _point
   int y;
 };
 
-struct _metric
+struct _candidate
 {
-  int a;
-  int b;
-  int c;
-  double d;
-  int e;
-  double angle;
+  char *letter;
+  int score;
+};
+
+struct _candidates
+{
+  int candidate_num;
+  candidate *cand;
 };
 
 /* Initialize tomoe */
-void tomoe_init (void);
+extern void tomoe_init (void);
+
+#if 0
+/* get dictionaries list */
+extern int tomoe_get_dictionaries ();
+
+/* set dictionaries */
+extern tomoe_bool tomoe_set_dictionaries ();
+
+extern void *tomoe_add_stroke (void*, stroke *stroke);
+extern void tomoe_clear_stroke (void *stroke_list);
+#endif
 
 /* 
  * get matched characters 
@@ -77,7 +91,7 @@ void tomoe_init (void);
  * Return value: the number of matched characters
  *
  */
-int tomoe_match (letter *input, char ***matched);
+extern int tomoe_get_matched (glyph *input, candidates **matched);
 
 /* 
  * free matched characters 
@@ -85,9 +99,17 @@ int tomoe_match (letter *input, char ***matched);
  * matched:
  *
  */
-void tomoe_free_matched (char **matched);
+extern void tomoe_free_matched (candidates *matched);
+
+/*
+ * register to the current (user?) dictionary
+ *
+ * input: stroke datas
+ * data: characters to register to the current (user?) dictionary
+ */
+extern tomoe_bool tomoe_data_register (glyph *input, char *data);
 
 /* finalize tomoe */
-void tomoe_term (void);
+extern void tomoe_term (void);
 
 #endif /* __TOMOE_H__ */
