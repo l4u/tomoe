@@ -76,7 +76,7 @@ class Stroke
       pi1 = points[i + 1]
       a = pi1.x - pi.x
       b = pi1.y - pi.y
-      c = pi1.y * pi.x - pi1.x * pi.y
+      c = pi1.x * pi.y - pi1.y * pi.x
       d = Math.sqrt(a * a + b * b)
       e = a * pi.x + b * pi.y
       angle = Math.atan2(pi1.y - pi.y, pi1.x - pi.x)
@@ -309,7 +309,7 @@ class Dictionary
 	    # 各特徴点と線分との距離
 	    r = d_me.a * i_pt.x + d_me.b * i_pt.y - d_me.e
 	    if 0 <= r && r <= d_me.d * d_me.d &&
-		d_me.a * i_pt.y - d_me.b * i_pt.x - d_me.c < limit_length * d_me.d &&
+		abs(d_me.a * i_pt.y - d_me.b * i_pt.x - d_me.c) < limit_length * d_me.d &&
 		abs(i_me.angle - d_me.angle) < 3.14 / 2
 	      m = d_k
 	      break
@@ -363,7 +363,7 @@ class Dictionary
 	    # 各特徴点と線分との距離
 	    r = i_me.a * d_pt.x + i_me.b * d_pt.y - i_me.e
 	    if 0 <= r && r <= i_me.d * i_me.d &&
-		i_me.a * d_pt.y - i_me.b * d_pt.x - i_me.c < limit_length * i_me.d &&
+		abs(i_me.a * d_pt.y - i_me.b * d_pt.x - i_me.c) < limit_length * i_me.d &&
 	        abs(i_me.angle - d_me.angle) < 3.14 / 2
 	      m = i_k
 	      break
@@ -584,7 +584,7 @@ if ARGV[0] == "-v"
 else
   verbose = false
 end
-dict = Dictionary.new("all.tdic")
+dict = Dictionary.new("../data/all.tdic")
 #print "dict=" , dict.to_s, "\n"
 while (strokes = StrokeLoader.new.load_strokes(STDIN)) != nil
   t1 = Time.now
