@@ -70,11 +70,11 @@ struct _metric
 
 static dictionary *g_dict = NULL;
 
-static void load_dictionaries        (void);
-static void dictionary_free_contents (dictionary *dct);
+static void load_dictionaries           (void);
+static void dictionary_free_contents    (dictionary *dct);
 
-static void candidate_init           (candidate *cand);
-static void candidate_free_contents  (candidate *cand);
+static void candidate_init              (candidate *cand);
+static void candidate_free_contents     (candidate *cand);
 
 static void candidates_init             (candidates *cands);
 static void candidates_free_contents    (candidates *cands);
@@ -109,7 +109,7 @@ tomoe_get_matched (glyph *input, candidates **matched)
   if (!g_dict) return 0;
 
   cands = (candidates *) calloc (1, sizeof(candidates));
-  candidates_init(cands);
+  candidates_init (cands);
   
   for (i = 0; i < g_dict->letter_num; i++)
   {
@@ -122,9 +122,9 @@ tomoe_get_matched (glyph *input, candidates **matched)
 
     /* append a candidate to candidate list */
     cand = (candidate *) calloc (1, sizeof(candidate));
-    candidate_init(cand);
+    candidate_init (cand);
     cand->letter = strdup (g_dict->letters[i].character);
-    candidates_append_candidate(cands, cand);
+    candidates_append_candidate (cands, cand);
   }
 
   *matched = cands;
@@ -159,7 +159,7 @@ tomoe_data_register (glyph *input, char *data)
 void 
 tomoe_term (void)
 {
-  dictionary_free_contents(g_dict);
+  dictionary_free_contents (g_dict);
   /* Not implemented yet*/
 }
 
@@ -231,7 +231,7 @@ stroke_calculate_metrics (stroke *strk, metric **met)
     m.c = q->x * p->y - q->y * p->x;
     m.d = sqrt(m.a * m.a + m.b * m.b);
     m.e = m.a * p->x + m.b * p->y;
-    m.angle = atan2(q->y - p->y, q->x - p->x);
+    m.angle = atan2 (q->y - p->y, q->x - p->x);
   }
   
   return strk->point_num - 1;
@@ -252,13 +252,13 @@ letter_alloc_contents (letter *lttr, int stroke_num)
 }
 
 static void
-letter_free_contents(letter *lttr)
+letter_free_contents (letter *lttr)
 {
   int i;
 
   if (lttr->character != NULL)
   {
-    free(lttr->character);
+    free (lttr->character);
     lttr->character = NULL;
   }
 
@@ -266,9 +266,9 @@ letter_free_contents(letter *lttr)
   {
     for (i = 0; i < lttr->c_glyph->stroke_num; i++)
     {
-      stroke_free_contents(&lttr->c_glyph->strokes[i]);
+      stroke_free_contents (&lttr->c_glyph->strokes[i]);
     }
-    free(lttr->c_glyph->strokes);
+    free (lttr->c_glyph->strokes);
     lttr->c_glyph->strokes = NULL;
   } 
 }
@@ -280,14 +280,14 @@ letter_free_contents(letter *lttr)
  */
 
 static void
-dictionary_alloc_contents(dictionary *dct, int letter_num)
+dictionary_alloc_contents (dictionary *dct, int letter_num)
 {
   dct->letter_num = letter_num;
   dct->letters = (letter *) calloc (letter_num, sizeof(letter));
 }
 
 static void
-dictionary_free_contents(dictionary *dct)
+dictionary_free_contents (dictionary *dct)
 {
   int i;
 
@@ -297,26 +297,26 @@ dictionary_free_contents(dictionary *dct)
   {
     for (i = 0; i < dct->letter_num; i++)
     {
-      letter_free_contents(&dct->letters[i]);
+      letter_free_contents (&dct->letters[i]);
     }
-    free(dct->letters);
+    free (dct->letters);
     dct->letters = NULL;
   }
 }
 
 static void
-dictionary_expand_to(dictionary *dct, int letter_num)
+dictionary_expand_to (dictionary *dct, int letter_num)
 {
   letter *old_letters = dct->letters;
   int old_num = dct->letter_num;
 
   dct->letter_num = letter_num;
-  dct->letters = (letter *)calloc(letter_num, sizeof(letter));
+  dct->letters = (letter *) calloc (letter_num, sizeof(letter));
   if (old_letters != NULL)
   {
-    memcpy(dct->letters, old_letters,
-	   old_num * sizeof(letter));
-    free(old_letters);
+    memcpy (dct->letters, old_letters,
+	          old_num * sizeof(letter));
+    free (old_letters);
   }
 }
 
@@ -327,14 +327,14 @@ dictionary_expand_to(dictionary *dct, int letter_num)
  */
 
 static void
-candidate_init(candidate *cand)
+candidate_init (candidate *cand)
 {
   cand->letter = NULL;
   cand->score = 0;
 }
 
 static void
-candidate_free_contents(candidate *cand)
+candidate_free_contents (candidate *cand)
 {
   if (cand->letter)
     free (cand->letter);
@@ -348,14 +348,14 @@ candidate_free_contents(candidate *cand)
  */
 
 static void
-candidates_init(candidates *cands)
+candidates_init (candidates *cands)
 {
   cands->candidate_num = 0;
   cands->candidates = NULL;
 }
 
 static void
-candidates_free_contents(candidates *cands)
+candidates_free_contents (candidates *cands)
 {
   int i;
 
@@ -363,9 +363,9 @@ candidates_free_contents(candidates *cands)
   {
     for (i = 0; i < cands->candidate_num; i++)
     {
-      candidate_free_contents(&cands->candidates[i]);
+      candidate_free_contents (&cands->candidates[i]);
     }
-    free(cands->candidates);
+    free (cands->candidates);
     cands->candidates = NULL;
   }
 }
@@ -377,12 +377,12 @@ candidates_append_candidate (candidates *cands, candidate *cand)
   candidate *old_cands = cands->candidates;
   cands->candidate_num++;
   cands->candidates =
-    (candidate *)calloc(cands->candidate_num, sizeof(candidate));
+    (candidate *) calloc (cands->candidate_num, sizeof(candidate));
   if (old_cands != NULL)
   {
-    memcpy(cands->candidates, old_cands,
-	   old_cands_num * sizeof(candidate));
-    free(old_cands);
+    memcpy (cands->candidates, old_cands,
+	          old_cands_num * sizeof(candidate));
+    free (old_cands);
   }
   /* Ownership transfers from right hand side to left hand side. */
   cands->candidates[cands->candidate_num - 1] = *cand;
@@ -413,62 +413,62 @@ load_dictionaries (void)
   g_dict = calloc (1, sizeof(dictionary));
   dictionary_alloc_contents (g_dict, DICT_LETTER_INITIAL_SIZE);
 
-  FILE *fp = fopen(TOMOEDATADIR "/all.tdic", "r");
-  while ((p = fgets(line_buf, LINE_BUF_SIZE, fp)) != NULL)
-    {
-      if (p[0] == '\n')
-	{
-	  continue;
-	}
-      ++letter_num;
-      if (letter_num > g_dict->letter_num)
-	{
-	  dictionary_expand_to(g_dict,
-			       g_dict->letter_num + DICT_LETTER_EXPAND_SIZE);
-	}
+  FILE *fp = fopen (TOMOEDATADIR "/all.tdic", "r");
+  while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL)
+  {
+    if (p[0] == '\n')
+	  {
+	    continue;
+	  }
+    ++letter_num;
+    if (letter_num > g_dict->letter_num)
+	  {
+	    dictionary_expand_to (g_dict,
+			                      g_dict->letter_num + DICT_LETTER_EXPAND_SIZE);
+	  }
 
-      i = letter_num - 1;
-      lttr = &g_dict->letters[i];
-      p = strchr(p, '\n');
-      if (p != NULL)
-	{
-	  *p = '\0';
-	}
-      lttr->character = strdup(line_buf);
+    i = letter_num - 1;
+    lttr = &g_dict->letters[i];
+    p = strchr (p, '\n');
+    if (p != NULL)
+	  {
+	    *p = '\0';
+	  }
+    lttr->character = strdup (line_buf);
 
-      p = fgets(line_buf, LINE_BUF_SIZE, fp);
-      if (p == NULL)
-	{
-	  break;
-	}
-      if (p[0] != ':')
-	{
-	  continue;
-	}
+    p = fgets (line_buf, LINE_BUF_SIZE, fp);
+    if (p == NULL)
+	  {
+	    break;
+	  }
+    if (p[0] != ':')
+	  {
+	    continue;
+	  }
 
-      sscanf(p + 1, "%d", &stroke_num);
+    sscanf (p + 1, "%d", &stroke_num);
 
-      letter_alloc_contents(lttr, stroke_num);
+    letter_alloc_contents (lttr, stroke_num);
 
-      for (j = 0; j < stroke_num; j++)
-	{
-	  strk = &lttr->c_glyph->strokes[j];
-	  p = fgets(line_buf, LINE_BUF_SIZE, fp);
-	  sscanf(p, "%d", &point_num);
-	  p = strchr(p, ' ');
-	  stroke_alloc_contents(strk, point_num);
-	  for (k = 0; k < point_num; k++)
+    for (j = 0; j < stroke_num; j++)
+	  {
+	    strk = &lttr->c_glyph->strokes[j];
+	    p = fgets (line_buf, LINE_BUF_SIZE, fp);
+	    sscanf (p, "%d", &point_num);
+	    p = strchr (p, ' ');
+	    stroke_alloc_contents (strk, point_num);
+	    for (k = 0; k < point_num; k++)
 	    {
 	      pnt = &strk->points[k];
-	      sscanf(p, " (%d %d)", &pnt->x, &pnt->y);
-	      p = strchr(p, ')') + 1;
+	      sscanf (p, " (%d %d)", &pnt->x, &pnt->y);
+	      p = strchr (p, ')') + 1;
 	    }
 	  
-	  /* stroke_calculate_metrics(strk); */
-	}
+	    /* stroke_calculate_metrics(strk); */
+	  }
 
-    }
-  fclose(fp);
+  }
+  fclose (fp);
 
   if (letter_num < g_dict->letter_num)
   {
