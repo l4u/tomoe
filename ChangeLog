@@ -1,8 +1,13 @@
-2004-12-27  Hiroaki Nakamura  <hnakamur@desktop>
+2005-02-07  Hiroaki Nakamura  <hnakamur@good-day.co.jp>
+
+	* data/all.tdic: Added forgotten characters in JIS 1st level kanji
+	characters.  Also added 3 symbols.
+
+2004-12-27  Hiroaki Nakamura  <hnakamur@good-day.co.jp>
 
 	* Fixed AM_INIT_AUTOMAKE in confiugre.in.
 
-2004-12-15  Hiroaki Nakamura  <hnakamur@desktop>
+2004-12-15  Hiroaki Nakamura  <hnakamur@good-day.co.jp>
 
 	* Fixed indentation.
 	* src/match.c (load_data): Fixed to expand data structure and continue
