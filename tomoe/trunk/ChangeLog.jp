@@ -1,3 +1,7 @@
+2005-03-03 Hiroyuki Ikezoe <poincare@ikezoe.net>
+
+	* starting librarization. 
+
 2005-02-07  Hiroaki Nakamura  <hnakamur@good-day.co.jp>
 
 	* data/all.tdic: JIS第一水準の漢字のうち登録洩れの漢字を登録した。

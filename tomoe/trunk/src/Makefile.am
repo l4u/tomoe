@@ -8,13 +8,13 @@ AM_CPPFLAGS = \
 
 INCLUDES =
 
-bin_PROGRAMS = tomoe
-
-tomoe_SOURCES = \
-	match.c
-
-tomoe_LDADD = \
-	-lm
-
 EXTRA_DIST = \
 	match.rb
+
+lib_LIBRARIES = libtomoe.a
+
+libtomoe_a_SOURCES = \
+	tomoe.h tomoe.c
+
+libtomoe_a_LD_ADD = \
+	-lm
