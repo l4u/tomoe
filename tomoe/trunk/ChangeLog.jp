@@ -1,0 +1,9 @@
+2004-12-27  Hiroaki Nakamura  <hnakamur@desktop>
+
+	* confiugre.inのAM_INIT_AUTOMAKEの箇所を修正した。
+
+2004-12-15  Hiroaki Nakamura  <hnakamur@desktop>
+
+	* 一部インデントを修正。
+	* src/match.c (load_data): 辞書サイズが想定サイズより大きかった場合
+	  に拡張して読み込みを継続するように修正した。
