@@ -12,6 +12,7 @@ main (int argc, char **argv)
   tomoe_init ();
 
   test_glyph = (glyph *) calloc (1, sizeof(glyph));
+
   candidate_num = tomoe_get_matched (test_glyph, &matched);
  
   if (candidate_num != 0)
@@ -28,7 +29,8 @@ main (int argc, char **argv)
     }
     for (i = 0; i < candidate_num; i++)
     {
-      fprintf (stdout, "%s\t", matched->candidates[i].letter);
+      fprintf (stdout, "character:%s\tscore:%d",
+	       matched->candidates[i].letter, matched->candidates[i].score);
     }
   }
   
