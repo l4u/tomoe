@@ -21,6 +21,10 @@
  *  $Id$
  */
 
+/*
+ * This code is unfinished yet.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
