@@ -34,10 +34,32 @@
 #define DICT_LETTER_EXPAND_SIZE 10
 #define LIMIT_LENGTH ((300 * 0.25) * (300 * 0.25))
 
-/* Initialize tomoe */
+typedef struct _letter letter;
+typedef struct _dictionary dictionary;
+
+struct dictionary
+{
+  char *file_name;
+  char *dictionary_name;
+  char *encoding;
+  char *lang;
+};
+
+struct _letter
+{
+  char *character;
+  int stroke_num;
+  stroke *strokes;
+};
+
+
+/* 
+ * Initialize tomoe 
+ */
 void
 tomoe_init (void)
 {
+  /* load all available dictionaries */
   /* Not implemented yet*/
 }
 
@@ -49,7 +71,7 @@ tomoe_init (void)
  *
  */
 int
-tomoe_match (letter *input, char ***matched)
+tomoe_get_matched (glyph *input, candidates **matched)
 {
   int matched_num = 0;
   /* Not implemented yet*/
@@ -63,11 +85,19 @@ tomoe_match (letter *input, char ***matched)
  *
  */
 void
-tomoe_free_matched (char **matched)
+tomoe_free_matched (candidates *matched)
 {
   /* Not implemented yet*/
 }
 
+/* register characters with stroke */
+tomoe_bool
+tomoe_data_register (glyph *input, char *data)
+{
+  tomoe_bool ret = TRUE;
+  /* Not implemented yet*/
+  return ret;
+}
 
 /* finalize tomoe */
 void 
