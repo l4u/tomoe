@@ -91,10 +91,11 @@ main (int argc, char **argv)
       fprintf (stdout, "The number of candidates does not equal!\n");
       goto END;
     }
+    fprintf (stdout, "The number of matched characters: %d\n", candidate_num);
     for (i = 0; i < candidate_num; i++)
     {
       fprintf (stdout, "character:%s\tscore:%d\n",
-	       matched->candidates[i].letter, matched->candidates[i].score);
+	             matched->candidates[i].letter, matched->candidates[i].score);
     }
   }
   
