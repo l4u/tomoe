@@ -8,14 +8,7 @@ AM_CPPFLAGS = \
 
 INCLUDES =
 
-#lib_LIBRARIES = libtomoe.a
-#
-#libtomoe_a_SOURCES = \
-#	array.h array.c \
-#	tomoe.h tomoe.c
-#
-#libtomoe_a_LD_ADD = \
-#	-lm
+pkginclude_HEADERS = tomoe.h
 
 lib_LTLIBRARIES = libtomoe.la
 libtomoe_la_SOURCES = \

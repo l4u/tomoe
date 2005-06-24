@@ -28,6 +28,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include "tomoe.h"
+#include "array.h"
 
 #define LINE_BUF_SIZE 4096
 #define DICT_LETTER_INITIAL_SIZE 3049
