@@ -24,8 +24,6 @@
 #ifndef __TOMOE_H__
 #define __TOMOE_H__
 
-#include "array.h"
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
