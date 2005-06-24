@@ -113,6 +113,7 @@ tomoe_get_matched (glyph *input, candidate ***matched)
   candidate **ret = NULL;
   
   if (!input) return 0;
+  if (!input->stroke_num) return 0;
   if (!g_dict) return 0;
 
   first_cands = pointer_array_new ();
@@ -835,7 +836,8 @@ tomoe_glyph_free (glyph *g)
   {
     stroke_free_contents (&g->strokes[i]);
   }
-  free (g->strokes);
+  if (g->strokes)
+    free (g->strokes);
   g->strokes = NULL;
 
   free (g);
