@@ -1,3 +1,14 @@
+2005-06-24 Hiroyuki Ikezoe <poincare@ikezoe.net>
+
+	* src/main.c: New tomoe.
+	Old one is tomoe1.
+
+2005-06-24 Hiroyuki Ikezoe <poincare@ikezoe.net>
+
+	* lib/array.[ch], lib/tomoe.[ch],
+	  test/testtomoe.c:
+	Brushing up.
+
 2005-03-06 Hiroyuki Ikezoe <poincare@ikezoe.net>
 
 	* Reconstruction of directory trees.
