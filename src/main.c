@@ -63,7 +63,8 @@ read_test_data ()
     test_glyph->stroke_num = stroke_num;
 	  return test_glyph;
   }
-  return test_glyph;
+  tomoe_glyph_free (test_glyph);
+  return NULL;
 }
 
 #if 0
