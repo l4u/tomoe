@@ -111,7 +111,6 @@ extern tomoe_bool tomoe_data_register (glyph *input, char *data);
 /* finalize tomoe */
 extern void tomoe_term (void);
 
-
 extern void tomoe_glyph_free (glyph *g);
 
 #ifdef	__cplusplus

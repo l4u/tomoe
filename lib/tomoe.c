@@ -705,7 +705,6 @@ static pointer_array *
 get_candidates(stroke *input_stroke, pointer_array *cands)
 {
   pointer_array *rtn_cands;
-  int_array *adapted = NULL;
   candidate_private *cand;
   int cand_index = 0;
   letter lttr;
@@ -728,9 +727,10 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
   {
     tomoe_bool match_flag;
     match_flag = FALSE;
+    int_array *adapted = NULL;
     cand = cands->p[cand_index];
 
-    adapted = cand->adapted_strokes;
+    adapted = int_array_copy (cand->adapted_strokes);
 
     lttr = g_dict->letters[cand->index];
 
@@ -778,8 +778,10 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
 	      continue;
 	    }
 
-      int_array_append_data (adapted, strk_index);
+      int_array_append_data (cand->adapted_strokes, strk_index);
       match_flag = TRUE;
+
+      strk_index = lttr.c_glyph->stroke_num;
 
       free (d_met);
 	  }
@@ -787,6 +789,7 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
     {
 	    pointer_array_append_data (rtn_cands, cand);
     }
+    int_array_unref (adapted);
   }
 
   free (i_met);

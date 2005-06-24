@@ -38,6 +38,7 @@ struct _int_array
 int_array *int_array_new         (void);
 int_array *int_array_append_data (int_array *a, int i);
 int_array *int_array_ref         (int_array *a);
+int_array *int_array_copy        (int_array *a);
 int        int_array_find_data   (int_array *a, int i);
 
 void       int_array_unref       (int_array *a);
