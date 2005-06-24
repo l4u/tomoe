@@ -11,10 +11,17 @@ INCLUDES = \
 	-I$(top_builddir)/lib
 
 bin_PROGRAMS = \
-	tomoe
+	tomoe1 tomoe
+
+tomoe1_SOURCES = \
+	match.c
+
+tomoe1_LDADD = \
+	-lm
 
 tomoe_SOURCES = \
-	match.c
+	main.c
+
 tomoe_LDADD = \
 	$(top_builddir)/lib/libtomoe.a \
 	-lm
