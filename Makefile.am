@@ -2,7 +2,7 @@
 
 SUBDIRS = lib src data test
 
-EXTRA_DIST = autogen.sh
+EXTRA_DIST = autogen.sh tomoe.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA= tomoe.pc
