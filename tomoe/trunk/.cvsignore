@@ -24,6 +24,7 @@ missing
 mkinstalldirs
 stamp-h
 stamp-h*
+tomoe.pc
 *.bak
 *~
 *.log

@@ -1,5 +1,10 @@
 2005-06-24 Hiroyuki Ikezoe <poincare@ikezoe.net>
 
+	* Makefile.am, configure.in, tomoe.pc.in:
+	for pkgconfig.
+
+2005-06-24 Hiroyuki Ikezoe <poincare@ikezoe.net>
+
 	* src/main.c: New tomoe.
 	Old one is tomoe1.
 
