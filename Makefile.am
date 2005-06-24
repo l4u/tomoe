@@ -3,3 +3,8 @@
 SUBDIRS = lib src data test
 
 EXTRA_DIST = autogen.sh
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA= tomoe.pc
+
+DISTCLEANFILES = tomoe.pc

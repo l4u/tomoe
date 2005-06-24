@@ -94,6 +94,7 @@ src/Makefile
 lib/Makefile
 data/Makefile
 test/Makefile
+tomoe.pc
 ])
 
 AC_OUTPUT
