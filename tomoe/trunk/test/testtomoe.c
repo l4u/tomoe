@@ -67,7 +67,7 @@ int
 main (int argc, char **argv)
 {
   glyph *test_glyph = NULL;
-  candidates *matched = NULL;
+  candidate **matched = NULL;
   int i, candidate_num = 0;
 
   tomoe_init ();
@@ -86,25 +86,27 @@ main (int argc, char **argv)
       fprintf (stderr, "Candidate list is NULL!\n");
       goto END;
     }
+#if 0
     if (candidate_num != matched->candidate_num)
     {
       fprintf (stdout, "The number of candidates does not equal!\n");
       goto END;
     }
+#endif
     fprintf (stdout, "The number of matched characters: %d\n", candidate_num);
     for (i = 0; i < candidate_num; i++)
     {
       fprintf (stdout, "character:%s\tscore:%d\n",
-	             matched->candidates[i].letter, matched->candidates[i].score);
+	             matched[i]->letter, matched[i]->score);
     }
   }
   
 END:
-  free (test_glyph);
+  tomoe_glyph_free (test_glyph);
 
   if (matched)
   {
-    tomoe_free_matched (matched);
+    tomoe_free_matched (matched, candidate_num);
   }
 
   tomoe_term ();

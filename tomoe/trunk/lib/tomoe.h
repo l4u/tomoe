@@ -24,6 +24,8 @@
 #ifndef __TOMOE_H__
 #define __TOMOE_H__
 
+#include "array.h"
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
@@ -40,7 +42,6 @@ typedef struct _glyph glyph;
 typedef struct _stroke stroke;
 typedef struct _point point;
 typedef struct _candidate candidate;
-typedef struct _candidates candidates;
 
 typedef int tomoe_bool;
 
@@ -64,14 +65,8 @@ struct _point
 
 struct _candidate
 {
-  char *letter;
-  int score;
-};
-
-struct _candidates
-{
-  int candidate_num;
-  candidate *candidates;
+  const char  *letter;
+  int          score;
 };
 
 /* Initialize tomoe */
@@ -95,7 +90,7 @@ extern void tomoe_clear_stroke (void *stroke_list);
  * Return value: the number of matched characters
  *
  */
-extern int tomoe_get_matched (glyph *input, candidates **matched);
+extern int tomoe_get_matched (glyph *input, candidate ***matched);
 
 /* 
  * free matched characters 
@@ -103,7 +98,7 @@ extern int tomoe_get_matched (glyph *input, candidates **matched);
  * matched:
  *
  */
-extern void tomoe_free_matched (candidates *matched);
+extern void tomoe_free_matched (candidate **matched, int len);
 
 /*
  * register to the current (user?) dictionary
@@ -115,6 +110,9 @@ extern tomoe_bool tomoe_data_register (glyph *input, char *data);
 
 /* finalize tomoe */
 extern void tomoe_term (void);
+
+
+extern void tomoe_glyph_free (glyph *g);
 
 #ifdef	__cplusplus
 }

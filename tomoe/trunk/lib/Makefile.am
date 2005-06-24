@@ -11,6 +11,7 @@ INCLUDES =
 lib_LIBRARIES = libtomoe.a
 
 libtomoe_a_SOURCES = \
+	array.h array.c \
 	tomoe.h tomoe.c
 
 libtomoe_a_LD_ADD = \
