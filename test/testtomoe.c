@@ -86,13 +86,7 @@ main (int argc, char **argv)
       fprintf (stderr, "Candidate list is NULL!\n");
       goto END;
     }
-#if 0
-    if (candidate_num != matched->candidate_num)
-    {
-      fprintf (stdout, "The number of candidates does not equal!\n");
-      goto END;
-    }
-#endif
+    
     fprintf (stdout, "The number of matched characters: %d\n", candidate_num);
     for (i = 0; i < candidate_num; i++)
     {

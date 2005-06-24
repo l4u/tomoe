@@ -23,7 +23,7 @@ tomoe_SOURCES = \
 	main.c
 
 tomoe_LDADD = \
-	$(top_builddir)/lib/libtomoe.a \
+	$(top_builddir)/lib/libtomoe.la \
 	-lm
 
 EXTRA_DIST = \

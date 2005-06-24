@@ -16,5 +16,5 @@ noinst_PROGRAMS = \
 testtomoe_SOURCES = \
 	testtomoe.c
 testtomoe_LDADD = \
-	$(top_builddir)/lib/libtomoe.a \
+	$(top_builddir)/lib/libtomoe.la \
 	-lm
