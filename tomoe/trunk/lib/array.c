@@ -49,6 +49,26 @@ int_array_append_data (int_array *a, int i)
 }
 
 int_array *
+int_array_copy (int_array *a)
+{
+  int i;
+  int_array *ret;
+
+  ret = int_array_new ();
+
+  ret->len = a->len;
+
+  ret->p = (int *) calloc (ret->len, sizeof (int));
+ 
+  for (i = 0; i < ret->len; i++)
+  {
+    ret->p[i] = a->p[i];
+  }
+
+  return ret;
+}
+
+int_array *
 int_array_ref (int_array *a)
 {
   if (!a)
