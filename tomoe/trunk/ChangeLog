@@ -1,6 +1,11 @@
 2005-06-27 Hiroyuki Ikezoe <poincare@ikezoe.net>
 
 	* lib/tomoe.c:
+	More accurate score.
+
+2005-06-27 Hiroyuki Ikezoe <poincare@ikezoe.net>
+
+	* lib/tomoe.c:
 	Set the score.
 	But it does not indicate probable value yet.
 
