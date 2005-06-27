@@ -171,7 +171,9 @@ tomoe_get_matched (glyph *input, candidate ***matched)
         }
       }
       if (b)
+      {
         matches = int_array_append_data (matches, cand->index);
+      }
     }
   }
   matched_num = matches->len;
@@ -260,8 +262,6 @@ sq_dist (point *p, point *q)
 {
   return SQUARE_LENGTH (p->x - q->x, p->y - q->y);
 }
-
-#define DABS(a) (a > 0 ? a : -a)
 
 /*
  * *******************
@@ -595,7 +595,7 @@ match_input_to_dict(stroke *input_stroke, stroke *dict_stroke)
 	    {
 	      d_me = d_met[d_k];
 	      if (d < LIMIT_LENGTH &&
-		        DABS(i_me.angle - d_me.angle) < M_PI_2)
+		        abs(i_me.angle - d_me.angle) < M_PI_2)
 		    {
 		      m = d_k;
           ret += d;
@@ -605,10 +605,10 @@ match_input_to_dict(stroke *input_stroke, stroke *dict_stroke)
 		    {
 		      /* 各特徴点と線分との距離 */
 		      r = d_me.a * i_pt.x + d_me.b * i_pt.y - d_me.e;
-          d = DABS(d_me.a * i_pt.y - d_me.b * i_pt.x - d_me.c);
+          d = abs(d_me.a * i_pt.y - d_me.b * i_pt.x - d_me.c);
 		      if (0 <= r && r <= d_me.d * d_me.d &&
 		          d < LIMIT_LENGTH * d_me.d &&
-		          DABS(i_me.angle - d_me.angle) < M_PI_2)
+		          abs(i_me.angle - d_me.angle) < M_PI_2)
 		      {
 		        m = d_k;
             ret += d;
@@ -691,7 +691,7 @@ match_dict_to_input(stroke *dict_stroke, stroke *input_stroke)
 	    {
 	      i_me = i_met[i_k];
 	      if (d < LIMIT_LENGTH &&
-		        DABS(d_me.angle - i_me.angle) < M_PI_2)
+		        abs(d_me.angle - i_me.angle) < M_PI_2)
 		    {
 		       m = i_k;
            ret += d;
@@ -701,10 +701,10 @@ match_dict_to_input(stroke *dict_stroke, stroke *input_stroke)
 		    {
 		      /* 各特徴点と線分との距離 */
 		      r = i_me.a * d_pt.x + i_me.b * d_pt.y - i_me.e;
-          d = DABS(i_me.a * d_pt.y - i_me.b * d_pt.x - i_me.c);
+          d = abs(i_me.a * d_pt.y - i_me.b * d_pt.x - i_me.c);
 		      if (0 <= r && r <= i_me.d * i_me.d &&
 		          d < LIMIT_LENGTH * i_me.d &&
-		          DABS(d_me.angle - i_me.angle) < M_PI_2)
+		          abs(d_me.angle - i_me.angle) < M_PI_2)
 		      {
 		        m = i_k;
             ret += d;
@@ -763,7 +763,6 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
     match_flag = FALSE;
     int_array *adapted = NULL;
     cand = cands->p[cand_index];
-    int score1 = 0, score2 = 0;
 
     adapted = int_array_copy (cand->adapted_strokes);
 
@@ -771,6 +770,10 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
 
     for (strk_index = 0; strk_index < lttr.c_glyph->stroke_num; strk_index++)
 	  {
+      int d1 = 0, d2 = 0;
+      int d3 = 0, d4 = 0;
+      int score1 = 0, score2 = 0;
+      int score3 = 0, score4 = 0;
       if (int_array_find_data (adapted, strk_index) >= 0)
       {
 	        continue;
@@ -782,18 +785,23 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
       stroke_calculate_metrics (&dict_stroke, &d_met);
 
 	    /* 始点・終点との距離, 特徴点の数 */
-	    if (sq_dist(&i_pts[0], &d_pts[0]) > LIMIT_LENGTH ||
-	        sq_dist(&i_pts[i_nop - 1], &d_pts[d_nop - 1]) > LIMIT_LENGTH ||
+      d1 = sq_dist(&i_pts[0], &d_pts[0]);
+      d2 = sq_dist(&i_pts[i_nop - 1], &d_pts[d_nop - 1]);
+      score3 = (d1 + d2);
+	    if (d1 > LIMIT_LENGTH ||
+	        d2 > LIMIT_LENGTH ||
 	        abs(d_nop - i_nop) > 3)
 	    {
         free (d_met);
 	      continue;
 	    }
 
+      d3 = sq_dist(&i_pts[0], &i_pts[1]);
+      d4 = sq_dist(&d_pts[0], &d_pts[1]);
 	    /* 始線の角度 % 45 度 (PI/4) がしきい値 */
-      if (sq_dist(&i_pts[0], &i_pts[1]) > LIMIT_LENGTH &&
-	        sq_dist(&d_pts[0], &d_pts[1]) > LIMIT_LENGTH &&
-	        DABS(d_met[0].angle - i_met[0].angle) > M_PI_4)
+      if (d1 > LIMIT_LENGTH &&
+	        d2 > LIMIT_LENGTH &&
+	        abs(d_met[0].angle - i_met[0].angle) > M_PI_4)
 	    {
         free (d_met);
 	      continue;
@@ -817,7 +825,7 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
 
       int_array_append_data (cand->adapted_strokes, strk_index);
       match_flag = TRUE;
-      cand->cand->score += score1 + score2;
+      cand->cand->score += score1 + score2 + score3;
 
       strk_index = lttr.c_glyph->stroke_num;
 
@@ -845,7 +853,7 @@ match_stroke_num(int letter_index, int input_stroke_num, int_array *adapted)
   int d_stroke_num = g_dict->letters[letter_index].c_glyph->stroke_num;
 
   if (!adapted)
-    return FALSE;
+    return 0;
 
   adapted_num = adapted->len;
 
@@ -857,7 +865,7 @@ match_stroke_num(int letter_index, int input_stroke_num, int_array *adapted)
 	    j = adapted->p[i];
 	    if (j - pj >= 3)
 	    {
-	      return FALSE;
+	      return 0;
 	    }
 	    pj = j;
     }
