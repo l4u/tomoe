@@ -1,3 +1,9 @@
+2005-06-27 Hiroyuki Ikezoe <poincare@ikezoe.net>
+
+	* lib/tomoe.c:
+	Set the score.
+	But it does not indicate probable value yet.
+
 2005-06-24 Hiroyuki Ikezoe <poincare@ikezoe.net>
 
 	* Makefile.am, configure.in, tomoe.pc.in:

@@ -85,6 +85,7 @@ static void               candidate_private_free (candidate_private *cand_p, tom
 static pointer_array *get_candidates    (stroke *input_stroke, pointer_array *cands);
 
 static int match_stroke_num             (int letter_index, int input_stroke_num, int_array *adapted);
+static void candidate_sort_by_score (candidate **cands, int length);
 /* 
  * Initialize tomoe 
  */
@@ -175,8 +176,6 @@ tomoe_get_matched (glyph *input, candidate ***matched)
   }
   matched_num = matches->len;
 
-  //sort_letter_indexes_by_stroke_num(&matched);
-
   if (cands->len > 0)
   {
     int pos = 0;
@@ -194,10 +193,13 @@ tomoe_get_matched (glyph *input, candidate ***matched)
         pos++;
       }
     }
+    matched_num = pos;
   }
   int_array_unref (matches);
 
   *matched = ret;
+
+  candidate_sort_by_score (ret, matched_num);
 
   pointer_array_unref (cands);
   
@@ -251,24 +253,15 @@ tomoe_term (void)
  * *******************
  */
 
-static int
-sq_len (int x, int y)
-{
-  return x * x + y * y;
-}
+#define SQUARE_LENGTH(x, y) ((x) * (x) + (y) * (y))
 
 static int
 sq_dist (point *p, point *q)
 {
-  return sq_len (p->x - q->x, p->y - q->y);
+  return SQUARE_LENGTH (p->x - q->x, p->y - q->y);
 }
 
-static double
-dabs (double a)
-{
-  return a > 0 ? a
-    : -a;
-}
+#define DABS(a) (a > 0 ? a : -a)
 
 /*
  * *******************
@@ -434,6 +427,25 @@ candidate_private_free (candidate_private *cand_p, tomoe_bool free_candidate)
   free (cand_p);
 }
 
+static int
+compare_candidate_score (const void *a, const void *b)
+{
+  const candidate **cand_a = (const candidate **) a;
+  const candidate **cand_b = (const candidate **) b;
+  int score_a = cand_a[0]->score;
+  int score_b = cand_b[0]->score;
+  return score_a > score_b ? 1
+    : score_a < score_b ? -1
+    : 0;
+}
+
+static void
+candidate_sort_by_score (candidate **cands, int length)
+{
+  qsort(cands, length, sizeof(void*),
+      	compare_candidate_score);
+}
+
 /*
  * ***********************
  *  data load functions.
@@ -546,6 +558,8 @@ match_input_to_dict(stroke *input_stroke, stroke *dict_stroke)
   point d_pt;
   metric d_me;
   int r = 0;
+  int d = 0;
+  int ret = 0;
 
   i_nop = input_stroke->point_num;
   i_pts = input_stroke->points;
@@ -555,6 +569,10 @@ match_input_to_dict(stroke *input_stroke, stroke *dict_stroke)
   d_pts = dict_stroke->points;
   stroke_calculate_metrics (dict_stroke, &d_met);
 
+  /* 
+   * if the length between last point and second last point is lesser than LIMIT_LENGTH,
+   * the last itinerary assumes "hane".
+   */
   if (sq_dist(&i_pts[i_nop - 1], &i_pts[i_nop - 2]) < LIMIT_LENGTH)
   {
     i_k_end = i_nop - 2;
@@ -572,34 +590,38 @@ match_input_to_dict(stroke *input_stroke, stroke *dict_stroke)
     for (d_k = m; d_k < d_nop; d_k++)
 	  {
 	    d_pt = d_pts[d_k];
+      d = sq_dist(&i_pt, &d_pt);
 	    if (d_k < d_nop - 1)
 	    {
 	      d_me = d_met[d_k];
-	      if (sq_dist(&i_pt, &d_pt) < LIMIT_LENGTH &&
-		        dabs(i_me.angle - d_me.angle) < M_PI_2)
+	      if (d < LIMIT_LENGTH &&
+		        DABS(i_me.angle - d_me.angle) < M_PI_2)
 		    {
 		      m = d_k;
+          ret += d;
 		      break;
 		    }
 	      else
 		    {
 		      /* 各特徴点と線分との距離 */
 		      r = d_me.a * i_pt.x + d_me.b * i_pt.y - d_me.e;
+          d = DABS(d_me.a * i_pt.y - d_me.b * i_pt.x - d_me.c);
 		      if (0 <= r && r <= d_me.d * d_me.d &&
-		          dabs(d_me.a * i_pt.y - d_me.b * i_pt.x - d_me.c) <
-		          LIMIT_LENGTH * d_me.d &&
-		          dabs(i_me.angle - d_me.angle) < M_PI_2)
+		          d < LIMIT_LENGTH * d_me.d &&
+		          DABS(i_me.angle - d_me.angle) < M_PI_2)
 		      {
 		        m = d_k;
+            ret += d;
 		        break;
 		      }
 		    }
 	    }
 	    else
 	    {
-	      if (sq_dist(&i_pt, &d_pt) < LIMIT_LENGTH)
+	      if (d < LIMIT_LENGTH)
 		    {
 		      m = d_k;
+          ret += d;
 		      break;
 		    }
 	    }
@@ -608,12 +630,12 @@ match_input_to_dict(stroke *input_stroke, stroke *dict_stroke)
 	  {
       free (i_met);
       free (d_met);
-	    return FALSE;
+	    return -1;
 	  }
   }
   free (i_met);
   free (d_met);
-  return TRUE;
+  return ret;
 }
 
 static int
@@ -634,6 +656,8 @@ match_dict_to_input(stroke *dict_stroke, stroke *input_stroke)
   point i_pt;
   metric i_me;
   int r = 0;
+  int d = 0;
+  int ret = 0;
 
   d_nop = dict_stroke->point_num;
   d_pts = dict_stroke->points;
@@ -642,6 +666,10 @@ match_dict_to_input(stroke *dict_stroke, stroke *input_stroke)
   i_pts = input_stroke->points;
   stroke_calculate_metrics (input_stroke, &i_met);
 
+  /* 
+   * if the length between last point and second last point is lesser than LIMIT_LENGTH,
+   * the last itineraryassumes "hane".
+   */
   if (sq_dist(&d_pts[d_nop - 1], &d_pts[d_nop - 2]) < LIMIT_LENGTH)
   {
     d_k_end = d_nop - 2;
@@ -658,34 +686,38 @@ match_dict_to_input(stroke *dict_stroke, stroke *input_stroke)
     for (i_k = m; i_k < i_nop; i_k++)
 	  {
   	  i_pt = i_pts[i_k];
+	    d = sq_dist(&d_pt, &i_pt);
 	    if (i_k < i_nop - 1)
 	    {
 	      i_me = i_met[i_k];
-	      if (sq_dist(&d_pt, &i_pt) < LIMIT_LENGTH &&
-		        dabs(d_me.angle - i_me.angle) < M_PI_2)
+	      if (d < LIMIT_LENGTH &&
+		        DABS(d_me.angle - i_me.angle) < M_PI_2)
 		    {
 		       m = i_k;
+           ret += d;
 		       break;
 		    }
 	      else
 		    {
 		      /* 各特徴点と線分との距離 */
 		      r = i_me.a * d_pt.x + i_me.b * d_pt.y - i_me.e;
+          d = DABS(i_me.a * d_pt.y - i_me.b * d_pt.x - i_me.c);
 		      if (0 <= r && r <= i_me.d * i_me.d &&
-		          dabs(i_me.a * d_pt.y - i_me.b * d_pt.x - i_me.c) <
-		          LIMIT_LENGTH * i_me.d &&
-		          dabs(d_me.angle - i_me.angle) < M_PI_2)
+		          d < LIMIT_LENGTH * i_me.d &&
+		          DABS(d_me.angle - i_me.angle) < M_PI_2)
 		      {
 		        m = i_k;
+            ret += d;
 		        break;
 		      }
 		    }
 	    }
 	    else
 	    {
-	      if (sq_dist(&d_pt, &i_pt) < LIMIT_LENGTH)
+	      if (d < LIMIT_LENGTH)
 		    {
 		      m = i_k;
+          ret += d;
 		      break;
 		    }
 	    }
@@ -694,12 +726,12 @@ match_dict_to_input(stroke *dict_stroke, stroke *input_stroke)
 	  {
       free (i_met);
       free (d_met);
-	    return FALSE;
+	    return -1;
 	  }
   }
   free (i_met);
   free (d_met);
-  return TRUE;
+  return d;
 }
 
 
@@ -731,6 +763,7 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
     match_flag = FALSE;
     int_array *adapted = NULL;
     cand = cands->p[cand_index];
+    int score1 = 0, score2 = 0;
 
     adapted = int_array_copy (cand->adapted_strokes);
 
@@ -760,21 +793,23 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
 	    /* 始線の角度 % 45 度 (PI/4) がしきい値 */
       if (sq_dist(&i_pts[0], &i_pts[1]) > LIMIT_LENGTH &&
 	        sq_dist(&d_pts[0], &d_pts[1]) > LIMIT_LENGTH &&
-	        dabs(d_met[0].angle - i_met[0].angle) > M_PI_4)
+	        DABS(d_met[0].angle - i_met[0].angle) > M_PI_4)
 	    {
         free (d_met);
 	      continue;
 	    }
 
 	    /* 各特徴点の距離と角度: (手書き文字を辞書と比較) */
-	    if (!match_input_to_dict(input_stroke, &dict_stroke))
+      score1 = match_input_to_dict(input_stroke, &dict_stroke);
+	    if (score1 < 0)
 	    {
         free (d_met);
 	      continue;
 	    }
 
 	    /* 各特徴点の距離と角度: (辞書を手書き文字と比較) */
-	    if (!match_dict_to_input(&dict_stroke, input_stroke))
+      score2 = match_dict_to_input(&dict_stroke, input_stroke);
+	    if (score2 < 0)
 	    {
         free (d_met);
 	      continue;
@@ -782,6 +817,7 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
 
       int_array_append_data (cand->adapted_strokes, strk_index);
       match_flag = TRUE;
+      cand->cand->score += score1 + score2;
 
       strk_index = lttr.c_glyph->stroke_num;
 
