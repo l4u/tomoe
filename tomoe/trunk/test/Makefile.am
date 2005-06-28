@@ -18,6 +18,7 @@ testtomoe_SOURCES = \
 testtomoe_LDADD = \
 	$(top_builddir)/lib/libtomoe.la \
 	-lm
+
 EXTRA_DIST = \
 	haru \
 	natu \
