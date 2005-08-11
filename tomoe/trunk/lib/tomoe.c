@@ -152,11 +152,16 @@ tomoe_get_matched (glyph *input, candidate ***matched)
     int_array *adapted;
     cand = cands->p[i];
     adapted = cand->adapted_strokes;
+    int pj;
 
-    if (!match_stroke_num(cand->index, input->stroke_num, adapted))
+    pj = match_stroke_num(cand->index, input->stroke_num, adapted);
+
+    if (pj < 0)
     {
       continue;
     }
+
+    cand->cand->score = cand->cand->score * 100 / pj;
 
     if (int_array_find_data (matches, cand->index) < 0)
     {
@@ -773,7 +778,7 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
       int d1 = 0, d2 = 0;
       int d3 = 0, d4 = 0;
       int score1 = 0, score2 = 0;
-      int score3 = 0, score4 = 0;
+      int score3 = 0;
       if (int_array_find_data (adapted, strk_index) >= 0)
       {
 	        continue;
@@ -788,6 +793,7 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
       d1 = sq_dist(&i_pts[0], &d_pts[0]);
       d2 = sq_dist(&i_pts[i_nop - 1], &d_pts[d_nop - 1]);
       score3 = (d1 + d2);
+      cand->cand->score += score3;
 	    if (d1 > LIMIT_LENGTH ||
 	        d2 > LIMIT_LENGTH ||
 	        abs(d_nop - i_nop) > 3)
@@ -812,25 +818,29 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
 	    if (score1 < 0)
 	    {
         free (d_met);
+        cand->cand->score = cand->cand->score * 2;
 	      continue;
 	    }
+      cand->cand->score += score1;
 
 	    /* 各特徴点の距離と角度: (辞書を手書き文字と比較) */
       score2 = match_dict_to_input(&dict_stroke, input_stroke);
 	    if (score2 < 0)
 	    {
         free (d_met);
+        cand->cand->score = cand->cand->score * 2;
 	      continue;
 	    }
+      cand->cand->score += score2;
 
       int_array_append_data (cand->adapted_strokes, strk_index);
       match_flag = TRUE;
-      cand->cand->score += score1 + score2 + score3;
 
       strk_index = lttr.c_glyph->stroke_num;
 
       free (d_met);
 	  }
+
     if (match_flag)
     {
 	    pointer_array_append_data (rtn_cands, cand);
@@ -846,14 +856,14 @@ get_candidates(stroke *input_stroke, pointer_array *cands)
 static int
 match_stroke_num(int letter_index, int input_stroke_num, int_array *adapted)
 {
-  int pj;
+  int pj = 100;
   int i;
   int j;
   int adapted_num;
   int d_stroke_num = g_dict->letters[letter_index].c_glyph->stroke_num;
 
   if (!adapted)
-    return 0;
+    return -1;
 
   adapted_num = adapted->len;
 
@@ -865,12 +875,12 @@ match_stroke_num(int letter_index, int input_stroke_num, int_array *adapted)
 	    j = adapted->p[i];
 	    if (j - pj >= 3)
 	    {
-	      return 0;
+	      return -1;
 	    }
 	    pj = j;
     }
   }
-  return TRUE;
+  return pj;
 }
 
 void
