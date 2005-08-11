@@ -161,7 +161,7 @@ tomoe_get_matched (glyph *input, candidate ***matched)
       continue;
     }
 
-    cand->cand->score = cand->cand->score * 100 / pj;
+    cand->cand->score = cand->cand->score / pj;
 
     if (int_array_find_data (matches, cand->index) < 0)
     {
