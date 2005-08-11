@@ -1,3 +1,8 @@
+2005-08-11 Hiroyuki Ikezoe <poincare@ikezoe.net>
+
+	* lib/tomoe.c:
+	scoring by weighinting with the number of storke.
+
 2005-06-29 Hiroyuki Ikezoe <poincare@ikezoe.net>
 
 	* configure.in:
