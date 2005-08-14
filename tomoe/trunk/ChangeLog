@@ -1,3 +1,8 @@
+2005-08-14 Hiroyuki Ikezoe <poincare@ikezoe.net>
+
+	* configure.in:
+	version 0.2.1.
+
 2005-08-11 Hiroyuki Ikezoe <poincare@ikezoe.net>
 
 	* lib/tomoe.c:
