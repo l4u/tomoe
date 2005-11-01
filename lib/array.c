@@ -25,7 +25,7 @@
 
 
 int_array *
-int_array_new (void)
+_int_array_new (void)
 {
   int_array *a;
   a = (int_array *) calloc (sizeof (int_array), 1);
@@ -36,7 +36,7 @@ int_array_new (void)
 }
 
 int_array *
-int_array_append_data (int_array *a, int i)
+_int_array_append_data (int_array *a, int i)
 {
   if (!a)
     return NULL;
@@ -49,12 +49,12 @@ int_array_append_data (int_array *a, int i)
 }
 
 int_array *
-int_array_copy (int_array *a)
+_int_array_copy (int_array *a)
 {
   int i;
   int_array *ret;
 
-  ret = int_array_new ();
+  ret = _int_array_new ();
 
   ret->len = a->len;
 
@@ -69,7 +69,7 @@ int_array_copy (int_array *a)
 }
 
 int_array *
-int_array_ref (int_array *a)
+_int_array_ref (int_array *a)
 {
   if (!a)
     return NULL;
@@ -79,7 +79,7 @@ int_array_ref (int_array *a)
 }
 
 void
-int_array_unref (int_array *a)
+_int_array_unref (int_array *a)
 {
   if (!a)
     return;
@@ -96,7 +96,7 @@ int_array_unref (int_array *a)
 }
 
 int
-int_array_find_data (int_array *a, int i)
+_int_array_find_data (int_array *a, int i)
 {
   int l;
   if (!a || a->len == 0)
@@ -112,7 +112,7 @@ int_array_find_data (int_array *a, int i)
 }
 
 pointer_array *
-pointer_array_new (void)
+_pointer_array_new (void)
 {
   pointer_array *a;
   a = (pointer_array *) calloc (sizeof (pointer_array), 1);
@@ -123,7 +123,7 @@ pointer_array_new (void)
 }
 
 pointer_array *
-pointer_array_append_data (pointer_array *a, void *p)
+_pointer_array_append_data (pointer_array *a, void *p)
 {
   if (!a)
     return NULL;
@@ -136,7 +136,7 @@ pointer_array_append_data (pointer_array *a, void *p)
 }
 
 pointer_array *
-pointer_array_ref (pointer_array *a)
+_pointer_array_ref (pointer_array *a)
 {
   if (!a)
     return NULL;
@@ -146,7 +146,7 @@ pointer_array_ref (pointer_array *a)
 }
 
 void
-pointer_array_unref (pointer_array *a)
+_pointer_array_unref (pointer_array *a)
 {
   if (!a)
     return;
@@ -163,7 +163,7 @@ pointer_array_unref (pointer_array *a)
 }
 
 int
-pointer_array_find_data (pointer_array *a, void *p)
+_pointer_array_find_data (pointer_array *a, void *p)
 {
   int l;
   if (!a)
