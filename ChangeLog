@@ -1,5 +1,9 @@
 2005-11-01 Takuro Ashie <ashie@homa.ne.jp>
 
+	* test/testtomoe.c: Add "tomoe_" prefix. Fix indent.
+
+2005-11-01 Takuro Ashie <ashie@homa.ne.jp>
+
 	* lib/tomoe.[ch], src/main.c:
 	Add "tomoe_" prefix to structures. Fix indent.
 

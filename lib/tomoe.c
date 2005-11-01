@@ -36,14 +36,14 @@
 #define DICT_LETTER_EXPAND_SIZE 10
 #define LIMIT_LENGTH ((300 * 0.25) * (300 * 0.25))
 
-typedef struct _tomoe_letter     tomoe_letter;
-typedef struct _tomoe_dictionary tomoe_dictionary;
-typedef struct _tomoe_metric     tomoe_metric;
+typedef struct _tomoe_letter tomoe_letter;
+typedef struct _tomoe_dict   tomoe_dict;
+typedef struct _tomoe_metric tomoe_metric;
 
-struct _tomoe_dictionary
+struct _tomoe_dict
 {
     char         *file_name;
-    char         *dictionary_name;
+    char         *dict_name;
     char         *encoding;
     char         *lang;
     int           letter_num;
@@ -66,24 +66,24 @@ struct _tomoe_metric
     double angle;
 };
 
-typedef struct _candidate_private candidate_private;
+typedef struct _cand_priv cand_priv;
 
-struct _candidate_private
+struct _cand_priv
 {
     tomoe_candidate *cand;
     int              index;
     int_array       *adapted_strokes;
 };
 
-static tomoe_dictionary *g_dict = NULL;
+static tomoe_dict *g_dict = NULL;
 
 static void     load_dictionaries           (void);
-static void     dictionary_free_contents    (tomoe_dictionary *dct);
+static void     dict_free_contents          (tomoe_dict *dct);
 
-static candidate_private
-               *candidate_private_new       (const char  *letter,
+static cand_priv
+               *cand_priv_new               (const char  *letter,
                                              int          index);
-static void     candidate_private_free      (candidate_private *cand_p,
+static void     cand_priv_free              (cand_priv   *cand_p,
                                              tomoe_bool   free_candidate);
 
 static pointer_array
@@ -125,7 +125,7 @@ tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched)
   
     for (i = 0; i < g_dict->letter_num; i++)
     {
-        candidate_private *cand = NULL;
+        cand_priv *cand = NULL;
         /* check the number of stroke */
         if (input->stroke_num > g_dict->letters[i].c_glyph->stroke_num)
         {
@@ -133,7 +133,7 @@ tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched)
         }
 
         /* append a candidate to candidate list */
-        cand = candidate_private_new ((const char*) g_dict->letters[i].character, i);
+        cand = cand_priv_new ((const char*) g_dict->letters[i].character, i);
         pointer_array_append_data (first_cands, cand);
     }
 
@@ -151,13 +151,13 @@ tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched)
     matches = int_array_new ();
     for (i = 0; i < cands->len; i++)
     {
-        candidate_private *cand;
+        cand_priv *cand;
         int_array *adapted;
         cand = cands->p[i];
         adapted = cand->adapted_strokes;
         int pj;
 
-        pj = match_stroke_num(cand->index, input->stroke_num, adapted);
+        pj = match_stroke_num (cand->index, input->stroke_num, adapted);
 
         if (pj < 0)
         {
@@ -193,14 +193,14 @@ tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched)
         ret = calloc (sizeof (tomoe_candidate*), matched_num);
         for (i = 0; i < cands->len; i++)
         {
-            int index = ((candidate_private *)cands->p[i])->index;
+            int index = ((cand_priv *)cands->p[i])->index;
             if (int_array_find_data (matches, index) >= 0)
             {
                 tomoe_candidate *cand;
-                cand = calloc (sizeof (tomoe_candidate), 1);
-                cand->letter = ((candidate_private *)cands->p[i])->cand->letter;
-                cand->score = ((candidate_private *)cands->p[i])->cand->score;
-                ret[pos] = cand;
+                cand         = calloc (sizeof (tomoe_candidate), 1);
+                cand->letter = ((cand_priv *)cands->p[i])->cand->letter;
+                cand->score  = ((cand_priv *)cands->p[i])->cand->score;
+                ret[pos]     = cand;
                 pos++;
             }
         }
@@ -216,9 +216,11 @@ tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched)
 
     for (i = 0; i < first_cands->len; i++)
     {
-        candidate_private_free (first_cands->p[i], TRUE);
+        cand_priv_free (first_cands->p[i], TRUE);
     }
+
     pointer_array_unref (first_cands);
+
     return matched_num;
 }
 
@@ -247,7 +249,7 @@ tomoe_data_register (tomoe_glyph *input, char *data)
 void 
 tomoe_term (void)
 {
-    dictionary_free_contents (g_dict);
+    dict_free_contents (g_dict);
 
     free (g_dict);
 }
@@ -278,7 +280,7 @@ static void
 stroke_alloc_contents (tomoe_stroke *strk, int point_num)
 {
     strk->point_num = point_num;
-    strk->points    = calloc (point_num, sizeof(tomoe_point));
+    strk->points    = calloc (point_num, sizeof (tomoe_point));
 }
 
 static void
@@ -301,17 +303,17 @@ stroke_calculate_metrics (tomoe_stroke *strk, tomoe_metric **met)
 
     if (!strk) return 0;
 
-    m = calloc (strk->point_num - 1, sizeof(tomoe_metric));
+    m = calloc (strk->point_num - 1, sizeof (tomoe_metric));
  
     for (i = 0; i < strk->point_num - 1; i++)
     {
         p = strk->points[i];
         q = strk->points[i + 1];
-        m[i].a = q.x - p.x;
-        m[i].b = q.y - p.y;
-        m[i].c = q.x * p.y - q.y * p.x;
-        m[i].d = sqrt(m[i].a * m[i].a + m[i].b * m[i].b);
-        m[i].e = m[i].a * p.x + m[i].b * p.y;
+        m[i].a     = q.x - p.x;
+        m[i].b     = q.y - p.y;
+        m[i].c     = q.x * p.y - q.y * p.x;
+        m[i].d     = sqrt (m[i].a * m[i].a + m[i].b * m[i].b);
+        m[i].e     = m[i].a * p.x + m[i].b * p.y;
         m[i].angle = atan2 (q.y - p.y, q.x - p.x);
     }
  
@@ -329,9 +331,9 @@ stroke_calculate_metrics (tomoe_stroke *strk, tomoe_metric **met)
 static void
 letter_alloc_contents (tomoe_letter *lttr, int stroke_num)
 {
-    lttr->c_glyph = calloc (1, sizeof(tomoe_glyph));
+    lttr->c_glyph             = calloc (1, sizeof (tomoe_glyph));
     lttr->c_glyph->stroke_num = stroke_num;
-    lttr->c_glyph->strokes = calloc (stroke_num, sizeof(tomoe_stroke));
+    lttr->c_glyph->strokes    = calloc (stroke_num, sizeof (tomoe_stroke));
 }
 
 static void
@@ -352,8 +354,8 @@ letter_free_contents (tomoe_letter *lttr)
             stroke_free_contents (&lttr->c_glyph->strokes[i]);
         }
         free (lttr->c_glyph->strokes);
-        lttr->c_glyph->strokes = NULL;
         free (lttr->c_glyph);
+        lttr->c_glyph->strokes = NULL;
         lttr->c_glyph = NULL;
     } 
 }
@@ -366,14 +368,14 @@ letter_free_contents (tomoe_letter *lttr)
  */
 
 static void
-dictionary_alloc_contents (tomoe_dictionary *dct, int letter_num)
+dict_alloc_contents (tomoe_dict *dct, int letter_num)
 {
     dct->letter_num = letter_num;
-    dct->letters = calloc (letter_num, sizeof(tomoe_letter));
+    dct->letters = calloc (letter_num, sizeof (tomoe_letter));
 }
 
 static void
-dictionary_free_contents (tomoe_dictionary *dct)
+dict_free_contents (tomoe_dict *dct)
 {
     int i;
 
@@ -391,10 +393,10 @@ dictionary_free_contents (tomoe_dictionary *dct)
 }
 
 static void
-dictionary_expand_to (tomoe_dictionary *dct, int letter_num)
+dict_expand_to (tomoe_dict *dct, int letter_num)
 {
     dct->letter_num = letter_num;
-    dct->letters = realloc (dct->letters, letter_num * sizeof(tomoe_letter));
+    dct->letters = realloc (dct->letters, letter_num * sizeof (tomoe_letter));
 }
 
 
@@ -404,12 +406,12 @@ dictionary_expand_to (tomoe_dictionary *dct, int letter_num)
  * **********************
  */
 
-static candidate_private *
-candidate_private_new (const char *letter, int index)
+static cand_priv *
+cand_priv_new (const char *letter, int index)
 {
-    candidate_private *cand_p;
+    cand_priv *cand_p;
 
-    cand_p                  = calloc (sizeof (candidate_private), 1);
+    cand_p                  = calloc (sizeof (cand_priv), 1);
     cand_p->cand            = calloc (sizeof (tomoe_candidate), 1);
     cand_p->cand->letter    = letter;
     cand_p->cand->score     = 0;
@@ -420,7 +422,7 @@ candidate_private_new (const char *letter, int index)
 }
 
 static void
-candidate_private_free (candidate_private *cand_p, tomoe_bool free_candidate)
+cand_priv_free (cand_priv *cand_p, tomoe_bool free_candidate)
 {
     if (!cand_p)
         return;
@@ -450,8 +452,8 @@ compare_candidate_score (const void *a, const void *b)
 static void
 candidate_sort_by_score (tomoe_candidate **cands, int length)
 {
-    qsort(cands, length, sizeof(void*),
-          compare_candidate_score);
+    qsort (cands, length, sizeof (void*),
+           compare_candidate_score);
 }
 
 
@@ -477,8 +479,8 @@ load_dictionaries (void)
 
     if (g_dict) return;
 
-    g_dict = calloc (1, sizeof(tomoe_dictionary));
-    dictionary_alloc_contents (g_dict, DICT_LETTER_INITIAL_SIZE);
+    g_dict = calloc (1, sizeof (tomoe_dict));
+    dict_alloc_contents (g_dict, DICT_LETTER_INITIAL_SIZE);
 
     FILE *fp = fopen (TOMOEDATADIR "/all.tdic", "r");
     while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL)
@@ -490,8 +492,9 @@ load_dictionaries (void)
         ++letter_num;
         if (letter_num > g_dict->letter_num)
         {
-            dictionary_expand_to (g_dict,
-                                  g_dict->letter_num + DICT_LETTER_EXPAND_SIZE);
+            dict_expand_to (
+                g_dict,
+                g_dict->letter_num + DICT_LETTER_EXPAND_SIZE);
         }
 
         i = letter_num - 1;
@@ -531,7 +534,7 @@ load_dictionaries (void)
                 p = strchr (p, ')') + 1;
             }
 
-            /*stroke_calculate_metrics(strk);*/
+            /*stroke_calculate_metrics (strk);*/
         }
     }
     fclose (fp);
@@ -604,7 +607,7 @@ match_input_to_dict(tomoe_stroke *input_stroke, tomoe_stroke *dict_stroke)
             {
                 d_me = d_met[d_k];
                 if (d < LIMIT_LENGTH &&
-                    abs(i_me.angle - d_me.angle) < M_PI_2)
+                    abs (i_me.angle - d_me.angle) < M_PI_2)
                 {
                     m = d_k;
                     ret += d;
@@ -614,10 +617,10 @@ match_input_to_dict(tomoe_stroke *input_stroke, tomoe_stroke *dict_stroke)
                 {
                     /* Distance between each characteristic points and line */
                     r = d_me.a * i_pt.x + d_me.b * i_pt.y - d_me.e;
-                    d = abs(d_me.a * i_pt.y - d_me.b * i_pt.x - d_me.c);
+                    d = abs (d_me.a * i_pt.y - d_me.b * i_pt.x - d_me.c);
                     if (0 <= r && r <= d_me.d * d_me.d &&
                         d < LIMIT_LENGTH * d_me.d &&
-                        abs(i_me.angle - d_me.angle) < M_PI_2)
+                        abs (i_me.angle - d_me.angle) < M_PI_2)
                     {
                         m = d_k;
                         ret += d;
@@ -648,12 +651,12 @@ match_input_to_dict(tomoe_stroke *input_stroke, tomoe_stroke *dict_stroke)
 }
 
 static int
-match_dict_to_input(tomoe_stroke *dict_stroke, tomoe_stroke *input_stroke)
+match_dict_to_input (tomoe_stroke *dict_stroke, tomoe_stroke *input_stroke)
 {
-    int d_nop = 0;              /* dict stroke number of points */
+    int           d_nop = 0;    /* dict stroke number of points */
     tomoe_point  *d_pts = NULL; /* dict stroke points */
     tomoe_metric *d_met = NULL; /* dict stroke metrics */
-    int i_nop = 0;              /* input stroke number of points */
+    int           i_nop = 0;    /* input stroke number of points */
     tomoe_point  *i_pts = NULL; /* input stroke points */
     tomoe_metric *i_met = NULL; /* input stroke metrics */
     int d_k_end = 0;
@@ -679,7 +682,7 @@ match_dict_to_input(tomoe_stroke *dict_stroke, tomoe_stroke *input_stroke)
      * if the length between last point and second last point is lesser than
      * LIMIT_LENGTH, the last itineraryassumes "hane".
      */
-    if (sq_dist(&d_pts[d_nop - 1], &d_pts[d_nop - 2]) < LIMIT_LENGTH)
+    if (sq_dist (&d_pts[d_nop - 1], &d_pts[d_nop - 2]) < LIMIT_LENGTH)
     {
         d_k_end = d_nop - 2;
     }
@@ -695,12 +698,12 @@ match_dict_to_input(tomoe_stroke *dict_stroke, tomoe_stroke *input_stroke)
         for (i_k = m; i_k < i_nop; i_k++)
         {
             i_pt = i_pts[i_k];
-            d = sq_dist(&d_pt, &i_pt);
+            d = sq_dist (&d_pt, &i_pt);
             if (i_k < i_nop - 1)
             {
                 i_me = i_met[i_k];
                 if (d < LIMIT_LENGTH &&
-                    abs(d_me.angle - i_me.angle) < M_PI_2)
+                    abs (d_me.angle - i_me.angle) < M_PI_2)
                 {
                     m = i_k;
                     ret += d;
@@ -710,10 +713,10 @@ match_dict_to_input(tomoe_stroke *dict_stroke, tomoe_stroke *input_stroke)
                 {
                     /* Distance between each characteristic points and line */
                     r = i_me.a * d_pt.x + i_me.b * d_pt.y - i_me.e;
-                    d = abs(i_me.a * d_pt.y - i_me.b * d_pt.x - i_me.c);
+                    d = abs (i_me.a * d_pt.y - i_me.b * d_pt.x - i_me.c);
                     if (0 <= r && r <= i_me.d * i_me.d &&
                         d < LIMIT_LENGTH * i_me.d &&
-                        abs(d_me.angle - i_me.angle) < M_PI_2)
+                        abs (d_me.angle - i_me.angle) < M_PI_2)
                     {
                         m = i_k;
                         ret += d;
@@ -745,10 +748,10 @@ match_dict_to_input(tomoe_stroke *dict_stroke, tomoe_stroke *input_stroke)
 
 
 static pointer_array *
-get_candidates(tomoe_stroke *input_stroke, pointer_array *cands)
+get_candidates (tomoe_stroke *input_stroke, pointer_array *cands)
 {
     pointer_array *rtn_cands;
-    candidate_private *cand;
+    cand_priv     *cand;
     int           cand_index = 0;
     tomoe_letter  lttr;
     int           strk_index = 0;
@@ -800,24 +803,24 @@ get_candidates(tomoe_stroke *input_stroke, pointer_array *cands)
              * Distance between the point and ending point.
              * Number of characteristic points.
              */
-            d1 = sq_dist(&i_pts[0], &d_pts[0]);
-            d2 = sq_dist(&i_pts[i_nop - 1], &d_pts[d_nop - 1]);
+            d1 = sq_dist (&i_pts[0], &d_pts[0]);
+            d2 = sq_dist (&i_pts[i_nop - 1], &d_pts[d_nop - 1]);
             score3 = (d1 + d2);
             cand->cand->score += score3;
             if (d1 > LIMIT_LENGTH ||
                 d2 > LIMIT_LENGTH ||
-                abs(d_nop - i_nop) > 3)
+                abs (d_nop - i_nop) > 3)
             {
                 free (d_met);
                 continue;
             }
 
-            d3 = sq_dist(&i_pts[0], &i_pts[1]);
-            d4 = sq_dist(&d_pts[0], &d_pts[1]);
+            d3 = sq_dist (&i_pts[0], &i_pts[1]);
+            d4 = sq_dist (&d_pts[0], &d_pts[1]);
             /* threshold is (angle of bigining line) % 45[degree] (PI/4)*/
             if (d1 > LIMIT_LENGTH &&
                 d2 > LIMIT_LENGTH &&
-                abs(d_met[0].angle - i_met[0].angle) > M_PI_4)
+                abs (d_met[0].angle - i_met[0].angle) > M_PI_4)
             {
                 free (d_met);
                 continue;
@@ -827,7 +830,7 @@ get_candidates(tomoe_stroke *input_stroke, pointer_array *cands)
              * Distance and angle of each characteristic points:
              * (Compare handwriting data with dictionary data)
              */
-            score1 = match_input_to_dict(input_stroke, &dict_stroke);
+            score1 = match_input_to_dict (input_stroke, &dict_stroke);
             if (score1 < 0)
             {
                 free (d_met);
@@ -840,7 +843,7 @@ get_candidates(tomoe_stroke *input_stroke, pointer_array *cands)
              * Distance and angle of each characteristic points:
              * (Compare dictionary data with handwriting data)
              */
-            score2 = match_dict_to_input(&dict_stroke, input_stroke);
+            score2 = match_dict_to_input (&dict_stroke, input_stroke);
             if (score2 < 0)
             {
                 free (d_met);
@@ -870,7 +873,7 @@ get_candidates(tomoe_stroke *input_stroke, pointer_array *cands)
 }
 
 static int
-match_stroke_num(int letter_index, int input_stroke_num, int_array *adapted)
+match_stroke_num (int letter_index, int input_stroke_num, int_array *adapted)
 {
     int pj = 100;
     int i;
@@ -913,20 +916,6 @@ tomoe_glyph_free (tomoe_glyph *g)
 
     free (g);
 }
-
-#if 0
-static void
-timeval_minus(struct timeval *tv1, struct timeval *tv2, struct timeval *diff)
-{
-    diff->tv_sec = tv1->tv_sec - tv2->tv_sec;
-    diff->tv_usec = tv1->tv_usec - tv2->tv_usec;
-    if (diff->tv_usec < 0)
-    {
-        diff->tv_usec += 1000000;
-        diff->tv_sec--;
-    }
-}
-#endif
 /*
 vi:ts=4:nowrap:ai:expandtab
 */
