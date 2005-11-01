@@ -69,8 +69,44 @@ struct _tomoe_candidate
 };
 
 
-/* Initialize tomoe */
+/**
+ * @brief Initialize tomoe
+ */
 extern void tomoe_init (void);
+
+/**
+ * @brief get matched characters 
+ * @param matched candidates
+ * @return the number of matched characters
+ */
+extern int tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched);
+
+/**
+ * @brief Free matched characters.
+ * @param Matched candidates to free.
+ * @param Length of candidates array.
+ */
+extern void tomoe_free_matched (tomoe_candidate **matched, int len);
+
+/**
+ * @brief Register to the current user dictionary.
+ * @param Stroke data.
+ * @param Characters to register to the current user dictionary.
+ */
+extern tomoe_bool tomoe_data_register (tomoe_glyph *input, char *data);
+
+/**
+ * @brief Finalize tomoe library.
+ */
+extern void tomoe_term (void);
+
+/**
+ * @brief Free an allocated tomoe_glyph structure.
+ * @param tomoe_glyph structure to free.
+ */
+extern void tomoe_glyph_free (tomoe_glyph *g);
+
+
 
 #if 0
 /* get dictionaries list */
@@ -83,34 +119,7 @@ extern void *tomoe_add_stroke   (void*, tomoe_stroke *stroke);
 extern void  tomoe_clear_stroke (void *stroke_list);
 #endif
 
-/**
- * @brief get matched characters 
- * @param matched candidates
- * @return the number of matched characters
- *
- */
-extern int tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched);
 
-/* 
- * free matched characters 
- *
- * matched:
- *
- */
-extern void tomoe_free_matched (tomoe_candidate **matched, int len);
-
-/*
- * register to the current (user?) dictionary
- *
- * input: stroke datas
- * data: characters to register to the current (user?) dictionary
- */
-extern tomoe_bool tomoe_data_register (tomoe_glyph *input, char *data);
-
-/* finalize tomoe */
-extern void tomoe_term (void);
-
-extern void tomoe_glyph_free (tomoe_glyph *g);
 
 #ifdef	__cplusplus
 }
