@@ -26,7 +26,7 @@ EXTRA_DIST = doxygen.conf.in
 
 if HAVE_DOXYGEN
 html: 
-	(cd $(top_builddir)/docs; rm -fr html/*; $(DOXYGEN) doxygen.conf)
+	(cd $(top_builddir)/doc; rm -fr html/*; $(DOXYGEN) doxygen.conf)
 
 dist-hook: html
 	cp -Rp $(top_builddir)/docs/html $(distdir)
