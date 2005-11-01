@@ -35,13 +35,13 @@ struct _int_array
   int ref_count;
 };
 
-int_array *int_array_new         (void);
-int_array *int_array_append_data (int_array *a, int i);
-int_array *int_array_ref         (int_array *a);
-int_array *int_array_copy        (int_array *a);
-int        int_array_find_data   (int_array *a, int i);
+int_array *_int_array_new         (void);
+int_array *_int_array_append_data (int_array *a, int i);
+int_array *_int_array_ref         (int_array *a);
+int_array *_int_array_copy        (int_array *a);
+int        _int_array_find_data   (int_array *a, int i);
 
-void       int_array_unref       (int_array *a);
+void       _int_array_unref       (int_array *a);
 
 typedef struct _pointer_array pointer_array;
 
@@ -52,12 +52,12 @@ struct _pointer_array
   int ref_count;
 };
 
-pointer_array *pointer_array_new         (void);
-pointer_array *pointer_array_append_data (pointer_array *a, void *p);
-pointer_array *pointer_array_ref         (pointer_array *a);
-int            pointer_array_find_data   (pointer_array *a, void *p);
+pointer_array *_pointer_array_new         (void);
+pointer_array *_pointer_array_append_data (pointer_array *a, void *p);
+pointer_array *_pointer_array_ref         (pointer_array *a);
+int            _pointer_array_find_data   (pointer_array *a, void *p);
 
-void           pointer_array_unref       (pointer_array *a);
+void           _pointer_array_unref       (pointer_array *a);
 
 #ifdef	__cplusplus
 }
