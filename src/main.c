@@ -44,7 +44,7 @@ read_test_data ()
     FILE *fp = stdin;
     tomoe_glyph *test_glyph = NULL;
 
-    test_glyph = (tomoe_glyph *) calloc (1, sizeof (tomoe_glyph));
+    test_glyph = calloc (1, sizeof (tomoe_glyph));
 
     while ((p = fgets(line_buf, LINE_BUF_SIZE, fp)) != NULL)
     {
@@ -60,7 +60,7 @@ read_test_data ()
         }
         sscanf(p + 1, "%d", &stroke_num);
         test_glyph->stroke_num = stroke_num;
-        strk = (tomoe_stroke *) calloc (stroke_num, sizeof (tomoe_stroke));
+        strk = calloc (stroke_num, sizeof (tomoe_stroke));
         test_glyph->strokes = strk;
 
         for (j = 0; j < stroke_num; j++)
@@ -70,7 +70,7 @@ read_test_data ()
             p = strchr(p, ' ');
 
             strk[j].point_num = point_num;
-            pnt = (tomoe_point *) calloc (point_num, sizeof (tomoe_point));
+            pnt = calloc (point_num, sizeof (tomoe_point));
             strk[j].points = pnt;
             for (k = 0; k < point_num; k++)
             {
@@ -99,12 +99,12 @@ get_stroke ()
     int point_num = 0;
     int j = 0;
     int k = 0;
-    stroke *strk = NULL;
-    point *pnt = NULL;
+    tomoe_stroke *strk = NULL;
+    tomoe_point *pnt = NULL;
     FILE *fp = stdin;
     glyph *test_glyph = NULL;
 
-    test_glyph = (glyph *) calloc (1, sizeof(glyph));
+    test_glyph = calloc (1, sizeof(tomoe_glyph));
     /* printf("------------------ get_stroke() ----------------------\n"); */
     while ((p = fgets(line_buf, LINE_BUF_SIZE, fp)) != NULL)
     {
@@ -120,7 +120,7 @@ get_stroke ()
         sscanf(p + 1, "%d", &stroke_num);
         test_glyph->stroke_num = stroke_num;
         /* printf("input_stroke_num=%d\n", stroke_num); */
-        strk = (stroke *) calloc (stroke_num, sizeof (stroke));
+        strk = calloc (stroke_num, sizeof (tomoe_stroke));
         test_glyph->strokes = strk;
         /* letter_alloc_contents(&input, stroke_num); */
 
@@ -131,7 +131,7 @@ get_stroke ()
             p = strchr(p, ' ');
 
             strk[j].point_num = point_num;
-            pnt = (point *) calloc (point_num, sizeof (point));
+            pnt = calloc (point_num, sizeof (tomoe_point));
             strk[j].points = pnt;
             for (k = 0; k < point_num; k++)
             {
