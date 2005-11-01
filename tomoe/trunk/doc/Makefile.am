@@ -1,4 +1,4 @@
-# -*- Mode: Makefile; tab-width: 8; indent-tabs-mode: t; -*-
+## -*- Mode: Makefile; tab-width: 8; indent-tabs-mode: t; -*-
 
 ## Makefile.am -- Process this file with automake to produce Makefile.in
 ## Copyright (C) 2005 Takuro Ashie <ashie@homa.ne.jp>
@@ -17,9 +17,28 @@
 ## along with this program; if not, write to the Free Software
 ## Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-dicdir = $(datadir)/$(PACKAGE)
-dic_DATA = hiragana.tdic all.tdic
+MAINTAINERCLEANFILE = Makefile.in html/*
+CLEANFILES = *~ *.bak
+EXTRA_DIST = doxygen.conf.in
 
-EXTRA_DIST = \
-	$(dic_DATA) \
-	sample-data.txt
+.PHONY: html
+
+
+if HAVE_DOXYGEN
+html: 
+	(cd $(top_builddir)/docs; rm -fr html/*; $(DOXYGEN) doxygen.conf)
+
+dist-hook: html
+	cp -Rp $(top_builddir)/docs/html $(distdir)
+else
+html:
+	echo "***"
+	echo "*** Warning: Documentation not built"
+	echo "***"
+
+dist-hook:
+	echo "***"
+	echo "*** Warning: Documentation not built"
+	echo "*** DISTRIBUTION IS INCOMPLETE"
+	echo "***"
+endif

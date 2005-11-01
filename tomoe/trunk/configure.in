@@ -61,6 +61,12 @@ if test "x$GCC" = "xyes"; then
   fi
 fi
 
+# Checks if doxygen is avaiable
+
+AC_PATH_PROG(DOXYGEN, doxygen, no)
+AM_CONDITIONAL(HAVE_DOXYGEN, test x$DOXYGEN != xno)
+AC_SUBST(DOXYGEN)
+
 dnl **************************************************************
 dnl Checks for libraries.
 dnl **************************************************************
@@ -94,6 +100,8 @@ src/Makefile
 lib/Makefile
 data/Makefile
 test/Makefile
+doc/Makefile
+doc/doxygen.conf
 tomoe.pc
 ])
 
