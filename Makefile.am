@@ -24,4 +24,5 @@ EXTRA_DIST = autogen.sh tomoe.pc
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA= tomoe.pc
 
+CLEANFILES = *~ *.bak
 DISTCLEANFILES = tomoe.pc
