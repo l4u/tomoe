@@ -1,5 +1,9 @@
 2005-11-01 Takuro Ashie <ashie@homa.ne.jp>
 
+	* src/match.c, src/match.rb: Remove old files.
+
+2005-11-01 Takuro Ashie <ashie@homa.ne.jp>
+
 	* test/testtomoe.c: Add "tomoe_" prefix. Fix indent.
 
 2005-11-01 Takuro Ashie <ashie@homa.ne.jp>

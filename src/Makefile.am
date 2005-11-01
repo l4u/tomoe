@@ -28,13 +28,7 @@ INCLUDES = \
 	-I$(top_builddir)/lib
 
 bin_PROGRAMS = \
-	tomoe1 tomoe
-
-tomoe1_SOURCES = \
-	match.c
-
-tomoe1_LDADD = \
-	-lm
+	tomoe
 
 tomoe_SOURCES = \
 	main.c
@@ -42,6 +36,3 @@ tomoe_SOURCES = \
 tomoe_LDADD = \
 	$(top_builddir)/lib/libtomoe.la \
 	-lm
-
-EXTRA_DIST = \
-	match.rb
