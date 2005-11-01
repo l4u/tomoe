@@ -1,5 +1,9 @@
 2005-11-01 Takuro Ashie <ashie@homa.ne.jp>
 
+	* data/sample-data.txt: Remove.
+
+2005-11-01 Takuro Ashie <ashie@homa.ne.jp>
+
 	* lib/tomoe.h: Add comments.
 
 2005-11-01 Takuro Ashie <ashie@homa.ne.jp>

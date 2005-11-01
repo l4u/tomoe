@@ -23,5 +23,4 @@ dicdir = $(datadir)/$(PACKAGE)
 dic_DATA = hiragana.tdic all.tdic
 
 EXTRA_DIST = \
-	$(dic_DATA) \
-	sample-data.txt
+	$(dic_DATA)
