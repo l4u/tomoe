@@ -29,7 +29,7 @@ html:
 	(cd $(top_builddir)/doc; rm -fr html/*; $(DOXYGEN) doxygen.conf)
 
 dist-hook: html
-	cp -Rp $(top_builddir)/docs/html $(distdir)
+	cp -Rp $(top_builddir)/doc/html $(distdir)
 else
 html:
 	echo "***"
