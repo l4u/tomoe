@@ -17,12 +17,8 @@
 ## along with this program; if not, write to the Free Software
 ## Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-SUBDIRS = lib src data test doc utils
-
-EXTRA_DIST = autogen.sh tomoe.pc
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA= tomoe.pc
-
 CLEANFILES = *~ *.bak
-DISTCLEANFILES = tomoe.pc
+
+EXTRA_DIST = \
+	dictionary.rb \
+	gtk2dictview.rb
