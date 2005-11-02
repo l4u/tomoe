@@ -100,9 +100,6 @@ read_glyph (void)
 int
 main (int argc, char **argv)
 {
-    tomoe_glyph *glyph = NULL;
-    tomoe_candidate **matched = NULL;
-    int i, candidate_num = 0;
 
     /* FIXME! read arguments */
 
@@ -110,6 +107,10 @@ main (int argc, char **argv)
 
     while (1)
     {
+        tomoe_glyph *glyph;
+        tomoe_candidate **matched = NULL;
+        int candidate_num = 0;
+
         glyph = read_glyph ();
 
         if (!glyph)
@@ -117,26 +118,21 @@ main (int argc, char **argv)
 
         candidate_num = tomoe_get_matched (glyph, &matched);
 
-        if (candidate_num != 0)
+        if (candidate_num != 0 && matched)
         {
-            if (matched)
+            int i;
+
+            for (i = 0; i < candidate_num; i++)
             {
-                for (i = 0; i < candidate_num; i++)
-                {
-                    if (i > 0)
-                        fprintf (stdout, " ");
-                    fprintf (stdout, " %s", matched[i]->letter);
-                }
-                fprintf (stdout, "\n");
+                if (i > 0)
+                    fprintf (stdout, " ");
+                fprintf (stdout, " %s", matched[i]->letter);
             }
+            fprintf (stdout, "\n");
         }
 
         tomoe_glyph_free (glyph);
-  
-        if (matched)
-        {
-            tomoe_free_matched (matched, candidate_num);
-        }
+        tomoe_free_matched (matched, candidate_num);
     }
 
     tomoe_term ();
