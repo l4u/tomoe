@@ -22,6 +22,10 @@
  *  $Id$
  */
 
+/** @file tomoe.h
+ *  @brief Provide a set of API for handwriting recognition.
+ */
+
 #ifndef __TOMOE_H__
 #define __TOMOE_H__
 
@@ -34,7 +38,7 @@ extern "C" {
 #endif
 
 #ifndef TRUE
-#define TRUE 1
+#define TRUE  1
 #endif
 
 typedef struct _tomoe_glyph     tomoe_glyph;
@@ -42,6 +46,11 @@ typedef struct _tomoe_stroke    tomoe_stroke;
 typedef struct _tomoe_point     tomoe_point;
 typedef struct _tomoe_candidate tomoe_candidate;
 
+/**
+ * @typedef typedef int bool;
+ *
+ * Boolean type used in tomoe library.
+ */
 typedef int tomoe_bool;
 
 struct _tomoe_glyph
@@ -72,39 +81,41 @@ struct _tomoe_candidate
 /**
  * @brief Initialize tomoe
  */
-extern void tomoe_init (void);
-
-/**
- * @brief get matched characters 
- * @param matched candidates
- * @return the number of matched characters
- */
-extern int tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched);
-
-/**
- * @brief Free matched characters.
- * @param Matched candidates to free.
- * @param Length of candidates array.
- */
-extern void tomoe_free_matched (tomoe_candidate **matched, int len);
-
-/**
- * @brief Register to the current user dictionary.
- * @param Stroke data.
- * @param Characters to register to the current user dictionary.
- */
-extern tomoe_bool tomoe_data_register (tomoe_glyph *input, char *data);
-
+void       tomoe_init          (void);
 /**
  * @brief Finalize tomoe library.
  */
-extern void tomoe_term (void);
+void       tomoe_term          (void);
+
+/**
+ * @brief Get matched characters 
+ * @param input    - matched candidates
+ * @return matched - the number of matched characters
+ */
+int        tomoe_get_matched   (tomoe_glyph       *input,
+                                tomoe_candidate ***matched);
+/**
+ * @brief Free matched characters.
+ * @param matched - Matched candidates to free.
+ * @param len     - Length of candidates array.
+ */
+void       tomoe_free_matched  (tomoe_candidate  **matched,
+                                int                len);
+
+/**
+ * @brief Register to the current user dictionary.
+ * @param input - Stroke data.
+ * @param data  - Characters to register to the current user dictionary.
+ * @param return
+ */
+tomoe_bool tomoe_data_register (tomoe_glyph       *input,
+                                char              *data);
 
 /**
  * @brief Free an allocated tomoe_glyph structure.
- * @param tomoe_glyph structure to free.
+ * @param glyph - tomoe_glyph structure to free.
  */
-extern void tomoe_glyph_free (tomoe_glyph *g);
+void       tomoe_glyph_free    (tomoe_glyph       *glyph);
 
 
 
