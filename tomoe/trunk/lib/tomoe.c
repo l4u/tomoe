@@ -914,15 +914,15 @@ tomoe_glyph_free (tomoe_glyph *glyph)
     if (!glyph) return;
 
     int i;
-    for (i = 0; i < g->stroke_num; i++)
+    for (i = 0; i < glyph->stroke_num; i++)
     {
-        stroke_free_contents (&g->strokes[i]);
+        stroke_free_contents (&glyph->strokes[i]);
     }
-    if (g->strokes)
-        free (g->strokes);
-    g->strokes = NULL;
+    if (glyph->strokes)
+        free (glyph->strokes);
+    glyph->strokes = NULL;
 
-    free (g);
+    free (glyph);
 }
 /*
 vi:ts=4:nowrap:ai:expandtab
