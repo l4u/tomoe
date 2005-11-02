@@ -54,8 +54,7 @@ class Gtk2DictView
       draw_letter
     }
     @letter_comboboxentry.child.signal_connect("activate") {
-      character = GLib.convert(@letter_comboboxentry.child.text, "euc-jp", "utf-8")
-      letter = @dict.get_letter(character)
+      letter = @dict.get_letter(@letter_comboboxentry.child.text)
       if letter == nil
 	dialog = Gtk::MessageDialog.new(window, Gtk::Dialog::MODAL,
 					Gtk::MessageDialog::ERROR,
@@ -89,7 +88,7 @@ class Gtk2DictView
 
     @letter_liststore.clear
     for letter in @letters
-      @letter_liststore.append[0] = GLib.convert(letter.character, "utf-8", "euc-jp")
+      @letter_liststore.append[0] = letter.character
     end
   end
 
