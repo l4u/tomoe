@@ -106,7 +106,7 @@ void       tomoe_free_matched  (tomoe_candidate  **matched,
  * @brief Register to the current user dictionary.
  * @param input - Stroke data.
  * @param data  - Characters to register to the current user dictionary.
- * @param return
+ * @return
  */
 tomoe_bool tomoe_data_register (tomoe_glyph       *input,
                                 char              *data);
