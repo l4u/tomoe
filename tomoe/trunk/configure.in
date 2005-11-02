@@ -107,6 +107,7 @@ data/Makefile
 test/Makefile
 doc/Makefile
 doc/doxygen.conf
+utils/Makefile
 tomoe.pc
 ])
 
