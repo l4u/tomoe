@@ -121,13 +121,13 @@ void       tomoe_glyph_free    (tomoe_glyph       *glyph);
 
 #if 0
 /* get dictionaries list */
-extern int tomoe_get_dictionaries ();
+int tomoe_get_dictionaries ();
 
 /* set dictionaries */
-extern tomoe_bool tomoe_set_dictionaries ();
+tomoe_bool tomoe_set_dictionaries ();
 
-extern void *tomoe_add_stroke   (void*, tomoe_stroke *stroke);
-extern void  tomoe_clear_stroke (void *stroke_list);
+void *tomoe_add_stroke   (void*, tomoe_stroke *stroke);
+void  tomoe_clear_stroke (void *stroke_list);
 #endif
 
 
