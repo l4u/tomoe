@@ -227,6 +227,8 @@ tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched)
 void
 tomoe_free_matched (tomoe_candidate **matched, int len)
 {
+    if (!matched) return;
+
     int i;
     for (i = 0; i< len; i++)
     {
@@ -286,6 +288,8 @@ stroke_alloc_contents (tomoe_stroke *strk, int point_num)
 static void
 stroke_free_contents (tomoe_stroke *strk)
 {
+    if (strk) return;
+
     if (strk->points != NULL)
     {
         free (strk->points);
@@ -340,6 +344,8 @@ static void
 letter_free_contents (tomoe_letter *lttr)
 {
     int i;
+
+    if (!lttr) return;
 
     if (lttr->character != NULL)
     {
@@ -424,8 +430,8 @@ cand_priv_new (const char *letter, int index)
 static void
 cand_priv_free (cand_priv *cand_p, tomoe_bool free_candidate)
 {
-    if (!cand_p)
-        return;
+    if (!cand_p) return;
+
     if (cand_p->adapted_strokes)
         _int_array_unref (cand_p->adapted_strokes);
     cand_p->adapted_strokes = NULL;
@@ -903,8 +909,10 @@ match_stroke_num (int letter_index, int input_stroke_num, int_array *adapted)
 }
 
 void
-tomoe_glyph_free (tomoe_glyph *g)
+tomoe_glyph_free (tomoe_glyph *glyph)
 {
+    if (!glyph) return;
+
     int i;
     for (i = 0; i < g->stroke_num; i++)
     {
