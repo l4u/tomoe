@@ -1,6 +1,7 @@
 Makefile
 Makefile.in
 doxygen.conf
+html
 *.bak
 *~
 *.log
