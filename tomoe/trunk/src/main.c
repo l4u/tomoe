@@ -40,14 +40,14 @@ read_glyph (void)
 
     glyph = calloc (1, sizeof (tomoe_glyph));
 
-    while ((p = fgets(line_buf, LINE_BUF_SIZE, fp)) != NULL)
+    while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL)
     {
         int stroke_num = 0;
         int j = 0;
         tomoe_stroke *strk = NULL;
         tomoe_point  *pnt  = NULL;
 
-        if (strstr(p, "EOF") != NULL)
+        if (strstr (p, "EOF") != NULL)
         {
             tomoe_glyph_free (glyph);
             return NULL;
@@ -58,7 +58,7 @@ read_glyph (void)
             continue;
         }
 
-        sscanf(p + 1, "%d", &stroke_num);
+        sscanf (p + 1, "%d", &stroke_num);
         glyph->stroke_num = stroke_num;
         strk = calloc (stroke_num, sizeof (tomoe_stroke));
         glyph->strokes = strk;
@@ -68,9 +68,9 @@ read_glyph (void)
             int k = 0;
             int point_num = 0;
 
-            p = fgets(line_buf, LINE_BUF_SIZE, fp);
-            sscanf(p, "%d", &point_num);
-            p = strchr(p, ' ');
+            p = fgets (line_buf, LINE_BUF_SIZE, fp);
+            sscanf (p, "%d", &point_num);
+            p = strchr (p, ' ');
 
             strk[j].point_num = point_num;
             pnt = calloc (point_num, sizeof (tomoe_point));
@@ -79,8 +79,8 @@ read_glyph (void)
             {
                 int x = 0, y = 0, n_matched;
 
-                n_matched = sscanf(p, " (%d %d)", &x, &y);
-                p = strchr(p, ')') + 1;
+                n_matched = sscanf (p, " (%d %d)", &x, &y);
+                p = strchr (p, ')') + 1;
                 pnt[k].x = x;
                 pnt[k].y = y;
             }
