@@ -1,5 +1,9 @@
 2005-11-04 Takuro Ashie <ashie@homa.ne.jp>
 
+	* src/array.h, src/array.c: Fix indent.
+
+2005-11-04 Takuro Ashie <ashie@homa.ne.jp>
+
 	* src/main.c: Fix indent.
 
 2005-11-02 Takuro Ashie <ashie@homa.ne.jp>

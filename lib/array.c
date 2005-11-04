@@ -1,3 +1,4 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2005 Hiroyuki Ikezoe <poincare@ikezoe.net>
  *
@@ -27,155 +28,160 @@
 int_array *
 _int_array_new (void)
 {
-  int_array *a;
-  a = (int_array *) calloc (sizeof (int_array), 1);
-  a->len = 0;
-  a->p = NULL;
-  a->ref_count = 1;
-  return a;
+    int_array *a;
+
+    a = calloc (sizeof (int_array), 1);
+    a->len = 0;
+    a->p = NULL;
+    a->ref_count = 1;
+
+    return a;
 }
 
 int_array *
 _int_array_append_data (int_array *a, int i)
 {
-  if (!a)
-    return NULL;
+    if (!a)
+        return NULL;
   
-  a->len++;
-  a->p = (int *) realloc (a->p, sizeof (int) * (a->len));
-  a->p[a->len - 1] = i;
+    a->len++;
+    a->p = realloc (a->p, sizeof (int) * (a->len));
+    a->p[a->len - 1] = i;
 
-  return a;
+    return a;
 }
 
 int_array *
 _int_array_copy (int_array *a)
 {
-  int i;
-  int_array *ret;
+    int i;
+    int_array *ret;
 
-  ret = _int_array_new ();
+    ret = _int_array_new ();
 
-  ret->len = a->len;
+    ret->len = a->len;
 
-  ret->p = (int *) calloc (ret->len, sizeof (int));
+    ret->p = calloc (ret->len, sizeof (int));
  
-  for (i = 0; i < ret->len; i++)
-  {
-    ret->p[i] = a->p[i];
-  }
+    for (i = 0; i < ret->len; i++)
+    {
+        ret->p[i] = a->p[i];
+    }
 
-  return ret;
+    return ret;
 }
 
 int_array *
 _int_array_ref (int_array *a)
 {
-  if (!a)
-    return NULL;
-  a->ref_count++;
+    if (!a)
+        return NULL;
+    a->ref_count++;
 
-  return a;
+    return a;
 }
 
 void
 _int_array_unref (int_array *a)
 {
-  if (!a)
-    return;
+    if (!a)
+        return;
  
-  a->ref_count--;
-  if (a->ref_count == 0)
-  {
-    if (a->p)
-      free (a->p);
-    a->p = NULL;
+    a->ref_count--;
+    if (a->ref_count == 0)
+    {
+        if (a->p)
+            free (a->p);
+        a->p = NULL;
 
-    free (a);
-  }
+        free (a);
+    }
 }
 
 int
 _int_array_find_data (int_array *a, int i)
 {
-  int l;
-  if (!a || a->len == 0)
-    return -1;
-  
-  for (l = 0; l < a->len; l++)
-  {
-    if (a->p[l] == i)
-      return l;
-  }
+    int l;
 
-  return -1;
+    if (!a || a->len == 0)
+        return -1;
+  
+    for (l = 0; l < a->len; l++)
+    {
+        if (a->p[l] == i)
+            return l;
+    }
+
+    return -1;
 }
 
 pointer_array *
 _pointer_array_new (void)
 {
-  pointer_array *a;
-  a = (pointer_array *) calloc (sizeof (pointer_array), 1);
-  a->len = 0;
-  a->p = NULL;
-  a->ref_count = 1;
-  return a;
+    pointer_array *a;
+
+    a = calloc (sizeof (pointer_array), 1);
+    a->len = 0;
+    a->p = NULL;
+    a->ref_count = 1;
+
+    return a;
 }
 
 pointer_array *
 _pointer_array_append_data (pointer_array *a, void *p)
 {
-  if (!a)
-    return NULL;
+    if (!a)
+        return NULL;
   
-  a->len++;
-  a->p = (void **) realloc (a->p, sizeof (void*) * (a->len));
-  a->p[a->len - 1] = p;
+    a->len++;
+    a->p = realloc (a->p, sizeof (void*) * (a->len));
+    a->p[a->len - 1] = p;
 
-  return a;
+    return a;
 }
 
 pointer_array *
 _pointer_array_ref (pointer_array *a)
 {
-  if (!a)
-    return NULL;
-  a->ref_count++;
+    if (!a)
+        return NULL;
+    a->ref_count++;
 
-  return a;
+    return a;
 }
 
 void
 _pointer_array_unref (pointer_array *a)
 {
-  if (!a)
-    return;
+    if (!a)
+        return;
  
-  a->ref_count--;
-  if (a->ref_count == 0)
-  {
-    if (a->p)
-      free (a->p);
-    a->p = NULL;
+    a->ref_count--;
+    if (a->ref_count == 0)
+    {
+        if (a->p)
+            free (a->p);
+        a->p = NULL;
 
-    free (a);
-  }
+        free (a);
+    }
 }
 
 int
 _pointer_array_find_data (pointer_array *a, void *p)
 {
-  int l;
-  if (!a)
-    return -1;
+    int l;
+    if (!a)
+      return -1;
   
-  for (l = 0; l < a->len; l++)
-  {
-    if (a->p[l] == p)
-      return l;
-  }
+    for (l = 0; l < a->len; l++)
+    {
+        if (a->p[l] == p)
+            return l;
+    }
 
-  return -1;
+    return -1;
 }
 
 /*

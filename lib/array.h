@@ -1,3 +1,4 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2005 Hiroyuki Ikezoe <poincare@ikezoe.net>
  *
@@ -30,9 +31,9 @@ typedef struct _int_array int_array;
 
 struct _int_array
 {
-  int *p;
-  int len;
-  int ref_count;
+    int *p;
+    int  len;
+    int  ref_count;
 };
 
 int_array *_int_array_new         (void);
@@ -47,9 +48,9 @@ typedef struct _pointer_array pointer_array;
 
 struct _pointer_array
 {
-  void **p;
-  int len;
-  int ref_count;
+    void **p;
+    int    len;
+    int    ref_count;
 };
 
 pointer_array *_pointer_array_new         (void);
