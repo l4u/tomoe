@@ -61,8 +61,8 @@ struct _tomoe_glyph
 
 struct _tomoe_stroke
 {
-    int          point_num;
-    tomoe_point *points;
+    int           point_num;
+    tomoe_point  *points;
 };
 
 struct _tomoe_point
@@ -73,8 +73,8 @@ struct _tomoe_point
 
 struct _tomoe_candidate
 {
-    const char  *letter;
-    int          score;
+    const char   *letter;
+    int           score;
 };
 
 
