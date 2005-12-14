@@ -41,6 +41,7 @@ extern "C" {
  * @brief Initialize tomoe
  */
 void       tomoe_init          (void);
+
 /**
  * @brief Finalize tomoe library.
  */
