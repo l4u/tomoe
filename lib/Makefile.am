@@ -27,12 +27,14 @@ AM_CPPFLAGS =							\
 
 INCLUDES =
 
-pkginclude_HEADERS = tomoe.h
+pkginclude_HEADERS = tomoe.h tomoe-dict.h tomoe-data-types.h
 
 lib_LTLIBRARIES = libtomoe.la
 libtomoe_la_SOURCES = \
 	array.h array.c \
-	tomoe.h tomoe.c
+	tomoe.h tomoe.c \
+	tomoe-dict.h tomoe-dict.c \
+	tomoe-data-types.h
 
 libtomoe_la_LDFLAGS =						\
   -version-info $(LT_VERSION_INFO)				\

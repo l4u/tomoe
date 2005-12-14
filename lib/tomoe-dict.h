@@ -23,55 +23,51 @@
  *  $Id$
  */
 
-/** @file tomoe.h
- *  @brief Provide a set of API for handwriting recognition.
+/** @file tomoe-dict.h
+ *  @brief Provide a set of API for accessing to tomoe dictionary.
  */
 
-#ifndef __TOMOE_H__
-#define __TOMOE_H__
+#ifndef __TOMOE_DICT_H__
+#define __TOMOE_DICT_H__
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
 #include "tomoe-data-types.h"
-#include "tomoe-dict.h"
+
+typedef struct _tomoe_dict tomoe_dict;
+
+struct _tomoe_dict
+{
+    char         *file_name;
+    char         *dict_name;
+    char         *encoding;
+    char         *lang;
+    int           letter_num;
+    tomoe_letter *letters;
+};
 
 /**
- * @brief Initialize tomoe
+ * @brief Load dictionary from a file.
+ * @param filename - Name of dictonary file to load.
  */
-void       tomoe_init          (void);
-/**
- * @brief Finalize tomoe library.
- */
-void       tomoe_term          (void);
+tomoe_dict *tomoe_dict_new      (const char  *filename);
 
 /**
- * @brief Get matched characters 
- * @param input    - matched candidates
- * @return matched - the number of matched characters
+ * @brief Free an allocated tomoe_dict struct.
+ * @param dict - Pointer to tomoe_dict to free.
  */
-int        tomoe_get_matched   (tomoe_glyph       *input,
-                                tomoe_candidate ***matched);
-/**
- * @brief Free matched characters.
- * @param matched - Matched candidates to free.
- * @param len     - Length of candidates array.
- */
-void       tomoe_free_matched  (tomoe_candidate  **matched,
-                                int                len);
+void        tomoe_dict_free     (tomoe_dict  *dict);
 
 /**
- * @brief Register to the current user dictionary.
- * @param input - Stroke data.
- * @param data  - Characters to register to the current user dictionary.
- * @return
+ * @brief Free an allocated tomoe_glyph structure.
+ * @param glyph - tomoe_glyph structure to free.
  */
-tomoe_bool tomoe_data_register (tomoe_glyph       *input,
-                                char              *data);
+void        tomoe_glyph_free    (tomoe_glyph *glyph);
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif /* __TOMOE_H__ */
+#endif /* __TOMOE_DICT_H__ */

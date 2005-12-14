@@ -23,55 +23,70 @@
  *  $Id$
  */
 
-/** @file tomoe.h
- *  @brief Provide a set of API for handwriting recognition.
+/** @file tomoe-data-types.h
+ *  @brief Define fundamental data types.
  */
 
-#ifndef __TOMOE_H__
-#define __TOMOE_H__
+#ifndef __TOMOE_DATA_TYPES_H__
+#define __TOMOE_DATA_TYPES_H__
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-#include "tomoe-data-types.h"
-#include "tomoe-dict.h"
+/**
+ * @typedef typedef int bool;
+ *
+ * Boolean type used in tomoe library.
+ */
+typedef int tomoe_bool;
 
-/**
- * @brief Initialize tomoe
- */
-void       tomoe_init          (void);
-/**
- * @brief Finalize tomoe library.
- */
-void       tomoe_term          (void);
+#ifndef FALSE
+#define FALSE 0
+#endif
 
-/**
- * @brief Get matched characters 
- * @param input    - matched candidates
- * @return matched - the number of matched characters
- */
-int        tomoe_get_matched   (tomoe_glyph       *input,
-                                tomoe_candidate ***matched);
-/**
- * @brief Free matched characters.
- * @param matched - Matched candidates to free.
- * @param len     - Length of candidates array.
- */
-void       tomoe_free_matched  (tomoe_candidate  **matched,
-                                int                len);
+#ifndef TRUE
+#define TRUE  1
+#endif
 
-/**
- * @brief Register to the current user dictionary.
- * @param input - Stroke data.
- * @param data  - Characters to register to the current user dictionary.
- * @return
- */
-tomoe_bool tomoe_data_register (tomoe_glyph       *input,
-                                char              *data);
+typedef struct _tomoe_letter    tomoe_letter;
+typedef struct _tomoe_glyph     tomoe_glyph;
+typedef struct _tomoe_stroke    tomoe_stroke;
+typedef struct _tomoe_point     tomoe_point;
+typedef struct _tomoe_candidate tomoe_candidate;
+
+struct _tomoe_letter
+{
+    char         *character;
+    tomoe_glyph  *c_glyph;
+};
+
+struct _tomoe_glyph
+{
+    int           stroke_num;
+    tomoe_stroke *strokes;
+};
+
+struct _tomoe_stroke
+{
+    int           point_num;
+    tomoe_point  *points;
+};
+
+struct _tomoe_point
+{
+    int x;
+    int y;
+};
+
+struct _tomoe_candidate
+{
+    const char   *letter;
+    int           score;
+};
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif /* __TOMOE_H__ */
+#endif /* __TOMOE_DATA_TYPES_H__ */

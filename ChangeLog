@@ -1,3 +1,8 @@
+2005-12-14 Takuro Ashie <ashie@homa.ne.jp>
+
+	* src/tomoe-dict.[ch], src/tomoe-data-types.h:
+	New file (Splited from tomoe.[ch]).
+
 2005-11-04 Takuro Ashie <ashie@homa.ne.jp>
 
 	* src/array.h, src/array.c: Fix indent.

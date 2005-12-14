@@ -29,32 +29,12 @@
 #include <sys/time.h>
 #include <time.h>
 #include "tomoe.h"
+#include "tomoe-dict.h"
 #include "array.h"
 
-#define LINE_BUF_SIZE 4096
-#define DICT_LETTER_INITIAL_SIZE 3049
-#define DICT_LETTER_EXPAND_SIZE 10
 #define LIMIT_LENGTH ((300 * 0.25) * (300 * 0.25))
 
-typedef struct _tomoe_letter tomoe_letter;
-typedef struct _tomoe_dict   tomoe_dict;
 typedef struct _tomoe_metric tomoe_metric;
-
-struct _tomoe_dict
-{
-    char         *file_name;
-    char         *dict_name;
-    char         *encoding;
-    char         *lang;
-    int           letter_num;
-    tomoe_letter *letters;
-};
-
-struct _tomoe_letter
-{
-    char        *character;
-    tomoe_glyph *c_glyph;
-};
 
 struct _tomoe_metric
 {
@@ -76,9 +56,6 @@ struct _cand_priv
 };
 
 static tomoe_dict *g_dict = NULL;
-
-static void     load_dictionaries           (void);
-static void     dict_free_contents          (tomoe_dict *dct);
 
 static cand_priv
                *cand_priv_new               (const char  *letter,
@@ -102,9 +79,18 @@ void
 tomoe_init (void)
 {
     /* load all available dictionaries */
-    load_dictionaries ();
+    if (!g_dict)
+        g_dict = tomoe_dict_new (TOMOEDATADIR "/all.tdic");
+}
 
-    /* Not implemented yet*/
+/* finalize tomoe */
+void 
+tomoe_term (void)
+{
+    if (g_dict) {
+        tomoe_dict_free (g_dict);
+        free (g_dict);
+    }
 }
 
 int
@@ -247,15 +233,6 @@ tomoe_data_register (tomoe_glyph *input, char *data)
     return ret;
 }
 
-/* finalize tomoe */
-void 
-tomoe_term (void)
-{
-    dict_free_contents (g_dict);
-
-    free (g_dict);
-}
-
 
 /*
  * *******************
@@ -277,26 +254,6 @@ sq_dist (tomoe_point *p, tomoe_point *q)
  *  stroke functions.
  * *******************
  */
-
-static void
-stroke_alloc_contents (tomoe_stroke *strk, int point_num)
-{
-    strk->point_num = point_num;
-    strk->points    = calloc (point_num, sizeof (tomoe_point));
-}
-
-static void
-stroke_free_contents (tomoe_stroke *strk)
-{
-    if (strk) return;
-
-    if (strk->points != NULL)
-    {
-        free (strk->points);
-        strk->points = NULL;
-    }
-}
-
 static int 
 stroke_calculate_metrics (tomoe_stroke *strk, tomoe_metric **met)
 {
@@ -323,86 +280,6 @@ stroke_calculate_metrics (tomoe_stroke *strk, tomoe_metric **met)
  
     *met = m;
     return strk->point_num - 1;
-}
-
-
-/*
- * *******************
- *  letter functions.
- * *******************
- */
-
-static void
-letter_alloc_contents (tomoe_letter *lttr, int stroke_num)
-{
-    lttr->c_glyph             = calloc (1, sizeof (tomoe_glyph));
-    lttr->c_glyph->stroke_num = stroke_num;
-    lttr->c_glyph->strokes    = calloc (stroke_num, sizeof (tomoe_stroke));
-}
-
-static void
-letter_free_contents (tomoe_letter *lttr)
-{
-    int i;
-
-    if (!lttr) return;
-
-    if (lttr->character != NULL)
-    {
-        free (lttr->character);
-        lttr->character = NULL;
-    }
-
-    if (lttr->c_glyph != NULL)
-    {
-        for (i = 0; i < lttr->c_glyph->stroke_num; i++)
-        {
-            stroke_free_contents (&lttr->c_glyph->strokes[i]);
-        }
-        free (lttr->c_glyph->strokes);
-        free (lttr->c_glyph);
-        lttr->c_glyph->strokes = NULL;
-        lttr->c_glyph = NULL;
-    } 
-}
-
-
-/*
- * ***********************
- *  dictionary functions.
- * ***********************
- */
-
-static void
-dict_alloc_contents (tomoe_dict *dct, int letter_num)
-{
-    dct->letter_num = letter_num;
-    dct->letters = calloc (letter_num, sizeof (tomoe_letter));
-}
-
-static void
-dict_free_contents (tomoe_dict *dct)
-{
-    int i;
-
-    if (!dct) return;
-
-    if (dct->letters != NULL)
-    {
-        for (i = 0; i < dct->letter_num; i++)
-        {
-            letter_free_contents (&dct->letters[i]);
-        }
-        free (dct->letters);
-        dct->letters = NULL;
-    }
-}
-
-static void
-dict_expand_to (tomoe_dict *dct, int letter_num)
-{
-    dct->letter_num = letter_num;
-    dct->letters = realloc (dct->letters, letter_num * sizeof (tomoe_letter));
 }
 
 
@@ -460,95 +337,6 @@ candidate_sort_by_score (tomoe_candidate **cands, int length)
 {
     qsort (cands, length, sizeof (void*),
            compare_candidate_score);
-}
-
-
-/*
- * ***********************
- *  data load functions.
- * ***********************
- */
-static void
-load_dictionaries (void)
-{
-    char *p = NULL;
-    int letter_num = 0;
-    int stroke_num = 0;
-    int point_num = 0;
-    int i = 0;
-    int j = 0;
-    int k = 0;
-    tomoe_letter *lttr;
-    tomoe_stroke *strk = NULL;
-    tomoe_point  *pnt  = NULL;
-    char line_buf[LINE_BUF_SIZE];
-
-    if (g_dict) return;
-
-    g_dict = calloc (1, sizeof (tomoe_dict));
-    dict_alloc_contents (g_dict, DICT_LETTER_INITIAL_SIZE);
-
-    FILE *fp = fopen (TOMOEDATADIR "/all.tdic", "r");
-    while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL)
-    {
-        if (p[0] == '\n')
-        {
-            continue;
-        }
-        ++letter_num;
-        if (letter_num > g_dict->letter_num)
-        {
-            dict_expand_to (
-                g_dict,
-                g_dict->letter_num + DICT_LETTER_EXPAND_SIZE);
-        }
-
-        i = letter_num - 1;
-        lttr = &g_dict->letters[i];
-        p = strchr (p, '\n');
-        if (p != NULL)
-        {
-            *p = '\0';
-        }
-        lttr->character = strdup (line_buf);
-
-        p = fgets (line_buf, LINE_BUF_SIZE, fp);
-        if (p == NULL)
-        {
-            break;
-        }
-        if (p[0] != ':')
-        {
-            continue;
-        }
-
-        sscanf (p + 1, "%d", &stroke_num);
-
-        letter_alloc_contents (lttr, stroke_num);
-
-        for (j = 0; j < stroke_num; j++)
-        {
-            strk = &lttr->c_glyph->strokes[j];
-            p = fgets (line_buf, LINE_BUF_SIZE, fp);
-            sscanf (p, "%d", &point_num);
-            p = strchr (p, ' ');
-            stroke_alloc_contents (strk, point_num);
-            for (k = 0; k < point_num; k++)
-            {
-                pnt = &strk->points[k];
-                sscanf (p, " (%d %d)", &pnt->x, &pnt->y);
-                p = strchr (p, ')') + 1;
-            }
-
-            /*stroke_calculate_metrics (strk);*/
-        }
-    }
-    fclose (fp);
-
-    if (letter_num < g_dict->letter_num)
-    {
-        g_dict->letter_num = letter_num;
-    }
 }
 
 
@@ -906,23 +694,6 @@ match_stroke_num (int letter_index, int input_stroke_num, int_array *adapted)
         }
     }
     return pj;
-}
-
-void
-tomoe_glyph_free (tomoe_glyph *glyph)
-{
-    if (!glyph) return;
-
-    int i;
-    for (i = 0; i < glyph->stroke_num; i++)
-    {
-        stroke_free_contents (&glyph->strokes[i]);
-    }
-    if (glyph->strokes)
-        free (glyph->strokes);
-    glyph->strokes = NULL;
-
-    free (glyph);
 }
 /*
 vi:ts=4:nowrap:ai:expandtab
