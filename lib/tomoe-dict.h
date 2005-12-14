@@ -24,7 +24,7 @@
  */
 
 /** @file tomoe-dict.h
- *  @brief Provide a set of API for accessing to tomoe dictionary.
+ *  @brief Provide a set of API to access to tomoe dictionary.
  */
 
 #ifndef __TOMOE_DICT_H__
