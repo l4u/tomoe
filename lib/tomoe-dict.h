@@ -50,7 +50,7 @@ struct _tomoe_dict
 
 /**
  * @brief Load a dictionary from a file.
- * @param filename - Name of dictonary file to load.
+ * @param filename - Name of dictionary file to load.
  */
 tomoe_dict *tomoe_dict_new      (const char  *filename);
 
