@@ -57,20 +57,19 @@ struct _cand_priv
 
 static tomoe_dict *g_dict = NULL;
 
-static cand_priv
-               *cand_priv_new               (const char  *letter,
+static cand_priv *cand_priv_new             (const char  *letter,
                                              int          index);
-static void     cand_priv_free              (cand_priv   *cand_p,
+static void       cand_priv_free            (cand_priv   *cand_p,
                                              tomoe_bool   free_candidate);
 
 static pointer_array
-               *get_candidates              (tomoe_stroke  *input_stroke,
+                 *get_candidates            (tomoe_stroke  *input_stroke,
                                              pointer_array *cands);
 
-static int match_stroke_num                 (int          letter_index,
+static int        match_stroke_num          (int          letter_index,
                                              int          input_stroke_num,
                                              int_array   *adapted);
-static void candidate_sort_by_score         (tomoe_candidate **cands,
+static void       candidate_sort_by_score   (tomoe_candidate **cands,
                                              int          length);
 /* 
  * Initialize tomoe 
@@ -347,7 +346,7 @@ candidate_sort_by_score (tomoe_candidate **cands, int length)
  */
 
 static int
-match_input_to_dict(tomoe_stroke *input_stroke, tomoe_stroke *dict_stroke)
+match_input_to_dict (tomoe_stroke *input_stroke, tomoe_stroke *dict_stroke)
 {
     int i_nop = 0;              /* input stroke number of points */
     tomoe_point  *i_pts = NULL; /* input stroke points */
@@ -539,7 +538,6 @@ match_dict_to_input (tomoe_stroke *dict_stroke, tomoe_stroke *input_stroke)
     free (d_met);
     return d;
 }
-
 
 static pointer_array *
 get_candidates (tomoe_stroke *input_stroke, pointer_array *cands)

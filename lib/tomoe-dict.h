@@ -49,7 +49,7 @@ struct _tomoe_dict
 };
 
 /**
- * @brief Load dictionary from a file.
+ * @brief Load a dictionary from a file.
  * @param filename - Name of dictonary file to load.
  */
 tomoe_dict *tomoe_dict_new      (const char  *filename);
@@ -61,7 +61,7 @@ tomoe_dict *tomoe_dict_new      (const char  *filename);
 void        tomoe_dict_free     (tomoe_dict  *dict);
 
 /**
- * @brief Free an allocated tomoe_glyph structure.
+ * @brief Free an allocated tomoe_glyph struct.
  * @param glyph - tomoe_glyph structure to free.
  */
 void        tomoe_glyph_free    (tomoe_glyph *glyph);
