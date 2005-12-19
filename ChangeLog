@@ -1,5 +1,9 @@
 2005-12-19 Takuro Ashie <ashie@homa.ne.jp>
 
+	* src/tomoe-dict.c: Fix double freeing.
+
+2005-12-19 Takuro Ashie <ashie@homa.ne.jp>
+
 	* src/tomoe-letter.[ch]: Split letter related data types from
 	tomoe-data-types.h.
 
