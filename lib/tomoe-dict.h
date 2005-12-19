@@ -35,6 +35,7 @@ extern "C" {
 #endif
 
 #include "tomoe-data-types.h"
+#include "tomoe-letter.h"
 
 typedef struct _tomoe_dict tomoe_dict;
 

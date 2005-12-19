@@ -29,6 +29,7 @@ INCLUDES =
 
 pkginclude_HEADERS = \
 	tomoe.h \
+	tomoe-letter.h \
 	tomoe-dict.h \
 	tomoe-handwrite.h \
 	tomoe-data-types.h
@@ -37,6 +38,7 @@ lib_LTLIBRARIES = libtomoe.la
 libtomoe_la_SOURCES = \
 	array.h array.c \
 	tomoe.h tomoe.c \
+	tomoe-letter.c \
 	tomoe-dict.h tomoe-dict.c \
 	tomoe-handwrite.c
 
