@@ -1,3 +1,8 @@
+2005-12-19 Takuro Ashie <ashie@homa.ne.jp>
+
+	* src/tomoe-handwrite.[ch]: New file.
+	NEW API for handwriting based on object oriented.
+
 2005-12-14 Takuro Ashie <ashie@homa.ne.jp>
 
 	* src/tomoe-dict.[ch], src/tomoe-data-types.h:
