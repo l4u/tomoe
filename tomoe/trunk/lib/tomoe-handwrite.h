@@ -38,7 +38,7 @@ void                tomoe_hw_context_free       (tomoe_hw_context *ctx);
 void                tomoe_hw_append_dictionary  (tomoe_hw_context *ctx,
                                                  tomoe_dict       *dict);
 void                tomoe_hw_remove_dictionary  (tomoe_hw_context *ctx,
-                                                tomoe_dict       *dict);
+                                                 tomoe_dict       *dict);
 const tomoe_dict  **tomoe_hw_get_dictionaries   (tomoe_hw_context *ctx);
 
 void                tomoe_hw_set_canvas_width   (tomoe_hw_context *ctx,
