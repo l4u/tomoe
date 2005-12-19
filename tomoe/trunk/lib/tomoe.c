@@ -88,7 +88,7 @@ tomoe_term (void)
 {
     if (g_dict) {
         tomoe_dict_free (g_dict);
-        free (g_dict);
+        g_dict = NULL;
     }
 }
 
