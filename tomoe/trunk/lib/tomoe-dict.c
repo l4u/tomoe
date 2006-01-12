@@ -43,80 +43,6 @@ struct _tomoe_dict
     tomoe_letter *letters;
 };
 
-#if 1
-/*
- * FIXME! Move to other file.
- */
-static void
-tomoe_stroke_new (tomoe_stroke *strk, int point_num)
-{
-    strk->point_num = point_num;
-    strk->points    = calloc (point_num, sizeof (tomoe_point));
-}
-
-static void
-tomoe_stroke_free (tomoe_stroke *strk)
-{
-    if (strk)
-        return;
-
-    if (strk->points != NULL)
-    {
-        free (strk->points);
-        strk->points = NULL;
-    }
-}
-
-static void
-tomoe_letter_new (tomoe_letter *lttr, int stroke_num)
-{
-    lttr->c_glyph             = calloc (1, sizeof (tomoe_glyph));
-    lttr->c_glyph->stroke_num = stroke_num;
-    lttr->c_glyph->strokes    = calloc (stroke_num, sizeof (tomoe_stroke));
-}
-
-static void
-tomoe_letter_free (tomoe_letter *lttr)
-{
-    int i;
-
-    if (!lttr) return;
-
-    if (lttr->character != NULL)
-    {
-        free (lttr->character);
-        lttr->character = NULL;
-    }
-
-    if (lttr->c_glyph != NULL)
-    {
-        for (i = 0; i < lttr->c_glyph->stroke_num; i++)
-            tomoe_stroke_free (&lttr->c_glyph->strokes[i]);
-        free (lttr->c_glyph->strokes);
-        free (lttr->c_glyph);
-        lttr->c_glyph->strokes = NULL;
-        lttr->c_glyph          = NULL;
-    }
-}
-
-void
-tomoe_glyph_free (tomoe_glyph *glyph)
-{
-    int i;
-
-    if (!glyph) return;
-
-    for (i = 0; i < glyph->stroke_num; i++)
-        tomoe_stroke_free (&glyph->strokes[i]);
-    if (glyph->strokes) {
-        free (glyph->strokes);
-        glyph->strokes = NULL;
-    }
-
-    free (glyph);
-}
-#endif
-
 tomoe_dict *
 tomoe_dict_new (const char *filename)
 {
@@ -132,12 +58,10 @@ tomoe_dict_new (const char *filename)
     char line_buf[LINE_BUF_SIZE];
     FILE *fp;
 
-    if (!filename && !*filename)
-        return NULL;
+    if (!filename && !*filename) return NULL;
 
     fp = fopen (filename, "r");
-    if (!fp)
-        return NULL;
+    if (!fp) return NULL;
 
     dict = calloc (1, sizeof (tomoe_dict));
     dict->letter_num = DICT_LETTER_INITIAL_SIZE;
@@ -171,7 +95,8 @@ tomoe_dict_new (const char *filename)
 
         sscanf (p + 1, "%d", &stroke_num);
 
-        tomoe_letter_new (lttr, stroke_num);
+        lttr->c_glyph = calloc (1, sizeof (tomoe_glyph));
+        tomoe_glyph_init_with_strokes (lttr->c_glyph, stroke_num);
 
         for (j = 0; j < stroke_num; j++)
         {
@@ -179,7 +104,7 @@ tomoe_dict_new (const char *filename)
             p = fgets (line_buf, LINE_BUF_SIZE, fp);
             sscanf (p, "%d", &point_num);
             p = strchr (p, ' ');
-            tomoe_stroke_new (strk, point_num);
+            tomoe_stroke_init_with_points (strk, point_num);
             for (k = 0; k < point_num; k++)
             {
                 pnt = &strk->points[k];
@@ -208,7 +133,7 @@ tomoe_dict_free (tomoe_dict *dict)
     if (dict->letters != NULL)
     {
         for (i = 0; i < dict->letter_num; i++)
-            tomoe_letter_free (&dict->letters[i]);
+            tomoe_letter_clear (&dict->letters[i]);
         free (dict->letters);
         dict->letters = NULL;
     }
@@ -219,31 +144,27 @@ tomoe_dict_free (tomoe_dict *dict)
 const char *
 tomoe_dict_get_file_name (tomoe_dict *dict)
 {
-    if (!dict)
-        return NULL;
+    if (!dict) return NULL;
     return dict->file_name;
 }
 
 const char *
 tomoe_dict_get_name (tomoe_dict *dict)
 {
-    if (!dict)
-        return NULL;
+    if (!dict) return NULL;
     return dict->dict_name;
 }
 
 unsigned int
 tomoe_dict_get_number_of_letters (tomoe_dict *dict)
 {
-    if (!dict)
-        return 0;
+    if (!dict) return 0;
     return dict->letter_num;
 }
 
 const tomoe_letter *
 tomoe_dict_get_letters (tomoe_dict *dict)
 {
-    if (!dict)
-        return NULL;
+    if (!dict) return NULL;
     return dict->letters;
 }

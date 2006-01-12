@@ -31,22 +31,16 @@
 extern "C" {
 #endif
 
-typedef struct _tomoe_letter    tomoe_letter;
-typedef struct _tomoe_glyph     tomoe_glyph;
-typedef struct _tomoe_stroke    tomoe_stroke;
 typedef struct _tomoe_point     tomoe_point;
+typedef struct _tomoe_stroke    tomoe_stroke;
+typedef struct _tomoe_glyph     tomoe_glyph;
+typedef struct _tomoe_letter    tomoe_letter;
 typedef struct _tomoe_candidate tomoe_candidate;
 
-struct _tomoe_letter
+struct _tomoe_point
 {
-    char         *character;
-    tomoe_glyph  *c_glyph;
-};
-
-struct _tomoe_glyph
-{
-    int           stroke_num;
-    tomoe_stroke *strokes;
+    int           x;
+    int           y;
 };
 
 struct _tomoe_stroke
@@ -55,10 +49,16 @@ struct _tomoe_stroke
     tomoe_point  *points;
 };
 
-struct _tomoe_point
+struct _tomoe_glyph
 {
-    int           x;
-    int           y;
+    int           stroke_num;
+    tomoe_stroke *strokes;
+};
+
+struct _tomoe_letter
+{
+    char         *character;
+    tomoe_glyph  *c_glyph;
 };
 
 struct _tomoe_candidate
@@ -67,12 +67,26 @@ struct _tomoe_candidate
     int           score;
 };
 
+
+void            tomoe_stroke_init               (tomoe_stroke *strk);
+void            tomoe_stroke_init_with_points   (tomoe_stroke *strk,
+                                                 int           point_num);
+void            tomoe_stroke_clear              (tomoe_stroke *strk);
+void            tomoe_stroke_free               (tomoe_stroke *strk);
+
+/*tomoe_glyph    *tomoe_glyph_new                 (void);*/
+void            tomoe_glyph_init                (tomoe_glyph *glyph);
+void            tomoe_glyph_init_with_strokes   (tomoe_glyph *glyph,
+                                                 int          stroke_num);
+void            tomoe_glyph_clear               (tomoe_glyph *glyph);
 /**
  * @brief Free an allocated tomoe_glyph struct.
  * @param glyph - pointer to tomoe_glyph struct to free. NULL pointer will be
                   ignored.
  */
-void        tomoe_glyph_free    (tomoe_glyph *glyph);
+void            tomoe_glyph_free                (tomoe_glyph *glyph);
+
+void            tomoe_letter_clear              (tomoe_letter *lttr);
 
 #ifdef	__cplusplus
 }
