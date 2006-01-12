@@ -146,7 +146,7 @@ tomoe_dict_new (const char *filename)
     dict = calloc (1, sizeof (tomoe_dict));
     dict->letter_num = DICT_LETTER_INITIAL_SIZE;
     dict->letters    = calloc (letter_num,
-                                 sizeof (DICT_LETTER_INITIAL_SIZE));
+                               sizeof (DICT_LETTER_INITIAL_SIZE));
 
     while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL)
     {
