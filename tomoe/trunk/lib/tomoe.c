@@ -681,7 +681,7 @@ static int
 match_stroke_num (int letter_index, int input_stroke_num, int_array *adapted)
 {
     const tomoe_letter *letters = tomoe_dict_get_letters (g_dict);
-    int pj = 100, i, j;
+    int pj = 100;
     int adapted_num;
     int d_stroke_num = letters[letter_index].c_glyph->stroke_num;
 
@@ -692,7 +692,10 @@ match_stroke_num (int letter_index, int input_stroke_num, int_array *adapted)
 
     if (d_stroke_num - input_stroke_num >= 3)
     {
+        int i, j;
+
         pj = 100;
+
         for (i = 0; i < adapted_num; i++)
         {
             j = adapted->p[i];
