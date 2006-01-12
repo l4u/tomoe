@@ -19,7 +19,7 @@
 2005-01-12 Takuro Ashie <ashie@homa.ne.jp>
 
 	* lib/tomoe-dict.{ch}, lib/tomoe.c: Hide tomoe_dict struct.
-	Fix C99 style variable declaration.
+	Fix C99 style declaration.
 	* lib/tomoe-handwrite.[ch]: Implement creating and freeing context.
 	* lib/tomoe-letter.c: Add copyright notice.
 
