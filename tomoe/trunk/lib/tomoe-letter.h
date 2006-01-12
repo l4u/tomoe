@@ -69,7 +69,8 @@ struct _tomoe_candidate
 
 /**
  * @brief Free an allocated tomoe_glyph struct.
- * @param glyph - tomoe_glyph structure to free.
+ * @param glyph - pointer to tomoe_glyph struct to free. NULL pointer will be
+                  ignored.
  */
 void        tomoe_glyph_free    (tomoe_glyph *glyph);
 
