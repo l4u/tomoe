@@ -47,16 +47,19 @@ void       tomoe_init          (void);
  */
 void       tomoe_term          (void);
 
+
+#if 1
 /**
  * @brief Get matched characters 
  * @param input    - matched candidates
- * @return matched - the number of matched characters
+ * @param matched  - 
+ * @return         - the number of matched characters
  */
 int        tomoe_get_matched   (tomoe_glyph       *input,
                                 tomoe_candidate ***matched);
 /**
  * @brief Free matched characters.
- * @param matched - Matched candidates to free.
+ * @param matched - Array of pointer to matched candidates to free.
  * @param len     - Length of candidates array.
  */
 void       tomoe_free_matched  (tomoe_candidate  **matched,
@@ -66,10 +69,11 @@ void       tomoe_free_matched  (tomoe_candidate  **matched,
  * @brief Register to the current user dictionary.
  * @param input - Stroke data.
  * @param data  - Characters to register to the current user dictionary.
- * @return
+ * @return      - 
  */
 tomoe_bool tomoe_data_register (tomoe_glyph       *input,
                                 char              *data);
+#endif
 
 #ifdef	__cplusplus
 }
