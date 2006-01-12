@@ -23,18 +23,29 @@
 #include <stdlib.h>
 #include "tomoe-handwrite.h"
 
+#define DEFAULT_CANVAS_WIDTH  300
+#define DEFAULT_CANVAS_HEIGHT 300
+
 struct _tomoe_hw_context
 {
     tomoe_dict  **dict;
+    unsigned int  dict_num;
+
     tomoe_glyph  *glyph;
+
+    unsigned int  canvas_width;
+    unsigned int  canvas_height;
 };
 
 tomoe_hw_context *
 tomoe_hw_context_new (void)
 {
     tomoe_hw_context *ctx = malloc (sizeof (tomoe_hw_context));
-    ctx->dict  = NULL;
-    ctx->glyph = NULL;
+    ctx->dict          = NULL;
+    ctx->dict_num      = 0;
+    ctx->glyph         = NULL;
+    ctx->canvas_width  = DEFAULT_CANVAS_WIDTH;
+    ctx->canvas_height = DEFAULT_CANVAS_HEIGHT;
     return ctx;
 }
 
@@ -43,11 +54,67 @@ tomoe_hw_context_free (tomoe_hw_context *ctx)
 {
     int i;
 
-    for (i = 0; ctx->dict && ctx->dict[i]; i++) {
-        // free contents
-    }
+    for (i = 0; ctx->dict && ctx->dict[i]; i++)
+        tomoe_dict_free (ctx->dict[i]);
     free (ctx->dict);
 
     tomoe_glyph_free (ctx->glyph);
     free (ctx);
+}
+
+void
+tomoe_hw_append_dictionary (tomoe_hw_context *ctx, tomoe_dict *dict)
+{
+    if (!ctx)
+        return;
+    if (!dict)
+        return;
+
+    ctx->dict_num++;
+    ctx->dict = realloc (ctx->dict,
+                         sizeof (tomoe_dict*) * (ctx->dict_num + 1));
+    ctx->dict[ctx->dict_num - 1] = dict;
+    ctx->dict[ctx->dict_num] = NULL;
+}
+
+void
+tomoe_hw_remove_dictionary (tomoe_hw_context *ctx, tomoe_dict *dict)
+{
+    int i;
+
+    if (!ctx)
+        return;
+    if (!dict)
+        return;
+
+    for (i = 0; i < ctx->dict_num && ctx->dict[i]; i++)
+    {
+        if (ctx->dict[i] != dict)
+            continue;
+
+        memmove (ctx->dict + i,
+                 ctx->dict + i + 1,
+                 sizeof (tomoe_dict*) * ctx->dict_num - i);
+        ctx->dict_num--;
+        ctx->dict = realloc (ctx->dict,
+                             sizeof (tomoe_dict*) * (ctx->dict_num + 1));
+    }
+}
+
+unsigned int
+tomoe_hw_get_number_of_dictionaries (tomoe_hw_context *ctx)
+{
+    if (!ctx)
+        return 0;
+    return ctx->dict_num;
+}
+
+const tomoe_dict **
+tomoe_hw_get_dictionaries (tomoe_hw_context *ctx)
+{
+    if (!ctx)
+        return NULL;
+    if (ctx->dict_num <= 0)
+        return NULL;
+    return (const tomoe_dict**) ctx->dict;
 }
