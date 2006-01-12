@@ -39,7 +39,9 @@ extern "C" {
 #include "tomoe-letter.h"
 
 /**
+ * @typedef typedef struct _tomoe_dict tomoe_dict;
  *
+ * The struct type which represents tomoe dictionary.
  */
 typedef struct _tomoe_dict tomoe_dict;
 
