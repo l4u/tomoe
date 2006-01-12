@@ -21,6 +21,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include "tomoe-handwrite.h"
 
 #define DEFAULT_CANVAS_WIDTH  300
@@ -80,7 +81,7 @@ tomoe_hw_append_dictionary (tomoe_hw_context *ctx, tomoe_dict *dict)
 void
 tomoe_hw_remove_dictionary (tomoe_hw_context *ctx, tomoe_dict *dict)
 {
-    int i;
+    unsigned int i;
 
     if (!ctx)
         return;
@@ -117,4 +118,47 @@ tomoe_hw_get_dictionaries (tomoe_hw_context *ctx)
     if (ctx->dict_num <= 0)
         return NULL;
     return (const tomoe_dict**) ctx->dict;
+}
+
+void
+tomoe_hw_push_point (tomoe_hw_context *ctx, unsigned int x, unsigned int y)
+{
+}
+
+void
+tomoe_hw_pop_point (tomoe_hw_context *ctx)
+{
+}
+
+void
+tomoe_hw_push_stroke (tomoe_hw_context *ctx)
+{
+}
+
+void
+tomoe_hw_pop_stroke (tomoe_hw_context *ctx)
+{
+}
+
+unsigned int
+tomoe_hw_get_number_of_strokes (tomoe_hw_context *ctx)
+{
+    if (!ctx)
+        return 0;
+    if (!ctx->glyph)
+        return 0;
+    return ctx->glyph->stroke_num;
+}
+
+const tomoe_glyph *
+tomoe_hw_get_glyph (tomoe_hw_context *ctx)
+{
+    if (!ctx)
+        return NULL;
+    return ctx->glyph;
+}
+
+void
+tomeo_hw_clear_glyph (tomoe_hw_context *ctx)
+{
 }
