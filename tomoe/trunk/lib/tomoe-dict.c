@@ -91,9 +91,7 @@ tomoe_letter_free (tomoe_letter *lttr)
     if (lttr->c_glyph != NULL)
     {
         for (i = 0; i < lttr->c_glyph->stroke_num; i++)
-        {
             tomoe_stroke_free (&lttr->c_glyph->strokes[i]);
-        }
         free (lttr->c_glyph->strokes);
         free (lttr->c_glyph);
         lttr->c_glyph->strokes = NULL;
@@ -109,9 +107,7 @@ tomoe_glyph_free (tomoe_glyph *glyph)
     if (!glyph) return;
 
     for (i = 0; i < glyph->stroke_num; i++)
-    {
         tomoe_stroke_free (&glyph->strokes[i]);
-    }
     if (glyph->strokes) {
         free (glyph->strokes);
         glyph->strokes = NULL;
@@ -150,9 +146,8 @@ tomoe_dict_new (const char *filename)
     while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL)
     {
         if (p[0] == '\n')
-        {
             continue;
-        }
+
         ++letter_num;
         if (letter_num > dict->letter_num)
         {
@@ -165,20 +160,14 @@ tomoe_dict_new (const char *filename)
         lttr = &dict->letters[i];
         p = strchr (p, '\n');
         if (p != NULL)
-        {
             *p = '\0';
-        }
         lttr->character = strdup (line_buf);
 
         p = fgets (line_buf, LINE_BUF_SIZE, fp);
         if (p == NULL)
-        {
             break;
-        }
         if (p[0] != ':')
-        {
             continue;
-        }
 
         sscanf (p + 1, "%d", &stroke_num);
 
@@ -204,9 +193,7 @@ tomoe_dict_new (const char *filename)
     fclose (fp);
 
     if (letter_num < dict->letter_num)
-    {
         dict->letter_num = letter_num;
-    }
 
     return dict;
 }
@@ -221,9 +208,7 @@ tomoe_dict_free (tomoe_dict *dict)
     if (dict->letters != NULL)
     {
         for (i = 0; i < dict->letter_num; i++)
-        {
             tomoe_letter_free (&dict->letters[i]);
-        }
         free (dict->letters);
         dict->letters = NULL;
     }
