@@ -20,4 +20,34 @@
  *  $Id$
  */
 
+#include <stdlib.h>
 #include "tomoe-handwrite.h"
+
+struct _tomoe_hw_context
+{
+    tomoe_dict  **dict;
+    tomoe_glyph  *glyph;
+};
+
+tomoe_hw_context *
+tomoe_hw_context_new (void)
+{
+    tomoe_hw_context *ctx = malloc (sizeof (tomoe_hw_context));
+    ctx->dict  = NULL;
+    ctx->glyph = NULL;
+    return ctx;
+}
+
+void
+tomoe_hw_context_free (tomoe_hw_context *ctx)
+{
+    int i;
+
+    for (i = 0; ctx->dict && ctx->dict[i]; i++) {
+        // free contents
+    }
+    free (ctx->dict);
+
+    tomoe_glyph_free (ctx->glyph);
+    free (ctx);
+}

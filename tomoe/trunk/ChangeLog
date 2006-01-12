@@ -1,25 +1,32 @@
+2005-01-12 Takuro Ashie <ashie@homa.ne.jp>
+
+	* lib/tomoe-dict.{ch}, lib/tomoe.c: Hide tomoe_dict struct.
+	Fix C99 style variable declaration.
+	* lib/tomoe-handwrite.[ch]: Implement creating and freeing context.
+	* lib/tomoe-letter.c: Add copyright notice.
+
 2005-12-19 Takuro Ashie <ashie@homa.ne.jp>
 
-	* src/tomoe-dict.c: Fix double freeing.
+	* lib/tomoe-dict.c: Fix double freeing.
 
 2005-12-19 Takuro Ashie <ashie@homa.ne.jp>
 
-	* src/tomoe-letter.[ch]: Split letter related data types from
+	* lib/tomoe-letter.[ch]: Split letter related data types from
 	tomoe-data-types.h.
 
 2005-12-19 Takuro Ashie <ashie@homa.ne.jp>
 
-	* src/tomoe-handwrite.[ch]: New file.
+	* lib/tomoe-handwrite.[ch]: New file.
 	NEW API for handwriting based on object oriented.
 
 2005-12-14 Takuro Ashie <ashie@homa.ne.jp>
 
-	* src/tomoe-dict.[ch], src/tomoe-data-types.h:
+	* lib/tomoe-dict.[ch], src/tomoe-data-types.h:
 	New file (Splited from tomoe.[ch]).
 
 2005-11-04 Takuro Ashie <ashie@homa.ne.jp>
 
-	* src/array.h, src/array.c: Fix indent.
+	* lib/array.h, src/array.c: Fix indent.
 
 2005-11-04 Takuro Ashie <ashie@homa.ne.jp>
 

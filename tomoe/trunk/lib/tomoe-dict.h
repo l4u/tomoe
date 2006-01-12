@@ -23,7 +23,8 @@
  *  $Id$
  */
 
-/** @file tomoe-dict.h
+/**
+ *  @file tomoe-dict.h
  *  @brief Provide a set of API to access to tomoe dictionary.
  */
 
@@ -37,35 +38,36 @@ extern "C" {
 #include "tomoe-data-types.h"
 #include "tomoe-letter.h"
 
+/**
+ *
+ */
 typedef struct _tomoe_dict tomoe_dict;
-
-struct _tomoe_dict
-{
-    char         *file_name;
-    char         *dict_name;
-    char         *encoding;
-    char         *lang;
-    int           letter_num;
-    tomoe_letter *letters;
-};
 
 /**
  * @brief Load a dictionary from a file.
  * @param filename - Name of dictionary file to load.
  */
-tomoe_dict *tomoe_dict_new      (const char  *filename);
+tomoe_dict  *tomoe_dict_new           (const char   *filename);
 
 /**
  * @brief Free an allocated tomoe_dict struct.
  * @param dict - Pointer to tomoe_dict to free.
  */
-void        tomoe_dict_free     (tomoe_dict  *dict);
+void         tomoe_dict_free          (tomoe_dict    *dict);
 
-/**
- * @brief Free an allocated tomoe_glyph struct.
- * @param glyph - tomoe_glyph structure to free.
- */
-void        tomoe_glyph_free    (tomoe_glyph *glyph);
+const char  *tomoe_dict_get_file_name (tomoe_dict    *dict);
+const char  *tomoe_dict_get_name      (tomoe_dict    *dict);
+
+unsigned int tomoe_dict_get_number_of_letters
+                                      (tomoe_dict    *dict);
+const tomoe_letter *
+             tomoe_dict_get_letters   (tomoe_dict    *dict);
+
+void         tomoe_dict_append_letter (tomoe_dict    *dict,
+                                       tomoe_letter  *letter);
+
+void         tomoe_dict_remove_letter (tomoe_dict    *dict,
+                                       tomoe_letter  *letter);
 
 #ifdef	__cplusplus
 }

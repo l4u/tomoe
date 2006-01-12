@@ -20,6 +20,10 @@
  *  $Id$
  */
 
+/** @file tomoe-handwrite.h
+ *  @brief 
+ */
+
 #ifndef __TOMOE_HANDWRITE_H__
 #define __TOMOE_HANDWRITE_H__
 

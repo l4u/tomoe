@@ -96,52 +96,58 @@ int
 tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched)
 {
     int matched_num = 0;
-    int i, j; 
-    int_array        *matches     = NULL;
-    pointer_array    *cands       = NULL;
-    pointer_array    *first_cands = NULL;
-    tomoe_candidate **ret         = NULL;
-  
+    unsigned int i, j; 
+    int_array *matches = NULL;
+    pointer_array *cands = NULL;
+    pointer_array *first_cands = NULL;
+    tomoe_candidate **ret = NULL;
+    unsigned int letters_num = 0;
+    const tomoe_letter *letters = NULL;
+
     if (!input) return 0;
     if (!input->stroke_num) return 0;
     if (!g_dict) return 0;
 
     first_cands = _pointer_array_new ();
+    letters_num = tomoe_dict_get_number_of_letters (g_dict);
+    letters = tomoe_dict_get_letters (g_dict);
   
-    for (i = 0; i < g_dict->letter_num; i++)
+    for (i = 0; i < letters_num; i++)
     {
         cand_priv *cand = NULL;
+
         /* check the number of stroke */
-        if (input->stroke_num > g_dict->letters[i].c_glyph->stroke_num)
+        if (input->stroke_num > letters[i].c_glyph->stroke_num)
         {
             continue;
         }
 
         /* append a candidate to candidate list */
-        cand = cand_priv_new ((const char*) g_dict->letters[i].character, i);
+        cand = cand_priv_new ((const char*) letters[i].character, i);
         _pointer_array_append_data (first_cands, cand);
     }
 
     cands = first_cands;
     first_cands = _pointer_array_ref (first_cands);
 
-    for (i = 0; i < input->stroke_num; i++)
+    for (i = 0; i < (unsigned int) input->stroke_num; i++)
     {
         pointer_array *verbose_cands;
+
         verbose_cands = get_candidates (&input->strokes[i], cands);
         _pointer_array_unref (cands);
         cands = verbose_cands;
     }
 
     matches = _int_array_new ();
-    for (i = 0; i < cands->len; i++)
+    for (i = 0; i < (unsigned int) cands->len; i++)
     {
         cand_priv *cand;
         int_array *adapted;
-        cand = cands->p[i];
-        adapted = cand->adapted_strokes;
         int pj;
 
+        cand = cands->p[i];
+        adapted = cand->adapted_strokes;
         pj = match_stroke_num (cand->index, input->stroke_num, adapted);
 
         if (pj < 0)
@@ -155,10 +161,11 @@ tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched)
         if (_int_array_find_data (matches, cand->index) < 0)
         {
             tomoe_bool b = TRUE;
-            for (j = 0; j < matches->len; j++)
+
+            for (j = 0; j < (unsigned int) matches->len; j++)
             {
-                if (!strcmp (g_dict->letters[cand->index].character, 
-                             g_dict->letters[matches->p[j]].character))
+                if (!strcmp (letters[cand->index].character, 
+                             letters[matches->p[j]].character))
                 {
                     b = FALSE;
                     break;
@@ -175,13 +182,16 @@ tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched)
     if (cands->len > 0)
     {
         int pos = 0;
+
         ret = calloc (sizeof (tomoe_candidate*), matched_num);
-        for (i = 0; i < cands->len; i++)
+        for (i = 0; i < (unsigned int) cands->len; i++)
         {
             int index = ((cand_priv *)cands->p[i])->index;
+
             if (_int_array_find_data (matches, index) >= 0)
             {
                 tomoe_candidate *cand;
+
                 cand         = calloc (sizeof (tomoe_candidate), 1);
                 cand->letter = ((cand_priv *)cands->p[i])->cand->letter;
                 cand->score  = ((cand_priv *)cands->p[i])->cand->score;
@@ -199,7 +209,7 @@ tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched)
 
     _pointer_array_unref (cands);
 
-    for (i = 0; i < first_cands->len; i++)
+    for (i = 0; i < (unsigned int) first_cands->len; i++)
     {
         cand_priv_free (first_cands->p[i], TRUE);
     }
@@ -212,9 +222,10 @@ tomoe_get_matched (tomoe_glyph *input, tomoe_candidate ***matched)
 void
 tomoe_free_matched (tomoe_candidate **matched, int len)
 {
+    int i;
+
     if (!matched) return;
 
-    int i;
     for (i = 0; i< len; i++)
     {
         free (matched[i]);
@@ -228,6 +239,7 @@ tomoe_bool
 tomoe_data_register (tomoe_glyph *input, char *data)
 {
     tomoe_bool ret = FALSE;
+
     /* Not implemented yet*/
     return ret;
 }
@@ -326,6 +338,7 @@ compare_candidate_score (const void *a, const void *b)
     const tomoe_candidate **cand_b = (const tomoe_candidate **) b;
     int score_a = cand_a[0]->score;
     int score_b = cand_b[0]->score;
+
     return score_a > score_b ? 1
         : score_a < score_b ? -1
         : 0;
@@ -544,16 +557,16 @@ get_candidates (tomoe_stroke *input_stroke, pointer_array *cands)
 {
     pointer_array *rtn_cands;
     cand_priv     *cand;
-    int           cand_index = 0;
-    tomoe_letter  lttr;
-    int           strk_index = 0;
-    tomoe_stroke  dict_stroke;
-    int           i_nop = 0;    /* input stroke number of points */
-    tomoe_point  *i_pts = NULL; /* input stroke points */
-    tomoe_metric *i_met = NULL; /* input stroke metrics */
-    int           d_nop = 0;    /* dict stroke number of points */
-    tomoe_point  *d_pts = NULL; /* dict stroke points */
-    tomoe_metric *d_met = NULL; /* dict stroke metrics */
+    int            cand_index = 0;
+    tomoe_letter   lttr;
+    int            strk_index = 0;
+    tomoe_stroke   dict_stroke;
+    int            i_nop = 0;    /* input stroke number of points */
+    tomoe_point   *i_pts = NULL; /* input stroke points */
+    tomoe_metric  *i_met = NULL; /* input stroke metrics */
+    int            d_nop = 0;    /* dict stroke number of points */
+    tomoe_point   *d_pts = NULL; /* dict stroke points */
+    tomoe_metric  *d_met = NULL; /* dict stroke metrics */
 
     rtn_cands = _pointer_array_new ();
 
@@ -563,14 +576,13 @@ get_candidates (tomoe_stroke *input_stroke, pointer_array *cands)
 
     for (cand_index = 0; cand_index < cands->len; cand_index++)
     {
-        tomoe_bool match_flag;
-        match_flag = FALSE;
+        tomoe_bool match_flag = FALSE;
         int_array *adapted = NULL;
+        const tomoe_letter *letters = tomoe_dict_get_letters (g_dict);
+
         cand = cands->p[cand_index];
-
         adapted = _int_array_copy (cand->adapted_strokes);
-
-        lttr = g_dict->letters[cand->index];
+        lttr = letters[cand->index];
 
         for (strk_index = 0;
              strk_index < lttr.c_glyph->stroke_num;
@@ -580,6 +592,7 @@ get_candidates (tomoe_stroke *input_stroke, pointer_array *cands)
             int d3 = 0, d4 = 0;
             int score1 = 0, score2 = 0;
             int score3 = 0;
+
             if (_int_array_find_data (adapted, strk_index) >= 0)
             {
                 continue;
@@ -667,11 +680,10 @@ get_candidates (tomoe_stroke *input_stroke, pointer_array *cands)
 static int
 match_stroke_num (int letter_index, int input_stroke_num, int_array *adapted)
 {
-    int pj = 100;
-    int i;
-    int j;
+    const tomoe_letter *letters = tomoe_dict_get_letters (g_dict);
+    int pj = 100, i, j;
     int adapted_num;
-    int d_stroke_num = g_dict->letters[letter_index].c_glyph->stroke_num;
+    int d_stroke_num = letters[letter_index].c_glyph->stroke_num;
 
     if (!adapted)
         return -1;

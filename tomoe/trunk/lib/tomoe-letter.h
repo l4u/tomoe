@@ -20,6 +20,10 @@
  *  $Id$
  */
 
+/** @file tomoe-letter.h
+ *  @brief 
+ */
+
 #ifndef __TOMOE_LETTER_H__
 #define __TOMOE_LETTER_H__
 
@@ -62,6 +66,12 @@ struct _tomoe_candidate
     const char   *letter;
     int           score;
 };
+
+/**
+ * @brief Free an allocated tomoe_glyph struct.
+ * @param glyph - tomoe_glyph structure to free.
+ */
+void        tomoe_glyph_free    (tomoe_glyph *glyph);
 
 #ifdef	__cplusplus
 }
