@@ -41,14 +41,15 @@ extern "C" {
 /**
  * @typedef typedef struct _tomoe_dict tomoe_dict;
  *
- * A struct type which represents tomoe dictionary.
+ * A struct type which represents tomoe dictionary. All members in it should be
+ * accessed through tomoe_dict_* functions.
  */
 typedef struct _tomoe_dict tomoe_dict;
 
 /**
  * @brief Load a dictionary from a file.
  * @param filename - Name of dictionary file to load.
- * @return         - Pointer to newly allocated tomoe_dict struct.
+ * @return Pointer to newly allocated tomoe_dict struct.
  */
 tomoe_dict  *tomoe_dict_new           (const char   *filename);
 
@@ -61,23 +62,23 @@ void         tomoe_dict_free          (tomoe_dict    *dict);
 /**
  * @brief Get the file name of the tomoe dictionary.
  * @param dict - Pointer to the tomoe_dict struct.
- * @return     - File name of the tomoe dictionary. Return NULL if the
- *               dictionary wasn't load from a file, or newly allocated in a
- *               program and it doesn't saved yet.
+ * @return File name of the tomoe dictionary. Return NULL if the dictionary
+ *         wasn't load from a file, or newly allocated in a program and it
+ *         doesn't saved yet.
  */
 const char  *tomoe_dict_get_file_name (tomoe_dict    *dict);
 
 /**
  * @brief Get the dictionary name.
  * @param dict - Pointer to the tomoe_dict struct.
- * @return     - Name of the dictionary.
+ * @return Name of the dictionary.
  */
 const char  *tomoe_dict_get_name      (tomoe_dict    *dict);
 
 /**
  * @brief Return number of letters which is kept in a tomoe_dict.
  * @param dict - Pointer to the tomoe_dict struct.
- * @return     - Number of letters.
+ * @return Number of letters.
  */
 unsigned int tomoe_dict_get_number_of_letters
                                       (tomoe_dict    *dict);
@@ -85,7 +86,7 @@ unsigned int tomoe_dict_get_number_of_letters
 /**
  * @brief Reurn the array of tomoe_letter which is kept in a tomoe_dict.
  * @param dict - Pointer to the tomoe_dict struct.
- * @return     - The array of tomoe_letter.
+ * @return The array of tomoe_letter.
  */
 const tomoe_letter *
              tomoe_dict_get_letters   (tomoe_dict    *dict);

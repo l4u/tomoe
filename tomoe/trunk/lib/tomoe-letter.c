@@ -24,6 +24,17 @@
 
 #include <stdlib.h>
 
+tomoe_stroke *
+tomoe_stroke_new (void)
+{
+    tomoe_stroke *strk = calloc (1, sizeof (tomoe_stroke));
+
+    if (strk)
+        tomoe_stroke_init (strk);
+
+    return strk;
+}
+
 void
 tomoe_stroke_init (tomoe_stroke *strk)
 {
@@ -59,6 +70,17 @@ tomoe_stroke_free (tomoe_stroke *strk)
 
     tomoe_stroke_clear (strk);
     free (strk);
+}
+
+tomoe_glyph *
+tomoe_glyph_new (void)
+{
+    tomoe_glyph *glyph = calloc (1, sizeof (tomoe_glyph));
+
+    if (glyph)
+        tomoe_glyph_init (glyph);
+
+    return glyph;
 }
 
 void
@@ -105,11 +127,29 @@ tomoe_glyph_free (tomoe_glyph *glyph)
     free (glyph);
 }
 
+tomoe_letter *
+tomoe_letter_new (void)
+{
+    tomoe_letter *lttr = calloc (1, sizeof (tomoe_letter));
+
+    if (lttr)
+        tomoe_letter_init (lttr);
+
+    return lttr;
+}
+
+void
+tomoe_letter_init (tomoe_letter *lttr)
+{
+    if (!lttr) return;
+
+    lttr->character = NULL;
+    lttr->c_glyph   = NULL;
+}
+
 void
 tomoe_letter_clear (tomoe_letter *lttr)
 {
-    int i;
-
     if (!lttr) return;
 
     if (lttr->character != NULL)
@@ -120,11 +160,16 @@ tomoe_letter_clear (tomoe_letter *lttr)
 
     if (lttr->c_glyph != NULL)
     {
-        for (i = 0; i < lttr->c_glyph->stroke_num; i++)
-            tomoe_stroke_clear (&lttr->c_glyph->strokes[i]);
-        free (lttr->c_glyph->strokes);
-        free (lttr->c_glyph);
-        lttr->c_glyph->strokes = NULL;
-        lttr->c_glyph          = NULL;
+        tomoe_glyph_free (lttr->c_glyph);
+        lttr->c_glyph = NULL;
     }
+}
+
+void
+tomoe_letter_free (tomoe_letter *lttr)
+{
+    if (!lttr) return;
+
+    tomoe_letter_clear (lttr);
+    free (lttr);
 }

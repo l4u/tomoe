@@ -38,7 +38,7 @@ extern "C" {
 #include "tomoe-dict.h"
 
 /**
- * @brief Initialize tomoe
+ * @brief Initialize tomoe library.
  */
 void       tomoe_init          (void);
 

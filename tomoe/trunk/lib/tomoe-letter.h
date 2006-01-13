@@ -68,13 +68,14 @@ struct _tomoe_candidate
 };
 
 
+tomoe_stroke   *tomoe_stroke_new                (void);
 void            tomoe_stroke_init               (tomoe_stroke *strk);
 void            tomoe_stroke_init_with_points   (tomoe_stroke *strk,
                                                  int           point_num);
 void            tomoe_stroke_clear              (tomoe_stroke *strk);
 void            tomoe_stroke_free               (tomoe_stroke *strk);
 
-/*tomoe_glyph    *tomoe_glyph_new                 (void);*/
+tomoe_glyph    *tomoe_glyph_new                 (void);
 void            tomoe_glyph_init                (tomoe_glyph *glyph);
 void            tomoe_glyph_init_with_strokes   (tomoe_glyph *glyph,
                                                  int          stroke_num);
@@ -82,11 +83,14 @@ void            tomoe_glyph_clear               (tomoe_glyph *glyph);
 /**
  * @brief Free an allocated tomoe_glyph struct.
  * @param glyph - pointer to tomoe_glyph struct to free. NULL pointer will be
-                  ignored.
+ *                ignored.
  */
 void            tomoe_glyph_free                (tomoe_glyph *glyph);
 
+tomoe_letter   *tomoe_letter_new                (void);
+void            tomoe_letter_init               (tomoe_letter *lttr);
 void            tomoe_letter_clear              (tomoe_letter *lttr);
+void            tomoe_letter_free               (tomoe_letter *lttr);
 
 #ifdef	__cplusplus
 }
