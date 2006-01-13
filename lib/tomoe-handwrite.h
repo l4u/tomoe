@@ -44,7 +44,7 @@ typedef struct _tomoe_hw_context tomoe_hw_context;
 
 /**
  * @brief Create a tomoe_hw_context struct.
- * @return - Pointer to the newly allocated tomoe_hw_context struct.
+ * @return Pointer to the newly allocated tomoe_hw_context struct.
  */
 tomoe_hw_context   *tomoe_hw_context_new        (void);
 
@@ -73,7 +73,7 @@ void                tomoe_hw_remove_dictionary  (tomoe_hw_context *ctx,
 /**
  * @brief Return number of dictionaries which is kept in a tomoe_hw_context.
  * @param ctx - Pointer to the tomoe_hw_context which keeps tomoe dictionaries.
- * @return    - Number of dictionaries.
+ * @return Number of dictionaries.
  */
 unsigned int        tomoe_hw_get_number_of_dictionaries
                                                 (tomoe_hw_context *ctx);
@@ -82,8 +82,8 @@ unsigned int        tomoe_hw_get_number_of_dictionaries
  * @brief Return array of tomoe_dict poitners which is kept by a
  *        tomoe_hw_context.
  * @param ctx - Pointer to the tomoe_hw_context which keeps tomoe dictionaries.
- * @return    - An array of tomoe_dict pointers. The array is terminated by NULL
- *              pointer. NULL will be returned if the context has no dictionary.
+ * @return An array of tomoe_dict pointers. The array is terminated by NULL
+ *         pointer. NULL will be returned if the context has no dictionary.
  */
 const tomoe_dict  **tomoe_hw_get_dictionaries   (tomoe_hw_context *ctx);
 
