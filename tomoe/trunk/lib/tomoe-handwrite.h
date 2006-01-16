@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
- *  Copyright (C) 2005 Takuro Ashie <ashie@homa.ne.jp>
+ *  Copyright (C) 2005-2006 Takuro Ashie <ashie@homa.ne.jp>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,8 @@
  *  $Id$
  */
 
-/** @file tomoe-handwrite.h
+/**
+ *  @file tomoe-handwrite.h
  *  @brief 
  */
 
