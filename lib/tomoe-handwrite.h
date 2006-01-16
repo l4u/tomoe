@@ -87,7 +87,6 @@ unsigned int        tomoe_hw_get_number_of_dictionaries
  */
 const tomoe_dict  **tomoe_hw_get_dictionaries   (tomoe_hw_context *ctx);
 
-#if 1
 void                tomoe_hw_push_point         (tomoe_hw_context *ctx,
                                                  unsigned int      x,
                                                  unsigned int      y);
@@ -98,12 +97,7 @@ unsigned int        tomoe_hw_get_number_of_strokes
                                                 (tomoe_hw_context *ctx);
 const tomoe_glyph  *tomoe_hw_get_glyph          (tomoe_hw_context *ctx);
 void                tomeo_hw_clear_glyph        (tomoe_hw_context *ctx);
-#endif
 
-#if 0
-/*
- * Not implemented yet.
- */
 void                tomoe_hw_set_canvas_width   (tomoe_hw_context *ctx,
                                                  unsigned int      width);
 void                tomoe_hw_set_canvas_height  (tomoe_hw_context *ctx,
@@ -113,7 +107,6 @@ unsigned int        tomoe_hw_get_canvas_height  (tomoe_hw_context *ctx);
 
 const tomoe_candidate
                   **tomoe_hw_get_candidates     (tomoe_hw_context *ctx);
-#endif
 
 #ifdef	__cplusplus
 }
