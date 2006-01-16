@@ -33,20 +33,25 @@ struct _tomoe_hw_context
     unsigned int  dict_num;
 
     tomoe_glyph  *glyph;
+    tomoe_glyph  *normalized_glyph;
 
     unsigned int  canvas_width;
     unsigned int  canvas_height;
+
+    tomoe_bool    stroke_is_pending;
 };
 
 tomoe_hw_context *
 tomoe_hw_context_new (void)
 {
     tomoe_hw_context *ctx = malloc (sizeof (tomoe_hw_context));
-    ctx->dict          = NULL;
-    ctx->dict_num      = 0;
-    ctx->glyph         = NULL;
-    ctx->canvas_width  = DEFAULT_CANVAS_WIDTH;
-    ctx->canvas_height = DEFAULT_CANVAS_HEIGHT;
+    ctx->dict              = NULL;
+    ctx->dict_num          = 0;
+    ctx->glyph             = tomoe_glyph_new ();
+    ctx->normalized_glyph  = tomoe_glyph_new ();
+    ctx->canvas_width      = DEFAULT_CANVAS_WIDTH;
+    ctx->canvas_height     = DEFAULT_CANVAS_HEIGHT;
+    ctx->stroke_is_pending = FALSE;
     return ctx;
 }
 
@@ -66,10 +71,8 @@ tomoe_hw_context_free (tomoe_hw_context *ctx)
 void
 tomoe_hw_append_dictionary (tomoe_hw_context *ctx, tomoe_dict *dict)
 {
-    if (!ctx)
-        return;
-    if (!dict)
-        return;
+    if (!ctx) return;
+    if (!dict) return;
 
     ctx->dict_num++;
     ctx->dict = realloc (ctx->dict,
@@ -83,10 +86,8 @@ tomoe_hw_remove_dictionary (tomoe_hw_context *ctx, tomoe_dict *dict)
 {
     unsigned int i;
 
-    if (!ctx)
-        return;
-    if (!dict)
-        return;
+    if (!ctx) return;
+    if (!dict) return;
 
     for (i = 0; i < ctx->dict_num && ctx->dict[i]; i++)
     {
@@ -105,60 +106,149 @@ tomoe_hw_remove_dictionary (tomoe_hw_context *ctx, tomoe_dict *dict)
 unsigned int
 tomoe_hw_get_number_of_dictionaries (tomoe_hw_context *ctx)
 {
-    if (!ctx)
-        return 0;
+    if (!ctx) return 0;
     return ctx->dict_num;
 }
 
 const tomoe_dict **
 tomoe_hw_get_dictionaries (tomoe_hw_context *ctx)
 {
-    if (!ctx)
-        return NULL;
-    if (ctx->dict_num <= 0)
-        return NULL;
+    if (!ctx) return NULL;
+    if (ctx->dict_num < 1) return NULL;
     return (const tomoe_dict**) ctx->dict;
 }
 
 void
 tomoe_hw_push_point (tomoe_hw_context *ctx, unsigned int x, unsigned int y)
 {
+    tomoe_stroke *stroke = NULL;
+    tomoe_point *point = NULL;
+
+    if (!ctx) return;
+
+    if (!ctx->stroke_is_pending) {
+        ctx->glyph->stroke_num++;
+        ctx->glyph->strokes
+            = realloc (ctx->glyph->strokes,
+                       sizeof (tomoe_stroke) * ctx->glyph->stroke_num);
+        stroke = &ctx->glyph->strokes[ctx->glyph->stroke_num - 1];
+        tomoe_stroke_init (stroke);
+        ctx->stroke_is_pending = TRUE;
+    } else {
+        stroke = &ctx->glyph->strokes[ctx->glyph->stroke_num - 1];
+    }
+
+    stroke->point_num++;
+    stroke->points = realloc (stroke->points,
+                              sizeof (tomoe_stroke) * stroke->point_num);
+    point = &stroke->points[stroke->point_num - 1];
+
+    point->x = x;
+    point->y = y;
 }
 
 void
 tomoe_hw_pop_point (tomoe_hw_context *ctx)
 {
+    tomoe_stroke *stroke = NULL;
+
+    if (!ctx) return;
+    if (!ctx->stroke_is_pending) return;
+    if (ctx->glyph->stroke_num < 1) return;
+
+    stroke = &ctx->glyph->strokes[ctx->glyph->stroke_num - 1];
+
+    stroke->point_num--;
+    stroke->points = realloc (stroke->points,
+                              sizeof (tomoe_stroke) * stroke->point_num);
+
+    if (stroke->point_num < 1 || !stroke->points) {
+        ctx->glyph->stroke_num--;
+        ctx->glyph->strokes
+            = realloc (ctx->glyph->strokes,
+                       sizeof (tomoe_stroke) * ctx->glyph->stroke_num);
+        ctx->stroke_is_pending = FALSE;
+    }
 }
 
 void
 tomoe_hw_push_stroke (tomoe_hw_context *ctx)
 {
+    if (!ctx) return;
+    if (!ctx->stroke_is_pending) return;
+    ctx->stroke_is_pending = FALSE;
 }
 
 void
 tomoe_hw_pop_stroke (tomoe_hw_context *ctx)
 {
+    if (!ctx) return;
+    if (ctx->glyph->stroke_num < 1) return;
+
+    ctx->glyph->stroke_num--;
+    ctx->glyph->strokes
+        = realloc (ctx->glyph->strokes,
+                   sizeof (tomoe_stroke) * ctx->glyph->stroke_num);
+    ctx->stroke_is_pending = FALSE;
 }
 
 unsigned int
 tomoe_hw_get_number_of_strokes (tomoe_hw_context *ctx)
 {
-    if (!ctx)
-        return 0;
-    if (!ctx->glyph)
-        return 0;
+    if (!ctx) return 0;
+    if (!ctx->glyph) return 0;
     return ctx->glyph->stroke_num;
 }
 
 const tomoe_glyph *
 tomoe_hw_get_glyph (tomoe_hw_context *ctx)
 {
-    if (!ctx)
-        return NULL;
+    if (!ctx) return NULL;
     return ctx->glyph;
 }
 
 void
 tomeo_hw_clear_glyph (tomoe_hw_context *ctx)
 {
+    if (!ctx) return;
+    if (!ctx->glyph) return;
+    tomoe_glyph_clear (ctx->glyph);
+}
+
+void
+tomoe_hw_set_canvas_width   (tomoe_hw_context *ctx, unsigned int width)
+{
+    if (!ctx) return;
+    if (width <= 0) return;
+    ctx->canvas_width = width;
+}
+
+void
+tomoe_hw_set_canvas_height (tomoe_hw_context *ctx, unsigned int height)
+{
+    if (!ctx) return;
+    if (height <= 0) return;
+    ctx->canvas_height = height;
+}
+
+unsigned int
+tomoe_hw_get_canvas_width (tomoe_hw_context *ctx)
+{
+    if (!ctx) return 0;
+    return ctx->canvas_width;
+}
+
+unsigned int
+tomoe_hw_get_canvas_height (tomoe_hw_context *ctx)
+{
+    if (!ctx) return 0;
+    return ctx->canvas_height;
+}
+
+const tomoe_candidate **
+tomoe_hw_get_candidates (tomoe_hw_context *ctx)
+{
+    if (!ctx) return NULL;
+
+    return NULL;
 }
