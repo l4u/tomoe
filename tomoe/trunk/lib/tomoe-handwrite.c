@@ -41,10 +41,14 @@ struct _tomoe_hw_context
     tomoe_bool    stroke_is_pending;
 };
 
+static void tomoe_hw_normalize_strokes (tomoe_hw_context *ctx);
+static void tomoe_hw_search_glyph      (tomoe_hw_context *ctx,
+                                        tomoe_dict       *dict);
+
 tomoe_hw_context *
 tomoe_hw_context_new (void)
 {
-    tomoe_hw_context *ctx = malloc (sizeof (tomoe_hw_context));
+    tomoe_hw_context *ctx  = malloc (sizeof (tomoe_hw_context));
     ctx->dict              = NULL;
     ctx->dict_num          = 0;
     ctx->glyph             = tomoe_glyph_new ();
@@ -65,6 +69,7 @@ tomoe_hw_context_free (tomoe_hw_context *ctx)
     free (ctx->dict);
 
     tomoe_glyph_free (ctx->glyph);
+    tomoe_glyph_free (ctx->normalized_glyph);
     free (ctx);
 }
 
@@ -245,10 +250,126 @@ tomoe_hw_get_canvas_height (tomoe_hw_context *ctx)
     return ctx->canvas_height;
 }
 
+static int
+get_distance (tomoe_point *first, tomoe_point *last, tomoe_point **most)
+{
+    /*
+     * Getting distance 
+     * MAX( |aw - bv + c| )
+     *   * first = (p, q)  last = (x, y)  other = (v, w)
+     *   * a = x - p
+     *   * b = y - q
+     *   * c = py - qx
+     */
+    int a, b, c;
+    int dist = 0;
+    int max  = 0;
+    int denominator;
+    tomoe_point *p;
+
+    *most = NULL;
+    if (first == last)
+    {
+        return 0;
+    }
+
+    a = last->x - first->x;
+    b = last->y - first->y;
+    c = last->y * first->x - last->x * first->y;
+
+    for (p = first; p != last; p++)
+    {
+        dist = abs ((a * p->y) - (b * p->x) + c);
+        if (dist > max)
+        {
+            max = dist;
+            *most = p;
+        }
+    }
+
+    denominator = a * a + b * b;
+
+    if (denominator == 0)
+        return 0;
+    else
+        return max * max / denominator;
+}
+
+static void
+get_vertex (tomoe_stroke *dest, tomoe_point *first, tomoe_point *last)
+{
+    tomoe_point *most = NULL;
+    int dist;
+    int error = 300 * 300 / 400; /* 5% */ /* FIXME! */
+
+    dist = get_distance (first, last, &most);
+
+    if (dist > error)
+    {
+        /*
+         * Pick up most far point, and continue to investigate points between
+         * first and most, and between most and last.
+         * The most far points will be added after it.
+         */
+        get_vertex (dest, first, most);
+        get_vertex (dest, most, last);
+    }
+    else if (most)
+    {
+        /*
+         * Now we can ignore points between first and last. Most far point from
+         * the line is near enough.
+         */
+        dest->point_num++;
+        dest->points = realloc (dest->points, dest->point_num);
+        dest->points[dest->point_num - 1] = *last;
+    }
+}
+
+static void
+tomoe_hw_normalize_strokes (tomoe_hw_context *ctx)
+{
+    int i;
+
+    if (!ctx) return;
+
+    tomoe_glyph_clear (ctx->normalized_glyph);
+    tomoe_glyph_init_with_strokes (ctx->normalized_glyph,
+                                   ctx->glyph->stroke_num);
+
+    for (i = 0; i < ctx->glyph->stroke_num; i++)
+    {
+        tomoe_stroke *dest = &ctx->normalized_glyph->strokes[i];
+        tomoe_stroke *stroke = &ctx->glyph->strokes[i];
+
+        /* First point is always used. */
+        tomoe_stroke_init_with_points (dest, 1);
+        dest->points[0] = stroke->points[0];
+
+        /* Drop needless points */
+        get_vertex (dest,
+                    &stroke->points[0],
+                    &stroke->points[stroke->point_num - 1]);
+    }
+}
+
+static void
+tomoe_hw_search_glyph (tomoe_hw_context *ctx, tomoe_dict *dict)
+{
+    if (!ctx) return;
+}
+
 const tomoe_candidate **
 tomoe_hw_get_candidates (tomoe_hw_context *ctx)
 {
+    unsigned int i;
+
     if (!ctx) return NULL;
+
+    tomoe_hw_normalize_strokes (ctx);
+
+    for (i = 0; i < ctx->dict_num; i++)
+        tomoe_hw_search_glyph (ctx, ctx->dict[i]);
 
     return NULL;
 }

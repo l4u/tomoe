@@ -60,6 +60,20 @@ tomoe_dict  *tomoe_dict_new           (const char   *filename);
 void         tomoe_dict_free          (tomoe_dict    *dict);
 
 /**
+ * @brief Increase reference count.
+ * @param dict - Pointer to the tomoe_dict struct to increase reference count.
+ */
+void         tomoe_dict_ref           (tomoe_dict    *dict);
+
+/**
+ * @brief Decrease reference count.
+ *        If the reference count has reached to 0, the dictionary will be freed
+          automatically.
+ * @param dict - Pointer to the tomoe_dict struct to decrease reference count.
+ */
+void         tomoe_dict_unref         (tomoe_dict    *dict);
+
+/**
  * @brief Get the file name of the tomoe dictionary.
  * @param dict - Pointer to the tomoe_dict struct.
  * @return File name of the tomoe dictionary. Return NULL if the dictionary

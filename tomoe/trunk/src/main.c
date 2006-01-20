@@ -38,7 +38,7 @@ read_glyph (void)
     FILE *fp = stdin;
     tomoe_glyph *glyph = NULL;
 
-    glyph = calloc (1, sizeof (tomoe_glyph));
+    glyph = tomoe_glyph_new ();
 
     while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL)
     {
@@ -100,7 +100,6 @@ read_glyph (void)
 int
 main (int argc, char **argv)
 {
-
     /* FIXME! read arguments */
 
     tomoe_init ();

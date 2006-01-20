@@ -39,8 +39,9 @@ struct _tomoe_dict
     char         *dict_name;
     char         *encoding;
     char         *lang;
-    int           letter_num;
+    unsigned int  letter_num;
     tomoe_letter *letters;
+    unsigned int  ref_count;
 };
 
 tomoe_dict *
@@ -48,7 +49,7 @@ tomoe_dict_new (const char *filename)
 {
     tomoe_dict *dict;
     char *p = NULL;
-    int letter_num = 0;
+    unsigned int letter_num = 0;
     int stroke_num = 0;
     int point_num = 0;
     int i = 0, j = 0, k = 0;
@@ -120,13 +121,15 @@ tomoe_dict_new (const char *filename)
     if (letter_num < dict->letter_num)
         dict->letter_num = letter_num;
 
+    dict->ref_count = 1;
+
     return dict;
 }
 
 void
 tomoe_dict_free (tomoe_dict *dict)
 {
-    int i;
+    unsigned int i;
 
     if (!dict) return;
 
@@ -139,6 +142,23 @@ tomoe_dict_free (tomoe_dict *dict)
     }
 
     free (dict);
+}
+
+void
+tomoe_dict_ref (tomoe_dict *dict)
+{
+    if (!dict) return;
+    dict->ref_count++;
+}
+
+void
+tomoe_dict_unref (tomoe_dict *dict)
+{
+    if (!dict) return;
+    dict->ref_count--;
+
+    if (dict->ref_count <= 0)
+        tomoe_dict_free (dict);
 }
 
 const char *
