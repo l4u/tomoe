@@ -268,7 +268,7 @@ sq_dist (tomoe_point *p, tomoe_point *q)
 static int 
 stroke_calculate_metrics (tomoe_stroke *strk, tomoe_metric **met)
 {
-    int i = 0;
+    unsigned int i = 0;
     tomoe_point p;
     tomoe_point q;
     tomoe_metric *m;
@@ -559,7 +559,7 @@ get_candidates (tomoe_stroke *input_stroke, pointer_array *cands)
     cand_priv     *cand;
     int            cand_index = 0;
     tomoe_letter   lttr;
-    int            strk_index = 0;
+    unsigned int   strk_index = 0;
     tomoe_stroke   dict_stroke;
     int            i_nop = 0;    /* input stroke number of points */
     tomoe_point   *i_pts = NULL; /* input stroke points */

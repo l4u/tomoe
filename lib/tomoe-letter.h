@@ -45,13 +45,13 @@ struct _tomoe_point
 
 struct _tomoe_stroke
 {
-    int           point_num;
+    unsigned int  point_num;
     tomoe_point  *points;
 };
 
 struct _tomoe_glyph
 {
-    int           stroke_num;
+    unsigned int  stroke_num;
     tomoe_stroke *strokes;
 };
 

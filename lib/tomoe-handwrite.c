@@ -348,7 +348,7 @@ get_vertex (tomoe_stroke *dest, tomoe_point *first, tomoe_point *last)
 static void
 normalize_strokes (tomoe_hw_context *ctx)
 {
-    int i;
+    unsigned int i;
 
     if (!ctx) return;
 
