@@ -41,9 +41,9 @@ struct _tomoe_hw_context
     tomoe_bool    stroke_is_pending;
 };
 
-static void tomoe_hw_normalize_strokes (tomoe_hw_context *ctx);
-static void tomoe_hw_search_glyph      (tomoe_hw_context *ctx,
-                                        tomoe_dict       *dict);
+static void normalize_strokes (tomoe_hw_context *ctx);
+static void search_glyph      (tomoe_hw_context *ctx,
+                               tomoe_dict       *dict);
 
 tomoe_hw_context *
 tomoe_hw_context_new (void)
@@ -250,6 +250,23 @@ tomoe_hw_get_canvas_height (tomoe_hw_context *ctx)
     return ctx->canvas_height;
 }
 
+const tomoe_candidate **
+tomoe_hw_get_candidates (tomoe_hw_context *ctx)
+{
+    unsigned int i;
+
+    if (!ctx) return NULL;
+
+    normalize_strokes (ctx);
+
+    for (i = 0; i < ctx->dict_num; i++)
+        search_glyph (ctx, ctx->dict[i]);
+
+    return NULL;
+}
+
+
+
 static int
 get_distance (tomoe_point *first, tomoe_point *last, tomoe_point **most)
 {
@@ -325,7 +342,7 @@ get_vertex (tomoe_stroke *dest, tomoe_point *first, tomoe_point *last)
 }
 
 static void
-tomoe_hw_normalize_strokes (tomoe_hw_context *ctx)
+normalize_strokes (tomoe_hw_context *ctx)
 {
     int i;
 
@@ -352,22 +369,7 @@ tomoe_hw_normalize_strokes (tomoe_hw_context *ctx)
 }
 
 static void
-tomoe_hw_search_glyph (tomoe_hw_context *ctx, tomoe_dict *dict)
+search_glyph (tomoe_hw_context *ctx, tomoe_dict *dict)
 {
     if (!ctx) return;
-}
-
-const tomoe_candidate **
-tomoe_hw_get_candidates (tomoe_hw_context *ctx)
-{
-    unsigned int i;
-
-    if (!ctx) return NULL;
-
-    tomoe_hw_normalize_strokes (ctx);
-
-    for (i = 0; i < ctx->dict_num; i++)
-        tomoe_hw_search_glyph (ctx, ctx->dict[i]);
-
-    return NULL;
 }
