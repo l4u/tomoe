@@ -62,13 +62,14 @@ void         tomoe_dict_free          (tomoe_dict    *dict);
 /**
  * @brief Increase reference count.
  * @param dict - Pointer to the tomoe_dict struct to increase reference count.
+ * @return The tomoe_dict.
  */
-void         tomoe_dict_ref           (tomoe_dict    *dict);
+tomoe_dict  *tomoe_dict_ref           (tomoe_dict    *dict);
 
 /**
  * @brief Decrease reference count.
  *        If the reference count has reached to 0, the dictionary will be freed
-          automatically.
+ *        automatically.
  * @param dict - Pointer to the tomoe_dict struct to decrease reference count.
  */
 void         tomoe_dict_unref         (tomoe_dict    *dict);

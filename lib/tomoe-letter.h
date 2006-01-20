@@ -69,15 +69,26 @@ struct _tomoe_candidate
 
 
 tomoe_stroke   *tomoe_stroke_new                (void);
-void            tomoe_stroke_init               (tomoe_stroke *strk);
-void            tomoe_stroke_init_with_points   (tomoe_stroke *strk,
+void            tomoe_stroke_init               (tomoe_stroke *strk,
                                                  int           point_num);
 void            tomoe_stroke_clear              (tomoe_stroke *strk);
 void            tomoe_stroke_free               (tomoe_stroke *strk);
+#if 0
+void            tomoe_stoke_ref                 (tomoe_stroke *strk);
+void            tomoe_stoke_unref               (tomoe_stroke *strk);
+unsigned int    tomoe_stroe_get_number_of_points(tomoe_stroke *strk);
+void            tomoe_stroke_push_point         (tomoe_stroke *strk,
+                                                 ?);
+void            tomoe_stroke_pop_point          (tomoe_stroke *strk);
+?               tomoe_stroke_get_point          (tomoe_stroke *strk,
+                                                 unsigned int  idx);
+void            tomoe_stroke_set_point          (tomoe_stroke *strk,
+                                                 unsigned int  idx,
+                                                 ?);
+#endif
 
 tomoe_glyph    *tomoe_glyph_new                 (void);
-void            tomoe_glyph_init                (tomoe_glyph *glyph);
-void            tomoe_glyph_init_with_strokes   (tomoe_glyph *glyph,
+void            tomoe_glyph_init                (tomoe_glyph *glyph,
                                                  int          stroke_num);
 void            tomoe_glyph_clear               (tomoe_glyph *glyph);
 /**
@@ -86,11 +97,21 @@ void            tomoe_glyph_clear               (tomoe_glyph *glyph);
  *                ignored.
  */
 void            tomoe_glyph_free                (tomoe_glyph *glyph);
+#if 0
+void            tomoe_glyph_ref                 (tomoe_glyph *glyph);
+void            tomoe_glyph_unref               (tomoe_glyph *glyph);
+unsigned int    tomoe_glyph_get_number_of_strokes
+                                                (tomoe_glyph *glyph);
+#endif
 
 tomoe_letter   *tomoe_letter_new                (void);
 void            tomoe_letter_init               (tomoe_letter *lttr);
 void            tomoe_letter_clear              (tomoe_letter *lttr);
 void            tomoe_letter_free               (tomoe_letter *lttr);
+#if 0
+void            tomoe_letter_ref                (tomoe_letter *lttr);
+void            tomoe_letter_unref              (tomoe_letter *lttr);
+#endif
 
 #ifdef	__cplusplus
 }

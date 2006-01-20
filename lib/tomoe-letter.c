@@ -30,20 +30,13 @@ tomoe_stroke_new (void)
     tomoe_stroke *strk = calloc (1, sizeof (tomoe_stroke));
 
     if (strk)
-        tomoe_stroke_init (strk);
+        tomoe_stroke_init (strk, 0);
 
     return strk;
 }
 
 void
-tomoe_stroke_init (tomoe_stroke *strk)
-{
-    strk->point_num = 0;
-    strk->points    = NULL;
-}
-
-void
-tomoe_stroke_init_with_points (tomoe_stroke *strk, int point_num)
+tomoe_stroke_init (tomoe_stroke *strk, int point_num)
 {
     if (!strk) return;
 
@@ -78,22 +71,13 @@ tomoe_glyph_new (void)
     tomoe_glyph *glyph = calloc (1, sizeof (tomoe_glyph));
 
     if (glyph)
-        tomoe_glyph_init (glyph);
+        tomoe_glyph_init (glyph, 0);
 
     return glyph;
 }
 
 void
-tomoe_glyph_init (tomoe_glyph *glyph)
-{
-    if (!glyph) return;
-
-    glyph->stroke_num = 0;
-    glyph->strokes    = NULL;
-}
-
-void
-tomoe_glyph_init_with_strokes (tomoe_glyph *glyph, int stroke_num)
+tomoe_glyph_init (tomoe_glyph *glyph, int stroke_num)
 {
     if (!glyph) return;
 
