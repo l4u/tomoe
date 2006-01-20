@@ -338,6 +338,7 @@ get_vertex (tomoe_stroke *dest, tomoe_point *first, tomoe_point *last)
          * Now we can ignore points between first and last. Most far point from
          * the line is near enough. Simply add last point to dest array.
          */
+        /* tomoe_stroke_push_point (dest, last->x, last->y) */
         dest->point_num++;
         dest->points = realloc (dest->points, dest->point_num);
         dest->points[dest->point_num - 1] = *last;
