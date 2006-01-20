@@ -62,7 +62,7 @@ tomoe_hw_context_new (void)
 void
 tomoe_hw_context_free (tomoe_hw_context *ctx)
 {
-    int i;
+    unsigned int i;
 
     for (i = 0; ctx->dict && ctx->dict[i]; i++)
         tomoe_dict_free (ctx->dict[i]);
@@ -270,7 +270,7 @@ tomoe_hw_get_candidates (tomoe_hw_context *ctx)
 /*
  * Functions for normalizing handwrited glyph.
  */
-static int
+static unsigned int
 get_distance (tomoe_point *first, tomoe_point *last, tomoe_point **most)
 {
     /*
@@ -280,9 +280,9 @@ get_distance (tomoe_point *first, tomoe_point *last, tomoe_point **most)
      *   * a = x - p,   b = y - q,   c = py - qx
      */
     int a, b, c;
-    int dist = 0;
-    int max  = 0;
-    int denominator;
+    unsigned int dist = 0;
+    unsigned int max  = 0;
+    unsigned int denominator;
     tomoe_point *p;
 
     *most = NULL;
@@ -317,8 +317,8 @@ static void
 get_vertex (tomoe_stroke *dest, tomoe_point *first, tomoe_point *last)
 {
     tomoe_point *most = NULL;
-    int dist;
-    int error = 300 * 300 / 400; /* 5% */ /* FIXME! */
+    unsigned int dist;
+    unsigned int error = 300 * 300 / 400; /* 5% */ /* FIXME! */
 
     dist = get_distance (first, last, &most);
 
