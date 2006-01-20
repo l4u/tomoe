@@ -256,10 +256,8 @@ get_distance (tomoe_point *first, tomoe_point *last, tomoe_point **most)
     /*
      * Getting distance 
      * MAX( |aw - bv + c| )
-     *   * first = (p, q)  last = (x, y)  other = (v, w)
-     *   * a = x - p
-     *   * b = y - q
-     *   * c = py - qx
+     *   * first = (p, q),  last = (x, y),  other = (v, w)
+     *   * a = x - p,   b = y - q,   c = py - qx
      */
     int a, b, c;
     int dist = 0;
@@ -277,7 +275,7 @@ get_distance (tomoe_point *first, tomoe_point *last, tomoe_point **most)
     b = last->y - first->y;
     c = last->y * first->x - last->x * first->y;
 
-    for (p = first; p != last; p++)
+    for (p = first; p < last; p++)
     {
         dist = abs ((a * p->y) - (b * p->x) + c);
         if (dist > max)
