@@ -97,7 +97,7 @@ tomoe_dict_new (const char *filename)
         sscanf (p + 1, "%d", &stroke_num);
 
         lttr->c_glyph = calloc (1, sizeof (tomoe_glyph));
-        tomoe_glyph_init_with_strokes (lttr->c_glyph, stroke_num);
+        tomoe_glyph_init (lttr->c_glyph, stroke_num);
 
         for (j = 0; j < stroke_num; j++)
         {
@@ -105,7 +105,7 @@ tomoe_dict_new (const char *filename)
             p = fgets (line_buf, LINE_BUF_SIZE, fp);
             sscanf (p, "%d", &point_num);
             p = strchr (p, ' ');
-            tomoe_stroke_init_with_points (strk, point_num);
+            tomoe_stroke_init (strk, point_num);
             for (k = 0; k < point_num; k++)
             {
                 pnt = &strk->points[k];
@@ -144,11 +144,12 @@ tomoe_dict_free (tomoe_dict *dict)
     free (dict);
 }
 
-void
+tomoe_dict *
 tomoe_dict_ref (tomoe_dict *dict)
 {
-    if (!dict) return;
+    if (!dict) return NULL;
     dict->ref_count++;
+    return dict;
 }
 
 void

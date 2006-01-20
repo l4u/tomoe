@@ -56,6 +56,21 @@ tomoe_hw_context   *tomoe_hw_context_new        (void);
 void                tomoe_hw_context_free       (tomoe_hw_context *ctx);
 
 /**
+ * @brief Increase reference count of a tomoe_hw_context.
+ * @param - Pointer to the tomoe_hw_context struct to increase reference count.
+ * @return The tomoe_hw_context.
+ */
+tomoe_hw_context   *tomoe_hw_context_ref        (tomoe_hw_context *ctx);
+
+/**
+ * @brief Decrease reference count.
+ *        If the reference count has reached to 0, the context will be freed
+ *        automatically.
+ * @param Pointer to the tomoe_hw_context struct to decrease reference count.
+ */
+void                tomoe_hw_context_unref      (tomoe_hw_context *ctx);
+
+/**
  * @brief Append a tomoe dictionary into a tomoe_hw_context.
  * @param ctx  - The tomoe_hw_context to remove a dictionary.
  * @param dict - A tomoe dictionary to append. NULL pointer will be ignored.

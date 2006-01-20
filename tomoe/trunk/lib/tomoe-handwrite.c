@@ -39,6 +39,8 @@ struct _tomoe_hw_context
     unsigned int  canvas_height;
 
     tomoe_bool    stroke_is_pending;
+
+    unsigned int  ref_count;
 };
 
 static void normalize_strokes (tomoe_hw_context *ctx);
@@ -56,6 +58,7 @@ tomoe_hw_context_new (void)
     ctx->canvas_width      = DEFAULT_CANVAS_WIDTH;
     ctx->canvas_height     = DEFAULT_CANVAS_HEIGHT;
     ctx->stroke_is_pending = FALSE;
+    ctx->ref_count         = 1;
     return ctx;
 }
 
@@ -71,6 +74,24 @@ tomoe_hw_context_free (tomoe_hw_context *ctx)
     tomoe_glyph_free (ctx->glyph);
     tomoe_glyph_free (ctx->normalized_glyph);
     free (ctx);
+}
+
+tomoe_hw_context *
+tomoe_hw_context_ref (tomoe_hw_context *ctx)
+{
+    if (!ctx) return NULL;
+    ctx->ref_count++;
+    return ctx;
+}
+
+void
+tomoe_hw_context_unref (tomoe_hw_context *ctx)
+{
+    if (!ctx) return;
+    ctx->ref_count--;
+
+    if (ctx->ref_count <= 0)
+        tomoe_hw_context_free (ctx);
 }
 
 void
@@ -137,7 +158,7 @@ tomoe_hw_push_point (tomoe_hw_context *ctx, unsigned int x, unsigned int y)
             = realloc (ctx->glyph->strokes,
                        sizeof (tomoe_stroke) * ctx->glyph->stroke_num);
         stroke = &ctx->glyph->strokes[ctx->glyph->stroke_num - 1];
-        tomoe_stroke_init (stroke);
+        tomoe_stroke_init (stroke, 0);
         ctx->stroke_is_pending = TRUE;
     } else {
         stroke = &ctx->glyph->strokes[ctx->glyph->stroke_num - 1];
@@ -353,8 +374,8 @@ normalize_strokes (tomoe_hw_context *ctx)
     if (!ctx) return;
 
     tomoe_glyph_clear (ctx->normalized_glyph);
-    tomoe_glyph_init_with_strokes (ctx->normalized_glyph,
-                                   ctx->glyph->stroke_num);
+    tomoe_glyph_init (ctx->normalized_glyph,
+                      ctx->glyph->stroke_num);
 
     for (i = 0; i < ctx->glyph->stroke_num; i++)
     {
@@ -362,7 +383,7 @@ normalize_strokes (tomoe_hw_context *ctx)
         tomoe_stroke *stroke = &ctx->glyph->strokes[i];
 
         /* First point is always used. */
-        tomoe_stroke_init_with_points (dest, 1);
+        tomoe_stroke_init (dest, 1);
         dest->points[0] = stroke->points[0];
 
         /* Drop needless points */
