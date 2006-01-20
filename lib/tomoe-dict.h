@@ -51,7 +51,7 @@ typedef struct _tomoe_dict tomoe_dict;
  * @param filename - Name of dictionary file to load.
  * @return Pointer to newly allocated tomoe_dict struct.
  */
-tomoe_dict  *tomoe_dict_new           (const char   *filename);
+tomoe_dict  *tomoe_dict_new           (const char    *filename);
 
 /**
  * @brief Free an allocated tomoe_dict struct.
@@ -98,7 +98,7 @@ unsigned int tomoe_dict_get_number_of_letters
                                       (tomoe_dict    *dict);
 
 /**
- * @brief Reurn the array of tomoe_letter which is kept in a tomoe_dict.
+ * @brief Reurn an array of tomoe_letter which is kept in a tomoe_dict.
  * @param dict - Pointer to the tomoe_dict struct.
  * @return The array of tomoe_letter.
  */
