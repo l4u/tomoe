@@ -104,7 +104,7 @@ tomoe_glyph_init_with_strokes (tomoe_glyph *glyph, int stroke_num)
 void
 tomoe_glyph_clear (tomoe_glyph *glyph)
 {
-    int i;
+    unsigned int i;
 
     if (!glyph) return;
 
