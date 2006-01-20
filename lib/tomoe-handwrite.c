@@ -304,7 +304,7 @@ get_vertex (tomoe_stroke *dest, tomoe_point *first, tomoe_point *last)
 
     dist = get_distance (first, last, &most);
 
-    if (dist > error)
+    if (most && dist > error)
     {
         /*
          * Pick up most far point, and continue to investigate points between
@@ -314,7 +314,7 @@ get_vertex (tomoe_stroke *dest, tomoe_point *first, tomoe_point *last)
         get_vertex (dest, first, most);
         get_vertex (dest, most, last);
     }
-    else if (most)
+    else
     {
         /*
          * Now we can ignore points between first and last. Most far point from
