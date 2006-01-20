@@ -267,6 +267,9 @@ tomoe_hw_get_candidates (tomoe_hw_context *ctx)
 
 
 
+/*
+ * Functions for normalizing handwrited glyph.
+ */
 static int
 get_distance (tomoe_point *first, tomoe_point *last, tomoe_point **most)
 {
@@ -323,8 +326,8 @@ get_vertex (tomoe_stroke *dest, tomoe_point *first, tomoe_point *last)
     {
         /*
          * Pick up most far point, and continue to investigate points between
-         * first and most, and between most and last.
-         * The most far points will be added after it.
+         * first and most. The most far points will be added after it, and
+         * investigate points between most and last.
          */
         get_vertex (dest, first, most);
         get_vertex (dest, most, last);
@@ -333,7 +336,7 @@ get_vertex (tomoe_stroke *dest, tomoe_point *first, tomoe_point *last)
     {
         /*
          * Now we can ignore points between first and last. Most far point from
-         * the line is near enough.
+         * the line is near enough. Simply add last point to dest array.
          */
         dest->point_num++;
         dest->points = realloc (dest->points, dest->point_num);
@@ -368,6 +371,12 @@ normalize_strokes (tomoe_hw_context *ctx)
     }
 }
 
+
+
+/*
+ * Functions for matching handwrited glyph with registered letters in
+ * a dictionary.
+ */
 static void
 search_glyph (tomoe_hw_context *ctx, tomoe_dict *dict)
 {
