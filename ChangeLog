@@ -1,3 +1,12 @@
+2006-01-04 Juernjakob Harder <juernjakob.harder@gmail.com>
+	* lib/tomoe-dict.c: Ported tomoe_dict_new to xml database.
+	* lib/tomoe.c: Changed all.tic to all.xml.
+	* data/all.xml: Added.
+	* utils/makexmldict.rb: Added.
+	* utils/dictionary/rb: Ported to xml database.
+	* configure.in: Added libxml2
+	* lib/Makefile.am: Added libxml2
+
 2005-01-20 Takuro Ashie <ashie@homa.ne.jp>
 
 	* lib/tomoe-letter.[ch]: Remove tomoe_*_init_with_*() functions.
