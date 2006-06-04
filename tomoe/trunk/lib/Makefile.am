@@ -26,7 +26,7 @@ AM_CPPFLAGS =							\
 	-DTOMOESYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\"	\
 	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"
 
-INCLUDES =
+INCLUDES = $(LIBXML_CFLAGS)
 
 pkginclude_HEADERS = \
 	tomoe.h \
@@ -51,3 +51,5 @@ libtomoe_la_LDFLAGS =						\
 
 libtomoe_la_LD_ADD = \
 	-lm
+
+libtomoe_la_LIBADD = $(LIBXML_LIBS)
