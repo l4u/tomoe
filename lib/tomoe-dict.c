@@ -4,6 +4,7 @@
  *  Copyright (C) 2004 Hiroaki Nakamura <hnakamur@good-day.co.jp>
  *  Copyright (C) 2005 Hiroyuki Ikezoe <poincare@ikezoe.net>
  *  Copyright (C) 2005 Takuro Ashie <ashie@homa.ne.jp>
+ *  Copyright (C) 2006 Juernjakob Harder <juernjakob.harder@gmail.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -26,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libxml/xmlreader.h>
 
 #include "tomoe-dict.h"
 
@@ -58,65 +60,118 @@ tomoe_dict_new (const char *filename)
     tomoe_point  *pnt  = NULL;
     char line_buf[LINE_BUF_SIZE];
     FILE *fp;
+    xmlTextReaderPtr reader;
+    int res;
+    int parse_mode = 0;
+
+    LIBXML_TEST_VERSION
 
     if (!filename && !*filename) return NULL;
 
-    fp = fopen (filename, "r");
-    if (!fp) return NULL;
+    reader = xmlReaderForFile(filename, NULL, 0);
+    if (!reader) return NULL;
 
     dict = calloc (1, sizeof (tomoe_dict));
     dict->letter_num = DICT_LETTER_INITIAL_SIZE;
     dict->letters    = calloc (dict->letter_num, sizeof (tomoe_letter));
 
-    while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL)
+    // FIX-ME: clean up, error handling
+
+    res = xmlTextReaderRead(reader);
+    while (res == 1)
     {
-        if (p[0] == '\n')
-            continue;
+        const xmlChar *name, *value;
 
-        ++letter_num;
-        if (letter_num > dict->letter_num)
+        name = xmlTextReaderConstName(reader);
+        if (name == NULL)
+            name = BAD_CAST "--";
+
+        switch (parse_mode)
         {
-            dict->letter_num += DICT_LETTER_EXPAND_SIZE;
-            dict->letters = realloc (dict->letters,
-                                     sizeof (tomoe_letter) * dict->letter_num);
-        }
-
-        i = letter_num - 1;
-        lttr = &dict->letters[i];
-        p = strchr (p, '\n');
-        if (p != NULL)
-            *p = '\0';
-        lttr->character = strdup (line_buf);
-
-        p = fgets (line_buf, LINE_BUF_SIZE, fp);
-        if (p == NULL)
+        case 0:
+            if (0 == xmlStrcmp(name, BAD_CAST "dict"))
+                parse_mode = 1;
             break;
-        if (p[0] != ':')
-            continue;
-
-        sscanf (p + 1, "%d", &stroke_num);
-
-        lttr->c_glyph = calloc (1, sizeof (tomoe_glyph));
-        tomoe_glyph_init (lttr->c_glyph, stroke_num);
-
-        for (j = 0; j < stroke_num; j++)
-        {
-            strk = &lttr->c_glyph->strokes[j];
-            p = fgets (line_buf, LINE_BUF_SIZE, fp);
-            sscanf (p, "%d", &point_num);
-            p = strchr (p, ' ');
-            tomoe_stroke_init (strk, point_num);
-            for (k = 0; k < point_num; k++)
+        case 1:
+            if (0 == xmlStrcmp(name, BAD_CAST "character"))
             {
-                pnt = &strk->points[k];
-                sscanf (p, " (%d %d)", &pnt->x, &pnt->y);
-                p = strchr (p, ')') + 1;
-            }
+                parse_mode = 2;
 
-            /*stroke_calculate_metrics (strk);*/
+                ++letter_num;
+                if (letter_num > dict->letter_num)
+                {
+                    dict->letter_num += DICT_LETTER_EXPAND_SIZE;
+                    dict->letters = realloc (dict->letters,
+                        sizeof (tomoe_letter) * dict->letter_num);
+                }
+
+                i = letter_num - 1;
+                lttr = &dict->letters[i];
+            }
+            else if (0 == xmlStrcmp(name, BAD_CAST "dict") && 
+                     15 == xmlTextReaderNodeType(reader))
+                parse_mode = 0;
+            break;
+        case 2:
+            if (0 == xmlStrcmp(name, BAD_CAST "literal"))
+                parse_mode = 3;
+            else if (0 == xmlStrcmp(name, BAD_CAST "strokelist"))
+            {
+                sscanf(xmlTextReaderGetAttribute(reader, BAD_CAST "count"), "%d", &stroke_num);
+                lttr->c_glyph = calloc(1, sizeof (tomoe_glyph));
+                tomoe_glyph_init(lttr->c_glyph, stroke_num);
+                j = 0;
+                parse_mode = 4;
+            }
+            else if (1 == xmlTextReaderDepth(reader))
+                parse_mode = 1;
+            break;
+        case 3:
+            if (0 == xmlStrcmp(name, BAD_CAST "literal") && 
+                15 == xmlTextReaderNodeType(reader))
+                parse_mode = 2;
+            else
+            {
+                lttr->character = strdup (xmlTextReaderConstValue(reader));
+            }
+            break;
+        case 4:
+            if (0 == xmlStrcmp(name, BAD_CAST "s"))
+            {
+                sscanf (xmlTextReaderGetAttribute(reader, BAD_CAST "count"), "%d", &point_num);
+                parse_mode = 5;
+            }
+            else if (0 == xmlStrcmp(name, BAD_CAST "strokelist") && 
+                     15 == xmlTextReaderNodeType(reader))
+                parse_mode = 2;
+            break;
+        case 5:
+            if (0 == xmlStrcmp(name, BAD_CAST "s") && 
+                15 == xmlTextReaderNodeType(reader))
+            {
+                parse_mode = 4;
+                j++;
+            }
+            else
+            {
+                strk = &lttr->c_glyph->strokes[j];
+                tomoe_stroke_init (strk, point_num);
+                p = BAD_CAST xmlTextReaderConstValue(reader);
+                for (k = 0; k < point_num; k++)
+                {
+                    pnt = &strk->points[k];
+                    sscanf (p, " (%d %d)", &pnt->x, &pnt->y);
+                    p = strchr (p, ')') + 1;
+                }
+            }
+            break;
+        default:;
         }
+
+        res = xmlTextReaderRead(reader);
     }
-    fclose (fp);
+
+    xmlFreeTextReader(reader);
 
     if (letter_num < dict->letter_num)
         dict->letter_num = letter_num;

@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 
+require 'xml/libxml'
+
 class Point
   def initialize(x = 0, y = 0)
     @x = x
@@ -59,7 +61,7 @@ class Letter
 end
 
 class Dictionary
-  def initialize(dictfilepath="../data/all.tdic")
+  def initialize(dictfilepath="../data/all.xml")
     @letters = load(dictfilepath)
     @letters_by_stroke_count = group_by_stroke_count(@letters)
   end
@@ -69,47 +71,39 @@ class Dictionary
 
   def load(dictfilepath)
     letters = []
-    open(dictfilepath, "r") do |f|
-      while ((line = f.gets) != nil)
-        line.chomp!
-        character = line
 
-        line = f.gets
-        line.chomp!
-        stroke_num = line[1 .. line.length].to_i
+    doc = XML::Document.file(dictfilepath)
+    root = doc.root
+    doc.find('//dict/character').each do |node|
+      literal = node.find('literal').to_a.first
+#      puts "letter #{literal}\n"
 
-        strokes = []
-        for i in 1 .. stroke_num
-          line = f.gets
-          line.chomp!
-	  index1 = 0
+      strokes = []
+      points = []
+      node.find('strokelist/s').each do |stroke|
+	line = "#{stroke}\n"
+	index1 = 0
+	index2 = 0
+	points = []
+	index1 = line.index("(", index2)
+	while index1 != nil
+	  index1 += 1
 	  index2 = line.index(" ", index1)
-	  # point_num = line.slice(index1, index2)
-
-	  points = []
+	  x = line.slice(index1, index2)
+	  index1 = index2 + 1
+	  index2 = line.index(")", index1)
+	  y = line.slice(index1, index2)
+          point = Point.new(x.to_i, y.to_i)
+          points.push(point)
 	  index1 = line.index("(", index2)
-	  while index1 != nil
-	    index1 += 1
-	    index2 = line.index(" ", index1)
-	    x = line.slice(index1, index2)
-	    index1 = index2 + 1
-	    index2 = line.index(")", index1)
-	    y = line.slice(index1, index2)
-            point = Point.new(x.to_i, y.to_i)
-            points.push(point)
-	    index1 = line.index("(", index2)
-          end
-          stroke = Stroke.new(points)
-          strokes.push(stroke)
         end
-
-        empty_line = f.gets
-
-        letter = Letter.new(character, strokes)
-#print "letter=", letter, "\n"
-	letters.push(letter)
+        stroke = Stroke.new(points)
+        strokes.push(stroke)
       end
+      letter = Letter.new("#{literal}", strokes)
+      letters.push(letter)
     end
+
     return letters
   end
 
@@ -143,7 +137,7 @@ class Dictionary
 #    for i in 0 .. @letters_by_stroke_count.size - 1
 #      stroke_count = i + 1
 #      letters = @letters_by_stroke_count[i]
-#      s += stroke_count.to_s + "²è:"
+#      s += stroke_count.to_s + "ï¿½"
 #      for letter in letters
 #	s += " " + letter.character
 #      end

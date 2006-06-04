@@ -79,7 +79,7 @@ tomoe_init (void)
 {
     /* load all available dictionaries */
     if (!g_dict)
-        g_dict = tomoe_dict_new (TOMOEDATADIR "/all.tdic");
+        g_dict = tomoe_dict_new (TOMOEDATADIR "/all.xml");
 }
 
 /* finalize tomoe */
