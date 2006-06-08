@@ -57,6 +57,7 @@ struct _tomoe_glyph
 
 struct _tomoe_letter
 {
+    int           ref;
     char         *character;
     tomoe_glyph  *c_glyph;
 };
@@ -104,14 +105,14 @@ unsigned int    tomoe_glyph_get_number_of_strokes
                                                 (tomoe_glyph *glyph);
 #endif
 
-tomoe_letter   *tomoe_letter_new                (void);
-void            tomoe_letter_init               (tomoe_letter *lttr);
-void            tomoe_letter_clear              (tomoe_letter *lttr);
-void            tomoe_letter_free               (tomoe_letter *lttr);
-#if 0
-void            tomoe_letter_ref                (tomoe_letter *lttr);
-void            tomoe_letter_unref              (tomoe_letter *lttr);
-#endif
+tomoe_letter*   tomoe_letter_new                (void);
+tomoe_letter*   tomoe_letter_addref             (tomoe_letter*        this);
+void            tomoe_letter_free               (tomoe_letter*        this);
+void            tomoe_letter_clear              (tomoe_letter*        this);
+int             tomoe_letter_compare            (const tomoe_letter** p0,
+                                                 const tomoe_letter** p1);
+int             tomoe_candidate_compare         (const tomoe_candidate** a,
+                                                 const tomoe_candidate** b);
 
 #ifdef	__cplusplus
 }

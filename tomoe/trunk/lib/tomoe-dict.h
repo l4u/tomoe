@@ -4,6 +4,7 @@
  *  Copyright (C) 2004 Hiroaki Nakamura <hnakamur@good-day.co.jp>
  *  Copyright (C) 2005 Hiroyuki Ikezoe <poincare@ikezoe.net>
  *  Copyright (C) 2005 Takuro Ashie <ashie@homa.ne.jp>
+ *  Copyright (C) 2006 Juernjakob Harder <juernjakob.harder@gmail.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -37,6 +38,7 @@ extern "C" {
 
 #include "tomoe-data-types.h"
 #include "tomoe-letter.h"
+#include "array.h"
 
 /**
  * @typedef typedef struct _tomoe_dict tomoe_dict;
@@ -64,15 +66,7 @@ void         tomoe_dict_free          (tomoe_dict    *dict);
  * @param dict - Pointer to the tomoe_dict struct to increase reference count.
  * @return The tomoe_dict.
  */
-tomoe_dict  *tomoe_dict_ref           (tomoe_dict    *dict);
-
-/**
- * @brief Decrease reference count.
- *        If the reference count has reached to 0, the dictionary will be freed
- *        automatically.
- * @param dict - Pointer to the tomoe_dict struct to decrease reference count.
- */
-void         tomoe_dict_unref         (tomoe_dict    *dict);
+tomoe_dict  *tomoe_dict_addref        (tomoe_dict    *dict);
 
 /**
  * @brief Get the file name of the tomoe dictionary.
@@ -91,26 +85,33 @@ const char  *tomoe_dict_get_file_name (tomoe_dict    *dict);
 const char  *tomoe_dict_get_name      (tomoe_dict    *dict);
 
 /**
- * @brief Return number of letters which is kept in a tomoe_dict.
- * @param dict - Pointer to the tomoe_dict struct.
- * @return Number of letters.
- */
-unsigned int tomoe_dict_get_number_of_letters
-                                      (tomoe_dict    *dict);
-
-/**
  * @brief Reurn an array of tomoe_letter which is kept in a tomoe_dict.
  * @param dict - Pointer to the tomoe_dict struct.
  * @return The array of tomoe_letter.
  */
-const tomoe_letter *
-             tomoe_dict_get_letters   (tomoe_dict    *dict);
+tomoe_array* tomoe_dict_get_letters   (tomoe_dict    *dict);
+
+/**
+ * @brief
+ * @param dict   -
+ * @param letter -
+ */
+tomoe_array* tomoe_dict_get_matched   (tomoe_dict*    this,
+                                       tomoe_glyph*   input);
 
 
 #if 0
 /*
  * Not implemented yet.
  */
+/**
+ * @brief
+ * @param dict   -
+ * @param letter -
+ */
+tomoe_array* tomoe_dict_get_reading   (tomoe_dict*    this,
+                                       const char*    reading);
+
 /**
  * @brief
  * @param dict   -

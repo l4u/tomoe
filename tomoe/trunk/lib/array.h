@@ -60,6 +60,27 @@ int            _pointer_array_find_data   (pointer_array *a, void *p);
 
 void           _pointer_array_unref       (pointer_array *a);
 
+typedef struct _tomoe_array tomoe_array;
+
+typedef void* (*tomoe_addref_fn)          (void*);
+typedef void  (*tomoe_free_fn)            (void*);
+typedef int   (*tomoe_compare_fn)         (const void**,
+                                           const void**);
+
+tomoe_array*   tomoe_array_new            (tomoe_compare_fn  compare,
+                                           tomoe_addref_fn   addref,
+                                           tomoe_free_fn     free);
+tomoe_array*   tomoe_array_addref         (tomoe_array*      this);
+void           tomoe_array_free           (tomoe_array*      this);
+tomoe_array*   tomoe_array_append         (tomoe_array*      this,
+                                           void*             p);
+int            tomoe_array_find           (tomoe_array*      this,
+                                           void*             p);
+void           tomoe_array_sort           (tomoe_array*      this);
+int            tomoe_array_size           (tomoe_array*      this);
+void*          tomoe_array_get            (tomoe_array*      this,
+                                           int index);
+
 #ifdef	__cplusplus
 }
 #endif

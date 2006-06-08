@@ -1,3 +1,17 @@
+2006-01-08 Juernjakob Harder <juernjakob.harder@gmail.com>
+	* lib/tomoe-db.[ch]: Added.
+	* data/readingtest.xml: Added.
+	* test/testreading.c: Added.
+	* lib/tomoe.[ch]: Dictionary handling moved to tomoe-db, replaced by database.
+	tomoe_get_matched returns now candidates in tomoe_array. API CHANGE
+	* lib/tomoe-dict.[ch]: *_get_matched is now handled by tomoe_dict.
+	* lib/tomoe-letter.[ch]: Reference count for tomoe_letter, 
+	tomoe_letter_compare and tomoe_candidate_compare added.
+	* lib/array.[ch]: tomoe_array added.
+	* test/Makefile.am: testreading.c added.
+	* Makefile.am: tomoe-db.[ch] added.
+	* main.c, test/testtomoe.c: Due to changed API, fixed 
+
 2006-01-04 Juernjakob Harder <juernjakob.harder@gmail.com>
 	* lib/tomoe-dict.c: Ported tomoe_dict_new to xml database.
 	* lib/tomoe.c: Changed all.tic to all.xml.
