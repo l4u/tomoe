@@ -24,6 +24,16 @@
 #include "stdlib.h"
 #include "stdio.h"
 
+struct _tomoe_array
+{
+    int                ref;
+    void**             p;
+    int                len;
+    int                cap;
+    tomoe_compare_fn   compare;
+    tomoe_addref_fn    addref;
+    tomoe_free_fn      free;
+};
 
 int_array *
 _int_array_new (void)
@@ -182,6 +192,106 @@ _pointer_array_find_data (pointer_array *a, void *p)
     }
 
     return -1;
+}
+
+tomoe_array*
+tomoe_array_new (tomoe_compare_fn  compare,
+                 tomoe_addref_fn   addref,
+                 tomoe_free_fn     free)
+{
+    tomoe_array* p;
+
+    p           = calloc(1, sizeof(tomoe_array));
+    p->ref      = 1;
+    p->len      = 0;
+    p->cap      = 32;
+    p->p        = calloc(32, sizeof(void*));
+    p->compare  = (tomoe_compare_fn)compare;
+    p->addref   = (tomoe_addref_fn)addref;
+    p->free     = (tomoe_free_fn)free;
+
+    return p;
+}
+
+tomoe_array*
+tomoe_array_addref(tomoe_array* this)
+{
+    if (!this) return 0;
+    this->ref ++;
+    return this;
+}
+
+void
+tomoe_array_free(tomoe_array* this)
+{
+    int i;
+
+    if (!this) return;
+
+    this->ref --;
+    if (this->ref <= 0)
+    {
+        if (!this->free)
+            for (i = 0; i < this->len; i++)
+                this->free(this->p[i]);
+        free(this);
+    }
+}
+
+tomoe_array*
+tomoe_array_append (tomoe_array* this, void* p)
+{
+    if (!this) return 0;
+
+    if (this->len == this->cap)
+    {
+        this->cap += this->cap / 2;
+        this->p = realloc (this->p, sizeof (void*) * (this->cap));
+    }
+
+    if (!this->addref)
+        this->p[this->len] = p;
+    else
+        this->p[this->len] = this->addref(p);
+    this->len ++;
+
+    return this;
+}
+
+int
+tomoe_array_find (tomoe_array* this, void* p)
+{
+    void* e;
+    if (!this || !this->compare) return -1;
+
+    e = bsearch(&p, this->p, this->len, sizeof(void*), 
+        ((int(*)(const void*, const void*))this->compare));
+    if (!e) return -1;
+
+    return (((int*)e) - ((int*)p)) / sizeof(int*);
+}
+
+void
+tomoe_array_sort (tomoe_array* this)
+{
+    if (!this || !this->compare) return;
+
+    qsort(this->p, this->len, sizeof(void*), 
+        ((int(*)(const void*, const void*))this->compare));
+}
+
+int
+tomoe_array_size (tomoe_array* this)
+{
+    if (!this) return 0;
+    return this->len;
+}
+
+void*
+tomoe_array_get (tomoe_array* this, int index)
+{
+    if (!this || index < 0 || this->len <= index) return NULL;
+    return this->p[index];
 }
 
 /*

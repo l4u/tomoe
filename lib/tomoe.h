@@ -35,35 +35,18 @@ extern "C" {
 #endif
 
 #include "tomoe-data-types.h"
-#include "tomoe-dict.h"
+#include "tomoe-db.h"
 
 /**
  * @brief Initialize tomoe library.
  */
-void       tomoe_init          (void);
+tomoe_db*  tomoe_init          (void);
 
 /**
  * @brief Finalize tomoe library.
  */
 void       tomoe_term          (void);
 
-
-#if 1
-/**
- * @brief Get matched characters 
- * @param input    - matched candidates
- * @param matched  - 
- * @return         - the number of matched characters
- */
-int        tomoe_get_matched   (tomoe_glyph       *input,
-                                tomoe_candidate ***matched);
-/**
- * @brief Free matched characters.
- * @param matched - Array of pointer to matched candidates to free.
- * @param len     - Length of candidates array.
- */
-void       tomoe_free_matched  (tomoe_candidate  **matched,
-                                int                len);
 
 /**
  * @brief Register to the current user dictionary.
@@ -73,7 +56,6 @@ void       tomoe_free_matched  (tomoe_candidate  **matched,
  */
 tomoe_bool tomoe_data_register (tomoe_glyph       *input,
                                 char              *data);
-#endif
 
 #ifdef	__cplusplus
 }

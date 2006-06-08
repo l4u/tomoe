@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<dict>
+<tomoe_dictionary>
   <character>
     <literal>&#x3042;</literal>
     <strokelist count="3">
@@ -47866,4 +47866,4 @@
       <s count="7">(226 54) (69 251) (35 273) (38 243) (94 135) (141 140) (192 180) </s>
     </strokelist>
   </character>
-</dict>
+</tomoe_dictionary>

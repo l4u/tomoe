@@ -115,45 +115,66 @@ tomoe_letter *
 tomoe_letter_new (void)
 {
     tomoe_letter *lttr = calloc (1, sizeof (tomoe_letter));
+    if (!lttr) return NULL;
 
-    if (lttr)
-        tomoe_letter_init (lttr);
+    lttr->ref       = 1;
+    lttr->character = NULL;
+    lttr->c_glyph   = NULL;
 
     return lttr;
 }
 
-void
-tomoe_letter_init (tomoe_letter *lttr)
+tomoe_letter*
+tomoe_letter_addref (tomoe_letter* this)
 {
-    if (!lttr) return;
-
-    lttr->character = NULL;
-    lttr->c_glyph   = NULL;
+    if (!this) return NULL;
+    this->ref ++;
+    return this;
 }
 
 void
-tomoe_letter_clear (tomoe_letter *lttr)
+tomoe_letter_free (tomoe_letter *this)
 {
-    if (!lttr) return;
-
-    if (lttr->character != NULL)
+    if (!this) return;
+    this->ref --;
+    if (this->ref <= 0)
     {
-        free (lttr->character);
-        lttr->character = NULL;
-    }
-
-    if (lttr->c_glyph != NULL)
-    {
-        tomoe_glyph_free (lttr->c_glyph);
-        lttr->c_glyph = NULL;
+        tomoe_letter_clear (this);
+        free (this);
     }
 }
 
 void
-tomoe_letter_free (tomoe_letter *lttr)
+tomoe_letter_clear (tomoe_letter *this)
 {
-    if (!lttr) return;
+    if (!this) return;
 
-    tomoe_letter_clear (lttr);
-    free (lttr);
+    if (this->character != NULL)
+    {
+        free (this->character);
+        this->character = NULL;
+    }
+
+    if (this->c_glyph != NULL)
+    {
+        tomoe_glyph_free (this->c_glyph);
+        this->c_glyph = NULL;
+    }
+}
+
+int
+tomoe_letter_compare (const tomoe_letter** p0, const tomoe_letter** p1)
+{
+    return 0;
+}
+
+int
+tomoe_candidate_compare (const tomoe_candidate** a, const tomoe_candidate** b)
+{
+    int score_a = a[0]->score;
+    int score_b = b[0]->score;
+
+    return score_a > score_b ? 1
+        : score_a < score_b ? -1
+        : 0;
 }

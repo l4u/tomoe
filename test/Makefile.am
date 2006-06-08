@@ -31,11 +31,18 @@ INCLUDES = \
 	-I$(top_builddir)/lib
 
 noinst_PROGRAMS = \
-	testtomoe
+	testtomoe \
+	testreading
 
 testtomoe_SOURCES = \
 	testtomoe.c
 testtomoe_LDADD = \
+	$(top_builddir)/lib/libtomoe.la \
+	-lm
+
+testreading_SOURCES = \
+	testreading.c
+testreading_LDADD = \
 	$(top_builddir)/lib/libtomoe.la \
 	-lm
 

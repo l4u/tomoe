@@ -102,12 +102,13 @@ main (int argc, char **argv)
 {
     /* FIXME! read arguments */
 
-    tomoe_init ();
+    tomoe_db* db = tomoe_init ();
+    if (!db) exit (1);
 
     while (1)
     {
         tomoe_glyph *glyph;
-        tomoe_candidate **matched = NULL;
+        tomoe_array* matched = NULL;
         int candidate_num = 0;
 
         glyph = read_glyph ();
@@ -115,7 +116,8 @@ main (int argc, char **argv)
         if (!glyph)
             break;
 
-        candidate_num = tomoe_get_matched (glyph, &matched);
+        matched = tomoe_db_get_matched (db, glyph);
+        candidate_num = tomoe_array_size (matched);
 
         if (candidate_num != 0 && matched)
         {
@@ -123,17 +125,19 @@ main (int argc, char **argv)
 
             for (i = 0; i < candidate_num; i++)
             {
+                tomoe_candidate* p = (tomoe_candidate*)tomoe_array_get (matched, i);
                 if (i > 0)
                     fprintf (stdout, " ");
-                fprintf (stdout, " %s", matched[i]->letter);
+                fprintf (stdout, " %s", p->letter);
             }
             fprintf (stdout, "\n");
         }
 
         tomoe_glyph_free (glyph);
-        tomoe_free_matched (matched, candidate_num);
+        tomoe_array_free (matched);
     }
 
+    tomoe_db_free (db);
     tomoe_term ();
 
     return 0;

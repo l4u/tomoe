@@ -69,17 +69,20 @@ int
 main (int argc, char **argv)
 {
     tomoe_glyph *test_glyph = NULL;
-    tomoe_candidate **matched = NULL;
     int i, candidate_num = 0;
+    tomoe_array* matched = NULL;
+    tomoe_db* db = NULL;
 
-    tomoe_init ();
+    db = tomoe_init ();
+    if (!db) exit (1);
 
     test_glyph = read_test_data (); 
 
-    if (!test_glyph)
-        exit (1);
+    if (!test_glyph) 
+        goto END;
 
-    candidate_num = tomoe_get_matched (test_glyph, &matched);
+    matched = tomoe_db_get_matched (db, test_glyph);
+    candidate_num = tomoe_array_size(matched);
 
     if (candidate_num != 0)
     {
@@ -93,19 +96,20 @@ main (int argc, char **argv)
                  candidate_num);
         for (i = 0; i < candidate_num; i++)
         {
+            tomoe_candidate* p = (tomoe_candidate*)tomoe_array_get(matched, i);
             fprintf (stdout, "character:%s\tscore:%d\n",
-                     matched[i]->letter, matched[i]->score);
+                     p->letter, p->score);
         }
     }
+    else
+        fprintf (stdout, "No Candidate found!\n");
   
 END:
-    tomoe_glyph_free (test_glyph);
-
+    if (!test_glyph)
+        tomoe_glyph_free (test_glyph);
     if (matched)
-    {
-        tomoe_free_matched (matched, candidate_num);
-    }
-
+        tomoe_array_free (matched);
+    tomoe_db_free (db);
     tomoe_term ();
     return 0;
 }
