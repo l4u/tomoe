@@ -1,6 +1,7 @@
 /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2005 Takuro Ashie <ashie@homa.ne.jp>
+ *  Copyright (C) 2006 Juernjakob Harder <juernjakob.harder@gmail.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -23,6 +24,7 @@
 #include "tomoe-letter.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 tomoe_stroke *
 tomoe_stroke_new (void)
@@ -111,7 +113,7 @@ tomoe_glyph_free (tomoe_glyph *glyph)
     free (glyph);
 }
 
-tomoe_letter *
+tomoe_letter*
 tomoe_letter_new (void)
 {
     tomoe_letter *lttr = calloc (1, sizeof (tomoe_letter));
@@ -120,6 +122,9 @@ tomoe_letter_new (void)
     lttr->ref       = 1;
     lttr->character = NULL;
     lttr->c_glyph   = NULL;
+    lttr->readings  = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
+                                       NULL,
+                                       (tomoe_free_fn)free);
 
     return lttr;
 }
@@ -136,29 +141,13 @@ void
 tomoe_letter_free (tomoe_letter *this)
 {
     if (!this) return;
+
     this->ref --;
     if (this->ref <= 0)
     {
-        tomoe_letter_clear (this);
-        free (this);
-    }
-}
-
-void
-tomoe_letter_clear (tomoe_letter *this)
-{
-    if (!this) return;
-
-    if (this->character != NULL)
-    {
         free (this->character);
-        this->character = NULL;
-    }
-
-    if (this->c_glyph != NULL)
-    {
         tomoe_glyph_free (this->c_glyph);
-        this->c_glyph = NULL;
+        free (this);
     }
 }
 
@@ -177,4 +166,10 @@ tomoe_candidate_compare (const tomoe_candidate** a, const tomoe_candidate** b)
     return score_a > score_b ? 1
         : score_a < score_b ? -1
         : 0;
+}
+
+int
+tomoe_string_compare (const char** a, const char** b)
+{
+    return strcmp(*a, *b);
 }

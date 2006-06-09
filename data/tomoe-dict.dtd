@@ -1,0 +1,9 @@
+<!ELEMENT tomoe_dictionary (character*)>
+<!ELEMENT character (literal, strokelist?, readings?)*>
+<!ELEMENT literal (#PCDATA)>
+<!ELEMENT strokelist (s*)>
+<!ATTLIST strokelist count CDATA #REQUIRED>
+<!ELEMENT s (#PCDATA)>
+<!ATTLIST s count CDATA #REQUIRED>
+<!ELEMENT readings (r*)>
+<!ELEMENT r (#PCDATA)>

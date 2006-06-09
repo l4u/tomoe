@@ -1,4 +1,5 @@
-<?xml version="1.0"?>
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE tomoe_dictionary SYSTEM "tomoe-dict.dtd">
 <tomoe_dictionary>
 	<character>
 		<literal>&#x65E5;</literal>
@@ -9,12 +10,12 @@
 			<s count="2">(64 266) (218 278) </s>
 		</strokelist>
 		<readings>
-			<on>ニチ</on>
-			<on>ジツ</on>
-			<kun>ひ</kun>
-			<kun>-び</kun>
-			<kun>-か</kun>
-			<kun>-ka</kun>
+			<r>ニチ</r>
+			<r>ジツ</r>
+			<r>ひ</r>
+			<r>-び</r>
+			<r>-か</r>
+			<r>-ka</r>
 		</readings>
 	</character>
 </tomoe_dictionary>

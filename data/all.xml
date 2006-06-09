@@ -1,4 +1,5 @@
-<?xml version="1.0"?>
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE tomoe_dictionary SYSTEM "tomoe-dict.dtd">
 <tomoe_dictionary>
   <character>
     <literal>&#x3042;</literal>

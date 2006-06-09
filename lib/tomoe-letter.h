@@ -1,6 +1,7 @@
 /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2005 Takuro Ashie <ashie@homa.ne.jp>
+ *  Copyright (C) 2006 Juernjakob Harder <juernjakob.harder@gmail.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -31,6 +32,8 @@
 extern "C" {
 #endif
 
+#include "array.h"
+
 typedef struct _tomoe_point     tomoe_point;
 typedef struct _tomoe_stroke    tomoe_stroke;
 typedef struct _tomoe_glyph     tomoe_glyph;
@@ -58,8 +61,9 @@ struct _tomoe_glyph
 struct _tomoe_letter
 {
     int           ref;
-    char         *character;
-    tomoe_glyph  *c_glyph;
+    char*         character;
+    tomoe_glyph*  c_glyph;
+    tomoe_array*  readings;
 };
 
 struct _tomoe_candidate
@@ -108,11 +112,14 @@ unsigned int    tomoe_glyph_get_number_of_strokes
 tomoe_letter*   tomoe_letter_new                (void);
 tomoe_letter*   tomoe_letter_addref             (tomoe_letter*        this);
 void            tomoe_letter_free               (tomoe_letter*        this);
-void            tomoe_letter_clear              (tomoe_letter*        this);
 int             tomoe_letter_compare            (const tomoe_letter** p0,
                                                  const tomoe_letter** p1);
+
 int             tomoe_candidate_compare         (const tomoe_candidate** a,
                                                  const tomoe_candidate** b);
+
+int             tomoe_string_compare            (const char**  a,
+                                                 const char**  b);
 
 #ifdef	__cplusplus
 }

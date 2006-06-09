@@ -32,9 +32,17 @@ main (int argc, char **argv)
                  candidate_num);
         for (i = 0; i < candidate_num; i++)
         {
-            tomoe_candidate* p = (tomoe_candidate*)tomoe_array_get(matched, i);
-            fprintf (stdout, "character:%s\tscore:%d\n",
-                     p->letter, p->score);
+            tomoe_letter* p = (tomoe_letter*)tomoe_array_get(matched, i);
+            int j;
+            int reading_num = tomoe_array_size(p->readings);
+
+            fprintf (stdout, "character:%s\t", p->character);
+            for (j = 0; j < reading_num; j++)
+            {
+                const char* r = (const char*)tomoe_array_get(p->readings, j);
+                fprintf (stdout, " %s", r);
+            }
+            fprintf (stdout, "\n");
         }
     }
     else
