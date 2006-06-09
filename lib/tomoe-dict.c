@@ -126,7 +126,7 @@ tomoe_dict_new (const char *filename)
         switch (parse_mode)
         {
         case 0:
-            if (0 == xmlStrcmp(name, BAD_CAST "dict"))
+            if (0 == xmlStrcmp(name, BAD_CAST "tomoe_dictionary"))
                 parse_mode = 1;
             break;
         case 1:
@@ -135,7 +135,7 @@ tomoe_dict_new (const char *filename)
                 lttr = tomoe_letter_new();
                 parse_mode = 2;
             }
-            else if (0 == xmlStrcmp(name, BAD_CAST "dict") && 
+            else if (0 == xmlStrcmp(name, BAD_CAST "tomoe_dictionary") && 
                      15 == xmlTextReaderNodeType(reader))
                 parse_mode = 0;
             break;

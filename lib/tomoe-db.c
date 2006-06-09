@@ -39,31 +39,31 @@ tomoe_db*
 tomoe_db_new(void)
 {
     tomoe_db* p;
-    p = calloc(1, sizeof(tomoe_db));
-    p->ref = 1;
-    p->dicts = tomoe_array_new(NULL,
-                               (tomoe_addref_fn)tomoe_dict_addref,
-                               (tomoe_free_fn)tomoe_dict_free);
+    p        = calloc (1, sizeof(tomoe_db));
+    p->ref   = 1;
+    p->dicts = tomoe_array_new (NULL,
+                                (tomoe_addref_fn)tomoe_dict_addref,
+                                (tomoe_free_fn)tomoe_dict_free);
     return p;
 }
 
-tomoe_db* 
+tomoe_db*
 tomoe_db_addref(tomoe_db* this)
 {
-    if (this == 0) return 0;
+    if (!this) return NULL;
     this->ref ++;
     return this;
 }
 
-void 
+void
 tomoe_db_free(tomoe_db* this)
 {
-    if (this == 0) return;
+    if (!this) return;
     this->ref--;
     if (this->ref <= 0)
     {
-        tomoe_array_free(this->dicts);
-        free(this);
+        tomoe_array_free (this->dicts);
+        free (this);
     }
 }
 
@@ -75,19 +75,40 @@ tomoe_db_add_dict (tomoe_db* this, const char *filename)
     if (!this) return;
     if (!filename) return;
 
-    dict = tomoe_dict_new(filename);
-    tomoe_array_append(this->dicts, dict);
+    dict = tomoe_dict_new (filename);
+    tomoe_array_append (this->dicts, dict);
 }
 
 tomoe_array*
 tomoe_db_get_matched (tomoe_db* this, tomoe_glyph* input)
 {
-    return tomoe_dict_get_matched((tomoe_dict*)tomoe_array_get(this->dicts, 0), input);
+    int i, num;
+    tomoe_array* matched;
+    tomoe_dict* dict;
+
+    if (!this) return tomoe_array_new (NULL, NULL, NULL);
+    num = tomoe_array_size (this->dicts);
+    if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
+
+    dict = (tomoe_dict*)tomoe_array_get (this->dicts, 0);
+    matched = tomoe_dict_get_matched (dict, input);
+    for (i = 1; i < num; i++)
+    {
+        tomoe_array* tmp;
+
+        dict = (tomoe_dict*)tomoe_array_get (this->dicts, i);
+        tmp = tomoe_dict_get_matched (dict, input);
+        tomoe_array_merge (matched, tmp);
+        tomoe_array_free (tmp);
+    }
+    tomoe_array_sort (matched);
+
+    return matched;
 }
 
 tomoe_array*
 tomoe_db_get_reading (tomoe_db* this, const char* input)
 {
-    tomoe_array* p = tomoe_array_new(NULL, NULL, NULL);
+    tomoe_array* p = tomoe_array_new (NULL, NULL, NULL);
     return p;
 }

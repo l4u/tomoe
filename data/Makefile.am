@@ -21,7 +21,7 @@
 CLEANFILES = *~ *.bak
 
 dicdir = $(datadir)/$(PACKAGE)
-dic_DATA = hiragana.tdic all.tdic
+dic_DATA = readingtest.xml all.xml
 
 EXTRA_DIST = \
 	$(dic_DATA)

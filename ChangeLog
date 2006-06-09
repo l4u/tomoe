@@ -1,3 +1,10 @@
+2006-01-09 Juernjakob Harder <juernjakob.harder@gmail.com>
+	* lib/tomoe-db.c: Calls tomoe_dict_get_matched of all loaded dictionaries and merge.
+	* lib/array.[ch]: tomoe_array_merge added.
+	* readingtest.xml: Fixed.
+	* tomoe-dict.c: Dictionary root tag changed to tomoe_dictionary.
+	* Makefile.am: readingtest.xml all.xml added.
+
 2006-01-08 Juernjakob Harder <juernjakob.harder@gmail.com>
 	* lib/tomoe-db.[ch]: Added.
 	* data/readingtest.xml: Added.
