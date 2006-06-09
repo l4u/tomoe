@@ -85,6 +85,10 @@ static int        match_stroke_num          (tomoe_dict*    dict,
                                              int            input_stroke_num,
                                              int_array     *adapted);
 
+int               _parse_readings           (xmlTextReaderPtr reader,
+                                             tomoe_letter*    lttr);
+
+
 tomoe_dict *
 tomoe_dict_new (const char *filename)
 {
@@ -105,14 +109,17 @@ tomoe_dict_new (const char *filename)
     if (!filename && !*filename) return NULL;
     if (!dict) return NULL;
 
-    reader = xmlReaderForFile(filename, NULL, 0);
+    reader = xmlReaderForFile(filename, NULL,
+                              XML_PARSE_DTDATTR |
+                              XML_PARSE_NOENT |
+                              XML_PARSE_DTDVALID);
     if (!reader) return NULL;
 
     dict->letters = tomoe_array_new((tomoe_compare_fn)tomoe_letter_compare,
                                     (tomoe_addref_fn)tomoe_letter_addref,
                                     (tomoe_free_fn)tomoe_letter_free);
 
-    // FIX-ME: clean up, error handling
+    // FIXME: clean up, error handling
 
     res = xmlTextReaderRead(reader);
     while (res == 1)
@@ -149,6 +156,10 @@ tomoe_dict_new (const char *filename)
                 tomoe_glyph_init(lttr->c_glyph, stroke_num);
                 j = 0;
                 parse_mode = 4;
+            }
+            else if (0 == xmlStrcmp(name, BAD_CAST "readings"))
+            {
+                res = _parse_readings (reader, lttr);
             }
             else if (0 == xmlStrcmp(name, BAD_CAST "character") &&
                      15 == xmlTextReaderNodeType(reader))
@@ -201,10 +212,13 @@ tomoe_dict_new (const char *filename)
         default:;
         }
 
-        res = xmlTextReaderRead(reader);
+        if (1 != xmlTextReaderIsValid (reader))
+            fprintf (stderr, "Dictionary %s does not validate\n", filename);
+        if (res == 1)
+            res = xmlTextReaderRead (reader);
     }
 
-    xmlFreeTextReader(reader);
+    xmlFreeTextReader (reader);
 
     dict->ref_count = 1;
 
@@ -377,6 +391,32 @@ tomoe_dict_get_matched (tomoe_dict* this, tomoe_glyph* input)
     _pointer_array_unref (first_cands);
 
     return matched;
+}
+
+tomoe_array*
+tomoe_dict_get_reading (tomoe_dict* this, const char* input)
+{
+    tomoe_array* reading = tomoe_array_new (NULL,
+                                            (tomoe_addref_fn)tomoe_letter_addref,
+                                            (tomoe_free_fn)tomoe_letter_free);
+    int letter_num = tomoe_array_size (this->letters);
+    int i;
+
+    for (i = 0; i < letter_num; i++)
+    {
+        tomoe_letter* lttr = (tomoe_letter*)tomoe_array_get (this->letters, i);
+        int j;
+        int reading_num = tomoe_array_size (lttr->readings);
+
+        for (j = 0; j < reading_num; j++)
+        {
+            const char* r = (const char*)tomoe_array_get (lttr->readings, j);
+            if (0 == strcmp(r, input))
+                tomoe_array_append(reading, lttr);
+        }
+    }
+
+    return reading;
 }
 
 /*
@@ -820,4 +860,41 @@ match_stroke_num (tomoe_dict* dict, int letter_index, int input_stroke_num, int_
         }
     }
     return pj;
+}
+
+int
+_parse_readings (xmlTextReaderPtr reader, tomoe_letter* lttr)
+{
+    int mode = 0;
+    int res = xmlTextReaderRead (reader);
+    while (res == 1)
+    {
+        const xmlChar *name;
+
+        name = xmlTextReaderConstName (reader);
+        if (name == NULL)
+            name = BAD_CAST "--";
+        switch (mode)
+        {
+        case 0:
+            if (0 == xmlStrcmp (name, BAD_CAST "readings") &&
+                15 == xmlTextReaderNodeType (reader))
+                return res;
+            if (0 == xmlStrcmp (name, BAD_CAST "r"))
+                mode = 1;
+            break;
+        case 1:
+            if (3 == xmlTextReaderNodeType(reader))
+                tomoe_array_append (lttr->readings, strdup (xmlTextReaderConstValue (reader)));
+            else if (0 == xmlStrcmp (name, BAD_CAST "r") &&
+                     15 == xmlTextReaderNodeType (reader))
+                mode = 0;
+            break;
+        default:;
+        }
+
+        res = xmlTextReaderRead (reader);
+    }
+
+    return res;
 }

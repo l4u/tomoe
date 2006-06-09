@@ -300,8 +300,7 @@ tomoe_array_merge (tomoe_array* this, tomoe_array* append)
 {
     int i, num;
 
-    if (!this || !append) return NULL;
-printf("array {%d} merge with {%d}\n", tomoe_array_size(this), tomoe_array_size(append));
+    if (!this || !append) return;
     num = tomoe_array_size(append);
     for (i = 0; i < num; i++)
         tomoe_array_append(this, tomoe_array_get(append, i));

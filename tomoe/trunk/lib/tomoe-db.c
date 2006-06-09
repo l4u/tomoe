@@ -109,6 +109,26 @@ tomoe_db_get_matched (tomoe_db* this, tomoe_glyph* input)
 tomoe_array*
 tomoe_db_get_reading (tomoe_db* this, const char* input)
 {
-    tomoe_array* p = tomoe_array_new (NULL, NULL, NULL);
-    return p;
+    int i, num;
+    tomoe_array* reading;
+    tomoe_dict* dict;
+
+    if (!this) return tomoe_array_new (NULL, NULL, NULL);
+    num = tomoe_array_size (this->dicts);
+    if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
+
+    dict = (tomoe_dict*)tomoe_array_get (this->dicts, 0);
+    reading = tomoe_dict_get_reading (dict, input);
+    for (i = 1; i < num; i++)
+    {
+        tomoe_array* tmp;
+
+        dict = (tomoe_dict*)tomoe_array_get (this->dicts, i);
+        tmp = tomoe_dict_get_reading (dict, input);
+        tomoe_array_merge (reading, tmp);
+        tomoe_array_free (tmp);
+    }
+    //tomoe_array_sort (reading);
+
+    return reading;
 }

@@ -85,33 +85,34 @@ const char  *tomoe_dict_get_file_name (tomoe_dict    *dict);
 const char  *tomoe_dict_get_name      (tomoe_dict    *dict);
 
 /**
- * @brief Reurn an array of tomoe_letter which is kept in a tomoe_dict.
+ * @brief Return an array of tomoe_letter which is kept in a tomoe_dict.
  * @param dict - Pointer to the tomoe_dict struct.
  * @return The array of tomoe_letter.
  */
 tomoe_array* tomoe_dict_get_letters   (tomoe_dict    *dict);
 
 /**
- * @brief
- * @param dict   -
- * @param letter -
+ * @brief Match strokes of tomoe_letter with input.
+ * @param this   - Pointer to the tomoe_dict object.
+ * @param input  - Pointer to tomoe_glyph matchkey.
+ * @return The array of tomoe_candidate.
  */
 tomoe_array* tomoe_dict_get_matched   (tomoe_dict*    this,
                                        tomoe_glyph*   input);
 
+/**
+ * @brief Match reading of tomoe_letter with input.
+ * @param this   - Pointer to the tomoe_dict object.
+ * @param input  - Pointer to string matchkey
+ * @return The array of tomoe_candidate.
+ */
+tomoe_array* tomoe_dict_get_reading   (tomoe_dict*    this,
+                                       const char*    input);
 
 #if 0
 /*
  * Not implemented yet.
  */
-/**
- * @brief
- * @param dict   -
- * @param letter -
- */
-tomoe_array* tomoe_dict_get_reading   (tomoe_dict*    this,
-                                       const char*    reading);
-
 /**
  * @brief
  * @param dict   -
