@@ -1,6 +1,7 @@
 /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2005 Hiroyuki Ikezoe <poincare@ikezoe.net>
+ *  Copyright (C) 2006 Juernjakob Harder <juernjakob@gmail.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -80,6 +81,8 @@ void           tomoe_array_sort           (tomoe_array*      this);
 int            tomoe_array_size           (tomoe_array*      this);
 void*          tomoe_array_get            (tomoe_array*      this,
                                            int index);
+void           tomoe_array_merge          (tomoe_array*      this,
+                                           tomoe_array*      append);
 
 #ifdef	__cplusplus
 }

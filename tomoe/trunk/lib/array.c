@@ -1,6 +1,7 @@
 /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2005 Hiroyuki Ikezoe <poincare@ikezoe.net>
+ *  Copyright (C) 2006 Juernjakob Harder <juernjakob.harder@gmail.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -292,6 +293,18 @@ tomoe_array_get (tomoe_array* this, int index)
 {
     if (!this || index < 0 || this->len <= index) return NULL;
     return this->p[index];
+}
+
+void
+tomoe_array_merge (tomoe_array* this, tomoe_array* append)
+{
+    int i, num;
+
+    if (!this || !append) return NULL;
+printf("array {%d} merge with {%d}\n", tomoe_array_size(this), tomoe_array_size(append));
+    num = tomoe_array_size(append);
+    for (i = 0; i < num; i++)
+        tomoe_array_append(this, tomoe_array_get(append, i));
 }
 
 /*
