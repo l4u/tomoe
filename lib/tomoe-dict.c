@@ -32,7 +32,7 @@
 
 #include "tomoe-dict.h"
 #include "tomoe-letter.h"
-#include "array.h"
+#include "tomoe-array.h"
 
 #define LIMIT_LENGTH ((300 * 0.25) * (300 * 0.25))
 #define LINE_BUF_SIZE 4096

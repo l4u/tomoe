@@ -1,3 +1,9 @@
+2006-06-16 Takuro Ashie <ashie@homa.ne.jp>
+
+	* tomoe-array.[ch]: Renamed from array.[ch].
+	* lib/Makefile.am, lib/tomoe-db.c, lib/tomoe-dict.[ch],
+	  lib/tomoe-letter.h, lib/tomoe.c: Replace array.h with tomoe-array.h.
+
 2006-06-09 Juernjakob Harder <juernjakob.harder@gmail.com>
 	* lib/tomoe-letter.[ch]: tomoe_string_compare added, tomoe_letter_clear removed.
 	Readings added to tomoe_letter.
@@ -39,62 +45,62 @@
 	* configure.in: Added libxml2
 	* lib/Makefile.am: Added libxml2
 
-2005-01-20 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-20 Takuro Ashie <ashie@homa.ne.jp>
 
 	* lib/tomoe-letter.[ch]: Remove tomoe_*_init_with_*() functions.
 	* lib/tomoe-dict.[ch]: Return tomoe_dict* on tomoe_dict_ref();
 	* lib/tomoe_handwrite.[ch]: Add reference count.
 
-2005-01-20 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-20 Takuro Ashie <ashie@homa.ne.jp>
 
 	* lib/tomoe-debug.[ch]: Added.
 	* lib/Makefile.am: Add above files.
 
-2005-01-20 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-20 Takuro Ashie <ashie@homa.ne.jp>
 
 	* lib/tomoe-handwrite.c: Create normalized glyph before start searching.
 
-2005-01-19 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-19 Takuro Ashie <ashie@homa.ne.jp>
 
 	* src/main.c: Use new API.
 
-2005-01-18 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-18 Takuro Ashie <ashie@homa.ne.jp>
 
 	* src/tomoe-dict.[ch]: Add reference count.
 
-2005-01-16 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-16 Takuro Ashie <ashie@homa.ne.jp>
 
 	* all Makefile.am: Sorry, license was wrong.
 
-2005-01-16 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-16 Takuro Ashie <ashie@homa.ne.jp>
 
 	* lib/tomoe-handwrite.[ch]: Implement some functions.
 
-2005-01-13 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-13 Takuro Ashie <ashie@homa.ne.jp>
 
 	* lib/tomoe-letter.[ch]: Add lacked functions.
 	* lib/tomoe-dict.h, lib/tomoe-handwrite.h, lib/tomoe.h:
 	Fix some comments.
 
-2005-01-12 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-12 Takuro Ashie <ashie@homa.ne.jp>
 
 	* lib/tomoe-dict.c, tomoe-letter.[ch]: Move some functions from
 	tomoe-dict.c to tomoe-letter.[ch].
 	* lib/tomoe-handwrite.[ch]: Implement some functions.
 
-2005-01-12 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-12 Takuro Ashie <ashie@homa.ne.jp>
 
 	* lib/tomoe-handwrite.[ch]: Implement some functions.
 
-2005-01-12 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-12 Takuro Ashie <ashie@homa.ne.jp>
 
 	* lib/tomoe.h, lib/tomoe-letter.h, lib/tomoe-dict.h: Add comments.
 
-2005-01-12 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-12 Takuro Ashie <ashie@homa.ne.jp>
 
 	* lib/tomoe-dict.c: Fix clash bug.
 
-2005-01-12 Takuro Ashie <ashie@homa.ne.jp>
+2006-01-12 Takuro Ashie <ashie@homa.ne.jp>
 
 	* lib/tomoe-dict.{ch}, lib/tomoe.c: Hide tomoe_dict struct.
 	Fix C99 style declaration.

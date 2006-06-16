@@ -26,7 +26,7 @@
 
 #include "tomoe-dict.h"
 #include "tomoe-db.h"
-#include "array.h"
+#include "tomoe-array.h"
 
 struct _tomoe_db
 {

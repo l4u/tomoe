@@ -38,7 +38,7 @@ extern "C" {
 
 #include "tomoe-data-types.h"
 #include "tomoe-letter.h"
-#include "array.h"
+#include "tomoe-array.h"
 
 /**
  * @typedef typedef struct _tomoe_dict tomoe_dict;
