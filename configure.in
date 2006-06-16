@@ -187,6 +187,84 @@ AC_SUBST(XML_CONFIG)
 AC_SUBST(LIBXML_LIBS)
 AC_SUBST(LIBXML_CFLAGS)
 
+dnl libxslt
+dnl original work - Mathieu Lacage 30/03/2000
+
+LIBXSLT_PREFIX=""
+AC_ARG_WITH(libxslt-prefix,
+        [  --with-libxslt-prefix=[PFX]    Specify location of libxslt],
+   LIBXSLT_PREFIX="$withval"
+)
+
+if test "x${LIBXSLT_PREFIX}" != "x"
+then
+  AC_MSG_RESULT(Using a libxslt prefix of ${LIBXSLT_PREFIX})
+fi
+
+dnl
+dnl find libxslt
+dnl
+XSLT_CONFIG="xslt-config"
+XSLT_WARNING=""
+AC_SUBST(LIBXSLT_REQUIRED_VERSION)
+AC_MSG_CHECKING(for libxslt libraries >= $LIBXSLT_REQUIRED_VERSION)
+if test "x$LIBXSLT_PREFIX" != "x"
+then
+  if ${LIBXSLT_PREFIX}/bin/xslt-config --libs print > /dev/null 2>&1
+  then
+    XSLT_CONFIG=${LIBXSLT_PREFIX}/bin/xslt-config
+  else
+          XSLT_WARNING="1"
+    XSLT_CONFIG=xslt-config
+  fi
+fi
+
+
+AC_DEFUN([VERSION_TO_NUMBER],
+[`$1 | sed -e 's/libxslt //' | $AWK 'BEGIN { FS = "."; } { printf "%d",
+ ([$]1  * 1000 + [$]2) * 1000 + [$]3;}'`])
+
+dnl
+dnl test version and init our variables
+dnl
+if test "x$XSLT_CONFIG" != "x"
+then
+  vers=VERSION_TO_NUMBER($XSLT_CONFIG --version)
+  if test "$vers" -ge VERSION_TO_NUMBER(echo $LIBXSLT_REQUIRED_VERSION)
+  then
+    LIBXSLT_LIBS="-lexslt `$XSLT_CONFIG --libs`"
+    LIBXSLT_CFLAGS="`$XSLT_CONFIG --cflags`"
+    AC_MSG_RESULT(found)
+          if test "x$LIBXSLT_PREFIX" != "x"
+     then
+       AC_MSG_RESULT(
+Don't forget to make sure that ${LIBXSLT_PREFIX}/lib has been added
+  to your LD_LIBRARY_PATH environment variable)
+    else
+      LIBXSLT_PREFIX="$XSLT_CONFIG --prefix"
+          fi
+  else
+    AC_MSG_ERROR(You need at least libxslt $LIBXSLT_REQUIRED_VERSION for this
+  version of xsldbg)
+  fi
+else
+  AC_MSG_ERROR(Could not find libxslt anywhere, check
+ ftp://xmlsoft.org/XSLT/.)
+fi
+
+if test "x${XSLT_WARNING}" != "x"
+then
+   AC_MSG_RESULT(
+!!Warning!! using xslt-config in default path
+)
+fi
+
+AC_SUBST(XSLT_CONFIG)
+AC_SUBST(LIBXSLT_PREFIX)
+AC_SUBST(LIBXSLT_LIBS)
+AC_SUBST(LIBXSLT_CFLAGS)
+
+
 dnl **************************************************************
 dnl Checks for libraries.
 dnl **************************************************************
