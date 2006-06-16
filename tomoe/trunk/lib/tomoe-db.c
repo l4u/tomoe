@@ -76,7 +76,8 @@ tomoe_db_add_dict (tomoe_db* this, const char *filename)
     if (!filename) return;
 
     dict = tomoe_dict_new (filename);
-    tomoe_array_append (this->dicts, dict);
+    if (dict)
+        tomoe_array_append (this->dicts, dict);
 }
 
 tomoe_array*

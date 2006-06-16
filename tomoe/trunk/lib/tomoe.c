@@ -42,6 +42,7 @@ tomoe_init (void)
     /* load all available dictionaries */
     tomoe_db_add_dict(db, TOMOEDATADIR "/all.xml");
     tomoe_db_add_dict(db, TOMOEDATADIR "/readingtest.xml");
+    tomoe_db_add_dict(db, TOMOEDATADIR "/kanjidic2.xml");
     return db;
 }
 

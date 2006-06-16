@@ -1,3 +1,12 @@
+2006-06-17 Juernjakob Harder <juernjakob.harder@gmail.com>
+	* kanjidic2.[xml,xsl]: Added.
+	* configure.in: Added libxslt.
+	* lib/Makefile.am: Added libxslt.
+	* data/Makefile.am: Added kanjidic2.xml, kanjidic2.xsl.
+	* lib/tomoe.c: Added kanjidic2.xml.
+	* lib/tomoe-db.c: tomoe_db_add_dict, check for NULL pointer added.
+	* tomoe-dict.c: Transformation of non-native dictionaries via xsl.
+
 2006-06-16 Takuro Ashie <ashie@homa.ne.jp>
 
 	* tomoe-array.[ch]: Renamed from array.[ch].
