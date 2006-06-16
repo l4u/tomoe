@@ -29,7 +29,7 @@
 #include "tomoe.h"
 #include "tomoe-dict.h"
 #include "tomoe-db.h"
-#include "array.h"
+#include "tomoe-array.h"
 
 /* 
  * Initialize tomoe 

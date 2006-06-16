@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-#include "array.h"
+#include "tomoe-array.h"
 
 typedef struct _tomoe_point     tomoe_point;
 typedef struct _tomoe_stroke    tomoe_stroke;

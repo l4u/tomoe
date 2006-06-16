@@ -30,6 +30,7 @@ INCLUDES = $(LIBXML_CFLAGS)
 
 pkginclude_HEADERS = \
 	tomoe.h \
+	tomoe-array.h \
 	tomoe-letter.h \
 	tomoe-dict.h \
 	tomoe-handwrite.h \
@@ -39,13 +40,13 @@ pkginclude_HEADERS = \
 
 lib_LTLIBRARIES = libtomoe.la
 libtomoe_la_SOURCES = \
-	array.h array.c \
-	tomoe.h tomoe.c \
-	tomoe-letter.h tomoe-letter.c \
-	tomoe-dict.h tomoe-dict.c \
+	tomoe.c \
+	tomoe-array.c \
+	tomoe-letter.c \
+	tomoe-dict.c \
 	tomoe-handwrite.c \
 	tomoe-debug.c \
-	tomoe-db.h tomoe-db.c
+	tomoe-db.c
 
 libtomoe_la_LDFLAGS =						\
   -version-info $(LT_VERSION_INFO)				\

@@ -21,8 +21,8 @@
  *  $Id$
  */
 
-#ifndef __ARRAY_H__
-#define __ARRAY_H__
+#ifndef __TOMOE_ARRAY_H__
+#define __TOMOE_ARRAY_H__
 
 #ifdef	__cplusplus
 extern "C" {
@@ -88,4 +88,4 @@ void           tomoe_array_merge          (tomoe_array*      this,
 }
 #endif
 
-#endif /* __ARRAY_H__ */
+#endif /* __TOMOE_ARRAY_H__ */

@@ -21,7 +21,7 @@
  *  $Id$
  */
 
-#include "array.h"
+#include "tomoe-array.h"
 #include "stdlib.h"
 #include "stdio.h"
 
