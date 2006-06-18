@@ -1,3 +1,12 @@
+2006-06-18 Juernjakob Harder <juernjakob.harder@gmail.com>
+	* readingtest.xml: Added meta info.
+	* meta.xsl: Added.
+	* Makefile.am: Added meta.xsl.
+	* tomoe-dict.c: Meta info added, Xml reading restructured.
+	* tomoe-letter.[ch]: Meta info added.
+	* testreading.c: Show meta info, "init tomoe...".
+	* testtomoe.c: Show "init tomoe..."
+
 2006-06-17 Juernjakob Harder <juernjakob.harder@gmail.com>
 	* kanjidic2.[xml,xsl]: Added.
 	* configure.in: Added libxslt.

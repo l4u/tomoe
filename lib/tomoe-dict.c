@@ -45,6 +45,8 @@
 
 extern int xmlLoadExtDtdDefaultValue;
 
+xsltStylesheetPtr _metaXsl = NULL;
+
 struct _tomoe_dict
 {
     char         *file_name;
@@ -52,7 +54,7 @@ struct _tomoe_dict
     char         *encoding;
     char         *lang;
     tomoe_array* letters;
-    unsigned int  ref_count;
+    unsigned int  ref;
 };
 
 typedef struct _tomoe_metric tomoe_metric;
@@ -91,10 +93,16 @@ static int        match_stroke_num          (tomoe_dict*    dict,
                                              int            input_stroke_num,
                                              int_array     *adapted);
 
-int               _parse_readings           (xmlTextReaderPtr reader,
+void              _parse_readings           (xmlNodePtr       node,
+                                             tomoe_letter*    lttr);
+void              _parse_meta               (xmlNodePtr       node,
+                                             tomoe_letter*    lttr);
+void              _parse_character          (xmlNodePtr       node,
+                                             tomoe_letter*    lttr);
+void              _parse_strokelist         (xmlNodePtr       node,
                                              tomoe_letter*    lttr);
 int               _check_dict_xsl           (const char*      filename);
-tomoe_dict*       _parse_tomoe_dict         (xmlTextReaderPtr reader);
+tomoe_dict*       _parse_tomoe_dict         (xmlNodePtr       root);
 tomoe_dict*       _parse_alien_dict         (const char*      filename);
 
 
@@ -102,22 +110,31 @@ tomoe_dict*
 tomoe_dict_new (const char *filename)
 {
     tomoe_dict* dict = NULL;
-    xmlTextReaderPtr reader;
+
+    LIBXML_TEST_VERSION
 
     if (!filename && !*filename) return NULL;
 
     if (0 == _check_dict_xsl (filename))
     {
-        reader = xmlReaderForFile (filename, NULL,
-                                   XML_PARSE_DTDATTR |
-                                   XML_PARSE_NOENT |
-                                   XML_PARSE_DTDVALID);
-        if (!reader) return NULL;
-        dict = _parse_tomoe_dict (reader);
-        xmlFreeTextReader (reader);
+        xmlDocPtr doc = xmlParseFile (filename);
+
+        if (doc)
+            dict = _parse_tomoe_dict (xmlDocGetRootElement (doc));
+
+        xmlFreeDoc (doc);
     }
     else
         dict = _parse_alien_dict (filename);
+
+    if (_metaXsl)
+    {
+        xsltFreeStylesheet (_metaXsl);
+        _metaXsl = NULL;
+    }
+
+    xsltCleanupGlobals ();
+    xmlCleanupParser ();
 
     return dict;
 }
@@ -127,8 +144,8 @@ tomoe_dict_free (tomoe_dict *dict)
 {
     if (!dict) return;
 
-    dict->ref_count--;
-    if (dict->ref_count <= 0)
+    dict->ref --;
+    if (dict->ref <= 0)
     {
         tomoe_array_free(dict->letters);
         free (dict);
@@ -139,7 +156,7 @@ tomoe_dict *
 tomoe_dict_addref (tomoe_dict *dict)
 {
     if (!dict) return NULL;
-    dict->ref_count++;
+    dict->ref ++;
     return dict;
 }
 
@@ -190,14 +207,15 @@ tomoe_dict_get_matched (tomoe_dict* this, tomoe_glyph* input)
     for (i = 0; i < letters_num; i++)
     {
         tomoe_letter* p = (tomoe_letter*)tomoe_array_get (letters, i);
-
         cand_priv *cand = NULL;
+
+        /* check for available glyph data */
+        if (!p->c_glyph)
+            continue;
 
         /* check the number of stroke */
         if (input->stroke_num > p->c_glyph->stroke_num)
-        {
             continue;
-        }
 
         /* append a candidate to candidate list */
         cand = cand_priv_new ((const char*) p->character, i);
@@ -303,7 +321,13 @@ tomoe_dict_get_reading (tomoe_dict* this, const char* input)
     {
         tomoe_letter* lttr = (tomoe_letter*)tomoe_array_get (this->letters, i);
         int j;
-        int reading_num = tomoe_array_size (lttr->readings);
+        int reading_num;
+
+        /* check for available reading data */
+        if (!lttr->readings)
+            continue;
+
+        reading_num = tomoe_array_size (lttr->readings);
 
         for (j = 0; j < reading_num; j++)
         {
@@ -759,41 +783,112 @@ match_stroke_num (tomoe_dict* dict, int letter_index, int input_stroke_num, int_
     return pj;
 }
 
-int
-_parse_readings (xmlTextReaderPtr reader, tomoe_letter* lttr)
+void
+_parse_readings (xmlNodePtr node, tomoe_letter* lttr)
 {
-    int mode = 0;
-    int res = xmlTextReaderRead (reader);
-    while (res == 1)
+    xmlNodePtr child;
+    for (child = node->children; child; child = child->next)
     {
-        const xmlChar *name;
+        if (child->type == XML_ELEMENT_NODE)
+            tomoe_array_append (lttr->readings, strdup (child->children->content));
+    }
+}
 
-        name = xmlTextReaderConstName (reader);
-        if (name == NULL)
-            name = BAD_CAST "--";
-        switch (mode)
+void
+_parse_meta (xmlNodePtr node, tomoe_letter* lttr)
+{
+    xmlDocPtr doc;
+    xmlDocPtr meta;
+    const char* param[3];
+    xmlNodePtr root;
+    xmlNodePtr p = node->parent;
+    int len = 0;
+
+    if (!_metaXsl) return;
+
+    doc = xmlNewDoc("1.0");
+    root = xmlNewNode(NULL, BAD_CAST "ch");
+    param[0] = 0;
+
+    xmlDocSetRootElement (doc, root);
+    xmlUnlinkNode (node);
+    xmlAddChild (root, node);
+
+    xmlSubstituteEntitiesDefault (1);
+    xmlLoadExtDtdDefaultValue = 1;
+    meta = xsltApplyStylesheet (_metaXsl, doc, param);
+
+    xsltSaveResultToString((xmlChar**)&lttr->meta, &len, meta, _metaXsl);
+
+    xmlFreeDoc (meta);
+
+    xmlUnlinkNode (node);
+    xmlAddChild (p, node);
+    xmlFreeDoc (doc);
+}
+
+void
+_parse_character (xmlNodePtr node, tomoe_letter* lttr)
+{
+    xmlNodePtr child;
+    for (child = node->children; child; child = child->next)
+    {
+        if (child->type != XML_ELEMENT_NODE)
+            continue;
+
+        if (0 == xmlStrcmp (child->name, BAD_CAST "readings"))
+            _parse_readings (child, lttr);
+        else if (0 == xmlStrcmp (child->name, BAD_CAST "strokelist"))
+            _parse_strokelist (child, lttr);
+        else if (0 == xmlStrcmp (child->name, BAD_CAST "literal"))
+            lttr->character = strdup (BAD_CAST child->children->content);
+        else if (0 == xmlStrcmp (child->name, BAD_CAST "meta"))
+            _parse_meta (child, lttr);
+    }
+}
+
+void
+_parse_strokelist (xmlNodePtr node, tomoe_letter* lttr)
+{
+    int stroke_num = 0;
+    xmlNodePtr child;
+    int j = 0;
+
+    for (child = node->children; child; child = child->next)
+        if (child->type == XML_ELEMENT_NODE)
+            stroke_num ++;
+
+    if (stroke_num == 0)
+        return;
+
+
+    lttr->c_glyph = calloc(1, sizeof (tomoe_glyph));
+    tomoe_glyph_init(lttr->c_glyph, stroke_num);
+
+    for (child = node->children; child; child = child->next)
+    {
+        if (child->type != XML_ELEMENT_NODE)
+            continue;
+
+        tomoe_stroke* strk = &lttr->c_glyph->strokes[j];
+        int point_num = 0;
+        int k;
+        const char* p = (const char*) child->children->content;
+        for (; *p; p++)
+            if (*p == '(') 
+                point_num ++;
+
+        p = (const char*) child->children->content;
+        tomoe_stroke_init (strk, point_num);
+        for (k = 0; k < point_num; k++)
         {
-        case 0:
-            if (0 == xmlStrcmp (name, BAD_CAST "readings") &&
-                15 == xmlTextReaderNodeType (reader))
-                return res;
-            if (0 == xmlStrcmp (name, BAD_CAST "r"))
-                mode = 1;
-            break;
-        case 1:
-            if (3 == xmlTextReaderNodeType(reader))
-                tomoe_array_append (lttr->readings, strdup (xmlTextReaderConstValue (reader)));
-            else if (0 == xmlStrcmp (name, BAD_CAST "r") &&
-                     15 == xmlTextReaderNodeType (reader))
-                mode = 0;
-            break;
-        default:;
+            tomoe_point* pnt = &strk->points[k];
+            sscanf (p, " (%d %d)", &pnt->x, &pnt->y);
+            p = strchr (p, ')') + 1;
         }
 
-        res = xmlTextReaderRead (reader);
+        j++;
     }
-
-    return res;
 }
 
 int
@@ -818,125 +913,47 @@ _check_dict_xsl (const char* filename)
 }
 
 tomoe_dict*
-_parse_tomoe_dict (xmlTextReaderPtr reader)
+_parse_tomoe_dict (xmlNodePtr root)
 {
     tomoe_dict *dict = calloc (1, sizeof (tomoe_dict));
-    char *p = NULL;
-    int stroke_num = 0;
-    int point_num = 0;
-    int j = 0, k = 0;
-    tomoe_letter *lttr = NULL;
-    tomoe_stroke *strk = NULL;
-    tomoe_point  *pnt  = NULL;
-    int res;
-    int parse_mode = 0;
-
-    LIBXML_TEST_VERSION
-
     if (!dict) return NULL;
 
     dict->letters = tomoe_array_new((tomoe_compare_fn)tomoe_letter_compare,
                                     (tomoe_addref_fn)tomoe_letter_addref,
                                     (tomoe_free_fn)tomoe_letter_free);
 
-    // FIXME: clean up, error handling
-
-    res = xmlTextReaderRead(reader);
-    while (res == 1)
+    if (root && 0 == xmlStrcmp(root->name, BAD_CAST "tomoe_dictionary"))
     {
-        const xmlChar *name;
-
-        name = xmlTextReaderConstName(reader);
-        if (name == NULL)
-            name = BAD_CAST "--";
-
-        switch (parse_mode)
+        xmlNodePtr node;
+        for (node = root->children; node; node = node->next)
         {
-        case 0:
-            if (0 == xmlStrcmp(name, BAD_CAST "tomoe_dictionary"))
-                parse_mode = 1;
-            break;
-        case 1:
-            if (0 == xmlStrcmp(name, BAD_CAST "character"))
-            {
-                lttr = tomoe_letter_new();
-                parse_mode = 2;
-            }
-            else if (0 == xmlStrcmp(name, BAD_CAST "tomoe_dictionary") && 
-                     15 == xmlTextReaderNodeType(reader))
-                parse_mode = 0;
-            break;
-        case 2:
-            if (0 == xmlStrcmp(name, BAD_CAST "literal"))
-                parse_mode = 3;
-            else if (0 == xmlStrcmp(name, BAD_CAST "strokelist"))
-            {
-                sscanf(BAD_CAST xmlTextReaderGetAttribute(reader, BAD_CAST "count"), "%d", &stroke_num);
-                lttr->c_glyph = calloc(1, sizeof (tomoe_glyph));
-                tomoe_glyph_init(lttr->c_glyph, stroke_num);
-                j = 0;
-                parse_mode = 4;
-            }
-            else if (0 == xmlStrcmp(name, BAD_CAST "readings"))
-            {
-                res = _parse_readings (reader, lttr);
-            }
-            else if (0 == xmlStrcmp(name, BAD_CAST "character") &&
-                     15 == xmlTextReaderNodeType(reader))
-            {
-                tomoe_array_append(dict->letters, lttr);
-                tomoe_letter_free(lttr);
-                lttr = 0;
-                parse_mode = 1;
-            }
-            break;
-        case 3:
-            if (0 == xmlStrcmp(name, BAD_CAST "literal") && 
-                15 == xmlTextReaderNodeType(reader))
-                parse_mode = 2;
-            else
-            {
-                lttr->character = strdup (BAD_CAST xmlTextReaderConstValue(reader));
-            }
-            break;
-        case 4:
-            if (0 == xmlStrcmp(name, BAD_CAST "s"))
-            {
-                sscanf (xmlTextReaderGetAttribute(reader, BAD_CAST "count"), "%d", &point_num);
-                parse_mode = 5;
-            }
-            else if (0 == xmlStrcmp(name, BAD_CAST "strokelist") && 
-                     15 == xmlTextReaderNodeType(reader))
-                parse_mode = 2;
-            break;
-        case 5:
-            if (0 == xmlStrcmp(name, BAD_CAST "s") && 
-                15 == xmlTextReaderNodeType(reader))
-            {
-                parse_mode = 4;
-                j++;
-            }
-            else
-            {
-                strk = &lttr->c_glyph->strokes[j];
-                tomoe_stroke_init (strk, point_num);
-                p = BAD_CAST xmlTextReaderConstValue(reader);
-                for (k = 0; k < point_num; k++)
-                {
-                    pnt = &strk->points[k];
-                    sscanf (p, " (%d %d)", &pnt->x, &pnt->y);
-                    p = strchr (p, ')') + 1;
-                }
-            }
-            break;
-        default:;
-        }
+            if (node->type != XML_ELEMENT_NODE)
+                continue;
 
-        if (res == 1)
-            res = xmlTextReaderRead (reader);
+            if (0 == xmlStrcmp(node->name, BAD_CAST "character"))
+            {
+                tomoe_letter* lttr = tomoe_letter_new();
+                lttr->readings = tomoe_array_new((tomoe_compare_fn)tomoe_string_compare,
+                                                 NULL,
+                                                 (tomoe_free_fn)free);
+                _parse_character (node, lttr);
+                tomoe_array_append (dict->letters, lttr);
+                tomoe_letter_free (lttr);
+            }
+            else if (0 == xmlStrcmp(node->name, BAD_CAST "metaxsl"))
+            {
+                const char* metaxsl = (const char*)node->children->content;
+                char* path = (char*)calloc(strlen(metaxsl) + strlen(TOMOEDATADIR) + 2, sizeof(char));
+                strcpy(path, TOMOEDATADIR);
+                strcat(path, "/");
+                strcat(path, metaxsl);
+                _metaXsl = xsltParseStylesheetFile (BAD_CAST path);
+                free(path);
+            }
+        }
     }
 
-    dict->ref_count = 1;
+    dict->ref = 1;
 
     return dict;
 }
@@ -950,7 +967,6 @@ _parse_alien_dict (const char* filename)
     xmlDocPtr doc, res;
     const char* param[1];
     tomoe_dict* dict = NULL;
-    xmlTextReaderPtr reader;
     param[0] = NULL;
 
     if (!xslname) return NULL;
@@ -959,23 +975,15 @@ _parse_alien_dict (const char* filename)
 
     xmlSubstituteEntitiesDefault (1);
     xmlLoadExtDtdDefaultValue = 1;
-    cur = xsltParseStylesheetFile (xslname);
+    cur = xsltParseStylesheetFile (BAD_CAST xslname);
     doc = xmlParseFile (filename);
     res = xsltApplyStylesheet (cur, doc, param);
 
-    reader = xmlReaderWalker (res);
-    if (reader)
-    {
-        dict = _parse_tomoe_dict (reader);
-        xmlFreeTextReader (reader);
-    }
+    dict = _parse_tomoe_dict (xmlDocGetRootElement (res));
 
     xsltFreeStylesheet (cur);
     xmlFreeDoc (res);
     xmlFreeDoc (doc);
-
-    xsltCleanupGlobals ();
-    xmlCleanupParser ();
 
     return dict;
 }

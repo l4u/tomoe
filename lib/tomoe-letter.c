@@ -122,6 +122,7 @@ tomoe_letter_new (void)
     lttr->ref       = 1;
     lttr->character = NULL;
     lttr->c_glyph   = NULL;
+    lttr->meta      = NULL;
     lttr->readings  = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
                                        NULL,
                                        (tomoe_free_fn)free);
@@ -147,6 +148,7 @@ tomoe_letter_free (tomoe_letter *this)
     {
         free (this->character);
         tomoe_glyph_free (this->c_glyph);
+        free (this->meta);
         free (this);
     }
 }

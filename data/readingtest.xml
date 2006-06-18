@@ -1,6 +1,8 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE tomoe_dictionary SYSTEM "tomoe-dict.dtd">
+<?xml-stylesheet type="text/xsl" href="meta.xsl"?>
+<!--<!DOCTYPE tomoe_dictionary SYSTEM "tomoe-dict.dtd">-->
 <tomoe_dictionary>
+	<metaxsl>meta.xsl</metaxsl>
 	<character>
 		<literal>&#x65E5;</literal>
 		<strokelist count="4">
@@ -17,5 +19,9 @@
 			<r>-か</r>
 			<r>-ka</r>
 		</readings>
+		<meta>
+			<desc>Character for day</desc>
+			<jlpt>4</jlpt>
+		</meta>
 	</character>
 </tomoe_dictionary>

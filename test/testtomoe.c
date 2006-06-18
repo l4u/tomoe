@@ -73,8 +73,11 @@ main (int argc, char **argv)
     tomoe_array* matched = NULL;
     tomoe_db* db = NULL;
 
+    fprintf (stdout, "init tomoe ... ");
+    fflush (stdout);
     db = tomoe_init ();
     if (!db) exit (1);
+    fprintf (stdout, "ok\n");
 
     test_glyph = read_test_data (); 
 

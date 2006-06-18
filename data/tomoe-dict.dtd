@@ -1,5 +1,5 @@
 <!ELEMENT tomoe_dictionary (character*)>
-<!ELEMENT character (literal, strokelist?, readings?)*>
+<!ELEMENT character (literal, strokelist?, readings?, meta?)*>
 <!ELEMENT literal (#PCDATA)>
 <!ELEMENT strokelist (s*)>
 <!ATTLIST strokelist count CDATA #REQUIRED>
@@ -7,3 +7,4 @@
 <!ATTLIST s count CDATA #REQUIRED>
 <!ELEMENT readings (r*)>
 <!ELEMENT r (#PCDATA)>
+<!ELEMENT meta ANY>
