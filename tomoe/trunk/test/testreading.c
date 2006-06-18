@@ -14,8 +14,11 @@ main (int argc, char **argv)
 
     if (argc != 2) exit (1);
 
+    fprintf (stdout, "init tomoe ... ");
+    fflush (stdout);
     db = tomoe_init ();
     if (!db) exit (1);
+    fprintf (stdout, "ok\n");
 
     matched = tomoe_db_get_reading (db, argv[1]);
     candidate_num = tomoe_array_size(matched);
@@ -42,6 +45,8 @@ main (int argc, char **argv)
                 const char* r = (const char*)tomoe_array_get(p->readings, j);
                 fprintf (stdout, " %s", r);
             }
+            fprintf (stdout, "\n");
+            fprintf (stdout, p->meta );
             fprintf (stdout, "\n");
         }
     }

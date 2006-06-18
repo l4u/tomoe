@@ -64,6 +64,7 @@ struct _tomoe_letter
     char*         character;
     tomoe_glyph*  c_glyph;
     tomoe_array*  readings;
+    char*         meta;
 };
 
 struct _tomoe_candidate
