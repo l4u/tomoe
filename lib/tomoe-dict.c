@@ -117,6 +117,7 @@ tomoe_dict_new (const char *filename)
 
     if (0 == _check_dict_xsl (filename))
     {
+        // native tomoe dictionary
         xmlDocPtr doc = xmlParseFile (filename);
 
         if (doc)
@@ -124,7 +125,7 @@ tomoe_dict_new (const char *filename)
 
         xmlFreeDoc (doc);
     }
-    else
+    else // non native dictionary
         dict = _parse_alien_dict (filename);
 
     if (_metaXsl)
@@ -806,6 +807,7 @@ _parse_meta (xmlNodePtr node, tomoe_letter* lttr)
 
     if (!_metaXsl) return;
 
+    // create xml doc and include meta xml block
     doc = xmlNewDoc("1.0");
     root = xmlNewNode(NULL, BAD_CAST "ch");
     param[0] = 0;
@@ -816,8 +818,11 @@ _parse_meta (xmlNodePtr node, tomoe_letter* lttr)
 
     xmlSubstituteEntitiesDefault (1);
     xmlLoadExtDtdDefaultValue = 1;
+
+    // translate xml meta to view text
     meta = xsltApplyStylesheet (_metaXsl, doc, param);
 
+    // save into character object
     xsltSaveResultToString((xmlChar**)&lttr->meta, &len, meta, _metaXsl);
 
     xmlFreeDoc (meta);
@@ -854,6 +859,7 @@ _parse_strokelist (xmlNodePtr node, tomoe_letter* lttr)
     xmlNodePtr child;
     int j = 0;
 
+    // count strokes
     for (child = node->children; child; child = child->next)
         if (child->type == XML_ELEMENT_NODE)
             stroke_num ++;
@@ -874,10 +880,12 @@ _parse_strokelist (xmlNodePtr node, tomoe_letter* lttr)
         int point_num = 0;
         int k;
         const char* p = (const char*) child->children->content;
+        // count stroke points
         for (; *p; p++)
             if (*p == '(') 
                 point_num ++;
 
+        // parse stroke
         p = (const char*) child->children->content;
         tomoe_stroke_init (strk, point_num);
         for (k = 0; k < point_num; k++)
@@ -915,13 +923,14 @@ _check_dict_xsl (const char* filename)
 tomoe_dict*
 _parse_tomoe_dict (xmlNodePtr root)
 {
+    // allocate dictionary
     tomoe_dict *dict = calloc (1, sizeof (tomoe_dict));
     if (!dict) return NULL;
-
     dict->letters = tomoe_array_new((tomoe_compare_fn)tomoe_letter_compare,
                                     (tomoe_addref_fn)tomoe_letter_addref,
                                     (tomoe_free_fn)tomoe_letter_free);
 
+    // parse xml tree
     if (root && 0 == xmlStrcmp(root->name, BAD_CAST "tomoe_dictionary"))
     {
         xmlNodePtr node;
@@ -977,8 +986,10 @@ _parse_alien_dict (const char* filename)
     xmlLoadExtDtdDefaultValue = 1;
     cur = xsltParseStylesheetFile (BAD_CAST xslname);
     doc = xmlParseFile (filename);
+    // translate to native
     res = xsltApplyStylesheet (cur, doc, param);
 
+    // load native dictionary
     dict = _parse_tomoe_dict (xmlDocGetRootElement (res));
 
     xsltFreeStylesheet (cur);

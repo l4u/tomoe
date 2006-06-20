@@ -1,3 +1,6 @@
+2006-06-20 Juernjakob Harder <juernjakob.harder@gmail.com>
+	* tomoe-dict.[ch], tomoe-db.h, tomoe-letter.h: Comments and cosmetic changes.
+
 2006-06-18 Juernjakob Harder <juernjakob.harder@gmail.com>
 	* readingtest.xml: Added meta info.
 	* meta.xsl: Added.
