@@ -35,16 +35,57 @@ extern "C" {
 #include "tomoe-data-types.h"
 #include "tomoe-dict.h"
 
+/**
+ * @typedef typedef struct _tomoe_db tomoe_db;
+ *
+ * A struct type which represents tomoe database. All members in it should be
+ * accessed through tomoe_dict_* functions.
+ */
 typedef struct _tomoe_db tomoe_db;
 
+/**
+ * @brief Create a database.
+ * @return Pointer to newly allocated tomoe_db struct.
+ */
 tomoe_db*     tomoe_db_new                (void);
+
+/**
+ * @brief Increase reference count.
+ * @param this     - Pointer to the tomoe_db struct to increase reference count.
+ * @return The tomoe_db.
+ */
 tomoe_db*     tomoe_db_addref             (tomoe_db*     this);
+
+/**
+ * @brief Decrease reference count and free if zero.
+ * @param this     - Pointer to the tomoe_db struct to free.
+ */
 void          tomoe_db_free               (tomoe_db*     this);
 
+/**
+ * @brief Load dictionary into database.
+ * @param this     - Pointer to the tomoe_db struct to increase reference count.
+ * @param filename - Name of dictionary file to load.
+ * @return The tomoe_db.
+ */
 void          tomoe_db_add_dict           (tomoe_db*     this,
                                            const char*   filename);
+
+/**
+ * @brief Match strokes of tomoe_letter with input.
+ * @param this     - Pointer to the tomoe_db object.
+ * @param input    - Pointer to tomoe_glyph matchkey.
+ * @return The array of tomoe_candidate.
+ */
 tomoe_array*  tomoe_db_get_matched        (tomoe_db*     this,
                                            tomoe_glyph*  input);
+
+/**
+ * @brief Match reading of tomoe_letter with input.
+ * @param this     - Pointer to the tomoe_db object.
+ * @param reading  - Pointer to string matchkey
+ * @return The array of tomoe_candidate.
+ */
 tomoe_array*  tomoe_db_get_reading        (tomoe_db*     this,
                                            const char*   reading);
 #if 0

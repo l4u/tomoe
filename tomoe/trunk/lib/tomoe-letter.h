@@ -110,15 +110,49 @@ unsigned int    tomoe_glyph_get_number_of_strokes
                                                 (tomoe_glyph *glyph);
 #endif
 
+/**
+ * @brief Create a tomoe letter.
+ * @return Pointer to newly allocated tomoe_letter struct.
+ */
 tomoe_letter*   tomoe_letter_new                (void);
-tomoe_letter*   tomoe_letter_addref             (tomoe_letter*        this);
-void            tomoe_letter_free               (tomoe_letter*        this);
-int             tomoe_letter_compare            (const tomoe_letter** p0,
-                                                 const tomoe_letter** p1);
 
+/**
+ * @brief Increase reference count.
+ * @param this - Pointer to the tomoe_letter struct to increase reference count.
+ * @return The tomoe_letter.
+ */
+tomoe_letter*   tomoe_letter_addref             (tomoe_letter*        this);
+
+/**
+ * @brief Decrease reference count and free if zero.
+ * @param this - Pointer to the tomoe_letter struct to free.
+ */
+void            tomoe_letter_free               (tomoe_letter*        this);
+
+/**
+ * @brief Compare two tomoe_letter.
+ * @param a - Pointer to the tomoe_letter 1 pointer.
+ * @param b - Pointer to the tomoe_letter 2 pointer.
+ * @return -1 a < b, 0 a= b, 1 a > b
+ */
+int             tomoe_letter_compare            (const tomoe_letter** a,
+                                                 const tomoe_letter** b);
+
+/**
+ * @brief Compare two tomoe_candidate.
+ * @param a - Pointer to the tomoe_candidate 1 pointer.
+ * @param b - Pointer to the tomoe_candidate 2 pointer.
+ * @return -1 a < b, 0 a= b, 1 a > b
+ */
 int             tomoe_candidate_compare         (const tomoe_candidate** a,
                                                  const tomoe_candidate** b);
 
+/**
+ * @brief Compare two ansi strings.
+ * @param a - Pointer to string 1.
+ * @param b - Pointer to string 2.
+ * @return -1 a < b, 0 a= b, 1 a > b
+ */
 int             tomoe_string_compare            (const char**  a,
                                                  const char**  b);
 
