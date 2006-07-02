@@ -21,7 +21,7 @@
 CLEANFILES = *~ *.bak
 
 dicdir = $(datadir)/$(PACKAGE)
-dic_DATA = readingtest.xml all.xml tomoe-dict.dtd kanjidic2.xml kanjidic2.xsl meta.xsl
+dic_DATA = all.xml tomoe-dict.dtd kanjidic2.xml kanjidic2.xsl meta.xsl
 
 EXTRA_DIST = \
 	$(dic_DATA)

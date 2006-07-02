@@ -154,9 +154,9 @@ tomoe_letter_free (tomoe_letter *this)
 }
 
 int
-tomoe_letter_compare (const tomoe_letter** p0, const tomoe_letter** p1)
+tomoe_letter_compare (const tomoe_letter** a, const tomoe_letter** b)
 {
-    return 0;
+    return strcmp ((*a)->character, (*b)->character);
 }
 
 int

@@ -232,7 +232,7 @@ tomoe_array_free(tomoe_array* this)
     this->ref --;
     if (this->ref <= 0)
     {
-        if (!this->free)
+        if (this->free)
             for (i = 0; i < this->len; i++)
                 this->free(this->p[i]);
         free(this);
@@ -269,7 +269,26 @@ tomoe_array_find (tomoe_array* this, void* p)
         ((int(*)(const void*, const void*))this->compare));
     if (!e) return -1;
 
-    return (((int*)e) - ((int*)p)) / sizeof(int*);
+    return (((int*)e) - ((int*)this->p));
+}
+
+void*
+tomoe_array_get (tomoe_array* this, int index)
+{
+    if (!this || index < 0 || this->len <= index) return NULL;
+    return this->p[index];
+}
+
+void
+tomoe_array_remove (tomoe_array* this, int index)
+{
+    int i;
+    if (!this || index < 0 || this->len <= index) return;
+    if (this->free)
+        this->free (this->p[index]);
+    for (i = index + 1; i < this->len; i++)
+        this->p[i - 1] = this->p[i];
+    this->len --;
 }
 
 void
@@ -288,22 +307,15 @@ tomoe_array_size (tomoe_array* this)
     return this->len;
 }
 
-void*
-tomoe_array_get (tomoe_array* this, int index)
-{
-    if (!this || index < 0 || this->len <= index) return NULL;
-    return this->p[index];
-}
-
 void
 tomoe_array_merge (tomoe_array* this, tomoe_array* append)
 {
     int i, num;
 
     if (!this || !append) return;
-    num = tomoe_array_size(append);
+    num = tomoe_array_size (append);
     for (i = 0; i < num; i++)
-        tomoe_array_append(this, tomoe_array_get(append, i));
+        tomoe_array_append (this, tomoe_array_get (append, i));
 }
 
 /*
