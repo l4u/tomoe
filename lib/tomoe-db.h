@@ -34,6 +34,7 @@ extern "C" {
 
 #include "tomoe-data-types.h"
 #include "tomoe-dict.h"
+#include "tomoe-config.h"
 
 /**
  * @typedef typedef struct _tomoe_db tomoe_db;
@@ -68,8 +69,19 @@ void          tomoe_db_free               (tomoe_db*     this);
  * @param filename - Name of dictionary file to load.
  * @return The tomoe_db.
  */
-void          tomoe_db_add_dict           (tomoe_db*     this,
+void          tomoe_db_addDict            (tomoe_db*     this,
+                                           tomoe_dict*   dict);
+void          tomoe_db_loadDict           (tomoe_db*     this,
+                                           const char*   filename,
+                                           int           editable);
+void          tomoe_db_loadDictList       (tomoe_db*     this,
+                                           tomoe_array*  list);
+tomoe_array*  tomoe_db_getDictList        (tomoe_db*     this);
+
+#if 0
+tomoe_dict*   tomoe_db_getUserDict        (tomoe_db*     this,
                                            const char*   filename);
+#endif
 
 /**
  * @brief Match strokes of tomoe_letter with input.

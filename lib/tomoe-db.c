@@ -68,16 +68,55 @@ tomoe_db_free(tomoe_db* this)
 }
 
 void
-tomoe_db_add_dict (tomoe_db* this, const char *filename)
+tomoe_db_addDict (tomoe_db* this, tomoe_dict* dict)
+{
+    if (!this || !dict) return;
+    tomoe_array_append (this->dicts, tomoe_dict_addref (dict));
+}
+
+void
+tomoe_db_loadDict (tomoe_db* this, const char *filename, int editable)
 {
     tomoe_dict* dict;
 
     if (!this) return;
     if (!filename) return;
 
+    fprintf (stdout, "load dictionary '%s' editable: %s...", filename, editable ? "yes" : "no");
+    fflush (stdout);
     dict = tomoe_dict_new (filename);
     if (dict)
         tomoe_array_append (this->dicts, dict);
+    printf (" ok\n");
+}
+
+void
+tomoe_db_loadDictList (tomoe_db* this, tomoe_array* list)
+{
+    int i;
+    for (i = 0; i < tomoe_array_size (list); i++)
+    {
+        tomoe_dict_cfg* p = tomoe_array_get (list, i);
+        if (p->dontLoad) continue;
+
+        if (p->user)
+            tomoe_db_loadDict (this, p->filename, p->writeAccess);
+        else
+        {
+            char* file = calloc (strlen (p->filename) + strlen (TOMOEDATADIR) + 2, sizeof (char));
+            strcpy (file, TOMOEDATADIR);
+            strcat (file, "/");
+            strcat (file, p->filename);
+            tomoe_db_loadDict (this, file, p->writeAccess);
+        }
+    }
+}
+
+tomoe_array*
+tomoe_db_getDictList (tomoe_db* this)
+{
+    if (!this) return NULL;
+    return tomoe_array_addref(this->dicts);
 }
 
 tomoe_array*

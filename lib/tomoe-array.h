@@ -73,14 +73,18 @@ tomoe_array*   tomoe_array_new            (tomoe_compare_fn  compare,
                                            tomoe_free_fn     free);
 tomoe_array*   tomoe_array_addref         (tomoe_array*      this);
 void           tomoe_array_free           (tomoe_array*      this);
+
 tomoe_array*   tomoe_array_append         (tomoe_array*      this,
                                            void*             p);
 int            tomoe_array_find           (tomoe_array*      this,
                                            void*             p);
+void*          tomoe_array_get            (tomoe_array*      this,
+                                           int               index);
+void           tomoe_array_remove         (tomoe_array*      this,
+                                           int               index);
+
 void           tomoe_array_sort           (tomoe_array*      this);
 int            tomoe_array_size           (tomoe_array*      this);
-void*          tomoe_array_get            (tomoe_array*      this,
-                                           int index);
 void           tomoe_array_merge          (tomoe_array*      this,
                                            tomoe_array*      append);
 

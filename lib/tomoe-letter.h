@@ -69,7 +69,7 @@ struct _tomoe_letter
 
 struct _tomoe_candidate
 {
-    const char   *letter;
+    const tomoe_letter* character;
     int           score;
 };
 

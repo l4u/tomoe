@@ -6,6 +6,10 @@
 #include "tomoe.h"
 
 static tomoe_glyph * read_test_data ();
+void outCharInfo (const tomoe_letter* chr, int score);
+void testStrokeMatch (tomoe_db* db);
+void testReadingMatch (tomoe_db* db, const char* reading);
+void testUserDB (tomoe_db* db);
 
 #define LINE_BUF_SIZE 4096
 static char line_buf[LINE_BUF_SIZE];
@@ -65,21 +69,29 @@ read_test_data ()
     return NULL;
 }
 
-int
-main (int argc, char **argv)
+void outCharInfo (const tomoe_letter* chr, int score)
+{
+   int j;
+   int reading_num = tomoe_array_size(chr->readings);
+
+   fprintf (stdout, "character:%s [%d]\t", chr->character, score);
+   for (j = 0; j < reading_num; j++)
+   {
+       const char* r = (const char*)tomoe_array_get (chr->readings, j);
+       fprintf (stdout, " %s", r);
+   }
+   fprintf (stdout, "\n");
+   fprintf (stdout, chr->meta );
+   fprintf (stdout, "\n");
+}
+
+void testStrokeMatch (tomoe_db* db)
 {
     tomoe_glyph *test_glyph = NULL;
     int i, candidate_num = 0;
     tomoe_array* matched = NULL;
-    tomoe_db* db = NULL;
 
-    fprintf (stdout, "init tomoe ... ");
-    fflush (stdout);
-    db = tomoe_init ();
-    if (!db) exit (1);
-    fprintf (stdout, "ok\n");
-
-    test_glyph = read_test_data (); 
+    test_glyph = read_test_data ();
 
     if (!test_glyph) 
         goto END;
@@ -99,19 +111,119 @@ main (int argc, char **argv)
                  candidate_num);
         for (i = 0; i < candidate_num; i++)
         {
-            tomoe_candidate* p = (tomoe_candidate*)tomoe_array_get(matched, i);
-            fprintf (stdout, "character:%s\tscore:%d\n",
-                     p->letter, p->score);
+            tomoe_candidate* p = (tomoe_candidate*)tomoe_array_get (matched, i);
+            outCharInfo (p->character, p->score);
         }
     }
     else
         fprintf (stdout, "No Candidate found!\n");
-  
+
 END:
     if (!test_glyph)
         tomoe_glyph_free (test_glyph);
     if (matched)
         tomoe_array_free (matched);
+}
+
+void testReadingMatch (tomoe_db* db, const char* reading)
+{
+    tomoe_array* matched = tomoe_db_get_reading (db, reading);
+    int candidate_num = tomoe_array_size(matched);
+
+    if (candidate_num != 0)
+    {
+        int i;
+
+        if (!matched)
+        {
+            fprintf (stderr, "Candidate list is NULL!\n");
+            return;
+        }
+
+        fprintf (stdout, "The number of matched characters: %d\n",
+                 candidate_num);
+        for (i = 0; i < candidate_num; i++)
+        {
+            tomoe_letter* p = (tomoe_letter*)tomoe_array_get(matched, i);
+            int j;
+            int reading_num = tomoe_array_size(p->readings);
+
+            fprintf (stdout, "character:%s\t", p->character);
+            for (j = 0; j < reading_num; j++)
+            {
+                const char* r = (const char*)tomoe_array_get(p->readings, j);
+                fprintf (stdout, " %s", r);
+            }
+            fprintf (stdout, "\n");
+            fprintf (stdout, p->meta );
+            fprintf (stdout, "\n");
+        }
+    }
+    else
+        fprintf (stdout, "No Candidate found!\n");
+}
+
+void testUserDB (tomoe_db* db)
+{
+    tomoe_letter* chr;
+    tomoe_dict* myDict = tomoe_dict_new ("../data/userdb.xml");
+
+    fprintf (stdout, "dictSize %d; create character \"（＾o＾）／\" with reading \"やった\" and add to dictionary\n", 
+             tomoe_dict_getSize (myDict));
+    chr = tomoe_letter_new ();
+    chr->character = strdup ("（＾o＾）／");
+    tomoe_array_append (chr->readings, strdup ("やった"));
+    tomoe_dict_addChar (myDict, chr);
+    // sort again after adding characters...
+    tomoe_dict_sort (myDict);
+
+    tomoe_db_addDict (db, myDict);
+
+    fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_getSize (myDict));
+    testReadingMatch (db, "やった");
+
+    fprintf (stdout, "update character to \"\\\\（＾o＾）//\"\n");
+    free (chr->character);
+    chr->character = strdup ("\\\\（＾o＾）//");
+    fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_getSize (myDict));
+    testReadingMatch (db, "やった");
+
+    fprintf (stdout, "update reading to \"yey\"\n");
+    tomoe_array_remove (chr->readings, tomoe_array_find (chr->readings, "やった"));
+    tomoe_array_append (chr->readings, "yey");
+    fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_getSize (myDict));
+    testReadingMatch (db, "やった");
+    fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_getSize (myDict));
+    testReadingMatch (db, "yey");
+
+    fprintf (stdout, "remove character \n");
+    tomoe_dict_removeByChar (myDict, chr);
+    fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_getSize (myDict));
+    testReadingMatch (db, "yey");
+
+    tomoe_letter_free (chr);
+    tomoe_dict_free (myDict);
+}
+
+int
+main (int argc, char **argv)
+{
+    tomoe_db* db = NULL;
+
+    tomoe_init ();
+
+    db = tomoe_simple_load ("tomoe-config.xml");
+    if (!db) exit (1);
+
+    if (argc == 2 && 0 == strcmp (argv[1], "stroke"))
+        testStrokeMatch (db);
+    else if (argc == 3 && 0 == strcmp (argv[1], "reading"))
+        testReadingMatch (db, argv[2]);
+    else if (argc == 2 && 0 == strcmp (argv[1], "userdb"))
+        testUserDB (db);
+    else
+        fprintf (stdout, "testtomoe [stroke|reading|userdb]\n");
+
     tomoe_db_free (db);
     tomoe_term ();
     return 0;

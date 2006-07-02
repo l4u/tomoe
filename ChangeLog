@@ -1,3 +1,18 @@
+2006-07-02 Juernjakob Harder <juernjakob.jharder@gmail.com>
+	* lib/tomoe-dict.[ch]: Methodes for modifying added.
+	* lib/tomoe-db.[ch]: tomoe_db_addDict now adds an already loaded dictionary.
+	tomoe_db_loadDict, tomoe_db_loadDictList added.
+	* lib/tomoe-config.[ch]: Added. Holds a list of dictionaries to load.
+	* lib/tomoe-letter.[ch]: tomoe_candidate now holds tomoe_letter*, tomoe_letter_compare implemented.
+	* lib/tomoe-array.[ch]: tomoe_array_find fixed, tomoe_array_remove added.
+	* lib/tomoe.[ch]: tomoe_init do not load any dictionaries anymore, tomoe_simple_load added.
+	* lib/Makefile.am: tomoe-config.[ch] added.
+	* test/testtomoe.c: Expended to stroke, reading and modify tests.
+	* test/tomoe-config.xml: Added.
+	* test/testreading.c: Removed.
+	* test/Makefile.am: testreading removed.
+	* data/userdb.xml: Added.
+
 2006-06-20 Juernjakob Harder <juernjakob.harder@gmail.com>
 	* tomoe-dict.[ch], tomoe-db.h, tomoe-letter.h: Comments and cosmetic changes.
 

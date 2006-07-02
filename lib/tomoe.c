@@ -26,23 +26,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libxml/xmlreader.h>
 #include "tomoe.h"
 #include "tomoe-dict.h"
 #include "tomoe-db.h"
 #include "tomoe-array.h"
+#include "tomoe-config.h"
 
 /* 
  * Initialize tomoe 
  */
-tomoe_db*
+void
 tomoe_init (void)
 {
+    LIBXML_TEST_VERSION
+}
+
+tomoe_db*
+tomoe_simple_load (const char* configFile)
+{
     tomoe_db* db = tomoe_db_new();
+    tomoe_array* list;
+    tomoe_config* cfg;
+    int i;
+
     if (!db) return NULL;
-    /* load all available dictionaries */
-    tomoe_db_add_dict(db, TOMOEDATADIR "/all.xml");
-    tomoe_db_add_dict(db, TOMOEDATADIR "/readingtest.xml");
-    tomoe_db_add_dict(db, TOMOEDATADIR "/kanjidic2.xml");
+
+    cfg = tomoe_config_new (configFile);
+    tomoe_config_load (cfg);
+    list = tomoe_config_getDictList (cfg);
+    tomoe_db_loadDictList (db, list);
+    tomoe_config_free (cfg);
+
     return db;
 }
 

@@ -70,19 +70,85 @@ void         tomoe_dict_free          (tomoe_dict    *this);
 
 /**
  * @brief Get the file name of the tomoe dictionary.
- * @param this - Pointer to the tomoe_dict struct.
+ * @param this - Pointer to the tomoe_dict object.
  * @return File name of the tomoe dictionary. Return NULL if the dictionary
  *         wasn't load from a file, or newly allocated in a program and it
  *         doesn't saved yet.
  */
-const char  *tomoe_dict_get_file_name (tomoe_dict    *this);
+const char*  tomoe_dict_getFilename   (tomoe_dict    *this);
 
 /**
  * @brief Get the dictionary name.
- * @param this - Pointer to the tomoe_dict struct.
+ * @param this - Pointer to the tomoe_dict object.
  * @return Name of the dictionary.
  */
-const char  *tomoe_dict_get_name      (tomoe_dict    *this);
+const char*  tomoe_dict_getName       (tomoe_dict*    this);
+
+/**
+ * @brief Get editable property.
+ * @param this - Pointer to the tomoe_dict object.
+ * @return 1 - is editable, 0 - is not editable
+ */
+int          tomoe_dict_getEditable   (tomoe_dict*    this);
+
+/**
+ * @brief Get character count
+ * @param this - Pointer to the tomoe_dict object.
+ * @return Count of the characters.
+ */
+int          tomoe_dict_getSize       (tomoe_dict*    this);
+
+/* Editable methods */
+
+/**
+ * @brief Add a character
+ * @param this - Pointer to the tomoe_dict object.
+ * @param add  - Pointer to the tomoe_letter object.
+ */
+void         tomoe_dict_addChar       (tomoe_dict*    this,
+                                       tomoe_letter*  remove);
+
+// TODO Sort automatically
+/**
+ * @brief Sort dictionary
+ * @param this - Pointer to the tomoe_dict object.
+ * @param add  - Pointer to the tomoe_letter object.
+ */
+void         tomoe_dict_sort          (tomoe_dict*    this);
+
+/**
+ * @brief Remove a character by a character object
+ * @param this   - Pointer to the tomoe_dict object.
+ * @param remove - Pointer to the tomoe_letter object.
+ */
+void         tomoe_dict_removeByChar  (tomoe_dict*    this,
+                                       tomoe_letter*  remove);
+
+/**
+ * @brief Remove a character by index
+ * @param this   - Pointer to the tomoe_dict object.
+ * @param remove - Index of the character.
+ */
+void         tomoe_dict_removeByIndex (tomoe_dict*    this,
+                                       int            remove);
+
+/**
+ * @brief Find a character
+ * @param this - Pointer to the tomoe_dict object.
+ * @param find - Pointer to the tomoe_letter object.
+ * @return Index of the character.
+ */
+int          tomoe_dict_findIndex     (tomoe_dict*    this,
+                                       tomoe_letter*  find);
+
+/**
+ * @brief Get a character by index
+ * @param this  - Pointer to the tomoe_dict object.
+ * @param index - Index of the character.
+ * @return tomoe_letter object.
+ */
+tomoe_letter*tomoe_dict_charByIndex   (tomoe_dict*    this,
+                                       int index);
 
 /**
  * @brief Return an array of tomoe_letter which is kept in a tomoe_dict.
@@ -108,27 +174,6 @@ tomoe_array* tomoe_dict_get_matched   (tomoe_dict*    this,
  */
 tomoe_array* tomoe_dict_get_reading   (tomoe_dict*    this,
                                        const char*    input);
-
-#if 0
-/*
- * Not implemented yet.
- */
-/**
- * @brief
- * @param dict   -
- * @param letter -
- */
-void         tomoe_dict_append_letter (tomoe_dict    *dict,
-                                       tomoe_letter  *letter);
-
-/**
- * @brief
- * @param dict   -
- * @param letter -
- */
-void         tomoe_dict_remove_letter (tomoe_dict    *dict,
-                                       tomoe_letter  *letter);
-#endif
 
 #ifdef	__cplusplus
 }

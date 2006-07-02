@@ -102,7 +102,8 @@ main (int argc, char **argv)
 {
     /* FIXME! read arguments */
 
-    tomoe_db* db = tomoe_init ();
+    tomoe_init ();
+    tomoe_db* db = tomoe_simple_load (NULL);
     if (!db) exit (1);
 
     while (1)
@@ -128,7 +129,7 @@ main (int argc, char **argv)
                 tomoe_candidate* p = (tomoe_candidate*)tomoe_array_get (matched, i);
                 if (i > 0)
                     fprintf (stdout, " ");
-                fprintf (stdout, " %s", p->letter);
+                //fprintf (stdout, " %s", p->character->letter);
             }
             fprintf (stdout, "\n");
         }

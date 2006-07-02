@@ -40,7 +40,9 @@ extern "C" {
 /**
  * @brief Initialize tomoe library.
  */
-tomoe_db*  tomoe_init          (void);
+void       tomoe_init          (void);
+
+tomoe_db*  tomoe_simple_load   (const char* configFile);
 
 /**
  * @brief Finalize tomoe library.
