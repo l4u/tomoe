@@ -21,10 +21,19 @@
  *  $Id$
  */
 
-#include "tomoe-letter.h"
+#include "tomoe-char.h"
 
 #include <stdlib.h>
 #include <string.h>
+
+struct _tomoe_char
+{
+    int           ref;
+    char*         charCode;
+    tomoe_glyph*  glyph;
+    tomoe_array*  readings;
+    char*         meta;
+};
 
 tomoe_stroke *
 tomoe_stroke_new (void)
@@ -113,25 +122,23 @@ tomoe_glyph_free (tomoe_glyph *glyph)
     free (glyph);
 }
 
-tomoe_letter*
-tomoe_letter_new (void)
+tomoe_char*
+tomoe_char_new (void)
 {
-    tomoe_letter *lttr = calloc (1, sizeof (tomoe_letter));
-    if (!lttr) return NULL;
+    tomoe_char *p = calloc (1, sizeof (tomoe_char));
+    if (!p) return NULL;
 
-    lttr->ref       = 1;
-    lttr->character = NULL;
-    lttr->c_glyph   = NULL;
-    lttr->meta      = NULL;
-    lttr->readings  = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
-                                       NULL,
-                                       (tomoe_free_fn)free);
+    p->ref       = 1;
+    p->charCode  = NULL;
+    p->glyph     = NULL;
+    p->meta      = NULL;
+    p->readings  = NULL;
 
-    return lttr;
+    return p;
 }
 
-tomoe_letter*
-tomoe_letter_addref (tomoe_letter* this)
+tomoe_char*
+tomoe_char_addref (tomoe_char* this)
 {
     if (!this) return NULL;
     this->ref ++;
@@ -139,24 +146,84 @@ tomoe_letter_addref (tomoe_letter* this)
 }
 
 void
-tomoe_letter_free (tomoe_letter *this)
+tomoe_char_free (tomoe_char *this)
 {
     if (!this) return;
 
     this->ref --;
     if (this->ref <= 0)
     {
-        free (this->character);
-        tomoe_glyph_free (this->c_glyph);
+        free (this->charCode);
+        tomoe_glyph_free (this->glyph);
         free (this->meta);
         free (this);
     }
 }
 
-int
-tomoe_letter_compare (const tomoe_letter** a, const tomoe_letter** b)
+const char*
+tomoe_char_getCode (const tomoe_char* this)
 {
-    return strcmp ((*a)->character, (*b)->character);
+    if (!this) return NULL;
+    return this->charCode;
+}
+
+void
+tomoe_char_setCode (tomoe_char* this, const char* code)
+{
+    if (!this) return;
+    free (this->charCode);
+    this->charCode = strdup (code);
+}
+
+tomoe_array*
+tomoe_char_getReadings (tomoe_char* this)
+{
+    if (!this) return NULL;
+    return this->readings;
+}
+
+void
+tomoe_char_setReadings (tomoe_char* this, tomoe_array* readings)
+{
+    if (!this) return;
+    tomoe_array_free (this->readings);
+    this->readings = tomoe_array_addref (readings);
+}
+
+tomoe_glyph*
+tomoe_char_getGlyph (tomoe_char* this)
+{
+    if (!this) return NULL;
+    return this->glyph;
+}
+
+void
+tomoe_char_setGlyph (tomoe_char* this, tomoe_glyph* glyph)
+{
+    if (!this) return;
+    tomoe_glyph_free (this->glyph);
+    this->glyph = glyph;
+}
+
+const char*
+tomoe_char_getMeta (const tomoe_char* this)
+{
+    if (!this) return NULL;
+    return this->meta;
+}
+
+void
+tomoe_char_setMeta (tomoe_char* this, const char* meta)
+{
+    if (!this) return;
+    free (this->meta);
+    this->meta = strdup (meta);
+}
+
+int
+tomoe_char_compare (const tomoe_char** a, const tomoe_char** b)
+{
+    return strcmp ((*a)->charCode, (*b)->charCode);
 }
 
 int

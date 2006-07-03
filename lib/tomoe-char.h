@@ -25,8 +25,8 @@
  *  @brief 
  */
 
-#ifndef __TOMOE_LETTER_H__
-#define __TOMOE_LETTER_H__
+#ifndef __TOMOE_CHAR_H__
+#define __TOMOE_CHAR_H__
 
 #ifdef	__cplusplus
 extern "C" {
@@ -37,7 +37,8 @@ extern "C" {
 typedef struct _tomoe_point     tomoe_point;
 typedef struct _tomoe_stroke    tomoe_stroke;
 typedef struct _tomoe_glyph     tomoe_glyph;
-typedef struct _tomoe_letter    tomoe_letter;
+typedef struct _tomoe_char      tomoe_letter; // obsolete
+typedef struct _tomoe_char      tomoe_char;
 typedef struct _tomoe_candidate tomoe_candidate;
 
 struct _tomoe_point
@@ -56,15 +57,6 @@ struct _tomoe_glyph
 {
     unsigned int  stroke_num;
     tomoe_stroke *strokes;
-};
-
-struct _tomoe_letter
-{
-    int           ref;
-    char*         character;
-    tomoe_glyph*  c_glyph;
-    tomoe_array*  readings;
-    char*         meta;
 };
 
 struct _tomoe_candidate
@@ -114,20 +106,33 @@ unsigned int    tomoe_glyph_get_number_of_strokes
  * @brief Create a tomoe letter.
  * @return Pointer to newly allocated tomoe_letter struct.
  */
-tomoe_letter*   tomoe_letter_new                (void);
+tomoe_char*     tomoe_char_new                  (void);
 
 /**
  * @brief Increase reference count.
  * @param this - Pointer to the tomoe_letter struct to increase reference count.
  * @return The tomoe_letter.
  */
-tomoe_letter*   tomoe_letter_addref             (tomoe_letter*        this);
+tomoe_char*     tomoe_char_addref               (tomoe_char*          this);
 
 /**
  * @brief Decrease reference count and free if zero.
  * @param this - Pointer to the tomoe_letter struct to free.
  */
-void            tomoe_letter_free               (tomoe_letter*        this);
+void            tomoe_char_free                 (tomoe_char*          this);
+
+const char*     tomoe_char_getCode              (const tomoe_char*    this);
+void            tomoe_char_setCode              (tomoe_char*          this,
+                                                 const char*          code);
+tomoe_array*    tomoe_char_getReadings          (tomoe_char*          this);
+void            tomoe_char_setReadings          (tomoe_char*          this,
+                                                 tomoe_array*         readings);
+tomoe_glyph*    tomoe_char_getGlyph             (tomoe_char*          this);
+void            tomoe_char_setGlyph             (tomoe_char*          this,
+                                                 tomoe_glyph*         glyph);
+const char*     tomoe_char_getMeta              (const tomoe_char*    this);
+void            tomoe_char_setMeta              (tomoe_char*          this,
+                                                 const char*          meta);
 
 /**
  * @brief Compare two tomoe_letter.
@@ -135,8 +140,8 @@ void            tomoe_letter_free               (tomoe_letter*        this);
  * @param b - Pointer to the tomoe_letter 2 pointer.
  * @return -1 a < b, 0 a= b, 1 a > b
  */
-int             tomoe_letter_compare            (const tomoe_letter** a,
-                                                 const tomoe_letter** b);
+int             tomoe_char_compare              (const tomoe_char** a,
+                                                 const tomoe_char** b);
 
 /**
  * @brief Compare two tomoe_candidate.
@@ -160,4 +165,4 @@ int             tomoe_string_compare            (const char**  a,
 }
 #endif
 
-#endif /* __TOMOE_LETTER_H__ */
+#endif /* __TOMOE_CHAR_H__ */

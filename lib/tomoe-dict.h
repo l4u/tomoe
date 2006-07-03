@@ -37,7 +37,7 @@ extern "C" {
 #endif
 
 #include "tomoe-data-types.h"
-#include "tomoe-letter.h"
+#include "tomoe-char.h"
 #include "tomoe-array.h"
 
 /**
@@ -51,22 +51,28 @@ typedef struct _tomoe_dict tomoe_dict;
 /**
  * @brief Create a dictionary from a file.
  * @param filename - Name of dictionary file to load.
- * @return Pointer to newly allocated tomoe_dict struct.
+ * @return Pointer to newly allocated tomoe_dict object.
  */
 tomoe_dict  *tomoe_dict_new           (const char    *filename);
 
 /**
  * @brief Increase reference count.
- * @param this - Pointer to the tomoe_dict struct to increase reference count.
+ * @param this - Pointer to the tomoe_dict object to increase reference count.
  * @return The tomoe_dict.
  */
-tomoe_dict  *tomoe_dict_addref        (tomoe_dict    *this);
+tomoe_dict*  tomoe_dict_addref        (tomoe_dict*    this);
 
 /**
  * @brief Decrease reference count and free if zero.
- * @param this - Pointer to the tomoe_dict struct to free.
+ * @param this - Pointer to the tomoe_dict object to free.
  */
-void         tomoe_dict_free          (tomoe_dict    *this);
+void         tomoe_dict_free          (tomoe_dict*    this);
+
+/**
+ * @brief Save tomoe dictionary.
+ * @param this - Pointer to the tomoe_dict object.
+ */
+void         tomoe_dict_save          (tomoe_dict*    this);
 
 /**
  * @brief Get the file name of the tomoe dictionary.
@@ -107,14 +113,6 @@ int          tomoe_dict_getSize       (tomoe_dict*    this);
  */
 void         tomoe_dict_addChar       (tomoe_dict*    this,
                                        tomoe_letter*  remove);
-
-// TODO Sort automatically
-/**
- * @brief Sort dictionary
- * @param this - Pointer to the tomoe_dict object.
- * @param add  - Pointer to the tomoe_letter object.
- */
-void         tomoe_dict_sort          (tomoe_dict*    this);
 
 /**
  * @brief Remove a character by a character object
