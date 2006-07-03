@@ -1,4 +1,13 @@
-2006-07-02 Juernjakob Harder <juernjakob.jharder@gmail.com>
+2006-07-03 Juernjakob Harder <juernjakob.harder@gmail.com>
+	* lib/tomoe-char.[ch]: Renamed from tomoe-letter.[ch].
+	tomoe_char* renamed from tomoe_letter, tomoe_char struct hided.
+	Property setter/getter added.
+	* lib/tomoe-dict.[ch]: tomoe_char* renamed from tomoe_letter, tomoe_dict_save added.
+	Replace tomoe-letter.h with tomoe-char.h.
+	* lib/Makefile.am: Replace tomoe-letter.[ch] with tomoe-char.[ch].
+	* test/testtomoe.c: Updated.
+
+2006-07-02 Juernjakob Harder <juernjakob.harder@gmail.com>
 	* lib/tomoe-dict.[ch]: Methodes for modifying added.
 	* lib/tomoe-db.[ch]: tomoe_db_addDict now adds an already loaded dictionary.
 	tomoe_db_loadDict, tomoe_db_loadDictList added.

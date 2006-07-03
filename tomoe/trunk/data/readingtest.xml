@@ -5,11 +5,11 @@
 	<metaxsl>meta.xsl</metaxsl>
 	<character>
 		<literal>&#x65E5;</literal>
-		<strokelist count="4">
-			<s count="2">(64 61) (50 257) </s>
-			<s count="3">(81 51) (250 65) (218 273) </s>
-			<s count="2">(75 168) (228 166) </s>
-			<s count="2">(64 266) (218 278) </s>
+		<strokelist>
+			<s>(64 61) (50 257) </s>
+			<s>(81 51) (250 65) (218 273) </s>
+			<s>(75 168) (228 166) </s>
+			<s>(64 266) (218 278) </s>
 		</strokelist>
 		<readings>
 			<r>ニチ</r>

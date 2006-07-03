@@ -72,16 +72,16 @@ read_test_data ()
 void outCharInfo (const tomoe_letter* chr, int score)
 {
    int j;
-   int reading_num = tomoe_array_size(chr->readings);
+   int reading_num = tomoe_array_size (tomoe_char_getReadings ((tomoe_letter*)chr)); //FIXME
 
-   fprintf (stdout, "character:%s [%d]\t", chr->character, score);
+   fprintf (stdout, "character:%s [%d]\t", tomoe_char_getCode (chr), score);
    for (j = 0; j < reading_num; j++)
    {
-       const char* r = (const char*)tomoe_array_get (chr->readings, j);
+       const char* r = (const char*)tomoe_array_get ( tomoe_char_getReadings ((tomoe_letter*)chr), j);//FIXME
        fprintf (stdout, " %s", r);
    }
    fprintf (stdout, "\n");
-   fprintf (stdout, chr->meta );
+   fprintf (stdout, tomoe_char_getMeta (chr));
    fprintf (stdout, "\n");
 }
 
@@ -144,18 +144,18 @@ void testReadingMatch (tomoe_db* db, const char* reading)
                  candidate_num);
         for (i = 0; i < candidate_num; i++)
         {
-            tomoe_letter* p = (tomoe_letter*)tomoe_array_get(matched, i);
+            tomoe_letter* p = (tomoe_letter*)tomoe_array_get (matched, i);
             int j;
-            int reading_num = tomoe_array_size(p->readings);
+            int reading_num = tomoe_array_size (tomoe_char_getReadings (p));
 
-            fprintf (stdout, "character:%s\t", p->character);
+            fprintf (stdout, "character:%s\t", tomoe_char_getCode (p));
             for (j = 0; j < reading_num; j++)
             {
-                const char* r = (const char*)tomoe_array_get(p->readings, j);
+                const char* r = (const char*)tomoe_array_get ( tomoe_char_getReadings (p), j);
                 fprintf (stdout, " %s", r);
             }
             fprintf (stdout, "\n");
-            fprintf (stdout, p->meta );
+            fprintf (stdout, tomoe_char_getMeta (p));
             fprintf (stdout, "\n");
         }
     }
@@ -167,15 +167,17 @@ void testUserDB (tomoe_db* db)
 {
     tomoe_letter* chr;
     tomoe_dict* myDict = tomoe_dict_new ("../data/userdb.xml");
+    tomoe_array* readings = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
+                                             NULL,
+                                             (tomoe_free_fn)free);
 
     fprintf (stdout, "dictSize %d; create character \"（＾o＾）／\" with reading \"やった\" and add to dictionary\n", 
              tomoe_dict_getSize (myDict));
-    chr = tomoe_letter_new ();
-    chr->character = strdup ("（＾o＾）／");
-    tomoe_array_append (chr->readings, strdup ("やった"));
+    chr = tomoe_char_new ();
+    tomoe_char_setCode (chr, "（＾o＾）／");
+    tomoe_array_append (readings, strdup ("やった"));
+    tomoe_char_setReadings (chr, readings);
     tomoe_dict_addChar (myDict, chr);
-    // sort again after adding characters...
-    tomoe_dict_sort (myDict);
 
     tomoe_db_addDict (db, myDict);
 
@@ -183,14 +185,13 @@ void testUserDB (tomoe_db* db)
     testReadingMatch (db, "やった");
 
     fprintf (stdout, "update character to \"\\\\（＾o＾）//\"\n");
-    free (chr->character);
-    chr->character = strdup ("\\\\（＾o＾）//");
+    tomoe_char_setCode (chr, "\\\\（＾o＾）//");
     fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_getSize (myDict));
     testReadingMatch (db, "やった");
 
     fprintf (stdout, "update reading to \"yey\"\n");
-    tomoe_array_remove (chr->readings, tomoe_array_find (chr->readings, "やった"));
-    tomoe_array_append (chr->readings, "yey");
+    tomoe_array_remove (readings, tomoe_array_find (readings, "やった"));
+    tomoe_array_append (readings, "yey");
     fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_getSize (myDict));
     testReadingMatch (db, "やった");
     fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_getSize (myDict));
@@ -201,7 +202,9 @@ void testUserDB (tomoe_db* db)
     fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_getSize (myDict));
     testReadingMatch (db, "yey");
 
-    tomoe_letter_free (chr);
+    //tomoe_dict_save (myDict);
+
+    tomoe_char_free (chr);
     tomoe_dict_free (myDict);
 }
 
