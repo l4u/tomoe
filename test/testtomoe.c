@@ -6,7 +6,7 @@
 #include "tomoe.h"
 
 static tomoe_glyph * read_test_data ();
-void outCharInfo (const tomoe_letter* chr, int score);
+void outCharInfo (tomoe_char* chr, int score);
 void testStrokeMatch (tomoe_db* db);
 void testReadingMatch (tomoe_db* db, const char* reading);
 void testUserDB (tomoe_db* db);
@@ -69,19 +69,26 @@ read_test_data ()
     return NULL;
 }
 
-void outCharInfo (const tomoe_letter* chr, int score)
+void outCharInfo (tomoe_char* chr, int score)
 {
    int j;
-   int reading_num = tomoe_array_size (tomoe_char_getReadings ((tomoe_letter*)chr)); //FIXME
+   tomoe_array* readings = tomoe_char_getReadings (chr);
+   const char* meta = tomoe_char_getMeta (chr);
 
-   fprintf (stdout, "character:%s [%d]\t", tomoe_char_getCode (chr), score);
-   for (j = 0; j < reading_num; j++)
+   fprintf (stdout, "character:%s [%d] ", tomoe_char_getCode (chr), score);
+   fflush (stdout);
+   if (readings)
    {
-       const char* r = (const char*)tomoe_array_get ( tomoe_char_getReadings ((tomoe_letter*)chr), j);//FIXME
-       fprintf (stdout, " %s", r);
+       int reading_num = tomoe_array_size (readings);
+       for (j = 0; j < reading_num; j++)
+       {
+           const char* r = tomoe_array_getConst (readings, j);
+           fprintf (stdout, " %s", r);
+       }
+       fprintf (stdout, "\n");
    }
-   fprintf (stdout, "\n");
-   fprintf (stdout, tomoe_char_getMeta (chr));
+   if (meta)
+       fprintf (stdout, meta);
    fprintf (stdout, "\n");
 }
 
@@ -96,8 +103,8 @@ void testStrokeMatch (tomoe_db* db)
     if (!test_glyph) 
         goto END;
 
-    matched = tomoe_db_get_matched (db, test_glyph);
-    candidate_num = tomoe_array_size(matched);
+    matched = tomoe_db_searchByStrokes (db, test_glyph);
+    candidate_num = tomoe_array_size (matched);
 
     if (candidate_num != 0)
     {
@@ -111,7 +118,7 @@ void testStrokeMatch (tomoe_db* db)
                  candidate_num);
         for (i = 0; i < candidate_num; i++)
         {
-            tomoe_candidate* p = (tomoe_candidate*)tomoe_array_get (matched, i);
+            const tomoe_candidate* p = (const tomoe_candidate*)tomoe_array_getConst (matched, i);
             outCharInfo (p->character, p->score);
         }
     }
@@ -127,7 +134,7 @@ END:
 
 void testReadingMatch (tomoe_db* db, const char* reading)
 {
-    tomoe_array* matched = tomoe_db_get_reading (db, reading);
+    tomoe_array* matched = tomoe_db_searchByReading (db, reading);
     int candidate_num = tomoe_array_size(matched);
 
     if (candidate_num != 0)
@@ -144,19 +151,8 @@ void testReadingMatch (tomoe_db* db, const char* reading)
                  candidate_num);
         for (i = 0; i < candidate_num; i++)
         {
-            tomoe_letter* p = (tomoe_letter*)tomoe_array_get (matched, i);
-            int j;
-            int reading_num = tomoe_array_size (tomoe_char_getReadings (p));
-
-            fprintf (stdout, "character:%s\t", tomoe_char_getCode (p));
-            for (j = 0; j < reading_num; j++)
-            {
-                const char* r = (const char*)tomoe_array_get ( tomoe_char_getReadings (p), j);
-                fprintf (stdout, " %s", r);
-            }
-            fprintf (stdout, "\n");
-            fprintf (stdout, tomoe_char_getMeta (p));
-            fprintf (stdout, "\n");
+            tomoe_char* p = (tomoe_char*)tomoe_array_get (matched, i);
+            outCharInfo (p, 0);
         }
     }
     else
@@ -165,7 +161,7 @@ void testReadingMatch (tomoe_db* db, const char* reading)
 
 void testUserDB (tomoe_db* db)
 {
-    tomoe_letter* chr;
+    tomoe_char* chr;
     tomoe_dict* myDict = tomoe_dict_new ("../data/userdb.xml");
     tomoe_array* readings = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
                                              NULL,
@@ -173,7 +169,7 @@ void testUserDB (tomoe_db* db)
 
     fprintf (stdout, "dictSize %d; create character \"（＾o＾）／\" with reading \"やった\" and add to dictionary\n", 
              tomoe_dict_getSize (myDict));
-    chr = tomoe_char_new ();
+    chr = tomoe_char_new (NULL);
     tomoe_char_setCode (chr, "（＾o＾）／");
     tomoe_array_append (readings, strdup ("やった"));
     tomoe_char_setReadings (chr, readings);
@@ -202,7 +198,7 @@ void testUserDB (tomoe_db* db)
     fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_getSize (myDict));
     testReadingMatch (db, "yey");
 
-    //tomoe_dict_save (myDict);
+    tomoe_dict_save (myDict);
 
     tomoe_char_free (chr);
     tomoe_dict_free (myDict);
