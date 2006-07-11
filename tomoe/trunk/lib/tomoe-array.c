@@ -242,7 +242,7 @@ tomoe_array_free(tomoe_array* this)
 tomoe_array*
 tomoe_array_append (tomoe_array* this, void* p)
 {
-    if (!this) return 0;
+    if (!this) return NULL;
 
     if (this->len == this->cap)
     {
@@ -260,12 +260,12 @@ tomoe_array_append (tomoe_array* this, void* p)
 }
 
 int
-tomoe_array_find (tomoe_array* this, void* p)
+tomoe_array_find (const tomoe_array* this, const void* p)
 {
     void* e;
     if (!this || !this->compare) return -1;
 
-    e = bsearch(&p, this->p, this->len, sizeof(void*), 
+    e = bsearch(&p, this->p, this->len, sizeof(void*),
         ((int(*)(const void*, const void*))this->compare));
     if (!e) return -1;
 
@@ -274,6 +274,13 @@ tomoe_array_find (tomoe_array* this, void* p)
 
 void*
 tomoe_array_get (tomoe_array* this, int index)
+{
+    if (!this || index < 0 || this->len <= index) return NULL;
+    return this->p[index];
+}
+
+const void*
+tomoe_array_getConst (const tomoe_array* this, int index)
 {
     if (!this || index < 0 || this->len <= index) return NULL;
     return this->p[index];
@@ -296,12 +303,12 @@ tomoe_array_sort (tomoe_array* this)
 {
     if (!this || !this->compare) return;
 
-    qsort(this->p, this->len, sizeof(void*), 
+    qsort(this->p, this->len, sizeof(void*),
         ((int(*)(const void*, const void*))this->compare));
 }
 
 int
-tomoe_array_size (tomoe_array* this)
+tomoe_array_size (const tomoe_array* this)
 {
     if (!this) return 0;
     return this->len;
@@ -316,6 +323,13 @@ tomoe_array_merge (tomoe_array* this, tomoe_array* append)
     num = tomoe_array_size (append);
     for (i = 0; i < num; i++)
         tomoe_array_append (this, tomoe_array_get (append, i));
+}
+
+tomoe_array*
+tomoe_array_cloneEmpty (const tomoe_array* this)
+{
+    if (!this) return NULL;
+    return tomoe_array_new (this->compare, this->addref, this->free);
 }
 
 /*

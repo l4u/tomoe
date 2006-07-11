@@ -109,7 +109,7 @@ main (int argc, char **argv)
     while (1)
     {
         tomoe_glyph *glyph;
-        tomoe_array* matched = NULL;
+        const tomoe_array* matched = NULL;
         int candidate_num = 0;
 
         glyph = read_glyph ();
@@ -117,7 +117,7 @@ main (int argc, char **argv)
         if (!glyph)
             break;
 
-        matched = tomoe_db_get_matched (db, glyph);
+        matched = tomoe_db_searchByStrokes (db, glyph);
         candidate_num = tomoe_array_size (matched);
 
         if (candidate_num != 0 && matched)
@@ -126,9 +126,9 @@ main (int argc, char **argv)
 
             for (i = 0; i < candidate_num; i++)
             {
-                tomoe_candidate* p = (tomoe_candidate*)tomoe_array_get (matched, i);
-                if (i > 0)
-                    fprintf (stdout, " ");
+                //const tomoe_candidate* p = (const tomoe_candidate*)tomoe_array_getConst (matched, i);
+                //if (i > 0)
+                //    fprintf (stdout, " ");
                 //fprintf (stdout, " %s", p->character->letter);
             }
             fprintf (stdout, "\n");

@@ -48,7 +48,6 @@ tomoe_simple_load (const char* configFile)
     tomoe_db* db = tomoe_db_new();
     tomoe_array* list;
     tomoe_config* cfg;
-    int i;
 
     if (!db) return NULL;
 
@@ -65,6 +64,7 @@ tomoe_simple_load (const char* configFile)
 void 
 tomoe_term (void)
 {
+    // TODO unfreed tomoe objects check
 }
 
 

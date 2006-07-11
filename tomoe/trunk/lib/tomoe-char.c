@@ -21,18 +21,28 @@
  *  $Id$
  */
 
-#include "tomoe-char.h"
-
 #include <stdlib.h>
 #include <string.h>
+#include <libxml/xmlreader.h>
+#include <libxslt/xslt.h>
+#include <libxslt/xsltInternals.h>
+#include <libxslt/transform.h>
+#include <libxslt/xsltutils.h>
+
+#define TOMOE_CHAR__USE_XML_METHODS
+#define TOMOE_DICT__USE_XSL_METHODS
+#include "tomoe-char.h"
+#include "tomoe-dict.h"
 
 struct _tomoe_char
 {
-    int           ref;
-    char*         charCode;
-    tomoe_glyph*  glyph;
-    tomoe_array*  readings;
-    char*         meta;
+    int                  ref;
+    char*                charCode;
+    tomoe_glyph*         glyph;
+    tomoe_array*         readings;
+    xmlNodePtr           xmlMeta;
+    char*                meta;
+    tomoe_dictInterface* parent;
 };
 
 tomoe_stroke *
@@ -123,7 +133,7 @@ tomoe_glyph_free (tomoe_glyph *glyph)
 }
 
 tomoe_char*
-tomoe_char_new (void)
+tomoe_char_new (tomoe_dictInterface* dict)
 {
     tomoe_char *p = calloc (1, sizeof (tomoe_char));
     if (!p) return NULL;
@@ -133,12 +143,13 @@ tomoe_char_new (void)
     p->glyph     = NULL;
     p->meta      = NULL;
     p->readings  = NULL;
+    p->parent    = dict;
 
     return p;
 }
 
 tomoe_char*
-tomoe_char_addref (tomoe_char* this)
+tomoe_char_addRef (tomoe_char* this)
 {
     if (!this) return NULL;
     this->ref ++;
@@ -155,6 +166,7 @@ tomoe_char_free (tomoe_char *this)
     {
         free (this->charCode);
         tomoe_glyph_free (this->glyph);
+        if (this->xmlMeta) xmlFreeNode (this->xmlMeta);
         free (this->meta);
         free (this);
     }
@@ -172,7 +184,7 @@ tomoe_char_setCode (tomoe_char* this, const char* code)
 {
     if (!this) return;
     free (this->charCode);
-    this->charCode = strdup (code);
+    this->charCode = code ? strdup (code) : NULL;
 }
 
 tomoe_array*
@@ -187,14 +199,14 @@ tomoe_char_setReadings (tomoe_char* this, tomoe_array* readings)
 {
     if (!this) return;
     tomoe_array_free (this->readings);
-    this->readings = tomoe_array_addref (readings);
+    this->readings = readings ? tomoe_array_addref (readings) : NULL;
 }
 
 tomoe_glyph*
 tomoe_char_getGlyph (tomoe_char* this)
 {
     if (!this) return NULL;
-    return this->glyph;
+    return this->glyph; 
 }
 
 void
@@ -202,28 +214,115 @@ tomoe_char_setGlyph (tomoe_char* this, tomoe_glyph* glyph)
 {
     if (!this) return;
     tomoe_glyph_free (this->glyph);
-    this->glyph = glyph;
+    this->glyph = glyph; // FIXME addRef
 }
 
 const char*
-tomoe_char_getMeta (const tomoe_char* this)
+tomoe_char_getMeta (tomoe_char* this)
 {
+    xmlDocPtr doc;
+    xmlDocPtr meta;
+    const char* param[3];
+    xmlNodePtr root;
+    int len = 0;
+
     if (!this) return NULL;
+    if (this->meta) return this->meta;
+    if (!this->xmlMeta) return "";
+
+    // create xml doc and include meta xml block
+    doc = xmlNewDoc(BAD_CAST "1.0");
+    root = xmlNewNode(NULL, BAD_CAST "ch");
+    param[0] = 0;
+
+    xmlDocSetRootElement (doc, root);
+    xmlAddChild (root, this->xmlMeta);
+
+    // translate xml meta to view text
+    meta = xsltApplyStylesheet (this->parent->getMetaXsl (this->parent->instance), doc, param);
+
+    // save into character object
+    xmlChar* metaString = NULL;
+    xsltSaveResultToString (&metaString, &len, meta, this->parent->getMetaXsl (this->parent->instance));
+
+    // change of meta is invariant
+    this->meta = strdup ((const char*)metaString);
+
+    xmlFreeDoc (meta);
+    xmlUnlinkNode (this->xmlMeta);
+    xmlFreeDoc (doc);
+
+    xsltCleanupGlobals ();
+    xmlCleanupParser ();
+
     return this->meta;
 }
 
 void
-tomoe_char_setMeta (tomoe_char* this, const char* meta)
+tomoe_char_setDictInterface (tomoe_char* this, tomoe_dictInterface* parent)
+{
+    if (!this) return NULL;
+    this->parent = parent;
+}
+
+xmlNodePtr
+tomoe_char_getXmlMeta (tomoe_char* this)
+{
+    if (!this) return NULL;
+    return this->xmlMeta; // TODO addRef??
+}
+
+void
+tomoe_char_setXmlMeta (tomoe_char* this, xmlNodePtr meta)
 {
     if (!this) return;
+    if (this->xmlMeta) xmlFreeNode (this->xmlMeta);
     free (this->meta);
-    this->meta = strdup (meta);
+    this->xmlMeta = meta; // TODO addRef??
 }
+
+/*void
+tomoe_char_setMetaXsl (tomoe_char* this, xsltStylesheetPtr metaXsl)
+{
+    if (!this) return;
+    this->metaXsl = metaXsl; // TODO link to tomoe_dict instead of metaXsl
+}*/
 
 int
 tomoe_char_compare (const tomoe_char** a, const tomoe_char** b)
 {
     return strcmp ((*a)->charCode, (*b)->charCode);
+}
+
+tomoe_candidate*
+tomoe_candidate_new (void)
+{
+    tomoe_candidate* cand;
+    cand            = calloc (sizeof (tomoe_candidate), 1);
+    cand->ref       = 1;
+    cand->character = NULL;
+    cand->score     = 0;
+    return cand;
+}
+
+tomoe_candidate*
+tomoe_candidate_addRef (tomoe_candidate* this)
+{
+    if (!this) return NULL;
+    this->ref ++;
+    return this;
+}
+
+void
+tomoe_candidate_free (tomoe_candidate* this)
+{
+    if (!this) return;
+    this->ref --;
+    if (this->ref <= 0)
+    {
+        tomoe_char_free (this->character);
+        free (this);
+    }
 }
 
 int
@@ -233,7 +332,7 @@ tomoe_candidate_compare (const tomoe_candidate** a, const tomoe_candidate** b)
     int score_b = b[0]->score;
 
     return score_a > score_b ? 1
-        : score_a < score_b ? -1
+        : score_a < score_b ? - 1
         : 0;
 }
 
@@ -242,3 +341,6 @@ tomoe_string_compare (const char** a, const char** b)
 {
     return strcmp(*a, *b);
 }
+
+//implementation_tomoe_array (tomoe_candidateArray, const tomoe_candidate*,
+//    tomoe_candidate_compare, tomoe_candidate_addRef, tomoe_candidate_free);

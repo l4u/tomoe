@@ -40,12 +40,6 @@ extern "C" {
 #include "tomoe-char.h"
 #include "tomoe-array.h"
 
-/**
- * @typedef typedef struct _tomoe_dict tomoe_dict;
- *
- * A struct type which represents tomoe dictionary. All members in it should be
- * accessed through tomoe_dict_* functions.
- */
 typedef struct _tomoe_dict tomoe_dict;
 
 /**
@@ -95,7 +89,7 @@ const char*  tomoe_dict_getName       (tomoe_dict*    this);
  * @param this - Pointer to the tomoe_dict object.
  * @return 1 - is editable, 0 - is not editable
  */
-int          tomoe_dict_getEditable   (tomoe_dict*    this);
+tomoe_bool   tomoe_dict_getEditable   (tomoe_dict*    this);
 
 /**
  * @brief Get character count
@@ -109,18 +103,18 @@ int          tomoe_dict_getSize       (tomoe_dict*    this);
 /**
  * @brief Add a character
  * @param this - Pointer to the tomoe_dict object.
- * @param add  - Pointer to the tomoe_letter object.
+ * @param add  - Pointer to the tomoe_char object.
  */
 void         tomoe_dict_addChar       (tomoe_dict*    this,
-                                       tomoe_letter*  remove);
+                                       tomoe_char*    remove);
 
 /**
  * @brief Remove a character by a character object
  * @param this   - Pointer to the tomoe_dict object.
- * @param remove - Pointer to the tomoe_letter object.
+ * @param remove - Pointer to the tomoe_char object.
  */
 void         tomoe_dict_removeByChar  (tomoe_dict*    this,
-                                       tomoe_letter*  remove);
+                                       tomoe_char*    remove);
 
 /**
  * @brief Remove a character by index
@@ -133,45 +127,49 @@ void         tomoe_dict_removeByIndex (tomoe_dict*    this,
 /**
  * @brief Find a character
  * @param this - Pointer to the tomoe_dict object.
- * @param find - Pointer to the tomoe_letter object.
+ * @param find - Pointer to the tomoe_char object.
  * @return Index of the character.
  */
 int          tomoe_dict_findIndex     (tomoe_dict*    this,
-                                       tomoe_letter*  find);
+                                       tomoe_char*    find);
 
 /**
  * @brief Get a character by index
  * @param this  - Pointer to the tomoe_dict object.
  * @param index - Index of the character.
- * @return tomoe_letter object.
+ * @return tomoe_char object.
  */
-tomoe_letter*tomoe_dict_charByIndex   (tomoe_dict*    this,
+tomoe_char*  tomoe_dict_charByIndex   (tomoe_dict*    this,
                                        int index);
 
 /**
- * @brief Return an array of tomoe_letter which is kept in a tomoe_dict.
+ * @brief Return an array of tomoe_char which is kept in a tomoe_dict.
  * @param this - Pointer to the tomoe_dict struct.
- * @return The array of tomoe_letter.
+ * @return The array of tomoe_char.
  */
 tomoe_array* tomoe_dict_get_letters   (tomoe_dict    *this);
 
 /**
- * @brief Match strokes of tomoe_letter with input.
+ * @brief Match strokes of tomoe_char with input.
  * @param this   - Pointer to the tomoe_dict object.
  * @param input  - Pointer to tomoe_glyph matchkey.
  * @return The array of tomoe_candidate.
  */
-tomoe_array* tomoe_dict_get_matched   (tomoe_dict*    this,
-                                       tomoe_glyph*   input);
+tomoe_array* tomoe_dict_searchByStrokes   (const tomoe_dict* this,
+                                                    tomoe_glyph*      input);
 
 /**
- * @brief Match reading of tomoe_letter with input.
+ * @brief Match reading of tomoe_char with input.
  * @param this   - Pointer to the tomoe_dict object.
  * @param input  - Pointer to string matchkey
  * @return The array of tomoe_candidate.
  */
-tomoe_array* tomoe_dict_get_reading   (tomoe_dict*    this,
-                                       const char*    input);
+tomoe_array* tomoe_dict_searchByReading   (const tomoe_dict* this,
+                                                 const char*       input);
+
+#ifdef TOMOE_DICT__USE_XSL_METHODS
+xsltStylesheetPtr  tomoe_dict_getMetaXsl        (tomoe_dict*       this);
+#endif
 
 #ifdef	__cplusplus
 }

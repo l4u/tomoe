@@ -32,12 +32,12 @@
 extern "C" {
 #endif
 
+#include "tomoe-data-types.h"
 #include "tomoe-array.h"
 
 typedef struct _tomoe_point     tomoe_point;
 typedef struct _tomoe_stroke    tomoe_stroke;
 typedef struct _tomoe_glyph     tomoe_glyph;
-typedef struct _tomoe_char      tomoe_letter; // obsolete
 typedef struct _tomoe_char      tomoe_char;
 typedef struct _tomoe_candidate tomoe_candidate;
 
@@ -61,10 +61,24 @@ struct _tomoe_glyph
 
 struct _tomoe_candidate
 {
-    const tomoe_letter* character;
-    int           score;
+    int               ref;
+    tomoe_char*       character;
+    int               score;
 };
 
+#ifdef TOMOE_DICT__USE_XSL_METHODS
+typedef xsltStylesheetPtr  (*tomoe_dictInterface_getMetaXsl_fn)  (void*);
+#else
+typedef void*              (*tomoe_dictInterface_getMetaXsl_fn)  (void*);
+#endif
+typedef tomoe_bool         (*tomoe_dictInterface_getEditable_fn) (void*);
+
+typedef struct _tomoe_dictInterface
+{
+    void*                              instance;
+    tomoe_dictInterface_getMetaXsl_fn  getMetaXsl;
+    tomoe_dictInterface_getEditable_fn getEditable;
+} tomoe_dictInterface;
 
 tomoe_stroke   *tomoe_stroke_new                (void);
 void            tomoe_stroke_init               (tomoe_stroke *strk,
@@ -106,14 +120,14 @@ unsigned int    tomoe_glyph_get_number_of_strokes
  * @brief Create a tomoe letter.
  * @return Pointer to newly allocated tomoe_letter struct.
  */
-tomoe_char*     tomoe_char_new                  (void);
+tomoe_char*     tomoe_char_new                  (tomoe_dictInterface* dict);
 
 /**
  * @brief Increase reference count.
  * @param this - Pointer to the tomoe_letter struct to increase reference count.
  * @return The tomoe_letter.
  */
-tomoe_char*     tomoe_char_addref               (tomoe_char*          this);
+tomoe_char*     tomoe_char_addRef               (tomoe_char*          this);
 
 /**
  * @brief Decrease reference count and free if zero.
@@ -130,9 +144,17 @@ void            tomoe_char_setReadings          (tomoe_char*          this,
 tomoe_glyph*    tomoe_char_getGlyph             (tomoe_char*          this);
 void            tomoe_char_setGlyph             (tomoe_char*          this,
                                                  tomoe_glyph*         glyph);
-const char*     tomoe_char_getMeta              (const tomoe_char*    this);
-void            tomoe_char_setMeta              (tomoe_char*          this,
-                                                 const char*          meta);
+const char*     tomoe_char_getMeta              (tomoe_char*          this);
+void            tomoe_char_setDictInterface     (tomoe_char*          this,
+                                                 tomoe_dictInterface* parent);
+
+#ifdef TOMOE_CHAR__USE_XML_METHODS
+xmlNodePtr      tomoe_char_getXmlMeta           (tomoe_char*          this);
+void            tomoe_char_setXmlMeta           (tomoe_char*          this,
+                                                 xmlNodePtr           meta);
+void            tomoe_char_setMetaXsl           (tomoe_char*          this,
+                                                 xsltStylesheetPtr    metaXsl);
+#endif
 
 /**
  * @brief Compare two tomoe_letter.
@@ -149,6 +171,9 @@ int             tomoe_char_compare              (const tomoe_char** a,
  * @param b - Pointer to the tomoe_candidate 2 pointer.
  * @return -1 a < b, 0 a= b, 1 a > b
  */
+tomoe_candidate*tomoe_candidate_new             (void);
+tomoe_candidate*tomoe_candidate_addRef          (tomoe_candidate*  this);
+void            tomoe_candidate_free            (tomoe_candidate*  this);
 int             tomoe_candidate_compare         (const tomoe_candidate** a,
                                                  const tomoe_candidate** b);
 
@@ -164,5 +189,7 @@ int             tomoe_string_compare            (const char**  a,
 #ifdef	__cplusplus
 }
 #endif
+
+//interface_tomoe_array (tomoe_candidateArray, const tomoe_candidate*);
 
 #endif /* __TOMOE_CHAR_H__ */

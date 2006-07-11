@@ -120,9 +120,10 @@ tomoe_db_getDictList (tomoe_db* this)
 }
 
 tomoe_array*
-tomoe_db_get_matched (tomoe_db* this, tomoe_glyph* input)
+tomoe_db_searchByStrokes (tomoe_db* this, tomoe_glyph* input)
 {
     int i, num;
+    tomoe_array* tmp;
     tomoe_array* matched;
     tomoe_dict* dict;
 
@@ -131,13 +132,13 @@ tomoe_db_get_matched (tomoe_db* this, tomoe_glyph* input)
     if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
 
     dict = (tomoe_dict*)tomoe_array_get (this->dicts, 0);
-    matched = tomoe_dict_get_matched (dict, input);
-    for (i = 1; i < num; i++)
+    tmp = tomoe_dict_searchByStrokes (dict, input);
+    matched = tomoe_array_cloneEmpty (tmp);
+    for (i = 0; i < num; i++)
     {
         tomoe_array* tmp;
-
         dict = (tomoe_dict*)tomoe_array_get (this->dicts, i);
-        tmp = tomoe_dict_get_matched (dict, input);
+        tmp = tomoe_dict_searchByStrokes (dict, input);
         tomoe_array_merge (matched, tmp);
         tomoe_array_free (tmp);
     }
@@ -147,10 +148,11 @@ tomoe_db_get_matched (tomoe_db* this, tomoe_glyph* input)
 }
 
 tomoe_array*
-tomoe_db_get_reading (tomoe_db* this, const char* input)
+tomoe_db_searchByReading (tomoe_db* this, const char* input)
 {
     int i, num;
     tomoe_array* reading;
+    tomoe_array* tmp;
     tomoe_dict* dict;
 
     if (!this) return tomoe_array_new (NULL, NULL, NULL);
@@ -158,13 +160,12 @@ tomoe_db_get_reading (tomoe_db* this, const char* input)
     if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
 
     dict = (tomoe_dict*)tomoe_array_get (this->dicts, 0);
-    reading = tomoe_dict_get_reading (dict, input);
-    for (i = 1; i < num; i++)
+    tmp = tomoe_dict_searchByReading (dict, input);
+    reading = tomoe_array_cloneEmpty (tmp);
+    for (i = 0; i < num; i++)
     {
-        tomoe_array* tmp;
-
         dict = (tomoe_dict*)tomoe_array_get (this->dicts, i);
-        tmp = tomoe_dict_get_reading (dict, input);
+        tmp = tomoe_dict_searchByReading (dict, input);
         tomoe_array_merge (reading, tmp);
         tomoe_array_free (tmp);
     }

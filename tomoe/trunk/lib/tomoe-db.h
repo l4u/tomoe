@@ -89,8 +89,8 @@ tomoe_dict*   tomoe_db_getUserDict        (tomoe_db*     this,
  * @param input    - Pointer to tomoe_glyph matchkey.
  * @return The array of tomoe_candidate.
  */
-tomoe_array*  tomoe_db_get_matched        (tomoe_db*     this,
-                                           tomoe_glyph*  input);
+tomoe_array*  tomoe_db_searchByStrokes  (tomoe_db*     this,
+                                                  tomoe_glyph*  input);
 
 /**
  * @brief Match reading of tomoe_letter with input.
@@ -98,8 +98,8 @@ tomoe_array*  tomoe_db_get_matched        (tomoe_db*     this,
  * @param reading  - Pointer to string matchkey
  * @return The array of tomoe_candidate.
  */
-tomoe_array*  tomoe_db_get_reading        (tomoe_db*     this,
-                                           const char*   reading);
+tomoe_array*  tomoe_db_searchByReading   (tomoe_db*     this,
+                                                const char*   reading);
 #if 0
 /* optional */
 void          tomoe_db_enable_dict        (tomoe_db*     this,
