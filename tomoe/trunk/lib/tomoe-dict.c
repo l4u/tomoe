@@ -106,9 +106,9 @@ void              _parse_strokelist         (xmlNodePtr       node,
                                              tomoe_char*      lttr);
 int               _check_dict_xsl           (const char*      filename);
 /* tomoe_dict private methods */
-tomoe_dict*       _parse_tomoe_dict         (tomoe_dict*      this,
+void              _parse_tomoe_dict         (tomoe_dict*      this,
                                              xmlNodePtr       root);
-tomoe_dict*       _parse_alien_dict         (tomoe_dict*      this,
+void              _parse_alien_dict         (tomoe_dict*      this,
                                              const char*      filename);
 
 
@@ -124,6 +124,8 @@ tomoe_dict_new (const char* filename)
     this->ref                       = 1;
     this->metaXsl                   = NULL;
     this->letters                   = NULL;
+    this->name                      = NULL;
+    this->filename                  = strdup (filename);
     this->dictInterface.instance    = this;
     this->dictInterface.getMetaXsl  = (tomoe_dictInterface_getMetaXsl_fn)tomoe_dict_getMetaXsl;
     this->dictInterface.getEditable = (tomoe_dictInterface_getEditable_fn)tomoe_dict_getEditable;
@@ -166,7 +168,6 @@ tomoe_dict_free (tomoe_dict* this)
     }
 }
 
-// TODO save meta data
 void
 tomoe_dict_save (tomoe_dict* this)
 {
@@ -270,7 +271,7 @@ void
 tomoe_dict_addChar (tomoe_dict* this, tomoe_char* add)
 {
     if (!this || !add) return;
-    tomoe_char_setDictInterface (add, this);
+    tomoe_char_setDictInterface (add, &this->dictInterface);
     tomoe_array_append (this->letters, add);
     tomoe_array_sort (this->letters);
 }
@@ -1062,7 +1063,7 @@ _check_dict_xsl (const char* filename)
     return 1;
 }
 
-tomoe_dict*
+void
 _parse_tomoe_dict (tomoe_dict* this, xmlNodePtr root)
 {
     this->letters = tomoe_array_new((tomoe_compare_fn)tomoe_char_compare,
@@ -1073,6 +1074,26 @@ _parse_tomoe_dict (tomoe_dict* this, xmlNodePtr root)
     if (root && 0 == xmlStrcmp(root->name, BAD_CAST "tomoe_dictionary"))
     {
         xmlNodePtr node;
+        xmlAttrPtr prop;
+
+        /* read dictionary properties */
+        for (prop = root->properties; prop; prop = prop->next)
+        {
+            if (0 == xmlStrcmp(prop->name, BAD_CAST "meta"))
+            {
+                const char* metaxsl = (const char*) prop->children->content;
+                char* path = (char*)calloc (strlen (metaxsl) + strlen (TOMOEDATADIR) + 2, sizeof (char));
+                strcpy (path, TOMOEDATADIR);
+                strcat (path, "/");
+                strcat (path, metaxsl);
+                this->metaXsl = xsltParseStylesheetFile (BAD_CAST path);
+                free (path);
+            }
+            else if (0 == xmlStrcmp(prop->name, BAD_CAST "name"))
+                this->name = strdup ((const char*) prop->children->content);
+        }
+
+        /* read character nodes */
         for (node = root->children; node; node = node->next)
         {
             if (node->type != XML_ELEMENT_NODE)
@@ -1092,21 +1113,11 @@ _parse_tomoe_dict (tomoe_dict* this, xmlNodePtr root)
                     tomoe_array_append (this->letters, chr);
                 tomoe_char_free (chr);
             }
-            else if (0 == xmlStrcmp(node->name, BAD_CAST "metaxsl") && !this->metaXsl)
-            {
-                const char* metaxsl = (const char*)node->children->content;
-                char* path = (char*)calloc (strlen (metaxsl) + strlen (TOMOEDATADIR) + 2, sizeof (char));
-                strcpy (path, TOMOEDATADIR);
-                strcat (path, "/");
-                strcat (path, metaxsl);
-                this->metaXsl = xsltParseStylesheetFile (BAD_CAST path);
-                free (path);
-            }
         }
     }
 }
 
-tomoe_dict*
+void
 _parse_alien_dict (tomoe_dict* this, const char* filename)
 {
     char* xslname = strdup (filename);
@@ -1114,11 +1125,10 @@ _parse_alien_dict (tomoe_dict* this, const char* filename)
     xsltStylesheetPtr cur = NULL;
     xmlDocPtr doc, res;
     const char* param[1];
-    tomoe_dict* dict = NULL;
     param[0] = NULL;
 
-    if (!xslname) return NULL;
-    if ((len = strlen (xslname)) < 3) return NULL;
+    if (!xslname) return;
+    if ((len = strlen (xslname)) < 3) return;
     xslname[len - 2] = 's'; // xml > xsl
 
     xmlSubstituteEntitiesDefault (1);
@@ -1135,5 +1145,4 @@ _parse_alien_dict (tomoe_dict* this, const char* filename)
     xmlFreeDoc (res);
     xmlFreeDoc (doc);
 
-    return dict;
 }

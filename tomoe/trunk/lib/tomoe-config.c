@@ -21,6 +21,7 @@
  */
 
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <libxml/xmlreader.h>
@@ -34,7 +35,7 @@ const xmlChar* defaultConfig  = BAD_CAST "<?xml version=\"1.0\" standalone=\"no\
                                 "</tomoeConfig>";
 const char* defaultConfigFile = "/.tomoe-config.xml";
 
-tomoe_dict_cfg* _tomoe_dict_cfg_new  ();
+tomoe_dict_cfg* _tomoe_dict_cfg_new  (void);
 void            _tomoe_dict_cfg_free (tomoe_dict_cfg* p);
 int             _tomoe_dict_cfg_cmp  (const tomoe_dict_cfg** a, const tomoe_dict_cfg** b);
 
@@ -56,7 +57,8 @@ tomoe_config_new (const char* configFile)
                                    NULL,
                                    (tomoe_free_fn)_tomoe_dict_cfg_free);
 
-    if (configFile)
+    // check config file
+    if (configFile && 0 == access (configFile, F_OK | R_OK))
         p->filename = strdup (configFile);
     else
     {
@@ -69,6 +71,12 @@ tomoe_config_new (const char* configFile)
             p->filename = calloc (strlen (home) + strlen (defaultConfigFile) + 1, sizeof(char));
             strcpy (p->filename, home);
             strcat (p->filename, defaultConfigFile);
+            // if not found use defaultConfig
+            if (0 != access (p->filename, F_OK | R_OK))
+            {
+                free (p->filename);
+                p->filename = NULL;
+            }
         }
     }
     return p;
@@ -135,8 +143,15 @@ tomoe_config_load (tomoe_config* this)
                     else if (0 == xmlStrcmp(prop->name, BAD_CAST "system"))
                         dcfg->user = xmlStrcmp(prop->children->content, BAD_CAST "yes") ? 1 : 0;
                 }
-                dcfg->writeAccess = dcfg->user; //FIXME check rights
-                tomoe_array_append (this->dictList, dcfg);
+
+                /* check if file exists */
+                if (access (dcfg->filename, F_OK | R_OK))
+                {
+                    dcfg->writeAccess = access (dcfg->filename, W_OK) ? dcfg->user : 0;
+                    tomoe_array_append (this->dictList, dcfg);
+                }
+                else
+                    _tomoe_dict_cfg_free (dcfg);
             }
 
         }
@@ -202,7 +217,7 @@ tomoe_config_getDictList (tomoe_config* this)
 }
 
 tomoe_dict_cfg*
-_tomoe_dict_cfg_new ()
+_tomoe_dict_cfg_new (void)
 {
     tomoe_dict_cfg* p = (tomoe_dict_cfg*)calloc (1, sizeof (tomoe_dict_cfg));
     p->filename = NULL;

@@ -1,6 +1,11 @@
+2006-07-12 Juernjakob Harder <juernjakob.harder@gmail.com>
+	* lib/tomoe-config.c: File check/rights added.
+	* lib/tomoe-dict.c: Dictionary name added.
+	* data/*.xml: Dictionary name added.
+
 2006-07-11 Juernjakob Harder <juernjakob.harder@gmail.com>
 	* configure.in: Version 0.3.0.
-	* src/tomoe-array.h: tomoe_array commented.
+	* lib/tomoe-array.h: tomoe_array commented.
 
 2006-07-04 Juernjakob Harder <juernjakob.harder@gmail.com>
 	* lib/tomoe-char.[ch], lib/tomoe-dict.[ch], lib/tomoe.c, 
