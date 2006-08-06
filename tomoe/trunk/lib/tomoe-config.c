@@ -45,6 +45,7 @@ struct _tomoe_config
     char*        filename;
     int          useSystemDictionaries;
     tomoe_array* dictList;
+    int          defaultUserDB;
 };
 
 tomoe_config*
@@ -109,11 +110,15 @@ tomoe_config_load (tomoe_config* this)
     xmlDocPtr doc;
     xmlNodePtr root;
     int system = 0;
+    char* defaultUserDB = NULL;
+    int i;
 
     if (!this) return;
     doc = this->filename ? xmlReadFile (this->filename, NULL, 1)
                          : xmlReadDoc ( defaultConfig, NULL, NULL, 1);
     root = xmlDocGetRootElement(doc);
+
+    this->defaultUserDB = -1;
 
     if (root && 0 == xmlStrcmp(root->name, BAD_CAST "tomoeConfig"))
     {
@@ -126,6 +131,15 @@ tomoe_config_load (tomoe_config* this)
             if (0 == xmlStrcmp(node->name, BAD_CAST "useSystemDictionaries"))
             {
                 system = 1;
+            }
+            else if (0 == xmlStrcmp(node->name, BAD_CAST "defaultUserDB"))
+            {
+                xmlAttrPtr prop;
+                for (prop = node->properties; prop; prop = prop->next)
+                {
+                    if (0 == xmlStrcmp(prop->name, BAD_CAST "file"))
+                        defaultUserDB = strdup ((const char*)prop->children->content);
+                }
             }
             else if (0 == xmlStrcmp(node->name, BAD_CAST "dictionary"))
             {
@@ -144,14 +158,14 @@ tomoe_config_load (tomoe_config* this)
                         dcfg->user = xmlStrcmp(prop->children->content, BAD_CAST "yes") ? 1 : 0;
                 }
 
-                /* check if file exists */
-                if (access (dcfg->filename, F_OK | R_OK))
-                {
+                /* check if file exists */fprintf (stdout, dcfg->filename);
+                //if (access (dcfg->filename, F_OK | R_OK)) FIXME
+                {//fprintf(stdout, "..access ok\n");
                     dcfg->writeAccess = access (dcfg->filename, W_OK) ? dcfg->user : 0;
                     tomoe_array_append (this->dictList, dcfg);
                 }
-                else
-                    _tomoe_dict_cfg_free (dcfg);
+                //else
+                //    {_tomoe_dict_cfg_free (dcfg);fprintf(stdout,"..not found\n");}
             }
 
         }
@@ -159,6 +173,19 @@ tomoe_config_load (tomoe_config* this)
     xmlFreeDoc (doc);
 
     tomoe_array_sort (this->dictList);
+
+    if (defaultUserDB)
+    {
+        for (i = 0; i < tomoe_array_size (this->dictList); i++)
+        {
+            tomoe_dict_cfg* dcfg = (tomoe_dict_cfg*)tomoe_array_get (this->dictList, i);
+            if (strcmp (defaultUserDB, dcfg->filename) == 0)
+            {
+                this->defaultUserDB = i;
+                break;
+            }
+        }
+    }
 
     // search in TOMOEDATADIR for additional dictionaries
     if (system)
@@ -216,6 +243,13 @@ tomoe_config_getDictList (tomoe_config* this)
     return tomoe_array_addref (this->dictList);
 }
 
+int
+tomoe_config_getDefaultUserDB (tomoe_config *this)
+{
+    if (!this) return NULL;
+    return this->defaultUserDB;
+}
+
 tomoe_dict_cfg*
 _tomoe_dict_cfg_new (void)
 {
@@ -236,5 +270,5 @@ int
 _tomoe_dict_cfg_cmp (const tomoe_dict_cfg** a, const tomoe_dict_cfg** b)
 {
     return (*a)->user == (*b)->user ? strcmp((*a)->filename, (*b)->filename) 
-                                    : (*a)->user - (*b)->user;
+                                    : (*b)->user - (*a)->user;
 }

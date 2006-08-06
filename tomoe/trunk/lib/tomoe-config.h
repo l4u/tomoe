@@ -51,6 +51,7 @@ void          tomoe_config_load        (tomoe_config* this);
 void          tomoe_config_save        (tomoe_config* this);
 const char*   tomoe_config_getFilename (tomoe_config* this);
 tomoe_array*  tomoe_config_getDictList (tomoe_config* this);
+int           tomoe_config_getDefaultUserDB (tomoe_config *this);
 
 #ifdef	__cplusplus
 }
