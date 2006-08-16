@@ -58,6 +58,7 @@ struct _tomoe_dict
     tomoe_bool          editable;
     tomoe_array*        letters;
     xsltStylesheetPtr   metaXsl;
+    char               *meta_xsl_file;
 };
 
 typedef struct _tomoe_metric tomoe_metric;
@@ -113,7 +114,7 @@ void              _parse_alien_dict         (tomoe_dict*      this,
 
 
 tomoe_dict*
-tomoe_dict_new (const char* filename)
+tomoe_dict_new (const char* filename, tomoe_bool editable)
 {
     tomoe_dict* this = NULL;
     if (!filename && !*filename) return NULL;
@@ -123,9 +124,11 @@ tomoe_dict_new (const char* filename)
 
     this->ref                       = 1;
     this->metaXsl                   = NULL;
+    this->meta_xsl_file             = NULL;
     this->letters                   = NULL;
     this->name                      = NULL;
     this->filename                  = strdup (filename);
+    this->editable                  = editable;
     this->dictInterface.instance    = this;
     this->dictInterface.getMetaXsl  = (tomoe_dictInterface_getMetaXsl_fn)tomoe_dict_getMetaXsl;
     this->dictInterface.getEditable = (tomoe_dictInterface_getEditable_fn)tomoe_dict_getEditable;
@@ -183,6 +186,11 @@ tomoe_dict_save (tomoe_dict* this)
     param[0] = 0;
 
     xmlDocSetRootElement (doc, root);
+
+    if (this->name)
+        xmlNewProp (root, BAD_CAST "name", BAD_CAST this->name);
+    if (this->meta_xsl_file)
+        xmlNewProp (root, BAD_CAST "meta", BAD_CAST this->meta_xsl_file);
 
     num = tomoe_array_size (this->letters);
     for (i = 0; i < num; i++)
@@ -274,6 +282,14 @@ tomoe_dict_addChar (tomoe_dict* this, tomoe_char* add)
     tomoe_char_setDictInterface (add, &this->dictInterface);
     tomoe_array_append (this->letters, add);
     tomoe_array_sort (this->letters);
+}
+
+void
+tomoe_dict_insert (tomoe_dict *dict, int position, tomoe_char *insert)
+{
+    if (!dict || !insert) return;
+    /*tomoe_array_insert (this->letters, position, insert);*/ 
+    /* TODO do we need this?? */ 
 }
 
 void
@@ -1082,6 +1098,7 @@ _parse_tomoe_dict (tomoe_dict* this, xmlNodePtr root)
             if (0 == xmlStrcmp(prop->name, BAD_CAST "meta"))
             {
                 const char* metaxsl = (const char*) prop->children->content;
+                this->meta_xsl_file = strdup (metaxsl);
                 char* path = (char*)calloc (strlen (metaxsl) + strlen (TOMOEDATADIR) + 2, sizeof (char));
                 strcpy (path, TOMOEDATADIR);
                 strcat (path, "/");

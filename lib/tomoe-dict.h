@@ -45,9 +45,11 @@ typedef struct _tomoe_dict tomoe_dict;
 /**
  * @brief Create a dictionary from a file.
  * @param filename - Name of dictionary file to load.
+ * @param editable - Editability of the dictionary.
  * @return Pointer to newly allocated tomoe_dict object.
  */
-tomoe_dict  *tomoe_dict_new           (const char    *filename);
+tomoe_dict  *tomoe_dict_new           (const char    *filename,
+                                       tomoe_bool     editable);
 
 /**
  * @brief Increase reference count.
@@ -108,6 +110,10 @@ int          tomoe_dict_getSize       (tomoe_dict*    this);
 void         tomoe_dict_addChar       (tomoe_dict*    this,
                                        tomoe_char*    remove);
 
+void         tomoe_dict_insert        (tomoe_dict    *dict,
+                                       int            position,
+                                       tomoe_char    *insert);
+
 /**
  * @brief Remove a character by a character object
  * @param this   - Pointer to the tomoe_dict object.
@@ -148,6 +154,8 @@ tomoe_char*  tomoe_dict_charByIndex   (tomoe_dict*    this,
  * @return The array of tomoe_char.
  */
 tomoe_array* tomoe_dict_get_letters   (tomoe_dict    *this);
+
+/* search methods */
 
 /**
  * @brief Match strokes of tomoe_char with input.

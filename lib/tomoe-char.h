@@ -147,6 +147,7 @@ void            tomoe_char_setGlyph             (tomoe_char*          this,
 const char*     tomoe_char_getMeta              (tomoe_char*          this);
 void            tomoe_char_setDictInterface     (tomoe_char*          this,
                                                  tomoe_dictInterface* parent);
+tomoe_bool      tomoe_char_is_editable          (tomoe_char          *chr);
 
 #ifdef TOMOE_CHAR__USE_XML_METHODS
 xmlNodePtr      tomoe_char_getXmlMeta           (tomoe_char*          this);
