@@ -1,24 +1,36 @@
-<?xml version="1.0" standalone="no"?>
-<tomoe_dictionary name="ReadingTest" meta="meta.xsl">
-	<character>
-		<literal>&#x65E5;</literal>
-		<strokelist>
-			<s>(64 61) (50 257) </s>
-			<s>(81 51) (250 65) (218 273) </s>
-			<s>(75 168) (228 166) </s>
-			<s>(64 266) (218 278) </s>
-		</strokelist>
-		<readings>
-			<r>ニチ</r>
-			<r>ジツ</r>
-			<r>ひ</r>
-			<r>-び</r>
-			<r>-か</r>
-			<r>-ka</r>
-		</readings>
-		<meta>
+<?xml version="1.0" encoding="UTF-8"?>
+<tomoe_dictionary name="My Dictionary" meta="meta.xsl">
+  <character>
+    <literal>??</literal>
+    <readings/>
+  </character>
+  <character>
+    <literal>人</literal>
+    <strokelist>
+      <s>(159 45) (48 207) </s>
+      <s>(116 144) (255 255) </s>
+    </strokelist>
+    <readings/>
+  </character>
+  <character>
+    <literal>日</literal>
+    <strokelist>
+      <s>(64 61) (50 257) </s>
+      <s>(81 51) (250 65) (218 273) </s>
+      <s>(75 168) (228 166) </s>
+      <s>(64 266) (218 278) </s>
+    </strokelist>
+    <readings>
+      <r>ニチ</r>
+      <r>ジツ</r>
+      <r>ひ</r>
+      <r>-び</r>
+      <r>-か</r>
+      <r>-ka</r>
+    </readings>
+    <meta>
 			<desc>Character for day</desc>
 			<jlpt>4</jlpt>
 		</meta>
-	</character>
+  </character>
 </tomoe_dictionary>

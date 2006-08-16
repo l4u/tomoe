@@ -1,6 +1,21 @@
+2006-08-16 Juernjakob Harder <juernjakob.harder@gmail.com>
+
+	* lib/tomoe_char.[ch]: tomoe_char_is_editable added.
+	* lib/tomoe-db.c, test/testtomoe.c, lib/tomoe-dict.[ch]: 
+	tomoe_dict_new: Argument editable added.
+
+2006-08-13 Juernjakob Harder <juernjakob.harder@gmail.com>
+
+	* lib/tomoe-char.c: tomoe_char_get_meta: meta xsl availability check.
+	* lib/tomoe-dict.c: Save name, meta properties.
+
+2006-08-11 Juernjakob Harder <juernjakob.harder@gmail.com>
+
+	* lib/tomoe-dict.[ch]: tomoe_dict_insert added.
+
 2006-08-05 Juernjakob Harder <juernjakob.harder@gmail.com>
 	
-	lib/tomoe-config.[ch]:
+	* lib/tomoe-config.[ch]: Default user dictionary added.
 
 2006-07-12 Juernjakob Harder <juernjakob.harder@gmail.com>
 	* lib/tomoe-config.c: File check/rights added.

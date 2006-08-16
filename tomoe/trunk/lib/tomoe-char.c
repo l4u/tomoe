@@ -229,6 +229,7 @@ tomoe_char_getMeta (tomoe_char* this)
     if (!this) return NULL;
     if (this->meta) return this->meta;
     if (!this->xmlMeta) return "";
+    if (!this->parent->getMetaXsl (this->parent->instance)) return "";
 
     // create xml doc and include meta xml block
     doc = xmlNewDoc(BAD_CAST "1.0");
@@ -263,6 +264,14 @@ tomoe_char_setDictInterface (tomoe_char* this, tomoe_dictInterface* parent)
 {
     if (!this) return NULL;
     this->parent = parent;
+}
+
+tomoe_bool
+tomoe_char_is_editable (tomoe_char *chr)
+{
+    if (!chr) return 0;
+    if (!chr->parent) return 1;
+    return chr->parent->getEditable (chr->parent->instance);
 }
 
 xmlNodePtr

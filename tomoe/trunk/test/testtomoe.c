@@ -162,7 +162,7 @@ void testReadingMatch (tomoe_db* db, const char* reading)
 void testUserDB (tomoe_db* db)
 {
     tomoe_char* chr;
-    tomoe_dict* myDict = tomoe_dict_new ("../data/userdb.xml");
+    tomoe_dict* myDict = tomoe_dict_new ("../data/userdb.xml", 1);
     tomoe_array* readings = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
                                              NULL,
                                              (tomoe_free_fn)free);

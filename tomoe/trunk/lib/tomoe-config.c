@@ -161,7 +161,7 @@ tomoe_config_load (tomoe_config* this)
                 /* check if file exists */fprintf (stdout, dcfg->filename);
                 //if (access (dcfg->filename, F_OK | R_OK)) FIXME
                 {//fprintf(stdout, "..access ok\n");
-                    dcfg->writeAccess = access (dcfg->filename, W_OK) ? dcfg->user : 0;
+                    dcfg->writeAccess = /*access (dcfg->filename, W_OK) ? */dcfg->user/* : 0*/;
                     tomoe_array_append (this->dictList, dcfg);
                 }
                 //else

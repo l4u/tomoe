@@ -84,7 +84,7 @@ tomoe_db_loadDict (tomoe_db* this, const char *filename, int editable)
 
     fprintf (stdout, "load dictionary '%s' editable: %s...", filename, editable ? "yes" : "no");
     fflush (stdout);
-    dict = tomoe_dict_new (filename);
+    dict = tomoe_dict_new (filename, editable);
     if (dict)
         tomoe_array_append (this->dicts, dict);
     printf (" ok\n");
