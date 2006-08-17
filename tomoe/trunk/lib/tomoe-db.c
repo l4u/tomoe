@@ -119,6 +119,21 @@ tomoe_db_getDictList (tomoe_db* this)
     return tomoe_array_addref(this->dicts);
 }
 
+void
+tomoe_db_save (tomoe_db *db)
+{
+    int i;
+
+    if (!db) return;
+
+    for (i = 0; i < tomoe_array_size (db->dicts); i++)
+    {
+        tomoe_dict *dict = (tomoe_dict*)tomoe_array_get (db->dicts, i);
+        if (tomoe_dict_get_modified (dict))
+            tomoe_dict_save (dict);
+    }
+}
+
 tomoe_array*
 tomoe_db_searchByStrokes (tomoe_db* this, tomoe_glyph* input)
 {

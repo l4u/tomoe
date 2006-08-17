@@ -77,6 +77,7 @@ void          tomoe_db_loadDict           (tomoe_db*     this,
 void          tomoe_db_loadDictList       (tomoe_db*     this,
                                            tomoe_array*  list);
 tomoe_array*  tomoe_db_getDictList        (tomoe_db*     this);
+void          tomoe_db_save               (tomoe_db     *db);
 
 #if 0
 tomoe_dict*   tomoe_db_getUserDict        (tomoe_db*     this,

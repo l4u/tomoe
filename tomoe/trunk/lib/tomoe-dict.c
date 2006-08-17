@@ -48,17 +48,18 @@ extern int xmlLoadExtDtdDefaultValue;
 
 struct _tomoe_dict
 {
-    int                 ref;
-    tomoe_dictInterface dictInterface;
+    int                  ref;
+    tomoe_dict_interface dict_interface;
 
-    char*               filename;
-    char*               name;
-    char*               encoding;
-    char*               lang;
-    tomoe_bool          editable;
-    tomoe_array*        letters;
-    xsltStylesheetPtr   metaXsl;
-    char               *meta_xsl_file;
+    char*                filename;
+    char*                name;
+    char*                encoding;
+    char*                lang;
+    tomoe_bool           editable;
+    tomoe_array*         letters;
+    xsltStylesheetPtr    metaXsl;
+    char                *meta_xsl_file;
+    tomoe_bool           modified;
 };
 
 typedef struct _tomoe_metric tomoe_metric;
@@ -117,21 +118,24 @@ tomoe_dict*
 tomoe_dict_new (const char* filename, tomoe_bool editable)
 {
     tomoe_dict* this = NULL;
+    int i;
+
     if (!filename && !*filename) return NULL;
 
     this = calloc (1, sizeof (tomoe_dict));
     if (!this) return NULL;
 
-    this->ref                       = 1;
-    this->metaXsl                   = NULL;
-    this->meta_xsl_file             = NULL;
-    this->letters                   = NULL;
-    this->name                      = NULL;
-    this->filename                  = strdup (filename);
-    this->editable                  = editable;
-    this->dictInterface.instance    = this;
-    this->dictInterface.getMetaXsl  = (tomoe_dictInterface_getMetaXsl_fn)tomoe_dict_getMetaXsl;
-    this->dictInterface.getEditable = (tomoe_dictInterface_getEditable_fn)tomoe_dict_getEditable;
+    this->ref                         = 1;
+    this->metaXsl                     = NULL;
+    this->meta_xsl_file               = NULL;
+    this->letters                     = NULL;
+    this->name                        = NULL;
+    this->filename                    = strdup (filename);
+    this->editable                    = editable;
+    this->dict_interface.instance     = this;
+    this->dict_interface.get_meta_xsl = (tomoe_dict_interface_get_meta_xsl)tomoe_dict_getMetaXsl;
+    this->dict_interface.get_editable = (tomoe_dict_interface_get_editable)tomoe_dict_getEditable;
+    this->dict_interface.set_modified = (tomoe_dict_interface_set_modified)tomoe_dict_set_modified;
 
     if (0 == _check_dict_xsl (filename))
     {
@@ -151,6 +155,13 @@ tomoe_dict_new (const char* filename, tomoe_bool editable)
 
     tomoe_array_sort (this->letters);
     this->filename = strdup (filename);
+
+    for (i = 0; i < tomoe_array_size (this->letters); i++)
+    {
+        tomoe_char *chr = (tomoe_char*)tomoe_array_get (this->letters, i);
+        tomoe_char_set_modified (chr, 0);
+    }
+    this->modified = 0;
 
     return this;
 }
@@ -180,6 +191,7 @@ tomoe_dict_save (tomoe_dict* this)
     int i, num;
 
     if (!this) return;
+    if (!tomoe_dict_getEditable (this)) return;
 
     doc = xmlNewDoc(BAD_CAST "1.0");
     root = xmlNewNode(NULL, BAD_CAST "tomoe_dictionary");
@@ -232,10 +244,13 @@ tomoe_dict_save (tomoe_dict* this)
         {
             xmlAddChild (charNode, xmlCopyNode (meta, 1));
         }
+
+        tomoe_char_set_modified (chr, 0);
     }
 
     xmlSaveFormatFileEnc(this->filename, doc, "UTF-8", 1);
     xmlFreeDoc (doc);
+    tomoe_dict_set_modified (this, 0);
 }
 
 tomoe_dict*
@@ -268,6 +283,20 @@ tomoe_dict_getEditable (tomoe_dict* this)
     return this->editable;
 }
 
+tomoe_bool
+tomoe_dict_get_modified (tomoe_dict *dict)
+{
+    if (!dict) return 0;
+    return dict->modified;
+}
+
+void
+tomoe_dict_set_modified (tomoe_dict *dict, tomoe_bool modified)
+{
+    if (!dict) return;
+    dict->modified = modified;
+}
+
 int
 tomoe_dict_getSize (tomoe_dict* this)
 {
@@ -279,9 +308,10 @@ void
 tomoe_dict_addChar (tomoe_dict* this, tomoe_char* add)
 {
     if (!this || !add) return;
-    tomoe_char_setDictInterface (add, &this->dictInterface);
+    tomoe_char_set_dict_interface (add, &this->dict_interface);
     tomoe_array_append (this->letters, add);
     tomoe_array_sort (this->letters);
+    tomoe_dict_set_modified (this, 1);
 }
 
 void
@@ -290,6 +320,7 @@ tomoe_dict_insert (tomoe_dict *dict, int position, tomoe_char *insert)
     if (!dict || !insert) return;
     /*tomoe_array_insert (this->letters, position, insert);*/ 
     /* TODO do we need this?? */ 
+    tomoe_dict_set_modified (dict, 1);
 }
 
 void
@@ -297,6 +328,7 @@ tomoe_dict_removeByChar (tomoe_dict* this, tomoe_char* remove)
 {
     if (!this) return;
     tomoe_array_remove (this->letters, tomoe_dict_findIndex (this, remove));
+    tomoe_dict_set_modified (this, 1);
 }
 
 void
@@ -304,6 +336,7 @@ tomoe_dict_removeByIndex (tomoe_dict* this, int remove)
 {
     if (!this) return;
     tomoe_array_remove (this->letters, remove);
+    tomoe_dict_set_modified (this, 1);
 }
 
 int
@@ -1118,7 +1151,7 @@ _parse_tomoe_dict (tomoe_dict* this, xmlNodePtr root)
 
             if (0 == xmlStrcmp(node->name, BAD_CAST "character"))
             {
-                tomoe_char* chr = tomoe_char_new (&this->dictInterface);
+                tomoe_char* chr = tomoe_char_new (&this->dict_interface);
                 tomoe_array* readings = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
                                                          NULL,
                                                          (tomoe_free_fn)free);
@@ -1126,6 +1159,7 @@ _parse_tomoe_dict (tomoe_dict* this, xmlNodePtr root)
                 tomoe_array_free (readings);
 
                 _parse_character (node, chr);
+                tomoe_char_set_dict_interface (chr, &this->dict_interface);
                 if (tomoe_char_getCode (chr))
                     tomoe_array_append (this->letters, chr);
                 tomoe_char_free (chr);
