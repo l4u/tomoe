@@ -67,18 +67,20 @@ struct _tomoe_candidate
 };
 
 #ifdef TOMOE_DICT__USE_XSL_METHODS
-typedef xsltStylesheetPtr  (*tomoe_dictInterface_getMetaXsl_fn)  (void*);
+typedef xsltStylesheetPtr  (*tomoe_dict_interface_get_meta_xsl) (void*);
 #else
-typedef void*              (*tomoe_dictInterface_getMetaXsl_fn)  (void*);
+typedef void*              (*tomoe_dict_interface_get_meta_xsl) (void*);
 #endif
-typedef tomoe_bool         (*tomoe_dictInterface_getEditable_fn) (void*);
+typedef tomoe_bool         (*tomoe_dict_interface_get_editable) (void*);
+typedef void               (*tomoe_dict_interface_set_modified) (void*, tomoe_bool);
 
-typedef struct _tomoe_dictInterface
+typedef struct _tomoe_dict_interface
 {
-    void*                              instance;
-    tomoe_dictInterface_getMetaXsl_fn  getMetaXsl;
-    tomoe_dictInterface_getEditable_fn getEditable;
-} tomoe_dictInterface;
+    void*                                instance;
+    tomoe_dict_interface_get_meta_xsl    get_meta_xsl;
+    tomoe_dict_interface_get_editable    get_editable;
+    tomoe_dict_interface_set_modified    set_modified;
+} tomoe_dict_interface;
 
 tomoe_stroke   *tomoe_stroke_new                (void);
 void            tomoe_stroke_init               (tomoe_stroke *strk,
@@ -120,7 +122,7 @@ unsigned int    tomoe_glyph_get_number_of_strokes
  * @brief Create a tomoe letter.
  * @return Pointer to newly allocated tomoe_letter struct.
  */
-tomoe_char*     tomoe_char_new                  (tomoe_dictInterface* dict);
+tomoe_char*     tomoe_char_new                  (tomoe_dict_interface* dict);
 
 /**
  * @brief Increase reference count.
@@ -145,9 +147,12 @@ tomoe_glyph*    tomoe_char_getGlyph             (tomoe_char*          this);
 void            tomoe_char_setGlyph             (tomoe_char*          this,
                                                  tomoe_glyph*         glyph);
 const char*     tomoe_char_getMeta              (tomoe_char*          this);
-void            tomoe_char_setDictInterface     (tomoe_char*          this,
-                                                 tomoe_dictInterface* parent);
-tomoe_bool      tomoe_char_is_editable          (tomoe_char          *chr);
+void            tomoe_char_set_dict_interface   (tomoe_char           *chr,
+                                                 tomoe_dict_interface *parent);
+tomoe_bool      tomoe_char_is_editable          (tomoe_char           *chr);
+tomoe_bool      tomoe_char_get_modified         (tomoe_char           *chr);
+void            tomoe_char_set_modified         (tomoe_char           *chr,
+                                                 tomoe_bool            modified);
 
 #ifdef TOMOE_CHAR__USE_XML_METHODS
 xmlNodePtr      tomoe_char_getXmlMeta           (tomoe_char*          this);

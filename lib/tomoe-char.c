@@ -36,13 +36,14 @@
 
 struct _tomoe_char
 {
-    int                  ref;
-    char*                charCode;
-    tomoe_glyph*         glyph;
-    tomoe_array*         readings;
-    xmlNodePtr           xmlMeta;
-    char*                meta;
-    tomoe_dictInterface* parent;
+    int                   ref;
+    char                 *charCode;
+    tomoe_glyph          *glyph;
+    tomoe_array          *readings;
+    xmlNodePtr            xmlMeta;
+    char                 *meta;
+    tomoe_dict_interface *parent;
+    tomoe_bool            modified;
 };
 
 tomoe_stroke *
@@ -133,7 +134,7 @@ tomoe_glyph_free (tomoe_glyph *glyph)
 }
 
 tomoe_char*
-tomoe_char_new (tomoe_dictInterface* dict)
+tomoe_char_new (tomoe_dict_interface* dict)
 {
     tomoe_char *p = calloc (1, sizeof (tomoe_char));
     if (!p) return NULL;
@@ -144,6 +145,7 @@ tomoe_char_new (tomoe_dictInterface* dict)
     p->meta      = NULL;
     p->readings  = NULL;
     p->parent    = dict;
+    p->modified  = 0;
 
     return p;
 }
@@ -185,6 +187,7 @@ tomoe_char_setCode (tomoe_char* this, const char* code)
     if (!this) return;
     free (this->charCode);
     this->charCode = code ? strdup (code) : NULL;
+    tomoe_char_set_modified (this, 1);
 }
 
 tomoe_array*
@@ -200,6 +203,7 @@ tomoe_char_setReadings (tomoe_char* this, tomoe_array* readings)
     if (!this) return;
     tomoe_array_free (this->readings);
     this->readings = readings ? tomoe_array_addref (readings) : NULL;
+    tomoe_char_set_modified(this, 1);
 }
 
 tomoe_glyph*
@@ -215,6 +219,7 @@ tomoe_char_setGlyph (tomoe_char* this, tomoe_glyph* glyph)
     if (!this) return;
     tomoe_glyph_free (this->glyph);
     this->glyph = glyph; // FIXME addRef
+    tomoe_char_set_modified(this, 1);
 }
 
 const char*
@@ -229,7 +234,7 @@ tomoe_char_getMeta (tomoe_char* this)
     if (!this) return NULL;
     if (this->meta) return this->meta;
     if (!this->xmlMeta) return "";
-    if (!this->parent->getMetaXsl (this->parent->instance)) return "";
+    if (!this->parent->get_meta_xsl (this->parent->instance)) return "";
 
     // create xml doc and include meta xml block
     doc = xmlNewDoc(BAD_CAST "1.0");
@@ -240,11 +245,11 @@ tomoe_char_getMeta (tomoe_char* this)
     xmlAddChild (root, this->xmlMeta);
 
     // translate xml meta to view text
-    meta = xsltApplyStylesheet (this->parent->getMetaXsl (this->parent->instance), doc, param);
+    meta = xsltApplyStylesheet (this->parent->get_meta_xsl (this->parent->instance), doc, param);
 
     // save into character object
     xmlChar* metaString = NULL;
-    xsltSaveResultToString (&metaString, &len, meta, this->parent->getMetaXsl (this->parent->instance));
+    xsltSaveResultToString (&metaString, &len, meta, this->parent->get_meta_xsl (this->parent->instance));
 
     // change of meta is invariant
     this->meta = strdup ((const char*)metaString);
@@ -260,10 +265,10 @@ tomoe_char_getMeta (tomoe_char* this)
 }
 
 void
-tomoe_char_setDictInterface (tomoe_char* this, tomoe_dictInterface* parent)
+tomoe_char_set_dict_interface (tomoe_char *chr, tomoe_dict_interface *parent)
 {
-    if (!this) return NULL;
-    this->parent = parent;
+    if (!chr) return;
+    chr->parent = parent;
 }
 
 tomoe_bool
@@ -271,7 +276,23 @@ tomoe_char_is_editable (tomoe_char *chr)
 {
     if (!chr) return 0;
     if (!chr->parent) return 1;
-    return chr->parent->getEditable (chr->parent->instance);
+    return chr->parent->get_editable (chr->parent->instance);
+}
+
+tomoe_bool
+tomoe_char_get_modified (tomoe_char *chr)
+{
+    if (!chr) return 0;
+    return chr->modified;
+}
+
+void
+tomoe_char_set_modified (tomoe_char *chr, tomoe_bool modified)
+{
+    if (!chr) return;
+    chr->modified = modified;
+    if (chr->parent && modified == 1)
+        chr->parent->set_modified (chr->parent->instance, 1);
 }
 
 xmlNodePtr
@@ -288,6 +309,7 @@ tomoe_char_setXmlMeta (tomoe_char* this, xmlNodePtr meta)
     if (this->xmlMeta) xmlFreeNode (this->xmlMeta);
     free (this->meta);
     this->xmlMeta = meta; // TODO addRef??
+    tomoe_char_set_modified(this, 1);
 }
 
 /*void

@@ -1,3 +1,8 @@
+2006-08-17 Juernjakob Harder <juernjakob.harder@gmail.com>
+
+	* lib/tomoe-char.[ch], lib/tomoe-dict.[ch]: [set,get]_modified added.
+	* lib/tomoe-db.[ch]: tomoe_db_save added.
+
 2006-08-16 Juernjakob Harder <juernjakob.harder@gmail.com>
 
 	* lib/tomoe_char.[ch]: tomoe_char_is_editable added.

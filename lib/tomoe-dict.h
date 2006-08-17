@@ -93,6 +93,10 @@ const char*  tomoe_dict_getName       (tomoe_dict*    this);
  */
 tomoe_bool   tomoe_dict_getEditable   (tomoe_dict*    this);
 
+tomoe_bool   tomoe_dict_get_modified  (tomoe_dict    *dict);
+void         tomoe_dict_set_modified  (tomoe_dict    *dict,
+                                       tomoe_bool     modified);
+
 /**
  * @brief Get character count
  * @param this - Pointer to the tomoe_dict object.
