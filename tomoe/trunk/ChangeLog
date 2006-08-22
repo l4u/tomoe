@@ -1,3 +1,7 @@
+2006-08-21 Juernjakob Harder <juernjakob.harder@gmail.com>
+
+	* lib/tomoe-config.[ch]: Compiler warnings fixed.
+
 2006-08-17 Juernjakob Harder <juernjakob.harder@gmail.com>
 
 	* lib/tomoe-char.[ch], lib/tomoe-dict.[ch]: [set,get]_modified added.

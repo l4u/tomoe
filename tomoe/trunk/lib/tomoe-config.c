@@ -246,7 +246,7 @@ tomoe_config_getDictList (tomoe_config* this)
 int
 tomoe_config_getDefaultUserDB (tomoe_config *this)
 {
-    if (!this) return NULL;
+    if (!this) return 0;
     return this->defaultUserDB;
 }
 

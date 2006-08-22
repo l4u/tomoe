@@ -38,7 +38,7 @@ typedef struct _tomoe_config tomoe_config;
 
 typedef struct _tomoe_dict_cfg
 {
-    const char* filename;
+    char*       filename;
     int         dontLoad;
     int         writeAccess;
     int         user;

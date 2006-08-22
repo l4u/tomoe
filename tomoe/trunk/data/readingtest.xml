@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tomoe_dictionary name="My Dictionary" meta="meta.xsl">
   <character>
-    <literal>myChar</literal>
+    <literal>ch</literal>
     <strokelist>
       <s>(162 101) (222 91) </s>
       <s>(86 54) (86 201) (218 210) </s>
