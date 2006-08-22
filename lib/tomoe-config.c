@@ -109,7 +109,6 @@ tomoe_config_load (tomoe_config* this)
 {
     xmlDocPtr doc;
     xmlNodePtr root;
-    int system = 0;
     char* defaultUserDB = NULL;
     int i;
 
@@ -119,6 +118,7 @@ tomoe_config_load (tomoe_config* this)
     root = xmlDocGetRootElement(doc);
 
     this->defaultUserDB = -1;
+    this->useSystemDictionaries = 0;
 
     if (root && 0 == xmlStrcmp(root->name, BAD_CAST "tomoeConfig"))
     {
@@ -130,7 +130,7 @@ tomoe_config_load (tomoe_config* this)
 
             if (0 == xmlStrcmp(node->name, BAD_CAST "useSystemDictionaries"))
             {
-                system = 1;
+                this->useSystemDictionaries = 1;
             }
             else if (0 == xmlStrcmp(node->name, BAD_CAST "defaultUserDB"))
             {
@@ -188,7 +188,7 @@ tomoe_config_load (tomoe_config* this)
     }
 
     // search in TOMOEDATADIR for additional dictionaries
-    if (system)
+    if (this->useSystemDictionaries)
     {
         tomoe_array* systemList = tomoe_array_new (NULL, NULL, NULL);
         size_t cnt;
@@ -227,12 +227,40 @@ tomoe_config_load (tomoe_config* this)
 }
 
 void
-tomoe_config_save (tomoe_config* this)
+tomoe_config_save (tomoe_config *cfg)
 {
-    if (!this) return;
-    if (this->filename)
+    if (!cfg) return;
+    if (cfg->filename)
     {
-        // TODO
+        xmlDocPtr doc;
+        const char* param[3];
+        xmlNodePtr root;
+        int i;
+
+        doc = xmlNewDoc(BAD_CAST "1.0");
+        root = xmlNewNode(NULL, BAD_CAST "tomoeConfig");
+        param[0] = 0;
+
+        xmlDocSetRootElement (doc, root);
+
+        if (cfg->useSystemDictionaries)
+            xmlNewChild (root, NULL, BAD_CAST "useSystemDictionaries", NULL);
+
+
+        for (i = 0; i < tomoe_array_size (cfg->dictList); i++)
+        {
+            xmlNodePtr node = xmlNewChild (root, NULL, BAD_CAST "dictionary", NULL);
+            tomoe_dict_cfg *dict = (tomoe_dict_cfg*)tomoe_array_get (cfg->dictList, i);
+
+            xmlNewProp (node, BAD_CAST "file", BAD_CAST dict->filename);
+            if (!dict->user)
+                xmlNewProp (node, BAD_CAST "system", BAD_CAST "yes");
+            if (dict->dontLoad)
+                xmlNewProp (node, BAD_CAST "dontLoad", BAD_CAST "yes");
+        }
+
+        xmlSaveFormatFileEnc(cfg->filename, doc, "UTF-8", 1);
+        xmlFreeDoc (doc);
     }
 }
 
