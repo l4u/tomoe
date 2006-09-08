@@ -33,6 +33,7 @@ extern "C" {
 #endif
 
 #include "tomoe-data-types.h"
+#include "tomoe-object.h"
 #include "tomoe-array.h"
 
 typedef struct _tomoe_point     tomoe_point;
@@ -65,6 +66,30 @@ struct _tomoe_candidate
     tomoe_char*       character;
     int               score;
 };
+
+
+TOMOE_CLASS_BEGIN (TomoeCandidate, TomoeObject)
+    /* public class members */
+    tomoe_char *character;
+    int         score;
+/* TOMOE_CLASS_VIRTUAL_SECTION */
+    /* section for virtual methods 
+    typedef (void) (*myvirt) (void);
+    ....
+    */
+TOMOE_CLASS_END
+
+/**
+ * @brief Compare two tomoe_candidate.
+ * @param a - Pointer to the tomoe_candidate 1 pointer.
+ * @param b - Pointer to the tomoe_candidate 2 pointer.
+ * @return -1 a < b, 0 a= b, 1 a > b
+ */
+tomoe_candidate*tomoe_candidate_new             (void);
+tomoe_candidate*tomoe_candidate_addRef          (tomoe_candidate*  this);
+void            tomoe_candidate_free            (tomoe_candidate*  this);
+int             tomoe_candidate_compare         (const tomoe_candidate** a,
+                                                 const tomoe_candidate** b);
 
 #ifdef TOMOE_DICT__USE_XSL_METHODS
 typedef xsltStylesheetPtr  (*tomoe_dict_interface_get_meta_xsl) (void*);
@@ -171,17 +196,6 @@ void            tomoe_char_setMetaXsl           (tomoe_char*          this,
 int             tomoe_char_compare              (const tomoe_char** a,
                                                  const tomoe_char** b);
 
-/**
- * @brief Compare two tomoe_candidate.
- * @param a - Pointer to the tomoe_candidate 1 pointer.
- * @param b - Pointer to the tomoe_candidate 2 pointer.
- * @return -1 a < b, 0 a= b, 1 a > b
- */
-tomoe_candidate*tomoe_candidate_new             (void);
-tomoe_candidate*tomoe_candidate_addRef          (tomoe_candidate*  this);
-void            tomoe_candidate_free            (tomoe_candidate*  this);
-int             tomoe_candidate_compare         (const tomoe_candidate** a,
-                                                 const tomoe_candidate** b);
 
 /**
  * @brief Compare two ansi strings.
