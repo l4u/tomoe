@@ -86,8 +86,8 @@ TOMOE_CLASS_END
  * @return -1 a < b, 0 a= b, 1 a > b
  */
 tomoe_candidate*tomoe_candidate_new             (void);
-tomoe_candidate*tomoe_candidate_addRef          (tomoe_candidate*  this);
-void            tomoe_candidate_free            (tomoe_candidate*  this);
+tomoe_candidate*tomoe_candidate_addRef          (tomoe_candidate*  t_char);
+void            tomoe_candidate_free            (tomoe_candidate*  t_char);
 int             tomoe_candidate_compare         (const tomoe_candidate** a,
                                                  const tomoe_candidate** b);
 
@@ -151,27 +151,27 @@ tomoe_char*     tomoe_char_new                  (tomoe_dict_interface* dict);
 
 /**
  * @brief Increase reference count.
- * @param this - Pointer to the tomoe_letter struct to increase reference count.
+ * @param t_char - Pointer to the tomoe_letter struct to increase reference count.
  * @return The tomoe_letter.
  */
-tomoe_char*     tomoe_char_addRef               (tomoe_char*          this);
+tomoe_char*     tomoe_char_addRef               (tomoe_char*          t_char);
 
 /**
  * @brief Decrease reference count and free if zero.
- * @param this - Pointer to the tomoe_letter struct to free.
+ * @param t_char - Pointer to the tomoe_letter struct to free.
  */
-void            tomoe_char_free                 (tomoe_char*          this);
+void            tomoe_char_free                 (tomoe_char*          t_char);
 
-const char*     tomoe_char_getCode              (const tomoe_char*    this);
-void            tomoe_char_setCode              (tomoe_char*          this,
+const char*     tomoe_char_getCode              (const tomoe_char*    t_char);
+void            tomoe_char_setCode              (tomoe_char*          t_char,
                                                  const char*          code);
-tomoe_array*    tomoe_char_getReadings          (tomoe_char*          this);
-void            tomoe_char_setReadings          (tomoe_char*          this,
+tomoe_array*    tomoe_char_getReadings          (tomoe_char*          t_char);
+void            tomoe_char_setReadings          (tomoe_char*          t_char,
                                                  tomoe_array*         readings);
-tomoe_glyph*    tomoe_char_getGlyph             (tomoe_char*          this);
-void            tomoe_char_setGlyph             (tomoe_char*          this,
+tomoe_glyph*    tomoe_char_getGlyph             (tomoe_char*          t_char);
+void            tomoe_char_setGlyph             (tomoe_char*          t_char,
                                                  tomoe_glyph*         glyph);
-const char*     tomoe_char_getMeta              (tomoe_char*          this);
+const char*     tomoe_char_getMeta              (tomoe_char*          t_char);
 void            tomoe_char_set_dict_interface   (tomoe_char           *chr,
                                                  tomoe_dict_interface *parent);
 tomoe_bool      tomoe_char_is_editable          (tomoe_char           *chr);
@@ -180,10 +180,10 @@ void            tomoe_char_set_modified         (tomoe_char           *chr,
                                                  tomoe_bool            modified);
 
 #ifdef TOMOE_CHAR__USE_XML_METHODS
-xmlNodePtr      tomoe_char_getXmlMeta           (tomoe_char*          this);
-void            tomoe_char_setXmlMeta           (tomoe_char*          this,
+xmlNodePtr      tomoe_char_getXmlMeta           (tomoe_char*          t_char);
+void            tomoe_char_setXmlMeta           (tomoe_char*          t_char,
                                                  xmlNodePtr           meta);
-void            tomoe_char_setMetaXsl           (tomoe_char*          this,
+void            tomoe_char_setMetaXsl           (tomoe_char*          t_char,
                                                  xsltStylesheetPtr    metaXsl);
 #endif
 

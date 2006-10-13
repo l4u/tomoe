@@ -45,13 +45,13 @@ typedef struct _tomoe_dict_cfg
 } tomoe_dict_cfg;
 
 tomoe_config* tomoe_config_new         (const char* configFile);
-tomoe_config* tomoe_config_addref      (tomoe_config* this);
-void          tomoe_config_free        (tomoe_config* this);
-void          tomoe_config_load        (tomoe_config* this);
-void          tomoe_config_save        (tomoe_config* this);
-const char*   tomoe_config_getFilename (tomoe_config* this);
-tomoe_array*  tomoe_config_getDictList (tomoe_config* this);
-int           tomoe_config_getDefaultUserDB (tomoe_config *this);
+tomoe_config* tomoe_config_addref      (tomoe_config* t_config);
+void          tomoe_config_free        (tomoe_config* t_config);
+void          tomoe_config_load        (tomoe_config* t_config);
+void          tomoe_config_save        (tomoe_config* t_config);
+const char*   tomoe_config_getFilename (tomoe_config* t_config);
+tomoe_array*  tomoe_config_getDictList (tomoe_config* t_config);
+int           tomoe_config_getDefaultUserDB (tomoe_config *t_config);
 
 #ifdef	__cplusplus
 }

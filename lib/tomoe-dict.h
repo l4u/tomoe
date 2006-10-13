@@ -53,45 +53,45 @@ tomoe_dict  *tomoe_dict_new           (const char    *filename,
 
 /**
  * @brief Increase reference count.
- * @param this - Pointer to the tomoe_dict object to increase reference count.
+ * @param t_dict - Pointer to the tomoe_dict object to increase reference count.
  * @return The tomoe_dict.
  */
-tomoe_dict*  tomoe_dict_addref        (tomoe_dict*    this);
+tomoe_dict*  tomoe_dict_addref        (tomoe_dict*    t_dict);
 
 /**
  * @brief Decrease reference count and free if zero.
- * @param this - Pointer to the tomoe_dict object to free.
+ * @param t_dict - Pointer to the tomoe_dict object to free.
  */
-void         tomoe_dict_free          (tomoe_dict*    this);
+void         tomoe_dict_free          (tomoe_dict*    t_dict);
 
 /**
  * @brief Save tomoe dictionary.
- * @param this - Pointer to the tomoe_dict object.
+ * @param t_dict - Pointer to the tomoe_dict object.
  */
-void         tomoe_dict_save          (tomoe_dict*    this);
+void         tomoe_dict_save          (tomoe_dict*    t_dict);
 
 /**
  * @brief Get the file name of the tomoe dictionary.
- * @param this - Pointer to the tomoe_dict object.
+ * @param t_dict - Pointer to the tomoe_dict object.
  * @return File name of the tomoe dictionary. Return NULL if the dictionary
  *         wasn't load from a file, or newly allocated in a program and it
  *         doesn't saved yet.
  */
-const char*  tomoe_dict_getFilename   (tomoe_dict    *this);
+const char*  tomoe_dict_getFilename   (tomoe_dict    *t_dict);
 
 /**
  * @brief Get the dictionary name.
- * @param this - Pointer to the tomoe_dict object.
+ * @param t_dict - Pointer to the tomoe_dict object.
  * @return Name of the dictionary.
  */
-const char*  tomoe_dict_getName       (tomoe_dict*    this);
+const char*  tomoe_dict_getName       (tomoe_dict*    t_dict);
 
 /**
  * @brief Get editable property.
- * @param this - Pointer to the tomoe_dict object.
+ * @param t_dict - Pointer to the tomoe_dict object.
  * @return 1 - is editable, 0 - is not editable
  */
-tomoe_bool   tomoe_dict_getEditable   (tomoe_dict*    this);
+tomoe_bool   tomoe_dict_getEditable   (tomoe_dict*    t_dict);
 
 tomoe_bool   tomoe_dict_get_modified  (tomoe_dict    *dict);
 void         tomoe_dict_set_modified  (tomoe_dict    *dict,
@@ -99,19 +99,19 @@ void         tomoe_dict_set_modified  (tomoe_dict    *dict,
 
 /**
  * @brief Get character count
- * @param this - Pointer to the tomoe_dict object.
+ * @param t_dict - Pointer to the tomoe_dict object.
  * @return Count of the characters.
  */
-int          tomoe_dict_getSize       (tomoe_dict*    this);
+int          tomoe_dict_getSize       (tomoe_dict*    t_dict);
 
 /* Editable methods */
 
 /**
  * @brief Add a character
- * @param this - Pointer to the tomoe_dict object.
+ * @param t_dict - Pointer to the tomoe_dict object.
  * @param add  - Pointer to the tomoe_char object.
  */
-void         tomoe_dict_addChar       (tomoe_dict*    this,
+void         tomoe_dict_addChar       (tomoe_dict*    t_dict,
                                        tomoe_char*    remove);
 
 void         tomoe_dict_insert        (tomoe_dict    *dict,
@@ -120,67 +120,67 @@ void         tomoe_dict_insert        (tomoe_dict    *dict,
 
 /**
  * @brief Remove a character by a character object
- * @param this   - Pointer to the tomoe_dict object.
+ * @param t_dict   - Pointer to the tomoe_dict object.
  * @param remove - Pointer to the tomoe_char object.
  */
-void         tomoe_dict_removeByChar  (tomoe_dict*    this,
+void         tomoe_dict_removeByChar  (tomoe_dict*    t_dict,
                                        tomoe_char*    remove);
 
 /**
  * @brief Remove a character by index
- * @param this   - Pointer to the tomoe_dict object.
+ * @param t_dict   - Pointer to the tomoe_dict object.
  * @param remove - Index of the character.
  */
-void         tomoe_dict_removeByIndex (tomoe_dict*    this,
+void         tomoe_dict_removeByIndex (tomoe_dict*    t_dict,
                                        int            remove);
 
 /**
  * @brief Find a character
- * @param this - Pointer to the tomoe_dict object.
+ * @param t_dict - Pointer to the tomoe_dict object.
  * @param find - Pointer to the tomoe_char object.
  * @return Index of the character.
  */
-int          tomoe_dict_findIndex     (tomoe_dict*    this,
+int          tomoe_dict_findIndex     (tomoe_dict*    t_dict,
                                        tomoe_char*    find);
 
 /**
  * @brief Get a character by index
- * @param this  - Pointer to the tomoe_dict object.
+ * @param t_dict  - Pointer to the tomoe_dict object.
  * @param index - Index of the character.
  * @return tomoe_char object.
  */
-tomoe_char*  tomoe_dict_charByIndex   (tomoe_dict*    this,
+tomoe_char*  tomoe_dict_charByIndex   (tomoe_dict*    t_dict,
                                        int index);
 
 /**
  * @brief Return an array of tomoe_char which is kept in a tomoe_dict.
- * @param this - Pointer to the tomoe_dict struct.
+ * @param t_dict - Pointer to the tomoe_dict struct.
  * @return The array of tomoe_char.
  */
-tomoe_array* tomoe_dict_get_letters   (tomoe_dict    *this);
+tomoe_array* tomoe_dict_get_letters   (tomoe_dict    *t_dict);
 
 /* search methods */
 
 /**
  * @brief Match strokes of tomoe_char with input.
- * @param this   - Pointer to the tomoe_dict object.
+ * @param t_dict   - Pointer to the tomoe_dict object.
  * @param input  - Pointer to tomoe_glyph matchkey.
  * @return The array of tomoe_candidate.
  */
-tomoe_array* tomoe_dict_searchByStrokes   (const tomoe_dict* this,
+tomoe_array* tomoe_dict_searchByStrokes   (const tomoe_dict* t_dict,
                                                     tomoe_glyph*      input);
 
 /**
  * @brief Match reading of tomoe_char with input.
- * @param this   - Pointer to the tomoe_dict object.
+ * @param t_dict   - Pointer to the tomoe_dict object.
  * @param input  - Pointer to string matchkey
  * @return The array of tomoe_candidate.
  */
-tomoe_array* tomoe_dict_searchByReading   (const tomoe_dict* this,
+tomoe_array* tomoe_dict_searchByReading   (const tomoe_dict* t_dict,
                                                  const char*       input);
 
 #ifdef TOMOE_DICT__USE_XSL_METHODS
-xsltStylesheetPtr  tomoe_dict_getMetaXsl        (tomoe_dict*       this);
+xsltStylesheetPtr  tomoe_dict_getMetaXsl        (tomoe_dict*       t_dict);
 #endif
 
 #ifdef	__cplusplus
