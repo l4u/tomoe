@@ -1,3 +1,9 @@
+2006-10-13  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* lib/tomoe-array.h, lib/tomoe-char.h,
+	  lib/tomoe-config.h, lib/tomoe-db.h,
+	  lib/tomoe-dict.h: Change "this" as argument value name.
+
 2006-09-08 Juernjakob Harder <juernjakob.harder@gmail.com>
 
 	* Classes for tomoe objects introduced (proposal).
