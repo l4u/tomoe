@@ -20,6 +20,10 @@
  *  $Id$
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -29,11 +33,13 @@
 
 #include "tomoe-config.h"
 
-const xmlChar* defaultConfig  = BAD_CAST "<?xml version=\"1.0\" standalone=\"no\"?>" \
+static const xmlChar* defaultConfig  = BAD_CAST "<?xml version=\"1.0\" standalone=\"no\"?>" \
                                 "	<tomoeConfig>" \
                                 "	<useSystemDictionaries value=\"yes\"/>" \
                                 "</tomoeConfig>";
-const char* defaultConfigFile = "/.tomoe-config.xml";
+
+static const char* systemConfigFile = TOMOESYSCONFDIR "/config.xml";
+static const char* defaultConfigFile = "/config.xml";
 
 tomoe_dict_cfg* _tomoe_dict_cfg_new  (void);
 void            _tomoe_dict_cfg_free (tomoe_dict_cfg* p);
@@ -63,21 +69,24 @@ tomoe_config_new (const char* configFile)
         p->filename = strdup (configFile);
     else
     {
-        // use ~/.tomoe-config.xml
+        // use ~/.tomoe/config.xml
         const char* home = getenv ("HOME");
         if (!home)
             p->filename = NULL;
         else
         {
-            p->filename = calloc (strlen (home) + strlen (defaultConfigFile) + 1, sizeof(char));
-            strcpy (p->filename, home);
-            strcat (p->filename, defaultConfigFile);
+            p->filename = calloc (strlen (home) + strlen ("/." PACKAGE) + strlen (defaultConfigFile) + 1, sizeof(char));
+            sprintf (p->filename, "%s/.%s/%s", home, PACKAGE, defaultConfigFile);
             // if not found use defaultConfig
             if (0 != access (p->filename, F_OK | R_OK))
             {
                 free (p->filename);
                 p->filename = NULL;
             }
+	    else if (0 != access (systemConfigFile, F_OK | R_OK)) // use system default config file
+	    {
+                p->filename = strdup (systemConfigFile);
+	    }
         }
     }
     return p;
@@ -114,7 +123,8 @@ tomoe_config_load (tomoe_config* this)
 
     if (!this) return;
     doc = this->filename ? xmlReadFile (this->filename, NULL, 1)
-                         : xmlReadDoc ( defaultConfig, NULL, NULL, 1);
+                         : xmlReadDoc (defaultConfig, NULL, NULL, 1);
+
     root = xmlDocGetRootElement(doc);
 
     this->defaultUserDB = -1;
