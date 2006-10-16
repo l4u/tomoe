@@ -1,5 +1,9 @@
 2006-10-16  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
+	* lib/tomoe-char.c: Use "USE_TOMOE_OBJECT" for ifdef.
+
+2006-10-16  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
 	* lib/tomoe-config.c: Create ~/.tomoe/config.xml if not exists.
 
 2006-10-13  Hiroyuki Ikezoe  <poincare@ikezoe.net>
