@@ -28,6 +28,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <libxml/xmlreader.h>
 #include <glob.h>
 
@@ -41,9 +43,10 @@ static const xmlChar* defaultConfig  = BAD_CAST "<?xml version=\"1.0\" standalon
 static const char* systemConfigFile = TOMOESYSCONFDIR "/config.xml";
 static const char* defaultConfigFile = "/config.xml";
 
-tomoe_dict_cfg* _tomoe_dict_cfg_new  (void);
-void            _tomoe_dict_cfg_free (tomoe_dict_cfg* p);
-int             _tomoe_dict_cfg_cmp  (const tomoe_dict_cfg** a, const tomoe_dict_cfg** b);
+static tomoe_dict_cfg* _tomoe_dict_cfg_new      (void);
+static void            _tomoe_dict_cfg_free     (tomoe_dict_cfg* p);
+static int             _tomoe_dict_cfg_cmp      (const tomoe_dict_cfg** a, const tomoe_dict_cfg** b);
+static void            _tomoe_create_config_dir (void);
 
 struct _tomoe_config
 {
@@ -64,29 +67,38 @@ tomoe_config_new (const char* configFile)
                                    NULL,
                                    (tomoe_free_fn)_tomoe_dict_cfg_free);
 
-    // check config file
+    /* check config file */
     if (configFile && 0 == access (configFile, F_OK | R_OK))
         p->filename = strdup (configFile);
     else
     {
-        // use ~/.tomoe/config.xml
+        /* use ~/.tomoe/config.xml */
         const char* home = getenv ("HOME");
         if (!home)
             p->filename = NULL;
         else
         {
+            _tomoe_create_config_dir ();
             p->filename = calloc (strlen (home) + strlen ("/." PACKAGE) + strlen (defaultConfigFile) + 1, sizeof(char));
-            sprintf (p->filename, "%s/.%s/%s", home, PACKAGE, defaultConfigFile);
-            // if not found use defaultConfig
-            if (0 != access (p->filename, F_OK | R_OK))
+            sprintf (p->filename, "%s/.%s%s", home, PACKAGE, defaultConfigFile);
+            /* if not found, use systemConfigFile */
+            if (0 != access (p->filename, F_OK | R_OK) &&
+                0 == access (systemConfigFile, F_OK | R_OK))
             {
-                free (p->filename);
-                p->filename = NULL;
+                FILE *src_file, *dest_file;
+                char buf[4096];
+                size_t bytes;
+                src_file = fopen (systemConfigFile, "r");
+                dest_file = fopen (p->filename, "w");
+                while (!feof(src_file))
+                {
+                    bytes = fread (buf, 1, sizeof (buf), src_file);
+                    fwrite (buf, 1, bytes, dest_file);
+                }
+
+                fclose (src_file);
+                fclose (dest_file);
             }
-	    else if (0 != access (systemConfigFile, F_OK | R_OK)) // use system default config file
-	    {
-                p->filename = strdup (systemConfigFile);
-	    }
         }
     }
     return p;
@@ -288,7 +300,7 @@ tomoe_config_getDefaultUserDB (tomoe_config *this)
     return this->defaultUserDB;
 }
 
-tomoe_dict_cfg*
+static tomoe_dict_cfg*
 _tomoe_dict_cfg_new (void)
 {
     tomoe_dict_cfg* p = (tomoe_dict_cfg*)calloc (1, sizeof (tomoe_dict_cfg));
@@ -296,7 +308,7 @@ _tomoe_dict_cfg_new (void)
     return p;
 }
 
-void
+static void
 _tomoe_dict_cfg_free (tomoe_dict_cfg* p)
 {
     if (!p) return;
@@ -304,9 +316,36 @@ _tomoe_dict_cfg_free (tomoe_dict_cfg* p)
     free (p);
 }
 
-int
+static int
 _tomoe_dict_cfg_cmp (const tomoe_dict_cfg** a, const tomoe_dict_cfg** b)
 {
     return (*a)->user == (*b)->user ? strcmp((*a)->filename, (*b)->filename) 
                                     : (*b)->user - (*a)->user;
 }
+
+static void
+_tomoe_create_config_dir (void)
+{
+    char *path;
+    const char *home;
+
+    home = getenv ("HOME");
+    if (!home)
+        return;
+
+    path = calloc (strlen (home) + strlen ("/." PACKAGE), sizeof (char));
+    sprintf (path, "%s/.%s", home, PACKAGE);
+
+    if (access (path, F_OK | R_OK | W_OK) == 0)
+    {
+        free (path);
+        return;
+    }
+
+    mkdir (path, 0711);
+    free (path);
+}
+
+/*
+ * vi:ts=4:nowrap:ai:expandtab
+ */

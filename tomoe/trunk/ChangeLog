@@ -1,3 +1,7 @@
+2006-10-16  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* lib/tomoe-config.c: Create ~/.tomoe/config.xml if not exists.
+
 2006-10-13  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* Change config file loading order.
