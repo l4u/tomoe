@@ -1,3 +1,4 @@
-* Merge same characters of different dictionaries in search output
+* Improve performance.
+* Merge same characters of different dictionaries in search output.
 * Transformation of reading search pattern, e.g. ka > か, か > カ, か > ka
-  should be language independent
+  should be language independent.
