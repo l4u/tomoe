@@ -211,7 +211,7 @@ main (int argc, char **argv)
 
     tomoe_init ();
 
-    db = tomoe_simple_load ("tomoe-config.xml");
+    db = tomoe_simple_load ("test-config.xml");
     if (!db) exit (1);
 
     if (argc == 2 && 0 == strcmp (argv[1], "stroke"))

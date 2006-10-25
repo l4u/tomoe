@@ -1,3 +1,9 @@
+2006-10-25  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* test/tomoe-config.xml: Removed.
+	* test/test-config.xml: Added.
+	* test/testtomoe.c: Use test-config.xml.
+
 2006-10-16  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-char.c: Use "USE_TOMOE_OBJECT" for ifdef.
