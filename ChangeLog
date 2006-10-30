@@ -1,3 +1,7 @@
+2006-10-29  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* configure.in: version-0.3.0.
+
 2006-10-25  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* test/tomoe-config.xml: Removed.
