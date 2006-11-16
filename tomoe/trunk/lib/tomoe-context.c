@@ -25,21 +25,21 @@
 #include <string.h>
 
 #include "tomoe-dict.h"
-#include "tomoe-db.h"
+#include "tomoe-context.h"
 #include "tomoe-array.h"
 
-struct _TomoeDB
+struct _TomoeContext
 {
     int         ref;
     TomoeArray *dicts;
 };
 
 
-TomoeDB*
-tomoe_db_new(void)
+TomoeContext*
+tomoe_context_new(void)
 {
-    TomoeDB* p;
-    p        = calloc (1, sizeof(TomoeDB));
+    TomoeContext* p;
+    p        = calloc (1, sizeof(TomoeContext));
     p->ref   = 1;
     p->dicts = tomoe_array_new (NULL,
                                 (tomoe_addref_fn)tomoe_dict_add_ref,
@@ -47,51 +47,52 @@ tomoe_db_new(void)
     return p;
 }
 
-TomoeDB*
-tomoe_db_add_ref(TomoeDB* t_db)
+TomoeContext*
+tomoe_context_add_ref(TomoeContext* ctx)
 {
-    if (!t_db) return NULL;
-    t_db->ref ++;
-    return t_db;
+    if (!ctx) return NULL;
+    ctx->ref++;
+    return ctx;
 }
 
 void
-tomoe_db_free(TomoeDB* t_db)
+tomoe_context_free(TomoeContext* ctx)
 {
-    if (!t_db) return;
-    t_db->ref--;
-    if (t_db->ref <= 0)
+    if (!ctx) return;
+    ctx->ref--;
+    if (ctx->ref <= 0)
     {
-        tomoe_array_free (t_db->dicts);
-        free (t_db);
+        tomoe_array_free (ctx->dicts);
+        free (ctx);
     }
 }
 
 void
-tomoe_db_add_dict (TomoeDB* t_db, TomoeDict* dict)
+tomoe_context_add_dict (TomoeContext* ctx, TomoeDict* dict)
 {
-    if (!t_db || !dict) return;
-    tomoe_array_append (t_db->dicts, tomoe_dict_add_ref (dict));
+    if (!ctx || !dict) return;
+    tomoe_array_append (ctx->dicts, tomoe_dict_add_ref (dict));
 }
 
 void
-tomoe_db_load_dict (TomoeDB* t_db, const char *filename, int editable)
+tomoe_context_load_dict (TomoeContext* ctx, const char *filename, int editable)
 {
     TomoeDict* dict;
 
-    if (!t_db) return;
+    if (!ctx) return;
     if (!filename) return;
 
-    fprintf (stdout, "load dictionary '%s' editable: %s...", filename, editable ? "yes" : "no");
+    fprintf (stdout, "load dictionary '%s' editable: %s...",
+             filename, editable ? "yes" : "no");
     fflush (stdout);
     dict = tomoe_dict_new (filename, editable);
     if (dict)
-        tomoe_array_append (t_db->dicts, dict);
+        tomoe_array_append (ctx->dicts, dict);
     printf (" ok\n");
 }
 
 void
-tomoe_db_load_dict_list (TomoeDB* t_db, TomoeArray* list)
+tomoe_context_load_dict_list (TomoeContext* ctx, TomoeArray* list)
 {
     int i;
     for (i = 0; i < tomoe_array_size (list); i++)
@@ -100,27 +101,29 @@ tomoe_db_load_dict_list (TomoeDB* t_db, TomoeArray* list)
         if (p->dontLoad) continue;
 
         if (p->user)
-            tomoe_db_load_dict (t_db, p->filename, p->writeAccess);
+            tomoe_context_load_dict (ctx, p->filename, p->writeAccess);
         else
         {
-            char* file = calloc (strlen (p->filename) + strlen (TOMOEDATADIR) + 2, sizeof (char));
+            char* file = calloc (strlen (p->filename) +
+                                 strlen (TOMOEDATADIR) + 2,
+                                 sizeof (char));
             strcpy (file, TOMOEDATADIR);
             strcat (file, "/");
             strcat (file, p->filename);
-            tomoe_db_load_dict (t_db, file, p->writeAccess);
+            tomoe_context_load_dict (ctx, file, p->writeAccess);
         }
     }
 }
 
 TomoeArray*
-tomoe_db_get_dict_list (TomoeDB* t_db)
+tomoe_context_get_dict_list (TomoeContext* ctx)
 {
-    if (!t_db) return NULL;
-    return tomoe_array_add_ref(t_db->dicts);
+    if (!ctx) return NULL;
+    return tomoe_array_add_ref(ctx->dicts);
 }
 
 void
-tomoe_db_save (TomoeDB *db)
+tomoe_context_save (TomoeContext *db)
 {
     int i;
 
@@ -135,24 +138,24 @@ tomoe_db_save (TomoeDB *db)
 }
 
 TomoeArray*
-tomoe_db_search_by_strokes (TomoeDB* t_db, TomoeGlyph* input)
+tomoe_context_search_by_strokes (TomoeContext* ctx, TomoeGlyph* input)
 {
     int i, num;
     TomoeArray* tmp;
     TomoeArray* matched;
     TomoeDict* dict;
 
-    if (!t_db) return tomoe_array_new (NULL, NULL, NULL);
-    num = tomoe_array_size (t_db->dicts);
+    if (!ctx) return tomoe_array_new (NULL, NULL, NULL);
+    num = tomoe_array_size (ctx->dicts);
     if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
 
-    dict = (TomoeDict*)tomoe_array_get (t_db->dicts, 0);
+    dict = (TomoeDict*)tomoe_array_get (ctx->dicts, 0);
     tmp = tomoe_dict_search_by_strokes (dict, input);
     matched = tomoe_array_clone_empty (tmp);
     for (i = 0; i < num; i++)
     {
         TomoeArray* tmp;
-        dict = (TomoeDict*)tomoe_array_get (t_db->dicts, i);
+        dict = (TomoeDict*)tomoe_array_get (ctx->dicts, i);
         tmp = tomoe_dict_search_by_strokes (dict, input);
         tomoe_array_merge (matched, tmp);
         tomoe_array_free (tmp);
@@ -163,23 +166,23 @@ tomoe_db_search_by_strokes (TomoeDB* t_db, TomoeGlyph* input)
 }
 
 TomoeArray*
-tomoe_db_search_by_reading (TomoeDB* t_db, const char* input)
+tomoe_context_search_by_reading (TomoeContext* ctx, const char* input)
 {
     int i, num;
     TomoeArray* reading;
     TomoeArray* tmp;
     TomoeDict*   dict;
 
-    if (!t_db) return tomoe_array_new (NULL, NULL, NULL);
-    num = tomoe_array_size (t_db->dicts);
+    if (!ctx) return tomoe_array_new (NULL, NULL, NULL);
+    num = tomoe_array_size (ctx->dicts);
     if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
 
-    dict = (TomoeDict*)tomoe_array_get (t_db->dicts, 0);
+    dict = (TomoeDict*)tomoe_array_get (ctx->dicts, 0);
     tmp = tomoe_dict_search_by_reading (dict, input);
     reading = tomoe_array_clone_empty (tmp);
     for (i = 0; i < num; i++)
     {
-        dict = (TomoeDict*)tomoe_array_get (t_db->dicts, i);
+        dict = (TomoeDict*)tomoe_array_get (ctx->dicts, i);
         tmp = tomoe_dict_search_by_reading (dict, input);
         tomoe_array_merge (reading, tmp);
         tomoe_array_free (tmp);

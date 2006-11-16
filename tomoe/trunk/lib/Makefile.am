@@ -34,7 +34,7 @@ pkginclude_HEADERS = \
 	tomoe-char.h \
 	tomoe-dict.h \
 	tomoe-data-types.h \
-	tomoe-db.h \
+	tomoe-context.h \
 	tomoe-config.h \
 	tomoe-object.h
 
@@ -44,7 +44,7 @@ libtomoe_la_SOURCES = \
 	tomoe-array.c \
 	tomoe-char.c \
 	tomoe-dict.c \
-	tomoe-db.c \
+	tomoe-context.c \
 	tomoe-config.c \
 	tomoe-object.c
 

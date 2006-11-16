@@ -7,9 +7,9 @@
 
 static TomoeGlyph * read_test_data ();
 void outCharInfo (TomoeChar* chr, int score);
-void testStrokeMatch (TomoeDB* db);
-void testReadingMatch (TomoeDB* db, const char* reading);
-void testUserDB (TomoeDB* db);
+void testStrokeMatch (TomoeContext* ctx);
+void testReadingMatch (TomoeContext* ctx, const char* reading);
+void testUserContext (TomoeContext* ctx);
 
 #define LINE_BUF_SIZE 4096
 static char line_buf[LINE_BUF_SIZE];
@@ -92,7 +92,7 @@ void outCharInfo (TomoeChar* chr, int score)
    fprintf (stdout, "\n");
 }
 
-void testStrokeMatch (TomoeDB* db)
+void testStrokeMatch (TomoeContext* ctx)
 {
     TomoeGlyph *test_glyph = NULL;
     int i, candidate_num = 0;
@@ -103,7 +103,7 @@ void testStrokeMatch (TomoeDB* db)
     if (!test_glyph) 
         goto END;
 
-    matched = tomoe_db_search_by_strokes (db, test_glyph);
+    matched = tomoe_context_search_by_strokes (ctx, test_glyph);
     candidate_num = tomoe_array_size (matched);
 
     if (candidate_num != 0)
@@ -132,9 +132,9 @@ END:
         tomoe_array_free (matched);
 }
 
-void testReadingMatch (TomoeDB* db, const char* reading)
+void testReadingMatch (TomoeContext* ctx, const char* reading)
 {
-    TomoeArray* matched = tomoe_db_search_by_reading (db, reading);
+    TomoeArray* matched = tomoe_context_search_by_reading (ctx, reading);
     int candidate_num = tomoe_array_size(matched);
 
     if (candidate_num != 0)
@@ -159,7 +159,7 @@ void testReadingMatch (TomoeDB* db, const char* reading)
         fprintf (stdout, "No Candidate found!\n");
 }
 
-void testUserDB (TomoeDB* db)
+void testUserDict (TomoeContext* ctx)
 {
     TomoeChar* chr;
     TomoeDict* myDict = tomoe_dict_new ("../data/userdb.xml", 1);
@@ -175,28 +175,28 @@ void testUserDB (TomoeDB* db)
     tomoe_char_set_readings (chr, readings);
     tomoe_dict_add_char (myDict, chr);
 
-    tomoe_db_add_dict (db, myDict);
+    tomoe_context_add_dict (ctx, myDict);
 
     fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_get_size (myDict));
-    testReadingMatch (db, "やった");
+    testReadingMatch (ctx, "やった");
 
     fprintf (stdout, "update character to \"\\\\（＾o＾）//\"\n");
     tomoe_char_set_code (chr, "\\\\（＾o＾）//");
     fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_get_size (myDict));
-    testReadingMatch (db, "やった");
+    testReadingMatch (ctx, "やった");
 
     fprintf (stdout, "update reading to \"yey\"\n");
     tomoe_array_remove (readings, tomoe_array_find (readings, "やった"));
     tomoe_array_append (readings, "yey");
     fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_get_size (myDict));
-    testReadingMatch (db, "やった");
+    testReadingMatch (ctx, "やった");
     fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_get_size (myDict));
-    testReadingMatch (db, "yey");
+    testReadingMatch (ctx, "yey");
 
     fprintf (stdout, "remove character \n");
     tomoe_dict_remove_by_char (myDict, chr);
     fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_get_size (myDict));
-    testReadingMatch (db, "yey");
+    testReadingMatch (ctx, "yey");
 
     tomoe_dict_save (myDict);
 
@@ -207,23 +207,23 @@ void testUserDB (TomoeDB* db)
 int
 main (int argc, char **argv)
 {
-    TomoeDB* db = NULL;
+    TomoeContext* ctx = NULL;
 
     tomoe_init ();
 
-    db = tomoe_simple_load ("test-config.xml");
-    if (!db) exit (1);
+    ctx = tomoe_simple_load ("test-config.xml");
+    if (!ctx) exit (1);
 
     if (argc == 2 && 0 == strcmp (argv[1], "stroke"))
-        testStrokeMatch (db);
+        testStrokeMatch (ctx);
     else if (argc == 3 && 0 == strcmp (argv[1], "reading"))
-        testReadingMatch (db, argv[2]);
-    else if (argc == 2 && 0 == strcmp (argv[1], "userdb"))
-        testUserDB (db);
+        testReadingMatch (ctx, argv[2]);
+    else if (argc == 2 && 0 == strcmp (argv[1], "userdict"))
+        testUserDict (ctx);
     else
-        fprintf (stdout, "testtomoe [stroke|reading|userdb]\n");
+        fprintf (stdout, "testtomoe [stroke|reading|userdict]\n");
 
-    tomoe_db_free (db);
+    tomoe_context_free (ctx);
     tomoe_quit ();
     return 0;
 }

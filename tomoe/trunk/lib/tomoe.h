@@ -35,14 +35,14 @@ extern "C" {
 #endif
 
 #include "tomoe-data-types.h"
-#include "tomoe-db.h"
+#include "tomoe-context.h"
 
 /**
  * @brief Initialize tomoe library.
  */
 void       tomoe_init          (void);
 
-TomoeDB*   tomoe_simple_load   (const char* config_file);
+TomoeContext *tomoe_simple_load   (const char* config_file);
 
 /**
  * @brief Finalize tomoe library.

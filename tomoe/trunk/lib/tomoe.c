@@ -29,7 +29,7 @@
 #include <libxml/xmlreader.h>
 #include "tomoe.h"
 #include "tomoe-dict.h"
-#include "tomoe-db.h"
+#include "tomoe-context.h"
 #include "tomoe-array.h"
 #include "tomoe-config.h"
 
@@ -42,22 +42,22 @@ tomoe_init (void)
     LIBXML_TEST_VERSION
 }
 
-TomoeDB*
+TomoeContext*
 tomoe_simple_load (const char* configFile)
 {
-    TomoeDB* db = tomoe_db_new();
+    TomoeContext* ctx = tomoe_context_new();
     TomoeArray* list;
     TomoeConfig* cfg;
 
-    if (!db) return NULL;
+    if (!ctx) return NULL;
 
     cfg = tomoe_config_new (configFile);
     tomoe_config_load (cfg);
     list = tomoe_config_get_dict_list (cfg);
-    tomoe_db_load_dict_list (db, list);
+    tomoe_context_load_dict_list (ctx, list);
     tomoe_config_free (cfg);
 
-    return db;
+    return ctx;
 }
 
 /* finalize tomoe */
