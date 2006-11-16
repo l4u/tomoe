@@ -12,9 +12,7 @@
     <xsl:apply-templates select="reading_meaning" mode="tomoe"/>
     <meta>
       <xsl:apply-templates select="misc|codepoint"/>
-      <meaning>
-        <xsl:apply-templates select="reading_meaning" mode="meta"/>
-      </meaning>
+      <xsl:apply-templates select="reading_meaning" mode="meta"/>
     </meta>
   </character>
 </xsl:template>
