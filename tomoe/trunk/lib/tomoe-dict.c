@@ -55,11 +55,11 @@ struct _TomoeDict
     char*                name;
     char*                encoding;
     char*                lang;
-    tomoe_bool           editable;
+    TomoeBool            editable;
     TomoeArray*          letters;
     xsltStylesheetPtr    metaXsl;
     char                *meta_xsl_file;
-    tomoe_bool           modified;
+    TomoeBool            modified;
 };
 
 typedef struct _tomoe_metric tomoe_metric;
@@ -86,7 +86,7 @@ struct _cand_priv
 static cand_priv *cand_priv_new             (TomoeChar*     character,
                                              int            index);
 static void       cand_priv_free            (cand_priv     *cand_p,
-                                             tomoe_bool     free_candidate);
+                                             TomoeBool      free_candidate);
 
 static pointer_array
                  *get_candidates            (const TomoeDict* t_dict,
@@ -115,7 +115,7 @@ void              _parse_alien_dict         (TomoeDict*      t_dict,
 
 
 TomoeDict*
-tomoe_dict_new (const char* filename, tomoe_bool editable)
+tomoe_dict_new (const char* filename, TomoeBool editable)
 {
     TomoeDict* t_dict = NULL;
     int i;
@@ -276,14 +276,14 @@ tomoe_dict_get_name (TomoeDict* t_dict)
     return t_dict->name;
 }
 
-tomoe_bool
+TomoeBool
 tomoe_dict_is_editable (TomoeDict* t_dict)
 {
     if (!t_dict) return 0;
     return t_dict->editable;
 }
 
-tomoe_bool
+TomoeBool
 tomoe_dict_is_modified (TomoeDict *dict)
 {
     if (!dict) return 0;
@@ -291,7 +291,7 @@ tomoe_dict_is_modified (TomoeDict *dict)
 }
 
 void
-tomoe_dict_set_modified (TomoeDict *dict, tomoe_bool modified)
+tomoe_dict_set_modified (TomoeDict *dict, TomoeBool modified)
 {
     if (!dict) return;
     dict->modified = modified;
@@ -434,7 +434,7 @@ tomoe_dict_search_by_strokes (const TomoeDict* t_dict, TomoeGlyph* input)
         if (_int_array_find_data (matches, cand->index) < 0)
         {
             const TomoeChar* a = tomoe_array_get(letters, cand->index);
-            tomoe_bool b = TRUE;
+            TomoeBool b = TRUE;
 
             for (j = 0; j < (unsigned int) matches->len; j++)
             {
@@ -594,7 +594,7 @@ cand_priv_new (TomoeChar* character, int index)
 }
 
 static void
-cand_priv_free (cand_priv *cand_p, tomoe_bool free_candidate)
+cand_priv_free (cand_priv *cand_p, TomoeBool free_candidate)
 {
     if (!cand_p) return;
 
@@ -834,7 +834,7 @@ get_candidates (const TomoeDict* t_dict, TomoeStroke *input_stroke, pointer_arra
 
     for (cand_index = 0; cand_index < cands->len; cand_index++)
     {
-        tomoe_bool match_flag = FALSE;
+        TomoeBool match_flag = FALSE;
         int_array *adapted = NULL;
         TomoeArray* letters = t_dict->letters;
 

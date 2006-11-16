@@ -43,7 +43,7 @@ struct _TomoeChar
     xmlNodePtr            xmlMeta;
     char                 *meta;
     tomoe_dict_interface *parent;
-    tomoe_bool            modified;
+    TomoeBool             modified;
 };
 
 TomoeStroke *
@@ -286,7 +286,7 @@ tomoe_char_set_dict_interface (TomoeChar *chr, tomoe_dict_interface *parent)
     chr->parent = parent;
 }
 
-tomoe_bool
+TomoeBool
 tomoe_char_is_editable (TomoeChar *chr)
 {
     if (!chr) return 0;
@@ -294,7 +294,7 @@ tomoe_char_is_editable (TomoeChar *chr)
     return chr->parent->is_editable (chr->parent->instance);
 }
 
-tomoe_bool
+TomoeBool
 tomoe_char_is_modified (TomoeChar *chr)
 {
     if (!chr) return 0;
@@ -302,7 +302,7 @@ tomoe_char_is_modified (TomoeChar *chr)
 }
 
 void
-tomoe_char_set_modified (TomoeChar *chr, tomoe_bool modified)
+tomoe_char_set_modified (TomoeChar *chr, TomoeBool modified)
 {
     if (!chr) return;
     chr->modified = modified;

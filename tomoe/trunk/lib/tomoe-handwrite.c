@@ -38,7 +38,7 @@ struct _tomoe_hw_context
     unsigned int  canvas_width;
     unsigned int  canvas_height;
 
-    tomoe_bool    stroke_is_pending;
+    TomoeBool     stroke_is_pending;
 
     unsigned int  ref_count;
 };

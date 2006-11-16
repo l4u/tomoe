@@ -49,7 +49,7 @@ typedef struct _TomoeDict TomoeDict;
  * @return Pointer to newly allocated TomoeDict object.
  */
 TomoeDict*      tomoe_dict_new                  (const char    *filename,
-                                                 tomoe_bool     editable);
+                                                 TomoeBool      editable);
 
 /**
  * @brief Increase reference count.
@@ -91,11 +91,11 @@ const char*     tomoe_dict_get_name             (TomoeDict     *t_dict);
  * @param t_dict - Pointer to the TomoeDict object.
  * @return 1 - is editable, 0 - is not editable
  */
-tomoe_bool      tomoe_dict_is_editable          (TomoeDict     *t_dict);
+TomoeBool       tomoe_dict_is_editable          (TomoeDict     *t_dict);
 
-tomoe_bool      tomoe_dict_is_modified          (TomoeDict     *dict);
+TomoeBool       tomoe_dict_is_modified          (TomoeDict     *dict);
 void            tomoe_dict_set_modified         (TomoeDict     *dict,
-                                                 tomoe_bool     modified);
+                                                 TomoeBool     modified);
 
 /**
  * @brief Get character count
