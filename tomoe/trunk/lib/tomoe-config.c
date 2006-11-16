@@ -143,39 +143,30 @@ tomoe_config_load (TomoeConfig* t_config)
     t_config->defaultUserDB = -1;
     t_config->useSystemDictionaries = 0;
 
-    if (root && 0 == xmlStrcmp(root->name, BAD_CAST "tomoeConfig"))
-    {
+    if (root && 0 == xmlStrcmp(root->name, BAD_CAST "tomoeConfig")) {
         xmlNodePtr node;
 
-        for (node = root->children; node; node = node->next)
-        {
+        for (node = root->children; node; node = node->next) {
             if (node->type != XML_ELEMENT_NODE)
                 continue;
 
-            if (0 == xmlStrcmp(node->name, BAD_CAST "useSystemDictionaries"))
-            {
+            if (0 == xmlStrcmp(node->name, BAD_CAST "useSystemDictionaries")) {
                 t_config->useSystemDictionaries = 1;
-            }
-            else if (0 == xmlStrcmp(node->name, BAD_CAST "defaultUserDB"))
-            {
+            } else if (0 == xmlStrcmp(node->name, BAD_CAST "defaultUserDB")) {
                 xmlAttrPtr prop;
 
-                for (prop = node->properties; prop; prop = prop->next)
-                {
+                for (prop = node->properties; prop; prop = prop->next) {
                     if (0 == xmlStrcmp(prop->name, BAD_CAST "file"))
                         defaultUserDB = strdup ((const char*)prop->children->content);
                 }
-            }
-            else if (0 == xmlStrcmp(node->name, BAD_CAST "dictionary"))
-            {
+            } else if (0 == xmlStrcmp(node->name, BAD_CAST "dictionary")) {
                 xmlAttrPtr prop;
                 TomoeDictCfg* dcfg = _tomoe_dict_cfg_new ();
 
                 dcfg->writeAccess = 0;
                 dcfg->dontLoad = 0;
                 dcfg->user = 1;
-                for (prop = node->properties; prop; prop = prop->next)
-                {
+                for (prop = node->properties; prop; prop = prop->next) {
                     if (0 == xmlStrcmp(prop->name, BAD_CAST "file"))
                         dcfg->filename = strdup ((const char*)prop->children->content);
                     else if (0 == xmlStrcmp(prop->name, BAD_CAST "dontLoad"))
@@ -184,7 +175,8 @@ tomoe_config_load (TomoeConfig* t_config)
                         dcfg->user = xmlStrcmp(prop->children->content, BAD_CAST "yes") ? 1 : 0;
                 }
 
-                /* check if file exists */fprintf (stdout, dcfg->filename);
+                /* check if file exists */
+                fprintf (stdout, dcfg->filename);
                 /*if (access (dcfg->filename, F_OK | R_OK)) FIXME*/
                 {/*fprintf(stdout, "..access ok\n");*/
                     dcfg->writeAccess = /*access (dcfg->filename, W_OK) ? */dcfg->user/* : 0*/;
@@ -202,14 +194,11 @@ tomoe_config_load (TomoeConfig* t_config)
 
     tomoe_array_sort (t_config->dictList);
 
-    if (defaultUserDB)
-    {
-        for (i = 0; i < tomoe_array_size (t_config->dictList); i++)
-        {
+    if (defaultUserDB) {
+        for (i = 0; i < tomoe_array_size (t_config->dictList); i++) {
             TomoeDictCfg* dcfg = (TomoeDictCfg*)tomoe_array_get (t_config->dictList, i);
 
-            if (strcmp (defaultUserDB, dcfg->filename) == 0)
-            {
+            if (strcmp (defaultUserDB, dcfg->filename) == 0) {
                 t_config->defaultUserDB = i;
                 break;
             }
@@ -217,8 +206,7 @@ tomoe_config_load (TomoeConfig* t_config)
     }
 
     /* search in TOMOEDATADIR for additional dictionaries */
-    if (t_config->useSystemDictionaries)
-    {
+    if (t_config->useSystemDictionaries) {
         TomoeArray* systemList = tomoe_array_new (NULL, NULL, NULL);
         size_t cnt;
         glob_t glob_results;
@@ -236,11 +224,9 @@ tomoe_config_load (TomoeConfig* t_config)
             dcfg->dontLoad = 0;
             dcfg->user = 0;
             slash = strrchr ( *p, '/');
-            if (slash)
-            {
+            if (slash) {
                 dcfg->filename = strdup (slash + 1);
-                if (-1 == tomoe_array_find (t_config->dictList, dcfg))
-                {
+                if (-1 == tomoe_array_find (t_config->dictList, dcfg)) {
                     tomoe_array_append (systemList, dcfg);
                     continue;
                 }
@@ -260,8 +246,7 @@ void
 tomoe_config_save (TomoeConfig *cfg)
 {
     if (!cfg) return;
-    if (cfg->filename)
-    {
+    if (cfg->filename) {
         xmlDocPtr doc;
         const char* param[3];
         xmlNodePtr root;
@@ -277,8 +262,7 @@ tomoe_config_save (TomoeConfig *cfg)
             xmlNewChild (root, NULL, BAD_CAST "useSystemDictionaries", NULL);
 
 
-        for (i = 0; i < tomoe_array_size (cfg->dictList); i++)
-        {
+        for (i = 0; i < tomoe_array_size (cfg->dictList); i++) {
             xmlNodePtr node = xmlNewChild (root, NULL, BAD_CAST "dictionary", NULL);
             TomoeDictCfg *dict = (TomoeDictCfg*)tomoe_array_get (cfg->dictList, i);
 
@@ -345,8 +329,7 @@ _tomoe_create_config_dir (void)
     path = calloc (strlen (home) + strlen ("/." PACKAGE), sizeof (char));
     sprintf (path, "%s/.%s", home, PACKAGE);
 
-    if (access (path, F_OK | R_OK | W_OK) == 0)
-    {
+    if (access (path, F_OK | R_OK | W_OK) == 0) {
         free (path);
         return;
     }
