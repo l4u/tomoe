@@ -71,8 +71,7 @@ tomoe_stroke_clear (TomoeStroke *strk)
 {
     if (!strk) return;
 
-    if (strk->points != NULL)
-    {
+    if (strk->points != NULL) {
         free (strk->points);
         strk->points = NULL;
     }
@@ -180,8 +179,7 @@ tomoe_char_free (TomoeChar *t_char)
     if (!t_char) return;
 
     t_char->ref --;
-    if (t_char->ref <= 0)
-    {
+    if (t_char->ref <= 0) {
         free (t_char->charCode);
         tomoe_glyph_free (t_char->glyph);
         if (t_char->xmlMeta) xmlFreeNode (t_char->xmlMeta);
@@ -369,8 +367,7 @@ tomoe_candidate_free (TomoeCandidate* t_cand)
 {
     if (!t_cand) return;
     t_cand->ref --;
-    if (t_cand->ref <= 0)
-    {
+    if (t_cand->ref <= 0) {
         tomoe_char_free (t_cand->character);
         free (t_cand);
     }
