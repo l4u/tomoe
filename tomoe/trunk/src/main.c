@@ -109,7 +109,7 @@ main (int argc, char **argv)
     while (1)
     {
         TomoeGlyph *glyph;
-        tomoe_array* matched = NULL;
+        TomoeArray* matched = NULL;
         int candidate_num = 0;
 
         glyph = read_glyph ();

@@ -167,9 +167,9 @@ void            tomoe_char_free                 (TomoeChar*           t_char);
 const char*     tomoe_char_get_code             (const TomoeChar*     t_char);
 void            tomoe_char_set_code             (TomoeChar*           t_char,
                                                  const char*          code);
-tomoe_array*    tomoe_char_get_readings         (TomoeChar*           t_char);
+TomoeArray*     tomoe_char_get_readings         (TomoeChar*           t_char);
 void            tomoe_char_set_readings         (TomoeChar*           t_char,
-                                                 tomoe_array*         readings);
+                                                 TomoeArray*          readings);
 TomoeGlyph*     tomoe_char_get_glyph            (TomoeChar*           t_char);
 void            tomoe_char_set_glyph            (TomoeChar*           t_char,
                                                  TomoeGlyph*          glyph);

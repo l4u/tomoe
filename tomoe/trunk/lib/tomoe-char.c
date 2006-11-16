@@ -39,7 +39,7 @@ struct _TomoeChar
     int                   ref;
     char                 *charCode;
     TomoeGlyph           *glyph;
-    tomoe_array          *readings;
+    TomoeArray           *readings;
     xmlNodePtr            xmlMeta;
     char                 *meta;
     tomoe_dict_interface *parent;
@@ -205,7 +205,7 @@ tomoe_char_set_code (TomoeChar* t_char, const char* code)
     tomoe_char_set_modified (t_char, 1);
 }
 
-tomoe_array*
+TomoeArray*
 tomoe_char_get_readings (TomoeChar* t_char)
 {
     if (!t_char) return NULL;
@@ -213,7 +213,7 @@ tomoe_char_get_readings (TomoeChar* t_char)
 }
 
 void
-tomoe_char_set_readings (TomoeChar* t_char, tomoe_array* readings)
+tomoe_char_set_readings (TomoeChar* t_char, TomoeArray* readings)
 {
     if (!t_char) return;
     tomoe_array_free (t_char->readings);

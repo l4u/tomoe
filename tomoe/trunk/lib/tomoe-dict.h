@@ -157,7 +157,7 @@ TomoeChar*      tomoe_dict_char_by_index        (TomoeDict*    t_dict,
  * @param t_dict - Pointer to the TomoeDict struct.
  * @return The array of tomoe_char.
  */
-tomoe_array*    tomoe_dict_get_letters          (TomoeDict    *t_dict);
+TomoeArray*     tomoe_dict_get_letters          (TomoeDict    *t_dict);
 
 /* search methods */
 
@@ -167,7 +167,7 @@ tomoe_array*    tomoe_dict_get_letters          (TomoeDict    *t_dict);
  * @param input  - Pointer to tomoe_glyph matchkey.
  * @return The array of tomoe_candidate.
  */
-tomoe_array*    tomoe_dict_search_by_strokes    (const TomoeDict *t_dict,
+TomoeArray*     tomoe_dict_search_by_strokes    (const TomoeDict *t_dict,
                                                  TomoeGlyph      *input);
 
 /**
@@ -176,7 +176,7 @@ tomoe_array*    tomoe_dict_search_by_strokes    (const TomoeDict *t_dict,
  * @param input  - Pointer to string matchkey
  * @return The array of tomoe_candidate.
  */
-tomoe_array*    tomoe_dict_search_by_reading    (const TomoeDict *t_dict,
+TomoeArray*     tomoe_dict_search_by_reading    (const TomoeDict *t_dict,
                                                  const char      *input);
 
 #ifdef TOMOE_DICT__USE_XSL_METHODS

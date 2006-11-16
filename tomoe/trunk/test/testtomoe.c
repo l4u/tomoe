@@ -72,7 +72,7 @@ read_test_data ()
 void outCharInfo (TomoeChar* chr, int score)
 {
    int j;
-   tomoe_array* readings = tomoe_char_get_readings (chr);
+   TomoeArray* readings = tomoe_char_get_readings (chr);
    const char* meta = tomoe_char_get_meta (chr);
 
    fprintf (stdout, "character:%s [%d] ", tomoe_char_get_code (chr), score);
@@ -96,7 +96,7 @@ void testStrokeMatch (TomoeDB* db)
 {
     TomoeGlyph *test_glyph = NULL;
     int i, candidate_num = 0;
-    tomoe_array* matched = NULL;
+    TomoeArray* matched = NULL;
 
     test_glyph = read_test_data ();
 
@@ -134,7 +134,7 @@ END:
 
 void testReadingMatch (TomoeDB* db, const char* reading)
 {
-    tomoe_array* matched = tomoe_db_search_by_reading (db, reading);
+    TomoeArray* matched = tomoe_db_search_by_reading (db, reading);
     int candidate_num = tomoe_array_size(matched);
 
     if (candidate_num != 0)
@@ -163,7 +163,7 @@ void testUserDB (TomoeDB* db)
 {
     TomoeChar* chr;
     TomoeDict* myDict = tomoe_dict_new ("../data/userdb.xml", 1);
-    tomoe_array* readings = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
+    TomoeArray* readings = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
                                              NULL,
                                              (tomoe_free_fn)free);
 

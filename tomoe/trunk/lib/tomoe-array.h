@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-/* TODO remove from tomoe, replace by tomoe_array */
+/* TODO remove from tomoe, replace by TomoeArray */
 typedef struct _int_array int_array;
 
 struct _int_array
@@ -50,7 +50,7 @@ int             _int_array_find_data            (int_array *a, int i);
 
 void            _int_array_unref                (int_array *a);
 
-/* TODO remove from tomoe, replace by tomoe_array */
+/* TODO remove from tomoe, replace by TomoeArray */
 typedef struct _pointer_array pointer_array;
 
 struct _pointer_array
@@ -68,12 +68,12 @@ int             _pointer_array_find_data        (pointer_array *a, void *p);
 void            _pointer_array_unref            (pointer_array *a);
 
 /**
- * @typedef typedef struct _tomoe_array tomoe_array;
+ * @typedef typedef struct _TomoeArray TomoeArray;
  *
- * A struct type which represents tomoe_array. All members in it should be
- * accessed through tomoe_array_* functions.
+ * A struct type which represents TomoeArray. All members in it should be
+ * accessed through TomoeArray_* functions.
  */
-typedef struct _tomoe_array tomoe_array;
+typedef struct _TomoeArray TomoeArray;
 
 /**
  * @typedef typedef void* (*tomoe_addref_fn) (void*);
@@ -102,96 +102,96 @@ typedef int     (*tomoe_compare_fn)             (const void**,
  * @param compare - Pointer to the compare method of the array object type.
  * @param addref  - Pointer to the addReference method of the array object type.
  * @param free    - Pointer to the free method of the array object type.
- * @return Pointer to newly allocated tomoe_array object.
+ * @return Pointer to newly allocated TomoeArray object.
  */
-tomoe_array*    tomoe_array_new                 (tomoe_compare_fn   compare,
+TomoeArray*     tomoe_array_new                 (tomoe_compare_fn   compare,
                                                  tomoe_addref_fn    addref,
                                                  tomoe_free_fn      free);
 
 /**
  * @brief Increase reference count.
- * @param t_array - Pointer to the tomoe_array.
- * @return The tomoe_array.
+ * @param t_array - Pointer to the TomoeArray.
+ * @return The TomoeArray.
  */
-tomoe_array*    tomoe_array_add_ref             (tomoe_array*       t_array);
+TomoeArray*     tomoe_array_add_ref             (TomoeArray        *t_array);
 
 /**
  * @brief Decrease reference count and free if zero.
- * @param t_array - Pointer to the tomoe_array.
+ * @param t_array - Pointer to the TomoeArray.
  */
-void            tomoe_array_free                (tomoe_array*       t_array);
+void            tomoe_array_free                (TomoeArray       *t_array);
 
 /**
  * @brief Append an object to the array.
- * @param t_array - Pointer to the tomoe_array.
+ * @param t_array - Pointer to the TomoeArray.
  * @param p       - Pointer to the object to append.
- * @return The tomoe_array.
+ * @return The TomoeArray.
  */
-tomoe_array*    tomoe_array_append              (tomoe_array*       t_array,
-                                                 void*              p);
+TomoeArray*     tomoe_array_append              (TomoeArray        *t_array,
+                                                 void              *p);
 
 /**
  * @brief Find the index of an object by search key of tomoe_compare_fn.
- * @param t_array - Pointer to the tomoe_array.
+ * @param t_array - Pointer to the TomoeArray.
  * @param p       - Pointer to the object to find.
  * @return Index of the element, -1 if not found.
  */
-int             tomoe_array_find                (const tomoe_array* t_array,
-                                                 const void*        p);
+int             tomoe_array_find                (const TomoeArray  *t_array,
+                                                 const void        *p);
 
 /**
  * @brief Return an object element.
- * @param t_array - Pointer to the tomoe_array.
+ * @param t_array - Pointer to the TomoeArray.
  * @param index   - Index of the element.
  * @return Object, NULL if index is out of range.
  */
-void*           tomoe_array_get                 (tomoe_array*       t_array,
+void*           tomoe_array_get                 (TomoeArray        *t_array,
                                                  int                index);
 
 /**
  * @brief Return an object element from a const array.
- * @param t_array - Pointer to the tomoe_array.
+ * @param t_array - Pointer to the TomoeArray.
  * @param index   - Index of the element.
  * @return Object, NULL if index is out of range.
  */
-const void*     tomoe_array_get_const           (const tomoe_array* t_array,
+const void*     tomoe_array_get_const           (const TomoeArray *t_array,
                                                  int                index);
 
 /**
  * @brief Remove an element.
- * @param t_array - Pointer to the tomoe_array.
+ * @param t_array - Pointer to the TomoeArray.
  * @param index   - Index of the element.
  */
-void            tomoe_array_remove              (tomoe_array*       t_array,
+void            tomoe_array_remove              (TomoeArray        *t_array,
                                                  int                index);
 
 /**
  * @brief QuickSort the array by tomoe_compare_fn.
- * @param t_array - Pointer to the tomoe_array.
+ * @param t_array - Pointer to the TomoeArray.
  */
-void            tomoe_array_sort                (tomoe_array*       t_array);
+void            tomoe_array_sort                (TomoeArray        *t_array);
 
 /**
  * @brief Return the number of elements in the array.
- * @param t_array - Pointer to the tomoe_array.
+ * @param t_array - Pointer to the TomoeArray.
  * @return Object element count.
  */
-int             tomoe_array_size                (const tomoe_array* t_array);
+int             tomoe_array_size                (const TomoeArray  *t_array);
 
 /**
  * @brief Append the content of another array to t_array.
- * @param t_array - Pointer to the tomoe_array.
- * @param append  - Pointer to the tomoe_array to append.
+ * @param t_array - Pointer to the TomoeArray.
+ * @param append  - Pointer to the TomoeArray to append.
  */
-void            tomoe_array_merge               (tomoe_array*       t_array,
-                                                 tomoe_array*       append);
+void            tomoe_array_merge               (TomoeArray        *t_array,
+                                                 TomoeArray        *append);
 
 /**
  * @brief Create an empty array with same compare, addref, free functions.
- * @param t_array - Pointer to the tomoe_array.
- * @return Pointer to the newly allocated tomoe_array.
+ * @param t_array - Pointer to the TomoeArray.
+ * @return Pointer to the newly allocated TomoeArray.
  */
-tomoe_array*    tomoe_array_clone_empty         (const tomoe_array* t_array);
+TomoeArray*     tomoe_array_clone_empty         (const TomoeArray *t_array);
 
 #ifdef	__cplusplus
 }

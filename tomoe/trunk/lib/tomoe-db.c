@@ -30,8 +30,8 @@
 
 struct _TomoeDB
 {
-    int          ref;
-    tomoe_array* dicts;
+    int         ref;
+    TomoeArray *dicts;
 };
 
 
@@ -91,7 +91,7 @@ tomoe_db_load_dict (TomoeDB* t_db, const char *filename, int editable)
 }
 
 void
-tomoe_db_load_dict_list (TomoeDB* t_db, tomoe_array* list)
+tomoe_db_load_dict_list (TomoeDB* t_db, TomoeArray* list)
 {
     int i;
     for (i = 0; i < tomoe_array_size (list); i++)
@@ -112,7 +112,7 @@ tomoe_db_load_dict_list (TomoeDB* t_db, tomoe_array* list)
     }
 }
 
-tomoe_array*
+TomoeArray*
 tomoe_db_get_dict_list (TomoeDB* t_db)
 {
     if (!t_db) return NULL;
@@ -134,12 +134,12 @@ tomoe_db_save (TomoeDB *db)
     }
 }
 
-tomoe_array*
+TomoeArray*
 tomoe_db_search_by_strokes (TomoeDB* t_db, TomoeGlyph* input)
 {
     int i, num;
-    tomoe_array* tmp;
-    tomoe_array* matched;
+    TomoeArray* tmp;
+    TomoeArray* matched;
     TomoeDict* dict;
 
     if (!t_db) return tomoe_array_new (NULL, NULL, NULL);
@@ -151,7 +151,7 @@ tomoe_db_search_by_strokes (TomoeDB* t_db, TomoeGlyph* input)
     matched = tomoe_array_clone_empty (tmp);
     for (i = 0; i < num; i++)
     {
-        tomoe_array* tmp;
+        TomoeArray* tmp;
         dict = (TomoeDict*)tomoe_array_get (t_db->dicts, i);
         tmp = tomoe_dict_search_by_strokes (dict, input);
         tomoe_array_merge (matched, tmp);
@@ -162,12 +162,12 @@ tomoe_db_search_by_strokes (TomoeDB* t_db, TomoeGlyph* input)
     return matched;
 }
 
-tomoe_array*
+TomoeArray*
 tomoe_db_search_by_reading (TomoeDB* t_db, const char* input)
 {
     int i, num;
-    tomoe_array* reading;
-    tomoe_array* tmp;
+    TomoeArray* reading;
+    TomoeArray* tmp;
     TomoeDict*   dict;
 
     if (!t_db) return tomoe_array_new (NULL, NULL, NULL);
