@@ -96,7 +96,7 @@ tomoe_db_load_dict_list (TomoeDB* t_db, TomoeArray* list)
     int i;
     for (i = 0; i < tomoe_array_size (list); i++)
     {
-        tomoe_dict_cfg* p = tomoe_array_get (list, i);
+        TomoeDictCfg* p = tomoe_array_get (list, i);
         if (p->dontLoad) continue;
 
         if (p->user)

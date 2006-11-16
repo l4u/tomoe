@@ -36,13 +36,13 @@ extern "C" {
 
 typedef struct _TomoeConfig TomoeConfig;
 
-typedef struct _tomoe_dict_cfg
+typedef struct _TomoeDictCfg
 {
     char*       filename;
     int         dontLoad;
     int         writeAccess;
     int         user;
-} tomoe_dict_cfg;
+} TomoeDictCfg;
 
 TomoeConfig*    tomoe_config_new                 (const char* config_file);
 TomoeConfig*    tomoe_config_add_ref             (TomoeConfig* t_config);

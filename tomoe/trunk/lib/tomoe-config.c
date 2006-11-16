@@ -43,9 +43,9 @@ static const xmlChar* defaultConfig  = BAD_CAST "<?xml version=\"1.0\" standalon
 static const char* systemConfigFile = TOMOESYSCONFDIR "/config.xml";
 static const char* defaultConfigFile = "/config.xml";
 
-static tomoe_dict_cfg* _tomoe_dict_cfg_new      (void);
-static void            _tomoe_dict_cfg_free     (tomoe_dict_cfg* p);
-static int             _tomoe_dict_cfg_cmp      (const tomoe_dict_cfg** a, const tomoe_dict_cfg** b);
+static TomoeDictCfg*   _tomoe_dict_cfg_new      (void);
+static void            _tomoe_dict_cfg_free     (TomoeDictCfg* p);
+static int             _tomoe_dict_cfg_cmp      (const TomoeDictCfg** a, const TomoeDictCfg** b);
 static void            _tomoe_create_config_dir (void);
 
 struct _TomoeConfig
@@ -166,7 +166,7 @@ tomoe_config_load (TomoeConfig* t_config)
             else if (0 == xmlStrcmp(node->name, BAD_CAST "dictionary"))
             {
                 xmlAttrPtr prop;
-                tomoe_dict_cfg* dcfg = _tomoe_dict_cfg_new ();
+                TomoeDictCfg* dcfg = _tomoe_dict_cfg_new ();
                 dcfg->writeAccess = 0;
                 dcfg->dontLoad = 0;
                 dcfg->user = 1;
@@ -202,7 +202,7 @@ tomoe_config_load (TomoeConfig* t_config)
     {
         for (i = 0; i < tomoe_array_size (t_config->dictList); i++)
         {
-            tomoe_dict_cfg* dcfg = (tomoe_dict_cfg*)tomoe_array_get (t_config->dictList, i);
+            TomoeDictCfg* dcfg = (TomoeDictCfg*)tomoe_array_get (t_config->dictList, i);
             if (strcmp (defaultUserDB, dcfg->filename) == 0)
             {
                 t_config->defaultUserDB = i;
@@ -224,7 +224,7 @@ tomoe_config_load (TomoeConfig* t_config)
         for (p = glob_results.gl_pathv, cnt = glob_results.gl_pathc;
              cnt; p++, cnt--)
         {
-            tomoe_dict_cfg* dcfg = _tomoe_dict_cfg_new ();
+            TomoeDictCfg* dcfg = _tomoe_dict_cfg_new ();
             char* slash;
             dcfg->writeAccess = 0;
             dcfg->dontLoad = 0;
@@ -274,7 +274,7 @@ tomoe_config_save (TomoeConfig *cfg)
         for (i = 0; i < tomoe_array_size (cfg->dictList); i++)
         {
             xmlNodePtr node = xmlNewChild (root, NULL, BAD_CAST "dictionary", NULL);
-            tomoe_dict_cfg *dict = (tomoe_dict_cfg*)tomoe_array_get (cfg->dictList, i);
+            TomoeDictCfg *dict = (TomoeDictCfg*)tomoe_array_get (cfg->dictList, i);
 
             xmlNewProp (node, BAD_CAST "file", BAD_CAST dict->filename);
             if (!dict->user)
@@ -302,16 +302,16 @@ tomoe_config_get_default_user_db (TomoeConfig *t_config)
     return t_config->defaultUserDB;
 }
 
-static tomoe_dict_cfg*
+static TomoeDictCfg*
 _tomoe_dict_cfg_new (void)
 {
-    tomoe_dict_cfg* p = (tomoe_dict_cfg*)calloc (1, sizeof (tomoe_dict_cfg));
+    TomoeDictCfg* p = (TomoeDictCfg*)calloc (1, sizeof (TomoeDictCfg));
     p->filename = NULL;
     return p;
 }
 
 static void
-_tomoe_dict_cfg_free (tomoe_dict_cfg* p)
+_tomoe_dict_cfg_free (TomoeDictCfg* p)
 {
     if (!p) return;
     free (p->filename);
@@ -319,7 +319,7 @@ _tomoe_dict_cfg_free (tomoe_dict_cfg* p)
 }
 
 static int
-_tomoe_dict_cfg_cmp (const tomoe_dict_cfg** a, const tomoe_dict_cfg** b)
+_tomoe_dict_cfg_cmp (const TomoeDictCfg** a, const TomoeDictCfg** b)
 {
     return (*a)->user == (*b)->user ? strcmp((*a)->filename, (*b)->filename) 
                                     : (*b)->user - (*a)->user;
