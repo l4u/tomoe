@@ -291,11 +291,11 @@ tomoe_char_is_editable (TomoeChar *chr)
 {
     if (!chr) return 0;
     if (!chr->parent) return 1;
-    return chr->parent->get_editable (chr->parent->instance);
+    return chr->parent->is_editable (chr->parent->instance);
 }
 
 tomoe_bool
-tomoe_char_get_modified (TomoeChar *chr)
+tomoe_char_is_modified (TomoeChar *chr)
 {
     if (!chr) return 0;
     return chr->modified;
