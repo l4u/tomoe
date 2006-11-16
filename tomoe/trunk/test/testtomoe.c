@@ -7,9 +7,9 @@
 
 static TomoeGlyph * read_test_data ();
 void outCharInfo (TomoeChar* chr, int score);
-void testStrokeMatch (tomoe_db* db);
-void testReadingMatch (tomoe_db* db, const char* reading);
-void testUserDB (tomoe_db* db);
+void testStrokeMatch (TomoeDB* db);
+void testReadingMatch (TomoeDB* db, const char* reading);
+void testUserDB (TomoeDB* db);
 
 #define LINE_BUF_SIZE 4096
 static char line_buf[LINE_BUF_SIZE];
@@ -92,7 +92,7 @@ void outCharInfo (TomoeChar* chr, int score)
    fprintf (stdout, "\n");
 }
 
-void testStrokeMatch (tomoe_db* db)
+void testStrokeMatch (TomoeDB* db)
 {
     TomoeGlyph *test_glyph = NULL;
     int i, candidate_num = 0;
@@ -132,7 +132,7 @@ END:
         tomoe_array_free (matched);
 }
 
-void testReadingMatch (tomoe_db* db, const char* reading)
+void testReadingMatch (TomoeDB* db, const char* reading)
 {
     tomoe_array* matched = tomoe_db_search_by_reading (db, reading);
     int candidate_num = tomoe_array_size(matched);
@@ -159,7 +159,7 @@ void testReadingMatch (tomoe_db* db, const char* reading)
         fprintf (stdout, "No Candidate found!\n");
 }
 
-void testUserDB (tomoe_db* db)
+void testUserDB (TomoeDB* db)
 {
     TomoeChar* chr;
     tomoe_dict* myDict = tomoe_dict_new ("../data/userdb.xml", 1);
@@ -207,7 +207,7 @@ void testUserDB (tomoe_db* db)
 int
 main (int argc, char **argv)
 {
-    tomoe_db* db = NULL;
+    TomoeDB* db = NULL;
 
     tomoe_init ();
 

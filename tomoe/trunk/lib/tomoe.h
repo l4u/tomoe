@@ -42,7 +42,7 @@ extern "C" {
  */
 void       tomoe_init          (void);
 
-tomoe_db*  tomoe_simple_load   (const char* config_file);
+TomoeDB*   tomoe_simple_load   (const char* config_file);
 
 /**
  * @brief Finalize tomoe library.
