@@ -68,18 +68,6 @@ tomoe_term (void)
 }
 
 
-/* register characters with stroke */
-tomoe_bool
-tomoe_data_register (tomoe_glyph *input, char *data)
-{
-    tomoe_bool ret = FALSE;
-
-    /* Not implemented yet*/
-    return ret;
-}
-
-
-
 /*
 vi:ts=4:nowrap:ai:expandtab
 */

@@ -49,16 +49,6 @@ tomoe_db*  tomoe_simple_load   (const char* configFile);
  */
 void       tomoe_term          (void);
 
-
-/**
- * @brief Register to the current user dictionary.
- * @param input - Stroke data.
- * @param data  - Characters to register to the current user dictionary.
- * @return      - 
- */
-tomoe_bool tomoe_data_register (tomoe_glyph       *input,
-                                char              *data);
-
 #ifdef	__cplusplus
 }
 #endif
