@@ -1,7 +1,7 @@
 # -*- Mode: Makefile; tab-width: 8; indent-tabs-mode: t; -*-
 
 ## Makefile.am -- Process this file with automake to produce Makefile.in
-## Copyright (C) 2005 Takuro Ashie <ashie@homa.ne.jp>
+## Copyright (C) 2006 Kouhei Sutou <kou@cozmixng.org>
 ##
 ## This library is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU Lesser General Public
@@ -25,38 +25,20 @@ AM_CPPFLAGS =							\
 	-DDATADIR=\""$(datadir)"\"				\
 	-DTOMOESYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\"	\
 	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"		\
-	-DRECOGNIZERDIR=\""$(recognizerdir)"\"
+	-I$(top_srcdir)/lib
 
-INCLUDES = $(LIBXML_CFLAGS) $(LIBXSLT_CFLAGS) $(GLIB_CFLAGS)
+INCLUDES = $(GLIB_CFLAGS)
 
-pkginclude_HEADERS = \
-	tomoe.h \
-	tomoe-array.h \
-	tomoe-char.h \
-	tomoe-dict.h \
-	tomoe-data-types.h \
-	tomoe-context.h \
-	tomoe-config.h \
-	tomoe-object.h \
-	tomoe-recognizer.h
+recognizer_LTLIBRARIES = libsimple.la
 
-lib_LTLIBRARIES = libtomoe.la
-libtomoe_la_SOURCES = \
-	tomoe.c \
-	tomoe-array.c \
-	tomoe-char.c \
-	tomoe-dict.c \
-	tomoe-context.c \
-	tomoe-config.c \
-	tomoe-object.c \
-	tomoe-recognizer.c \
-	tomoe-recognizer-impl.h
+libsimple_la_SOURCES = \
+	tomoe-recognizer-simple.c
 
-libtomoe_la_LDFLAGS =						\
+libsimple_la_LDFLAGS =						\
   -version-info $(LT_VERSION_INFO)				\
   -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)
 
-libtomoe_la_LD_ADD = \
+libsimple_la_LD_ADD = \
 	-lm
 
-libtomoe_la_LIBADD = $(LIBXML_LIBS) $(LIBXSLT_LIBS) $(GLIB_LIBS)
+libsimple_la_LIBADD = $(GLIB_LIBS)
