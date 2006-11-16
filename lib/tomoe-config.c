@@ -48,7 +48,7 @@ static void            _tomoe_dict_cfg_free     (tomoe_dict_cfg* p);
 static int             _tomoe_dict_cfg_cmp      (const tomoe_dict_cfg** a, const tomoe_dict_cfg** b);
 static void            _tomoe_create_config_dir (void);
 
-struct _tomoe_config
+struct _TomoeConfig
 {
     int          ref;
     char*        filename;
@@ -57,11 +57,11 @@ struct _tomoe_config
     int          defaultUserDB;
 };
 
-tomoe_config*
+TomoeConfig*
 tomoe_config_new (const char* configFile)
 {
-    tomoe_config* p;
-    p           = calloc (1, sizeof (tomoe_config));
+    TomoeConfig* p;
+    p           = calloc (1, sizeof (TomoeConfig));
     p->ref      = 1;
     p->dictList = tomoe_array_new ((tomoe_compare_fn)_tomoe_dict_cfg_cmp,
                                    NULL,
@@ -104,8 +104,8 @@ tomoe_config_new (const char* configFile)
     return p;
 }
 
-tomoe_config*
-tomoe_config_add_ref (tomoe_config* t_config)
+TomoeConfig*
+tomoe_config_add_ref (TomoeConfig* t_config)
 {
     if (!t_config) return NULL;
     t_config->ref ++;
@@ -113,7 +113,7 @@ tomoe_config_add_ref (tomoe_config* t_config)
 }
 
 void
-tomoe_config_free (tomoe_config* t_config)
+tomoe_config_free (TomoeConfig* t_config)
 {
     if (!t_config) return;
     t_config->ref--;
@@ -126,7 +126,7 @@ tomoe_config_free (tomoe_config* t_config)
 }
 
 void
-tomoe_config_load (tomoe_config* t_config)
+tomoe_config_load (TomoeConfig* t_config)
 {
     xmlDocPtr doc;
     xmlNodePtr root;
@@ -251,7 +251,7 @@ tomoe_config_load (tomoe_config* t_config)
 }
 
 void
-tomoe_config_save (tomoe_config *cfg)
+tomoe_config_save (TomoeConfig *cfg)
 {
     if (!cfg) return;
     if (cfg->filename)
@@ -289,14 +289,14 @@ tomoe_config_save (tomoe_config *cfg)
 }
 
 tomoe_array*
-tomoe_config_get_dict_list (tomoe_config* t_config)
+tomoe_config_get_dict_list (TomoeConfig* t_config)
 {
     if (!t_config) return NULL;
     return tomoe_array_add_ref (t_config->dictList);
 }
 
 int
-tomoe_config_get_default_user_db (tomoe_config *t_config)
+tomoe_config_get_default_user_db (TomoeConfig *t_config)
 {
     if (!t_config) return 0;
     return t_config->defaultUserDB;
