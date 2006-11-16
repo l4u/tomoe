@@ -103,8 +103,8 @@ main (int argc, char **argv)
     /* FIXME! read arguments */
 
     tomoe_init ();
-    TomoeDB* db = tomoe_simple_load (NULL);
-    if (!db) exit (1);
+    TomoeContext* ctx = tomoe_simple_load (NULL);
+    if (!ctx) exit (1);
 
     while (1)
     {
@@ -117,7 +117,7 @@ main (int argc, char **argv)
         if (!glyph)
             break;
 
-        matched = tomoe_db_search_by_strokes (db, glyph);
+        matched = tomoe_context_search_by_strokes (ctx, glyph);
         candidate_num = tomoe_array_size (matched);
 
         if (candidate_num != 0 && matched)
@@ -140,7 +140,7 @@ main (int argc, char **argv)
         tomoe_array_free (matched);
     }
 
-    tomoe_db_free (db);
+    tomoe_context_free (ctx);
     tomoe_quit ();
 
     return 0;
