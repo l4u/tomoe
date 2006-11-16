@@ -1,5 +1,13 @@
 2006-11-16  Kouhei Sutou  <kou@cozmixng.org>
 
+	* configure.in: added gmodule check.
+	* Makefile.am, lib/Makefile.am, lib/tomoe-recognizer.[ch]: made
+	handwriting recognizer implementation dynamic loadable.
+	* lib/tomoe-recognizer-impl.h: added for API of handwriting recognizer
+	implementation API.
+	* recognizer/tomoe-recognizer-simple.c: extracted implementation
+	in lib/tomoe-recognizer.c.
+
 	* lib/tomoe-recognizer.[ch], lib/tomoe-db.[ch]: extracted
 	handwriting recognition related functions from tomoe-dict.[ch].
 	* lib/tomoe-context.c: use TomoeRecognizer.
