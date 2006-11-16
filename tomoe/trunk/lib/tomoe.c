@@ -62,9 +62,9 @@ tomoe_simple_load (const char* configFile)
 
 /* finalize tomoe */
 void 
-tomoe_term (void)
+tomoe_quit (void)
 {
-    // TODO unfreed tomoe objects check
+    /* TODO unfreed tomoe objects check */
 }
 
 
