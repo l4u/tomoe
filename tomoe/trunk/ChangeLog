@@ -1,7 +1,8 @@
 2006-11-16  Takuro Ashie  <ashie@homa.ne.jp>
 
-	* lib/tomoe-array.[ch], lib/tomoe-char.[ch], lib/tomoe-db.c,
-	  lib/tomoe-dict.c, test/testtomoe.c:
+	* lib/tomoe-array.[ch], lib/tomoe-char.[ch], lib,tomoe-config.[ch],
+	  lib/tomoe-db.[ch], lib/tomoe-dict.[ch], lib/tomoe.c,
+	  src/main.c, test/testtomoe.c:
 	Change some CamelCase functions to snake_case.
 	Fix C++ style comments.
 	ts2 -> ts4.

@@ -113,7 +113,7 @@ tomoe_array*   tomoe_array_new            (tomoe_compare_fn   compare,
  * @param t_array - Pointer to the tomoe_array.
  * @return The tomoe_array.
  */
-tomoe_array*   tomoe_array_addref         (tomoe_array*       my);
+tomoe_array*   tomoe_array_add_ref        (tomoe_array*       my);
 
 /**
  * @brief Decrease reference count and free if zero.

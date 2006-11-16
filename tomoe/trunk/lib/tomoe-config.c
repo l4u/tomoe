@@ -105,7 +105,7 @@ tomoe_config_new (const char* configFile)
 }
 
 tomoe_config*
-tomoe_config_addref (tomoe_config* this)
+tomoe_config_add_ref (tomoe_config* this)
 {
     if (!this) return NULL;
     this->ref ++;
@@ -181,13 +181,15 @@ tomoe_config_load (tomoe_config* this)
                 }
 
                 /* check if file exists */fprintf (stdout, dcfg->filename);
-                //if (access (dcfg->filename, F_OK | R_OK)) FIXME
-                {//fprintf(stdout, "..access ok\n");
+                /*if (access (dcfg->filename, F_OK | R_OK)) FIXME*/
+                {/*fprintf(stdout, "..access ok\n");*/
                     dcfg->writeAccess = /*access (dcfg->filename, W_OK) ? */dcfg->user/* : 0*/;
                     tomoe_array_append (this->dictList, dcfg);
                 }
-                //else
-                //    {_tomoe_dict_cfg_free (dcfg);fprintf(stdout,"..not found\n");}
+                /*
+                else
+                    {_tomoe_dict_cfg_free (dcfg);fprintf(stdout,"..not found\n");}
+                */
             }
 
         }
@@ -209,7 +211,7 @@ tomoe_config_load (tomoe_config* this)
         }
     }
 
-    // search in TOMOEDATADIR for additional dictionaries
+    /* search in TOMOEDATADIR for additional dictionaries */
     if (this->useSystemDictionaries)
     {
         tomoe_array* systemList = tomoe_array_new (NULL, NULL, NULL);
@@ -287,14 +289,14 @@ tomoe_config_save (tomoe_config *cfg)
 }
 
 tomoe_array*
-tomoe_config_getDictList (tomoe_config* this)
+tomoe_config_get_dict_list (tomoe_config* this)
 {
     if (!this) return NULL;
-    return tomoe_array_addref (this->dictList);
+    return tomoe_array_add_ref (this->dictList);
 }
 
 int
-tomoe_config_getDefaultUserDB (tomoe_config *this)
+tomoe_config_get_default_user_db (tomoe_config *this)
 {
     if (!this) return 0;
     return this->defaultUserDB;

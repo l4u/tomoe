@@ -42,13 +42,13 @@ tomoe_db_new(void)
     p        = calloc (1, sizeof(tomoe_db));
     p->ref   = 1;
     p->dicts = tomoe_array_new (NULL,
-                                (tomoe_addref_fn)tomoe_dict_addref,
+                                (tomoe_addref_fn)tomoe_dict_add_ref,
                                 (tomoe_free_fn)tomoe_dict_free);
     return p;
 }
 
 tomoe_db*
-tomoe_db_addref(tomoe_db* this)
+tomoe_db_add_ref(tomoe_db* this)
 {
     if (!this) return NULL;
     this->ref ++;
@@ -68,14 +68,14 @@ tomoe_db_free(tomoe_db* this)
 }
 
 void
-tomoe_db_addDict (tomoe_db* this, tomoe_dict* dict)
+tomoe_db_add_dict (tomoe_db* this, tomoe_dict* dict)
 {
     if (!this || !dict) return;
-    tomoe_array_append (this->dicts, tomoe_dict_addref (dict));
+    tomoe_array_append (this->dicts, tomoe_dict_add_ref (dict));
 }
 
 void
-tomoe_db_loadDict (tomoe_db* this, const char *filename, int editable)
+tomoe_db_load_dict (tomoe_db* this, const char *filename, int editable)
 {
     tomoe_dict* dict;
 
@@ -91,7 +91,7 @@ tomoe_db_loadDict (tomoe_db* this, const char *filename, int editable)
 }
 
 void
-tomoe_db_loadDictList (tomoe_db* this, tomoe_array* list)
+tomoe_db_load_dict_list (tomoe_db* this, tomoe_array* list)
 {
     int i;
     for (i = 0; i < tomoe_array_size (list); i++)
@@ -100,23 +100,23 @@ tomoe_db_loadDictList (tomoe_db* this, tomoe_array* list)
         if (p->dontLoad) continue;
 
         if (p->user)
-            tomoe_db_loadDict (this, p->filename, p->writeAccess);
+            tomoe_db_load_dict (this, p->filename, p->writeAccess);
         else
         {
             char* file = calloc (strlen (p->filename) + strlen (TOMOEDATADIR) + 2, sizeof (char));
             strcpy (file, TOMOEDATADIR);
             strcat (file, "/");
             strcat (file, p->filename);
-            tomoe_db_loadDict (this, file, p->writeAccess);
+            tomoe_db_load_dict (this, file, p->writeAccess);
         }
     }
 }
 
 tomoe_array*
-tomoe_db_getDictList (tomoe_db* this)
+tomoe_db_get_dict_list (tomoe_db* this)
 {
     if (!this) return NULL;
-    return tomoe_array_addref(this->dicts);
+    return tomoe_array_add_ref(this->dicts);
 }
 
 void
@@ -135,7 +135,7 @@ tomoe_db_save (tomoe_db *db)
 }
 
 tomoe_array*
-tomoe_db_searchByStrokes (tomoe_db* this, tomoe_glyph* input)
+tomoe_db_search_by_strokes (tomoe_db* this, tomoe_glyph* input)
 {
     int i, num;
     tomoe_array* tmp;
@@ -147,13 +147,13 @@ tomoe_db_searchByStrokes (tomoe_db* this, tomoe_glyph* input)
     if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
 
     dict = (tomoe_dict*)tomoe_array_get (this->dicts, 0);
-    tmp = tomoe_dict_searchByStrokes (dict, input);
+    tmp = tomoe_dict_search_by_strokes (dict, input);
     matched = tomoe_array_clone_empty (tmp);
     for (i = 0; i < num; i++)
     {
         tomoe_array* tmp;
         dict = (tomoe_dict*)tomoe_array_get (this->dicts, i);
-        tmp = tomoe_dict_searchByStrokes (dict, input);
+        tmp = tomoe_dict_search_by_strokes (dict, input);
         tomoe_array_merge (matched, tmp);
         tomoe_array_free (tmp);
     }
@@ -163,7 +163,7 @@ tomoe_db_searchByStrokes (tomoe_db* this, tomoe_glyph* input)
 }
 
 tomoe_array*
-tomoe_db_searchByReading (tomoe_db* this, const char* input)
+tomoe_db_search_by_reading (tomoe_db* this, const char* input)
 {
     int i, num;
     tomoe_array* reading;
@@ -175,16 +175,16 @@ tomoe_db_searchByReading (tomoe_db* this, const char* input)
     if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
 
     dict = (tomoe_dict*)tomoe_array_get (this->dicts, 0);
-    tmp = tomoe_dict_searchByReading (dict, input);
+    tmp = tomoe_dict_search_by_reading (dict, input);
     reading = tomoe_array_clone_empty (tmp);
     for (i = 0; i < num; i++)
     {
         dict = (tomoe_dict*)tomoe_array_get (this->dicts, i);
-        tmp = tomoe_dict_searchByReading (dict, input);
+        tmp = tomoe_dict_search_by_reading (dict, input);
         tomoe_array_merge (reading, tmp);
         tomoe_array_free (tmp);
     }
-    //tomoe_array_sort (reading);
+    /*tomoe_array_sort (reading);*/
 
     return reading;
 }

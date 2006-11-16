@@ -103,7 +103,7 @@ void testStrokeMatch (tomoe_db* db)
     if (!test_glyph) 
         goto END;
 
-    matched = tomoe_db_searchByStrokes (db, test_glyph);
+    matched = tomoe_db_search_by_strokes (db, test_glyph);
     candidate_num = tomoe_array_size (matched);
 
     if (candidate_num != 0)
@@ -134,7 +134,7 @@ END:
 
 void testReadingMatch (tomoe_db* db, const char* reading)
 {
-    tomoe_array* matched = tomoe_db_searchByReading (db, reading);
+    tomoe_array* matched = tomoe_db_search_by_reading (db, reading);
     int candidate_num = tomoe_array_size(matched);
 
     if (candidate_num != 0)
@@ -168,34 +168,34 @@ void testUserDB (tomoe_db* db)
                                              (tomoe_free_fn)free);
 
     fprintf (stdout, "dictSize %d; create character \"（＾o＾）／\" with reading \"やった\" and add to dictionary\n", 
-             tomoe_dict_getSize (myDict));
+             tomoe_dict_get_size (myDict));
     chr = tomoe_char_new (NULL);
     tomoe_char_set_code (chr, "（＾o＾）／");
     tomoe_array_append (readings, strdup ("やった"));
     tomoe_char_set_readings (chr, readings);
-    tomoe_dict_addChar (myDict, chr);
+    tomoe_dict_add_char (myDict, chr);
 
-    tomoe_db_addDict (db, myDict);
+    tomoe_db_add_dict (db, myDict);
 
-    fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_getSize (myDict));
+    fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_get_size (myDict));
     testReadingMatch (db, "やった");
 
     fprintf (stdout, "update character to \"\\\\（＾o＾）//\"\n");
     tomoe_char_set_code (chr, "\\\\（＾o＾）//");
-    fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_getSize (myDict));
+    fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_get_size (myDict));
     testReadingMatch (db, "やった");
 
     fprintf (stdout, "update reading to \"yey\"\n");
     tomoe_array_remove (readings, tomoe_array_find (readings, "やった"));
     tomoe_array_append (readings, "yey");
-    fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_getSize (myDict));
+    fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_get_size (myDict));
     testReadingMatch (db, "やった");
-    fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_getSize (myDict));
+    fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_get_size (myDict));
     testReadingMatch (db, "yey");
 
     fprintf (stdout, "remove character \n");
-    tomoe_dict_removeByChar (myDict, chr);
-    fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_getSize (myDict));
+    tomoe_dict_remove_by_char (myDict, chr);
+    fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_get_size (myDict));
     testReadingMatch (db, "yey");
 
     tomoe_dict_save (myDict);

@@ -215,7 +215,7 @@ tomoe_array_new (tomoe_compare_fn  compare,
 }
 
 tomoe_array*
-tomoe_array_addref(tomoe_array* this)
+tomoe_array_add_ref(tomoe_array* this)
 {
     if (!this) return 0;
     this->ref ++;

@@ -217,7 +217,7 @@ tomoe_char_set_readings (tomoe_char* this, tomoe_array* readings)
 {
     if (!this) return;
     tomoe_array_free (this->readings);
-    this->readings = readings ? tomoe_array_addref (readings) : NULL;
+    this->readings = readings ? tomoe_array_add_ref (readings) : NULL;
     tomoe_char_set_modified(this, 1);
 }
 

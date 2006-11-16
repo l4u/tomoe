@@ -55,7 +55,7 @@ tomoe_db*     tomoe_db_new                (void);
  * @param t_db     - Pointer to the tomoe_db struct to increase reference count.
  * @return The tomoe_db.
  */
-tomoe_db*     tomoe_db_addref             (tomoe_db*     t_db);
+tomoe_db*     tomoe_db_add_ref            (tomoe_db*     t_db);
 
 /**
  * @brief Decrease reference count and free if zero.
@@ -69,18 +69,18 @@ void          tomoe_db_free               (tomoe_db*     t_db);
  * @param filename - Name of dictionary file to load.
  * @return The tomoe_db.
  */
-void          tomoe_db_addDict            (tomoe_db*     t_db,
+void          tomoe_db_add_dict           (tomoe_db*     t_db,
                                            tomoe_dict*   dict);
-void          tomoe_db_loadDict           (tomoe_db*     t_db,
+void          tomoe_db_load_dict          (tomoe_db*     t_db,
                                            const char*   filename,
                                            int           editable);
-void          tomoe_db_loadDictList       (tomoe_db*     t_db,
+void          tomoe_db_load_dict_list     (tomoe_db*     t_db,
                                            tomoe_array*  list);
-tomoe_array*  tomoe_db_getDictList        (tomoe_db*     t_db);
+tomoe_array*  tomoe_db_get_dict_list      (tomoe_db*     t_db);
 void          tomoe_db_save               (tomoe_db     *db);
 
 #if 0
-tomoe_dict*   tomoe_db_getUserDict        (tomoe_db*     t_db,
+tomoe_dict*   tomoe_db_get_user_dict      (tomoe_db*     t_db,
                                            const char*   filename);
 #endif
 
@@ -90,17 +90,17 @@ tomoe_dict*   tomoe_db_getUserDict        (tomoe_db*     t_db,
  * @param input    - Pointer to tomoe_glyph matchkey.
  * @return The array of tomoe_candidate.
  */
-tomoe_array*  tomoe_db_searchByStrokes  (tomoe_db*     t_db,
-                                                  tomoe_glyph*  input);
-
+tomoe_array*  tomoe_db_search_by_strokes  (tomoe_db*     t_db,
+                                           tomoe_glyph*  input);
+    
 /**
  * @brief Match reading of tomoe_letter with input.
  * @param t_db     - Pointer to the tomoe_db object.
  * @param reading  - Pointer to string matchkey
  * @return The array of tomoe_candidate.
  */
-tomoe_array*  tomoe_db_searchByReading   (tomoe_db*     t_db,
-                                                const char*   reading);
+tomoe_array*  tomoe_db_search_by_reading  (tomoe_db*     t_db,
+                                           const char*   reading);
 #if 0
 /* optional */
 void          tomoe_db_enable_dict        (tomoe_db*     t_db,

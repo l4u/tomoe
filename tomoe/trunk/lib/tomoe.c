@@ -53,8 +53,8 @@ tomoe_simple_load (const char* configFile)
 
     cfg = tomoe_config_new (configFile);
     tomoe_config_load (cfg);
-    list = tomoe_config_getDictList (cfg);
-    tomoe_db_loadDictList (db, list);
+    list = tomoe_config_get_dict_list (cfg);
+    tomoe_db_load_dict_list (db, list);
     tomoe_config_free (cfg);
 
     return db;
