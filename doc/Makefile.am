@@ -25,19 +25,19 @@ EXTRA_DIST = doxygen.conf.in
 .PHONY: html
 
 
-if HAVE_DOXYGEN
-html: 
-	(cd $(top_builddir)/doc; rm -fr html/*; $(DOXYGEN) doxygen.conf)
-
-dist-hook: html
-	cp -Rp $(top_builddir)/doc/html $(distdir)
-else
 html:
+if HAVE_DOXYGEN
+	(cd $(top_builddir)/doc; rm -fr html/*; $(DOXYGEN) doxygen.conf)
+else
 	echo "***"
 	echo "*** Warning: Documentation not built"
 	echo "***"
+endif
 
-dist-hook:
+dist-hook: html
+if HAVE_DOXYGEN
+	cp -Rp $(top_builddir)/doc/html $(distdir)
+else
 	echo "***"
 	echo "*** Warning: Documentation not built"
 	echo "*** DISTRIBUTION IS INCOMPLETE"

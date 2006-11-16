@@ -1,6 +1,7 @@
 2006-11-16  Kouhei Sutou  <kou@cozmixng.org>
 
 	* configure.in: suppressed automake warning.
+	* doc/Makefile.am: ditto.
 
 2006-10-29  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
