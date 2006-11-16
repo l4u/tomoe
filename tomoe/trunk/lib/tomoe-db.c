@@ -129,7 +129,7 @@ tomoe_db_save (tomoe_db *db)
     for (i = 0; i < tomoe_array_size (db->dicts); i++)
     {
         tomoe_dict *dict = (tomoe_dict*)tomoe_array_get (db->dicts, i);
-        if (tomoe_dict_get_modified (dict))
+        if (tomoe_dict_is_modified (dict))
             tomoe_dict_save (dict);
     }
 }

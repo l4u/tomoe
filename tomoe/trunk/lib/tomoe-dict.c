@@ -134,7 +134,7 @@ tomoe_dict_new (const char* filename, tomoe_bool editable)
     t_dict->editable                    = editable;
     t_dict->dict_interface.instance     = t_dict;
     t_dict->dict_interface.get_meta_xsl = (tomoe_dict_interface_get_meta_xsl)tomoe_dict_get_meta_xsl;
-    t_dict->dict_interface.get_editable = (tomoe_dict_interface_get_editable)tomoe_dict_get_editable;
+    t_dict->dict_interface.is_editable  = (tomoe_dict_interface_is_editable)tomoe_dict_is_editable;
     t_dict->dict_interface.set_modified = (tomoe_dict_interface_set_modified)tomoe_dict_set_modified;
 
     if (0 == _check_dict_xsl (filename))
@@ -191,7 +191,7 @@ tomoe_dict_save (tomoe_dict* t_dict)
     int i, num;
 
     if (!t_dict) return;
-    if (!tomoe_dict_get_editable (t_dict)) return;
+    if (!tomoe_dict_is_editable (t_dict)) return;
 
     doc = xmlNewDoc(BAD_CAST "1.0");
     root = xmlNewNode(NULL, BAD_CAST "tomoe_dictionary");
@@ -277,14 +277,14 @@ tomoe_dict_get_name (tomoe_dict* t_dict)
 }
 
 tomoe_bool
-tomoe_dict_get_editable (tomoe_dict* t_dict)
+tomoe_dict_is_editable (tomoe_dict* t_dict)
 {
     if (!t_dict) return 0;
     return t_dict->editable;
 }
 
 tomoe_bool
-tomoe_dict_get_modified (tomoe_dict *dict)
+tomoe_dict_is_modified (tomoe_dict *dict)
 {
     if (!dict) return 0;
     return dict->modified;

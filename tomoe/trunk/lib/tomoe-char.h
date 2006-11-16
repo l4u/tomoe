@@ -97,14 +97,14 @@ typedef xsltStylesheetPtr  (*tomoe_dict_interface_get_meta_xsl) (void*);
 #else
 typedef void*              (*tomoe_dict_interface_get_meta_xsl) (void*);
 #endif
-typedef tomoe_bool         (*tomoe_dict_interface_get_editable) (void*);
+typedef tomoe_bool         (*tomoe_dict_interface_is_editable)  (void*);
 typedef void               (*tomoe_dict_interface_set_modified) (void*, tomoe_bool);
 
 typedef struct _tomoe_dict_interface
 {
     void*                                instance;
     tomoe_dict_interface_get_meta_xsl    get_meta_xsl;
-    tomoe_dict_interface_get_editable    get_editable;
+    tomoe_dict_interface_is_editable     is_editable;
     tomoe_dict_interface_set_modified    set_modified;
 } tomoe_dict_interface;
 
@@ -177,7 +177,7 @@ const char*     tomoe_char_get_meta             (TomoeChar*           t_char);
 void            tomoe_char_set_dict_interface   (TomoeChar*           chr,
                                                  tomoe_dict_interface *parent);
 tomoe_bool      tomoe_char_is_editable          (TomoeChar*           chr);
-tomoe_bool      tomoe_char_get_modified         (TomoeChar*           chr);
+tomoe_bool      tomoe_char_is_modified          (TomoeChar*           chr);
 void            tomoe_char_set_modified         (TomoeChar*           chr,
                                                  tomoe_bool            modified);
 

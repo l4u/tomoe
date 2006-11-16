@@ -91,9 +91,9 @@ const char*     tomoe_dict_get_name             (tomoe_dict*    t_dict);
  * @param t_dict - Pointer to the tomoe_dict object.
  * @return 1 - is editable, 0 - is not editable
  */
-tomoe_bool      tomoe_dict_get_editable         (tomoe_dict*    t_dict);
+tomoe_bool      tomoe_dict_is_editable          (tomoe_dict*    t_dict);
 
-tomoe_bool      tomoe_dict_get_modified         (tomoe_dict    *dict);
+tomoe_bool      tomoe_dict_is_modified          (tomoe_dict    *dict);
 void            tomoe_dict_set_modified         (tomoe_dict    *dict,
                                                  tomoe_bool     modified);
 
