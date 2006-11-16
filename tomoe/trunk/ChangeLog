@@ -1,8 +1,15 @@
 2006-11-16  Takuro Ashie  <ashie@homa.ne.jp>
 
+	* lib/tomoe-array.[ch]: rename this -> t_array.
+	* lib/tomoe-char.[ch]: rename this -> t_char or t_cand.
+	* lib/tomoe-config.c: rename this -> t_config.
+	* lib/tomoe-db.c: rename this -> t_db.
+	* lib/tomoe-dict.c: rename this -> t_dict.
+
+2006-11-16  Takuro Ashie  <ashie@homa.ne.jp>
+
 	* lib/tomoe-dict.c: Fix compile time warnings.
 	* lib/tomoe-array.h, lib/tomoe-char.h: Fix indent.
-
 
 2006-11-16  Takuro Ashie  <ashie@homa.ne.jp>
 

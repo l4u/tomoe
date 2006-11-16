@@ -86,8 +86,8 @@ TOMOE_CLASS_END
  * @return -1 a < b, 0 a= b, 1 a > b
  */
 tomoe_candidate*tomoe_candidate_new             (void);
-tomoe_candidate*tomoe_candidate_add_ref         (tomoe_candidate*  t_char);
-void            tomoe_candidate_free            (tomoe_candidate*  t_char);
+tomoe_candidate*tomoe_candidate_add_ref         (tomoe_candidate*  t_cand);
+void            tomoe_candidate_free            (tomoe_candidate*  t_cand);
 int             tomoe_candidate_compare         (const tomoe_candidate** a,
                                                  const tomoe_candidate** b);
 

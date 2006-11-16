@@ -44,7 +44,7 @@ typedef struct _tomoe_dict_cfg
     int         user;
 } tomoe_dict_cfg;
 
-tomoe_config* tomoe_config_new                 (const char* configFile);
+tomoe_config* tomoe_config_new                 (const char* config_file);
 tomoe_config* tomoe_config_add_ref             (tomoe_config* t_config);
 void          tomoe_config_free                (tomoe_config* t_config);
 void          tomoe_config_load                (tomoe_config* t_config);

@@ -105,42 +105,42 @@ tomoe_config_new (const char* configFile)
 }
 
 tomoe_config*
-tomoe_config_add_ref (tomoe_config* this)
+tomoe_config_add_ref (tomoe_config* t_config)
 {
-    if (!this) return NULL;
-    this->ref ++;
-    return this;
+    if (!t_config) return NULL;
+    t_config->ref ++;
+    return t_config;
 }
 
 void
-tomoe_config_free (tomoe_config* this)
+tomoe_config_free (tomoe_config* t_config)
 {
-    if (!this) return;
-    this->ref--;
-    if (this->ref <= 0)
+    if (!t_config) return;
+    t_config->ref--;
+    if (t_config->ref <= 0)
     {
-        free (this->filename);
-        tomoe_array_free (this->dictList);
-        free (this);
+        free (t_config->filename);
+        tomoe_array_free (t_config->dictList);
+        free (t_config);
     }
 }
 
 void
-tomoe_config_load (tomoe_config* this)
+tomoe_config_load (tomoe_config* t_config)
 {
     xmlDocPtr doc;
     xmlNodePtr root;
     char* defaultUserDB = NULL;
     int i;
 
-    if (!this) return;
-    doc = this->filename ? xmlReadFile (this->filename, NULL, 1)
+    if (!t_config) return;
+    doc = t_config->filename ? xmlReadFile (t_config->filename, NULL, 1)
                          : xmlReadDoc (defaultConfig, NULL, NULL, 1);
 
     root = xmlDocGetRootElement(doc);
 
-    this->defaultUserDB = -1;
-    this->useSystemDictionaries = 0;
+    t_config->defaultUserDB = -1;
+    t_config->useSystemDictionaries = 0;
 
     if (root && 0 == xmlStrcmp(root->name, BAD_CAST "tomoeConfig"))
     {
@@ -152,7 +152,7 @@ tomoe_config_load (tomoe_config* this)
 
             if (0 == xmlStrcmp(node->name, BAD_CAST "useSystemDictionaries"))
             {
-                this->useSystemDictionaries = 1;
+                t_config->useSystemDictionaries = 1;
             }
             else if (0 == xmlStrcmp(node->name, BAD_CAST "defaultUserDB"))
             {
@@ -184,7 +184,7 @@ tomoe_config_load (tomoe_config* this)
                 /*if (access (dcfg->filename, F_OK | R_OK)) FIXME*/
                 {/*fprintf(stdout, "..access ok\n");*/
                     dcfg->writeAccess = /*access (dcfg->filename, W_OK) ? */dcfg->user/* : 0*/;
-                    tomoe_array_append (this->dictList, dcfg);
+                    tomoe_array_append (t_config->dictList, dcfg);
                 }
                 /*
                 else
@@ -196,23 +196,23 @@ tomoe_config_load (tomoe_config* this)
     }
     xmlFreeDoc (doc);
 
-    tomoe_array_sort (this->dictList);
+    tomoe_array_sort (t_config->dictList);
 
     if (defaultUserDB)
     {
-        for (i = 0; i < tomoe_array_size (this->dictList); i++)
+        for (i = 0; i < tomoe_array_size (t_config->dictList); i++)
         {
-            tomoe_dict_cfg* dcfg = (tomoe_dict_cfg*)tomoe_array_get (this->dictList, i);
+            tomoe_dict_cfg* dcfg = (tomoe_dict_cfg*)tomoe_array_get (t_config->dictList, i);
             if (strcmp (defaultUserDB, dcfg->filename) == 0)
             {
-                this->defaultUserDB = i;
+                t_config->defaultUserDB = i;
                 break;
             }
         }
     }
 
     /* search in TOMOEDATADIR for additional dictionaries */
-    if (this->useSystemDictionaries)
+    if (t_config->useSystemDictionaries)
     {
         tomoe_array* systemList = tomoe_array_new (NULL, NULL, NULL);
         size_t cnt;
@@ -233,7 +233,7 @@ tomoe_config_load (tomoe_config* this)
             if (slash)
             {
                 dcfg->filename = strdup (slash + 1);
-                if (-1 == tomoe_array_find (this->dictList, dcfg))
+                if (-1 == tomoe_array_find (t_config->dictList, dcfg))
                 {
                     tomoe_array_append (systemList, dcfg);
                     continue;
@@ -244,8 +244,8 @@ tomoe_config_load (tomoe_config* this)
         }
         globfree (&glob_results);
 
-        tomoe_array_merge (this->dictList, systemList);
-        tomoe_array_sort (this->dictList);
+        tomoe_array_merge (t_config->dictList, systemList);
+        tomoe_array_sort (t_config->dictList);
         tomoe_array_free (systemList);
     }
 }
@@ -289,17 +289,17 @@ tomoe_config_save (tomoe_config *cfg)
 }
 
 tomoe_array*
-tomoe_config_get_dict_list (tomoe_config* this)
+tomoe_config_get_dict_list (tomoe_config* t_config)
 {
-    if (!this) return NULL;
-    return tomoe_array_add_ref (this->dictList);
+    if (!t_config) return NULL;
+    return tomoe_array_add_ref (t_config->dictList);
 }
 
 int
-tomoe_config_get_default_user_db (tomoe_config *this)
+tomoe_config_get_default_user_db (tomoe_config *t_config)
 {
-    if (!this) return 0;
-    return this->defaultUserDB;
+    if (!t_config) return 0;
+    return t_config->defaultUserDB;
 }
 
 static tomoe_dict_cfg*
