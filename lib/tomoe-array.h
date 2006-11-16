@@ -42,10 +42,10 @@ struct _IntArray
     int  ref_count;
 };
 
-IntArray*       _int_array_new                  (void);
-IntArray*       _int_array_append_data          (IntArray *a, int i);
-IntArray*       _int_array_ref                  (IntArray *a);
-IntArray*       _int_array_copy                 (IntArray *a);
+IntArray       *_int_array_new                  (void);
+IntArray       *_int_array_append_data          (IntArray *a, int i);
+IntArray       *_int_array_ref                  (IntArray *a);
+IntArray       *_int_array_copy                 (IntArray *a);
 int             _int_array_find_data            (IntArray *a, int i);
 
 void            _int_array_unref                (IntArray *a);
@@ -60,9 +60,9 @@ struct _PointerArray
     int    ref_count;
 };
 
-PointerArray*   _pointer_array_new              (void);
-PointerArray*   _pointer_array_append_data      (PointerArray *a, void *p);
-PointerArray*   _pointer_array_ref              (PointerArray *a);
+PointerArray   *_pointer_array_new              (void);
+PointerArray   *_pointer_array_append_data      (PointerArray *a, void *p);
+PointerArray   *_pointer_array_ref              (PointerArray *a);
 int             _pointer_array_find_data        (PointerArray *a, void *p);
 
 void            _pointer_array_unref            (PointerArray *a);
@@ -104,7 +104,7 @@ typedef int     (*tomoe_compare_fn)             (const void**,
  * @param free    - Pointer to the free method of the array object type.
  * @return Pointer to newly allocated TomoeArray object.
  */
-TomoeArray*     tomoe_array_new                 (tomoe_compare_fn   compare,
+TomoeArray     *tomoe_array_new                 (tomoe_compare_fn   compare,
                                                  tomoe_addref_fn    addref,
                                                  tomoe_free_fn      free);
 
@@ -113,13 +113,13 @@ TomoeArray*     tomoe_array_new                 (tomoe_compare_fn   compare,
  * @param t_array - Pointer to the TomoeArray.
  * @return The TomoeArray.
  */
-TomoeArray*     tomoe_array_add_ref             (TomoeArray        *t_array);
+TomoeArray     *tomoe_array_add_ref             (TomoeArray        *t_array);
 
 /**
  * @brief Decrease reference count and free if zero.
  * @param t_array - Pointer to the TomoeArray.
  */
-void            tomoe_array_free                (TomoeArray       *t_array);
+void            tomoe_array_free                (TomoeArray        *t_array);
 
 /**
  * @brief Append an object to the array.
@@ -127,7 +127,7 @@ void            tomoe_array_free                (TomoeArray       *t_array);
  * @param p       - Pointer to the object to append.
  * @return The TomoeArray.
  */
-TomoeArray*     tomoe_array_append              (TomoeArray        *t_array,
+TomoeArray     *tomoe_array_append              (TomoeArray        *t_array,
                                                  void              *p);
 
 /**
@@ -145,7 +145,7 @@ int             tomoe_array_find                (const TomoeArray  *t_array,
  * @param index   - Index of the element.
  * @return Object, NULL if index is out of range.
  */
-void*           tomoe_array_get                 (TomoeArray        *t_array,
+void           *tomoe_array_get                 (TomoeArray        *t_array,
                                                  int                index);
 
 /**
@@ -154,7 +154,7 @@ void*           tomoe_array_get                 (TomoeArray        *t_array,
  * @param index   - Index of the element.
  * @return Object, NULL if index is out of range.
  */
-const void*     tomoe_array_get_const           (const TomoeArray *t_array,
+const void     *tomoe_array_get_const           (const TomoeArray  *t_array,
                                                  int                index);
 
 /**
@@ -191,7 +191,7 @@ void            tomoe_array_merge               (TomoeArray        *t_array,
  * @param t_array - Pointer to the TomoeArray.
  * @return Pointer to the newly allocated TomoeArray.
  */
-TomoeArray*     tomoe_array_clone_empty         (const TomoeArray *t_array);
+TomoeArray     *tomoe_array_clone_empty         (const TomoeArray *t_array);
 
 #ifdef	__cplusplus
 }
