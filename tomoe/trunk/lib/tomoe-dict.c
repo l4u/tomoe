@@ -139,7 +139,7 @@ tomoe_dict_new (const char* filename, tomoe_bool editable)
 
     if (0 == _check_dict_xsl (filename))
     {
-        // native tomoe dictionary
+        /* native tomoe dictionary */
         xmlDocPtr doc = xmlParseFile (filename);
 
         if (doc)
@@ -147,7 +147,7 @@ tomoe_dict_new (const char* filename, tomoe_bool editable)
 
         xmlFreeDoc (doc);
     }
-    else // non native dictionary
+    else /* non native dictionary */
         _parse_alien_dict (this, filename);
 
     xsltCleanupGlobals ();
@@ -209,10 +209,10 @@ tomoe_dict_save (tomoe_dict* this)
     {
         xmlNodePtr charNode = xmlNewChild (root, NULL, BAD_CAST "character", NULL);
         tomoe_char* chr = (tomoe_char*)tomoe_array_get (this->letters, i);
-        tomoe_array* readings = tomoe_char_getReadings (chr);
-        tomoe_glyph* glyph = tomoe_char_getGlyph (chr);
-        xmlNodePtr meta = tomoe_char_getXmlMeta (chr);
-        const char* code = tomoe_char_getCode (chr);
+        tomoe_array* readings = tomoe_char_get_readings (chr);
+        tomoe_glyph* glyph = tomoe_char_get_glyph (chr);
+        xmlNodePtr meta = tomoe_char_get_xml_meta (chr);
+        const char* code = tomoe_char_get_code (chr);
         xmlNewChild (charNode, NULL, BAD_CAST "literal", BAD_CAST code);
         int k;
 
@@ -222,7 +222,7 @@ tomoe_dict_save (tomoe_dict* this)
             for (k = 0; k < glyph->stroke_num; k++)
             {
                 int j;
-                char buf[256]; // FIXME overrun possible
+                char buf[256]; /* FIXME overrun possible */
                 strcpy (buf, "");
                 for (j = 0; j < glyph->strokes[k].point_num; j++)
                 {
@@ -364,7 +364,7 @@ tomoe_array*
 tomoe_dict_searchByStrokes (const tomoe_dict* this, tomoe_glyph* input)
 {
     tomoe_array* matched = tomoe_array_new((tomoe_compare_fn)tomoe_candidate_compare,
-                                           (tomoe_addref_fn)tomoe_candidate_addRef,
+                                           (tomoe_addref_fn)tomoe_candidate_add_ref,
                                            (tomoe_free_fn)tomoe_candidate_free);
     unsigned int i, j; 
     int_array *matches = NULL;
@@ -388,11 +388,11 @@ tomoe_dict_searchByStrokes (const tomoe_dict* this, tomoe_glyph* input)
         cand_priv *cand = NULL;
 
         /* check for available glyph data */
-        if (!tomoe_char_getGlyph (p))
+        if (!tomoe_char_get_glyph (p))
             continue;
 
         /* check the number of stroke */
-        if (input->stroke_num > tomoe_char_getGlyph (p)->stroke_num)
+        if (input->stroke_num > tomoe_char_get_glyph (p)->stroke_num)
             continue;
 
         /* append a candidate to candidate list */
@@ -461,7 +461,7 @@ tomoe_dict_searchByStrokes (const tomoe_dict* this, tomoe_glyph* input)
             if (_int_array_find_data (matches, index) >= 0)
             {
                 tomoe_candidate* cand = tomoe_candidate_new ();
-                cand->character = tomoe_char_addRef (((cand_priv*)cands->p[i])->cand->character);
+                cand->character = tomoe_char_add_ref (((cand_priv*)cands->p[i])->cand->character);
                 cand->score     = ((cand_priv *)cands->p[i])->cand->score;
                 tomoe_array_append (matched, cand);
                 tomoe_candidate_free (cand);
@@ -488,7 +488,7 @@ tomoe_array*
 tomoe_dict_searchByReading (const tomoe_dict* this, const char* input)
 {
     tomoe_array* reading = tomoe_array_new (NULL,
-                                            (tomoe_addref_fn)tomoe_char_addRef,
+                                            (tomoe_addref_fn)tomoe_char_add_ref,
                                             (tomoe_free_fn)tomoe_char_free);
     int letter_num = tomoe_array_size (this->letters);
     int i;
@@ -498,7 +498,7 @@ tomoe_dict_searchByReading (const tomoe_dict* this, const char* input)
         tomoe_char* lttr = (tomoe_char*)tomoe_array_get (this->letters, i);
         int j;
         int reading_num;
-        tomoe_array* readings = tomoe_char_getReadings (lttr);
+        tomoe_array* readings = tomoe_char_get_readings (lttr);
 
         /* check for available reading data */
         if (!readings)
@@ -843,7 +843,7 @@ get_candidates (const tomoe_dict* this, tomoe_stroke *input_stroke, pointer_arra
         lttr = tomoe_array_get (letters, cand->index);
 
         for (strk_index = 0;
-             strk_index < tomoe_char_getGlyph (lttr)->stroke_num;
+             strk_index < tomoe_char_get_glyph (lttr)->stroke_num;
              strk_index++)
         {
             int d1 = 0, d2 = 0;
@@ -856,7 +856,7 @@ get_candidates (const tomoe_dict* this, tomoe_stroke *input_stroke, pointer_arra
                 continue;
             }
 
-            dict_stroke = tomoe_char_getGlyph (lttr)->strokes[strk_index];
+            dict_stroke = tomoe_char_get_glyph (lttr)->strokes[strk_index];
             d_nop = dict_stroke.point_num;
             d_pts = dict_stroke.points;
             stroke_calculate_metrics (&dict_stroke, &d_met);
@@ -918,7 +918,7 @@ get_candidates (const tomoe_dict* this, tomoe_stroke *input_stroke, pointer_arra
             _int_array_append_data (cand->adapted_strokes, strk_index);
             match_flag = TRUE;
 
-            strk_index = tomoe_char_getGlyph (lttr)->stroke_num;
+            strk_index = tomoe_char_get_glyph (lttr)->stroke_num;
 
             free (d_met);
         }
@@ -942,7 +942,7 @@ match_stroke_num (const tomoe_dict* this, int letter_index, int input_stroke_num
     int pj = 100;
     int adapted_num;
     tomoe_char* chr = (tomoe_char*)tomoe_array_get (letters, letter_index);
-    int d_stroke_num = tomoe_char_getGlyph (chr)->stroke_num;
+    int d_stroke_num = tomoe_char_get_glyph (chr)->stroke_num;
 
     if (!adapted)
         return -1;
@@ -976,7 +976,7 @@ _parse_readings (xmlNodePtr node, tomoe_char* chr)
     {
         if (child->type == XML_ELEMENT_NODE)
         {
-            tomoe_array* readings = tomoe_char_getReadings (chr);
+            tomoe_array* readings = tomoe_char_get_readings (chr);
             tomoe_array_append (readings, strdup ((const char*)child->children->content));
         }
     }
@@ -1037,9 +1037,9 @@ _parse_character (xmlNodePtr node, tomoe_char* lttr)
         else if (0 == xmlStrcmp (child->name, BAD_CAST "strokelist"))
             _parse_strokelist (child, lttr);
         else if (0 == xmlStrcmp (child->name, BAD_CAST "literal"))
-            tomoe_char_setCode (lttr, (const char*) child->children->content);
+            tomoe_char_set_code (lttr, (const char*) child->children->content);
         else if (0 == xmlStrcmp (child->name, BAD_CAST "meta"))
-            tomoe_char_setXmlMeta (lttr, xmlCopyNode (child, 1));
+            tomoe_char_set_xml_meta (lttr, xmlCopyNode (child, 1));
     }
 }
 
@@ -1050,7 +1050,7 @@ _parse_strokelist (xmlNodePtr node, tomoe_char* lttr)
     xmlNodePtr child;
     int j = 0;
 
-    // count strokes
+    /* count strokes */
     for (child = node->children; child; child = child->next)
         if (child->type == XML_ELEMENT_NODE)
             stroke_num ++;
@@ -1061,23 +1061,23 @@ _parse_strokelist (xmlNodePtr node, tomoe_char* lttr)
 
     tomoe_glyph* glyph = calloc(1, sizeof (tomoe_glyph));
     tomoe_glyph_init (glyph, stroke_num);
-    tomoe_char_setGlyph (lttr, glyph);
+    tomoe_char_set_glyph (lttr, glyph);
 
     for (child = node->children; child; child = child->next)
     {
         if (child->type != XML_ELEMENT_NODE)
             continue;
 
-        tomoe_stroke* strk = &tomoe_char_getGlyph (lttr)->strokes[j];
+        tomoe_stroke* strk = &tomoe_char_get_glyph (lttr)->strokes[j];
         int point_num = 0;
         int k;
         const char* p = (const char*) child->children->content;
-        // count stroke points
+        /* count stroke points */
         for (; *p; p++)
             if (*p == '(') 
                 point_num ++;
 
-        // parse stroke
+        /* parse stroke */
         p = (const char*) child->children->content;
         tomoe_stroke_init (strk, point_num);
         for (k = 0; k < point_num; k++)
@@ -1101,12 +1101,12 @@ _check_dict_xsl (const char* filename)
     if (!(xslname = strdup(filename))) return 0;
     if ((len = strlen(xslname)) < 3) return 0;
 
-    xslname[len - 2] = 's'; // xml > xsl
+    xslname[len - 2] = 's'; /* xml > xsl */
 
     f = fopen(xslname, "r");
     free(xslname);
     if (!f)
-         return 0; // no xsl available
+        return 0; /* no xsl available */
     fclose(f);
 
     return 1;
@@ -1116,10 +1116,10 @@ void
 _parse_tomoe_dict (tomoe_dict* this, xmlNodePtr root)
 {
     this->letters = tomoe_array_new((tomoe_compare_fn)tomoe_char_compare,
-                                    (tomoe_addref_fn)tomoe_char_addRef,
+                                    (tomoe_addref_fn)tomoe_char_add_ref,
                                     (tomoe_free_fn)tomoe_char_free);
 
-    // parse xml tree
+    /* parse xml tree */
     if (root && 0 == xmlStrcmp(root->name, BAD_CAST "tomoe_dictionary"))
     {
         xmlNodePtr node;
@@ -1155,12 +1155,12 @@ _parse_tomoe_dict (tomoe_dict* this, xmlNodePtr root)
                 tomoe_array* readings = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
                                                          NULL,
                                                          (tomoe_free_fn)free);
-                tomoe_char_setReadings (chr, readings);
+                tomoe_char_set_readings (chr, readings);
                 tomoe_array_free (readings);
 
                 _parse_character (node, chr);
                 tomoe_char_set_dict_interface (chr, &this->dict_interface);
-                if (tomoe_char_getCode (chr))
+                if (tomoe_char_get_code (chr))
                     tomoe_array_append (this->letters, chr);
                 tomoe_char_free (chr);
             }
@@ -1180,16 +1180,16 @@ _parse_alien_dict (tomoe_dict* this, const char* filename)
 
     if (!xslname) return;
     if ((len = strlen (xslname)) < 3) return;
-    xslname[len - 2] = 's'; // xml > xsl
+    xslname[len - 2] = 's'; /* xml > xsl */
 
     xmlSubstituteEntitiesDefault (1);
     xmlLoadExtDtdDefaultValue = 1;
     cur = xsltParseStylesheetFile (BAD_CAST xslname);
     doc = xmlParseFile (filename);
-    // translate to native
+    /* translate to native */
     res = xsltApplyStylesheet (cur, doc, param);
 
-    // load native dictionary
+    /* load native dictionary */
     _parse_tomoe_dict (this, xmlDocGetRootElement (res));
 
     xsltFreeStylesheet (cur);

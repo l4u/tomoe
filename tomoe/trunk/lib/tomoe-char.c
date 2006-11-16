@@ -166,7 +166,7 @@ tomoe_char_new (tomoe_dict_interface* dict)
 }
 
 tomoe_char*
-tomoe_char_addRef (tomoe_char* this)
+tomoe_char_add_ref (tomoe_char* this)
 {
     if (!this) return NULL;
     this->ref ++;
@@ -190,14 +190,14 @@ tomoe_char_free (tomoe_char *this)
 }
 
 const char*
-tomoe_char_getCode (const tomoe_char* this)
+tomoe_char_get_code (const tomoe_char* this)
 {
     if (!this) return NULL;
     return this->charCode;
 }
 
 void
-tomoe_char_setCode (tomoe_char* this, const char* code)
+tomoe_char_set_code (tomoe_char* this, const char* code)
 {
     if (!this) return;
     free (this->charCode);
@@ -206,14 +206,14 @@ tomoe_char_setCode (tomoe_char* this, const char* code)
 }
 
 tomoe_array*
-tomoe_char_getReadings (tomoe_char* this)
+tomoe_char_get_readings (tomoe_char* this)
 {
     if (!this) return NULL;
     return this->readings;
 }
 
 void
-tomoe_char_setReadings (tomoe_char* this, tomoe_array* readings)
+tomoe_char_set_readings (tomoe_char* this, tomoe_array* readings)
 {
     if (!this) return;
     tomoe_array_free (this->readings);
@@ -222,23 +222,23 @@ tomoe_char_setReadings (tomoe_char* this, tomoe_array* readings)
 }
 
 tomoe_glyph*
-tomoe_char_getGlyph (tomoe_char* this)
+tomoe_char_get_glyph (tomoe_char* this)
 {
     if (!this) return NULL;
     return this->glyph; 
 }
 
 void
-tomoe_char_setGlyph (tomoe_char* this, tomoe_glyph* glyph)
+tomoe_char_set_glyph (tomoe_char* this, tomoe_glyph* glyph)
 {
     if (!this) return;
     tomoe_glyph_free (this->glyph);
-    this->glyph = glyph; // FIXME addRef
+    this->glyph = glyph; /* FIXME addRef */
     tomoe_char_set_modified(this, 1);
 }
 
 const char*
-tomoe_char_getMeta (tomoe_char* this)
+tomoe_char_get_meta (tomoe_char* this)
 {
     xmlDocPtr doc;
     xmlDocPtr meta;
@@ -251,7 +251,7 @@ tomoe_char_getMeta (tomoe_char* this)
     if (!this->xmlMeta) return "";
     if (!this->parent->get_meta_xsl (this->parent->instance)) return "";
 
-    // create xml doc and include meta xml block
+    /* create xml doc and include meta xml block */
     doc = xmlNewDoc(BAD_CAST "1.0");
     root = xmlNewNode(NULL, BAD_CAST "ch");
     param[0] = 0;
@@ -259,14 +259,14 @@ tomoe_char_getMeta (tomoe_char* this)
     xmlDocSetRootElement (doc, root);
     xmlAddChild (root, this->xmlMeta);
 
-    // translate xml meta to view text
+    /* translate xml meta to view text */
     meta = xsltApplyStylesheet (this->parent->get_meta_xsl (this->parent->instance), doc, param);
 
-    // save into character object
+    /* save into character object */
     xmlChar* metaString = NULL;
     xsltSaveResultToString (&metaString, &len, meta, this->parent->get_meta_xsl (this->parent->instance));
 
-    // change of meta is invariant
+    /* change of meta is invariant */
     this->meta = strdup ((const char*)metaString);
 
     xmlFreeDoc (meta);
@@ -311,28 +311,30 @@ tomoe_char_set_modified (tomoe_char *chr, tomoe_bool modified)
 }
 
 xmlNodePtr
-tomoe_char_getXmlMeta (tomoe_char* this)
+tomoe_char_get_xml_meta (tomoe_char* this)
 {
     if (!this) return NULL;
-    return this->xmlMeta; // TODO addRef??
+    return this->xmlMeta; /* TODO addRef?? */
 }
 
 void
-tomoe_char_setXmlMeta (tomoe_char* this, xmlNodePtr meta)
+tomoe_char_set_xml_meta (tomoe_char* this, xmlNodePtr meta)
 {
     if (!this) return;
     if (this->xmlMeta) xmlFreeNode (this->xmlMeta);
     free (this->meta);
-    this->xmlMeta = meta; // TODO addRef??
+    this->xmlMeta = meta; /* TODO addRef?? */
     tomoe_char_set_modified(this, 1);
 }
 
-/*void
+/*
+void
 tomoe_char_setMetaXsl (tomoe_char* this, xsltStylesheetPtr metaXsl)
 {
     if (!this) return;
     this->metaXsl = metaXsl; // TODO link to tomoe_dict instead of metaXsl
-}*/
+}
+*/
 
 int
 tomoe_char_compare (const tomoe_char** a, const tomoe_char** b)
@@ -352,7 +354,7 @@ tomoe_candidate_new (void)
 }
 
 tomoe_candidate*
-tomoe_candidate_addRef (tomoe_candidate* this)
+tomoe_candidate_add_ref (tomoe_candidate* this)
 {
     if (!this) return NULL;
     this->ref ++;
@@ -388,5 +390,10 @@ tomoe_string_compare (const char** a, const char** b)
     return strcmp(*a, *b);
 }
 
-//implementation_tomoe_array (tomoe_candidateArray, const tomoe_candidate*,
-//    tomoe_candidate_compare, tomoe_candidate_addRef, tomoe_candidate_free);
+/*
+implementation_tomoe_array (tomoe_candidateArray,
+                            const tomoe_candidate*,
+                            tomoe_candidate_compare,
+                            tomoe_candidate_addRef,
+                            tomoe_candidate_free);
+*/

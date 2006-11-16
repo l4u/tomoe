@@ -86,7 +86,7 @@ TOMOE_CLASS_END
  * @return -1 a < b, 0 a= b, 1 a > b
  */
 tomoe_candidate*tomoe_candidate_new             (void);
-tomoe_candidate*tomoe_candidate_addRef          (tomoe_candidate*  t_char);
+tomoe_candidate*tomoe_candidate_add_ref         (tomoe_candidate*  t_char);
 void            tomoe_candidate_free            (tomoe_candidate*  t_char);
 int             tomoe_candidate_compare         (const tomoe_candidate** a,
                                                  const tomoe_candidate** b);
@@ -154,7 +154,7 @@ tomoe_char*     tomoe_char_new                  (tomoe_dict_interface* dict);
  * @param t_char - Pointer to the tomoe_letter struct to increase reference count.
  * @return The tomoe_letter.
  */
-tomoe_char*     tomoe_char_addRef               (tomoe_char*          t_char);
+tomoe_char*     tomoe_char_add_ref              (tomoe_char*          t_char);
 
 /**
  * @brief Decrease reference count and free if zero.
@@ -162,16 +162,16 @@ tomoe_char*     tomoe_char_addRef               (tomoe_char*          t_char);
  */
 void            tomoe_char_free                 (tomoe_char*          t_char);
 
-const char*     tomoe_char_getCode              (const tomoe_char*    t_char);
-void            tomoe_char_setCode              (tomoe_char*          t_char,
+const char*     tomoe_char_get_code             (const tomoe_char*    t_char);
+void            tomoe_char_set_code             (tomoe_char*          t_char,
                                                  const char*          code);
-tomoe_array*    tomoe_char_getReadings          (tomoe_char*          t_char);
-void            tomoe_char_setReadings          (tomoe_char*          t_char,
+tomoe_array*    tomoe_char_get_readings         (tomoe_char*          t_char);
+void            tomoe_char_set_readings         (tomoe_char*          t_char,
                                                  tomoe_array*         readings);
-tomoe_glyph*    tomoe_char_getGlyph             (tomoe_char*          t_char);
-void            tomoe_char_setGlyph             (tomoe_char*          t_char,
+tomoe_glyph*    tomoe_char_get_glyph            (tomoe_char*          t_char);
+void            tomoe_char_set_glyph            (tomoe_char*          t_char,
                                                  tomoe_glyph*         glyph);
-const char*     tomoe_char_getMeta              (tomoe_char*          t_char);
+const char*     tomoe_char_get_meta             (tomoe_char*          t_char);
 void            tomoe_char_set_dict_interface   (tomoe_char           *chr,
                                                  tomoe_dict_interface *parent);
 tomoe_bool      tomoe_char_is_editable          (tomoe_char           *chr);
@@ -180,10 +180,10 @@ void            tomoe_char_set_modified         (tomoe_char           *chr,
                                                  tomoe_bool            modified);
 
 #ifdef TOMOE_CHAR__USE_XML_METHODS
-xmlNodePtr      tomoe_char_getXmlMeta           (tomoe_char*          t_char);
-void            tomoe_char_setXmlMeta           (tomoe_char*          t_char,
+xmlNodePtr      tomoe_char_get_xml_meta         (tomoe_char*          t_char);
+void            tomoe_char_set_xml_meta         (tomoe_char*          t_char,
                                                  xmlNodePtr           meta);
-void            tomoe_char_setMetaXsl           (tomoe_char*          t_char,
+void            tomoe_char_set_meta_xsl         (tomoe_char*          t_char,
                                                  xsltStylesheetPtr    metaXsl);
 #endif
 
@@ -210,6 +210,10 @@ int             tomoe_string_compare            (const char**  a,
 }
 #endif
 
-//interface_tomoe_array (tomoe_candidateArray, const tomoe_candidate*);
+/*interface_tomoe_array (tomoe_candidateArray, const tomoe_candidate*);*/
 
 #endif /* __TOMOE_CHAR_H__ */
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/
