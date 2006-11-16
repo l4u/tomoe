@@ -1200,3 +1200,7 @@ _parse_alien_dict (tomoe_dict* this, const char* filename)
     xmlFreeDoc (doc);
 
 }
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/

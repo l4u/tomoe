@@ -54,3 +54,7 @@ void       tomoe_quit          (void);
 #endif
 
 #endif /* __TOMOE_H__ */
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/

@@ -67,7 +67,6 @@ tomoe_quit (void)
     /* TODO unfreed tomoe objects check */
 }
 
-
 /*
 vi:ts=4:nowrap:ai:expandtab
 */

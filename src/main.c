@@ -145,6 +145,7 @@ main (int argc, char **argv)
 
     return 0;
 }
+
 /*
 vi:ts=4:nowrap:ai:expandtab
 */

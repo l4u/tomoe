@@ -188,3 +188,7 @@ xsltStylesheetPtr  tomoe_dict_get_meta_xsl(tomoe_dict*       t_dict);
 #endif
 
 #endif /* __TOMOE_DICT_H__ */
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/

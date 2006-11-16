@@ -117,3 +117,7 @@ tomoe_array*  tomoe_db_get_dicts          (tomoe_db*     t_db);
 #endif
 
 #endif /* __TOMOE_DB_H__ */
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/

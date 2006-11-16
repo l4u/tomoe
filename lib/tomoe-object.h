@@ -89,4 +89,7 @@ tomoe_class_type tomoe_register_class_type (tomoe_type_info typeinfo);
 #endif
 
 #endif /* __TOMOE_OBJECT_H__ */
- 
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/

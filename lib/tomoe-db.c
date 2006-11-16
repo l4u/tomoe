@@ -188,3 +188,7 @@ tomoe_db_search_by_reading (tomoe_db* this, const char* input)
 
     return reading;
 }
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/
