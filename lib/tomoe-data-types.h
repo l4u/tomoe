@@ -34,6 +34,8 @@
 extern "C" {
 #endif
 
+#include <stdlib.h>
+
 /**
  * @typedef typedef int bool;
  *

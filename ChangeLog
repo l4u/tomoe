@@ -1,3 +1,9 @@
+2006-11-16  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-recognizer.[ch], lib/tomoe-db.[ch]: extracted
+	handwriting recognition related functions from tomoe-dict.[ch].
+	* lib/tomoe-context.c: use TomoeRecognizer.
+
 2006-11-16  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe-array.c, lib/tomoe-char.c. lib/tomoe-config.c:

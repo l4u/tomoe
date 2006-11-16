@@ -9,7 +9,7 @@ static TomoeGlyph * read_test_data ();
 void outCharInfo (TomoeChar* chr, int score);
 void testStrokeMatch (TomoeContext* ctx);
 void testReadingMatch (TomoeContext* ctx, const char* reading);
-void testUserContext (TomoeContext* ctx);
+void testUserDict (TomoeContext* ctx);
 
 #define LINE_BUF_SIZE 4096
 static char line_buf[LINE_BUF_SIZE];

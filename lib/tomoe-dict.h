@@ -160,16 +160,6 @@ TomoeChar      *tomoe_dict_char_by_index        (TomoeDict     *t_dict,
 TomoeArray     *tomoe_dict_get_letters          (TomoeDict     *t_dict);
 
 /* search methods */
-
-/**
- * @brief Match strokes of tomoe_char with input.
- * @param t_dict   - Pointer to the TomoeDict object.
- * @param input  - Pointer to tomoe_glyph matchkey.
- * @return The array of tomoe_candidate.
- */
-TomoeArray     *tomoe_dict_search_by_strokes    (const TomoeDict *t_dict,
-                                                 TomoeGlyph      *input);
-
 /**
  * @brief Match reading of tomoe_char with input.
  * @param t_dict   - Pointer to the TomoeDict object.
