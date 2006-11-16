@@ -58,4 +58,7 @@ int           tomoe_config_get_default_user_db (tomoe_config *t_config);
 #endif
 
 #endif /* __TOMOE_CONFIG_H__ */
- 
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/

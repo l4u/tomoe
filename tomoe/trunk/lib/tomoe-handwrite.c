@@ -404,3 +404,7 @@ search_glyph (tomoe_hw_context *ctx, tomoe_dict *dict)
 {
     if (!ctx) return;
 }
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/

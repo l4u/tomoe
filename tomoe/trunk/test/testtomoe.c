@@ -227,6 +227,7 @@ main (int argc, char **argv)
     tomoe_quit ();
     return 0;
 }
+
 /*
 vi:ts=4:nowrap:ai:expandtab
 */

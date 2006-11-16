@@ -129,3 +129,7 @@ const tomoe_candidate
 #endif
 
 #endif /* __TOMOE_HANDWRITE_H__ */
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/

@@ -397,3 +397,7 @@ implementation_tomoe_array (tomoe_candidateArray,
                             tomoe_candidate_addRef,
                             tomoe_candidate_free);
 */
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/
