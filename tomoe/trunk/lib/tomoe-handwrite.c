@@ -29,7 +29,7 @@
 
 struct _tomoe_hw_context
 {
-    tomoe_dict  **dict;
+    TomoeDict   **dict;
     unsigned int  dict_num;
 
     TomoeGlyph   *glyph;
@@ -45,7 +45,7 @@ struct _tomoe_hw_context
 
 static void normalize_strokes (tomoe_hw_context *ctx);
 static void search_glyph      (tomoe_hw_context *ctx,
-                               tomoe_dict       *dict);
+                               TomoeDict        *dict);
 
 tomoe_hw_context *
 tomoe_hw_context_new (void)
@@ -95,20 +95,20 @@ tomoe_hw_context_unref (tomoe_hw_context *ctx)
 }
 
 void
-tomoe_hw_append_dictionary (tomoe_hw_context *ctx, tomoe_dict *dict)
+tomoe_hw_append_dictionary (tomoe_hw_context *ctx, TomoeDict *dict)
 {
     if (!ctx) return;
     if (!dict) return;
 
     ctx->dict_num++;
     ctx->dict = realloc (ctx->dict,
-                         sizeof (tomoe_dict*) * (ctx->dict_num + 1));
+                         sizeof (TomoeDict*) * (ctx->dict_num + 1));
     ctx->dict[ctx->dict_num - 1] = dict;
     ctx->dict[ctx->dict_num] = NULL;
 }
 
 void
-tomoe_hw_remove_dictionary (tomoe_hw_context *ctx, tomoe_dict *dict)
+tomoe_hw_remove_dictionary (tomoe_hw_context *ctx, TomoeDict *dict)
 {
     unsigned int i;
 
@@ -122,10 +122,10 @@ tomoe_hw_remove_dictionary (tomoe_hw_context *ctx, tomoe_dict *dict)
 
         memmove (ctx->dict + i,
                  ctx->dict + i + 1,
-                 sizeof (tomoe_dict*) * ctx->dict_num - i);
+                 sizeof (TomoeDict*) * ctx->dict_num - i);
         ctx->dict_num--;
         ctx->dict = realloc (ctx->dict,
-                             sizeof (tomoe_dict*) * (ctx->dict_num + 1));
+                             sizeof (TomoeDict*) * (ctx->dict_num + 1));
     }
 }
 
@@ -136,12 +136,12 @@ tomoe_hw_get_number_of_dictionaries (tomoe_hw_context *ctx)
     return ctx->dict_num;
 }
 
-const tomoe_dict **
+const TomoeDict **
 tomoe_hw_get_dictionaries (tomoe_hw_context *ctx)
 {
     if (!ctx) return NULL;
     if (ctx->dict_num < 1) return NULL;
-    return (const tomoe_dict**) ctx->dict;
+    return (const TomoeDict**) ctx->dict;
 }
 
 void
@@ -400,7 +400,7 @@ normalize_strokes (tomoe_hw_context *ctx)
  * a dictionary.
  */
 static void
-search_glyph (tomoe_hw_context *ctx, tomoe_dict *dict)
+search_glyph (tomoe_hw_context *ctx, TomoeDict *dict)
 {
     if (!ctx) return;
 }

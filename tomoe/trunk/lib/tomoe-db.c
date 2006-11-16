@@ -68,7 +68,7 @@ tomoe_db_free(TomoeDB* t_db)
 }
 
 void
-tomoe_db_add_dict (TomoeDB* t_db, tomoe_dict* dict)
+tomoe_db_add_dict (TomoeDB* t_db, TomoeDict* dict)
 {
     if (!t_db || !dict) return;
     tomoe_array_append (t_db->dicts, tomoe_dict_add_ref (dict));
@@ -77,7 +77,7 @@ tomoe_db_add_dict (TomoeDB* t_db, tomoe_dict* dict)
 void
 tomoe_db_load_dict (TomoeDB* t_db, const char *filename, int editable)
 {
-    tomoe_dict* dict;
+    TomoeDict* dict;
 
     if (!t_db) return;
     if (!filename) return;
@@ -128,7 +128,7 @@ tomoe_db_save (TomoeDB *db)
 
     for (i = 0; i < tomoe_array_size (db->dicts); i++)
     {
-        tomoe_dict *dict = (tomoe_dict*)tomoe_array_get (db->dicts, i);
+        TomoeDict *dict = (TomoeDict*)tomoe_array_get (db->dicts, i);
         if (tomoe_dict_is_modified (dict))
             tomoe_dict_save (dict);
     }
@@ -140,19 +140,19 @@ tomoe_db_search_by_strokes (TomoeDB* t_db, TomoeGlyph* input)
     int i, num;
     tomoe_array* tmp;
     tomoe_array* matched;
-    tomoe_dict* dict;
+    TomoeDict* dict;
 
     if (!t_db) return tomoe_array_new (NULL, NULL, NULL);
     num = tomoe_array_size (t_db->dicts);
     if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
 
-    dict = (tomoe_dict*)tomoe_array_get (t_db->dicts, 0);
+    dict = (TomoeDict*)tomoe_array_get (t_db->dicts, 0);
     tmp = tomoe_dict_search_by_strokes (dict, input);
     matched = tomoe_array_clone_empty (tmp);
     for (i = 0; i < num; i++)
     {
         tomoe_array* tmp;
-        dict = (tomoe_dict*)tomoe_array_get (t_db->dicts, i);
+        dict = (TomoeDict*)tomoe_array_get (t_db->dicts, i);
         tmp = tomoe_dict_search_by_strokes (dict, input);
         tomoe_array_merge (matched, tmp);
         tomoe_array_free (tmp);
@@ -168,18 +168,18 @@ tomoe_db_search_by_reading (TomoeDB* t_db, const char* input)
     int i, num;
     tomoe_array* reading;
     tomoe_array* tmp;
-    tomoe_dict* dict;
+    TomoeDict*   dict;
 
     if (!t_db) return tomoe_array_new (NULL, NULL, NULL);
     num = tomoe_array_size (t_db->dicts);
     if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
 
-    dict = (tomoe_dict*)tomoe_array_get (t_db->dicts, 0);
+    dict = (TomoeDict*)tomoe_array_get (t_db->dicts, 0);
     tmp = tomoe_dict_search_by_reading (dict, input);
     reading = tomoe_array_clone_empty (tmp);
     for (i = 0; i < num; i++)
     {
-        dict = (tomoe_dict*)tomoe_array_get (t_db->dicts, i);
+        dict = (TomoeDict*)tomoe_array_get (t_db->dicts, i);
         tmp = tomoe_dict_search_by_reading (dict, input);
         tomoe_array_merge (reading, tmp);
         tomoe_array_free (tmp);
