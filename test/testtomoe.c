@@ -224,7 +224,7 @@ main (int argc, char **argv)
         fprintf (stdout, "testtomoe [stroke|reading|userdb]\n");
 
     tomoe_db_free (db);
-    tomoe_term ();
+    tomoe_quit ();
     return 0;
 }
 /*

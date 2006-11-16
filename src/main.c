@@ -139,7 +139,7 @@ main (int argc, char **argv)
     }
 
     tomoe_db_free (db);
-    tomoe_term ();
+    tomoe_quit ();
 
     return 0;
 }
