@@ -214,14 +214,14 @@ tomoe_dict_save (tomoe_dict* this)
         xmlNodePtr meta = tomoe_char_get_xml_meta (chr);
         const char* code = tomoe_char_get_code (chr);
         xmlNewChild (charNode, NULL, BAD_CAST "literal", BAD_CAST code);
-        int k;
+        unsigned int k;
 
         if (glyph)
         {
             xmlNodePtr strokelistNode = xmlNewChild (charNode, NULL, BAD_CAST "strokelist", NULL);
             for (k = 0; k < glyph->stroke_num; k++)
             {
-                int j;
+                unsigned int j;
                 char buf[256]; /* FIXME overrun possible */
                 strcpy (buf, "");
                 for (j = 0; j < glyph->strokes[k].point_num; j++)
@@ -235,7 +235,7 @@ tomoe_dict_save (tomoe_dict* this)
         }
         if (readings)
         {
-            int readings_num = tomoe_array_size (readings);
+            unsigned int readings_num = tomoe_array_size (readings);
             xmlNodePtr readingsNode = xmlNewChild (charNode, NULL, BAD_CAST "readings", NULL);
             for (k = 0; k < readings_num; k++)
                 xmlNewChild (readingsNode, NULL, BAD_CAST "r", tomoe_array_get (readings, k));
@@ -496,8 +496,8 @@ tomoe_dict_search_by_reading (const tomoe_dict* this, const char* input)
     for (i = 0; i < letter_num; i++)
     {
         tomoe_char* lttr = (tomoe_char*)tomoe_array_get (this->letters, i);
-        int j;
-        int reading_num;
+        unsigned int j;
+        unsigned int reading_num;
         tomoe_array* readings = tomoe_char_get_readings (lttr);
 
         /* check for available reading data */

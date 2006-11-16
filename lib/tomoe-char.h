@@ -72,7 +72,7 @@ TOMOE_CLASS_BEGIN (TomoeCandidate, TomoeObject)
     /* public class members */
     tomoe_char *character;
     int         score;
-/* TOMOE_CLASS_VIRTUAL_SECTION */
+    /* TOMOE_CLASS_VIRTUAL_SECTION */
     /* section for virtual methods 
     typedef (void) (*myvirt) (void);
     ....
