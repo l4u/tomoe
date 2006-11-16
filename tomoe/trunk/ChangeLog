@@ -1,3 +1,7 @@
+2006-11-16  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* data/kanjidic2.xsl: Applied the patch in [Tomoe-devel 102]
+
 2006-11-16  Kouhei Sutou  <kou@cozmixng.org>
 
 	* configure.in: suppressed automake warning.
