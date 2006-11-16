@@ -154,7 +154,7 @@ void*           tomoe_array_get                 (tomoe_array*       t_array,
  * @param index   - Index of the element.
  * @return Object, NULL if index is out of range.
  */
-const void*     tomoe_array_getConst            (const tomoe_array* t_array,
+const void*     tomoe_array_get_const           (const tomoe_array* t_array,
                                                  int                index);
 
 /**
