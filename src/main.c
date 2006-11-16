@@ -117,7 +117,7 @@ main (int argc, char **argv)
         if (!glyph)
             break;
 
-        matched = tomoe_db_searchByStrokes (db, glyph);
+        matched = tomoe_db_search_by_strokes (db, glyph);
         candidate_num = tomoe_array_size (matched);
 
         if (candidate_num != 0 && matched)

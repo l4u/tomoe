@@ -133,8 +133,8 @@ tomoe_dict_new (const char* filename, tomoe_bool editable)
     this->filename                    = strdup (filename);
     this->editable                    = editable;
     this->dict_interface.instance     = this;
-    this->dict_interface.get_meta_xsl = (tomoe_dict_interface_get_meta_xsl)tomoe_dict_getMetaXsl;
-    this->dict_interface.get_editable = (tomoe_dict_interface_get_editable)tomoe_dict_getEditable;
+    this->dict_interface.get_meta_xsl = (tomoe_dict_interface_get_meta_xsl)tomoe_dict_get_meta_xsl;
+    this->dict_interface.get_editable = (tomoe_dict_interface_get_editable)tomoe_dict_get_editable;
     this->dict_interface.set_modified = (tomoe_dict_interface_set_modified)tomoe_dict_set_modified;
 
     if (0 == _check_dict_xsl (filename))
@@ -191,7 +191,7 @@ tomoe_dict_save (tomoe_dict* this)
     int i, num;
 
     if (!this) return;
-    if (!tomoe_dict_getEditable (this)) return;
+    if (!tomoe_dict_get_editable (this)) return;
 
     doc = xmlNewDoc(BAD_CAST "1.0");
     root = xmlNewNode(NULL, BAD_CAST "tomoe_dictionary");
@@ -254,7 +254,7 @@ tomoe_dict_save (tomoe_dict* this)
 }
 
 tomoe_dict*
-tomoe_dict_addref (tomoe_dict* dict)
+tomoe_dict_add_ref (tomoe_dict* dict)
 {
     if (!dict) return NULL;
     dict->ref ++;
@@ -263,21 +263,21 @@ tomoe_dict_addref (tomoe_dict* dict)
 
 
 const char*
-tomoe_dict_getFilename (tomoe_dict* this)
+tomoe_dict_get_filename (tomoe_dict* this)
 {
     if (!this) return NULL;
     return this->filename;
 }
 
 const char*
-tomoe_dict_getName (tomoe_dict* this)
+tomoe_dict_get_name (tomoe_dict* this)
 {
     if (!this) return NULL;
     return this->name;
 }
 
 tomoe_bool
-tomoe_dict_getEditable (tomoe_dict* this)
+tomoe_dict_get_editable (tomoe_dict* this)
 {
     if (!this) return 0;
     return this->editable;
@@ -298,14 +298,14 @@ tomoe_dict_set_modified (tomoe_dict *dict, tomoe_bool modified)
 }
 
 int
-tomoe_dict_getSize (tomoe_dict* this)
+tomoe_dict_get_size (tomoe_dict* this)
 {
     if (!this) return 0;
     return tomoe_array_size (this->letters);
 }
 
 void
-tomoe_dict_addChar (tomoe_dict* this, tomoe_char* add)
+tomoe_dict_add_char (tomoe_dict* this, tomoe_char* add)
 {
     if (!this || !add) return;
     tomoe_char_set_dict_interface (add, &this->dict_interface);
@@ -324,15 +324,15 @@ tomoe_dict_insert (tomoe_dict *dict, int position, tomoe_char *insert)
 }
 
 void
-tomoe_dict_removeByChar (tomoe_dict* this, tomoe_char* remove)
+tomoe_dict_remove_by_char (tomoe_dict* this, tomoe_char* remove)
 {
     if (!this) return;
-    tomoe_array_remove (this->letters, tomoe_dict_findIndex (this, remove));
+    tomoe_array_remove (this->letters, tomoe_dict_find_index (this, remove));
     tomoe_dict_set_modified (this, 1);
 }
 
 void
-tomoe_dict_removeByIndex (tomoe_dict* this, int remove)
+tomoe_dict_remove_by_index (tomoe_dict* this, int remove)
 {
     if (!this) return;
     tomoe_array_remove (this->letters, remove);
@@ -340,14 +340,14 @@ tomoe_dict_removeByIndex (tomoe_dict* this, int remove)
 }
 
 int
-tomoe_dict_findIndex (tomoe_dict* this, tomoe_char* find)
+tomoe_dict_find_index (tomoe_dict* this, tomoe_char* find)
 {
     if (!this) return -1;
     return tomoe_array_find (this->letters, find);
 }
 
 tomoe_char*
-tomoe_dict_charByIndex (tomoe_dict* this, int index)
+tomoe_dict_char_by_index (tomoe_dict* this, int index)
 {
     if (!this) return NULL;
     return tomoe_array_get (this->letters, index);
@@ -361,7 +361,7 @@ tomoe_dict_get_letters (tomoe_dict *this)
 }
 
 tomoe_array*
-tomoe_dict_searchByStrokes (const tomoe_dict* this, tomoe_glyph* input)
+tomoe_dict_search_by_strokes (const tomoe_dict* this, tomoe_glyph* input)
 {
     tomoe_array* matched = tomoe_array_new((tomoe_compare_fn)tomoe_candidate_compare,
                                            (tomoe_addref_fn)tomoe_candidate_add_ref,
@@ -485,7 +485,7 @@ tomoe_dict_searchByStrokes (const tomoe_dict* this, tomoe_glyph* input)
 }
 
 tomoe_array*
-tomoe_dict_searchByReading (const tomoe_dict* this, const char* input)
+tomoe_dict_search_by_reading (const tomoe_dict* this, const char* input)
 {
     tomoe_array* reading = tomoe_array_new (NULL,
                                             (tomoe_addref_fn)tomoe_char_add_ref,
@@ -518,7 +518,7 @@ tomoe_dict_searchByReading (const tomoe_dict* this, const char* input)
 }
 
 xsltStylesheetPtr
-tomoe_dict_getMetaXsl (tomoe_dict* this)
+tomoe_dict_get_meta_xsl (tomoe_dict* this)
 {
     if (!this) return NULL;
     return this->metaXsl;
