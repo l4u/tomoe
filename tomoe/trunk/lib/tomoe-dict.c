@@ -984,7 +984,8 @@ _parse_readings (xmlNodePtr node, tomoe_char* chr)
 
 void
 _parse_meta (xmlNodePtr node, tomoe_char* lttr)
-{/*
+{
+#if 0
     xmlDocPtr doc;
     xmlDocPtr meta;
     const char* param[3];
@@ -994,7 +995,7 @@ _parse_meta (xmlNodePtr node, tomoe_char* lttr)
 
     if (!_metaXsl) return;
 
-    // create xml doc and include meta xml block
+    /* create xml doc and include meta xml block */
     doc = xmlNewDoc(BAD_CAST "1.0");
     root = xmlNewNode(NULL, BAD_CAST "ch");
     param[0] = 0;
@@ -1006,22 +1007,24 @@ _parse_meta (xmlNodePtr node, tomoe_char* lttr)
     xmlSubstituteEntitiesDefault (1);
     xmlLoadExtDtdDefaultValue = 1;
 
-    // translate xml meta to view text
+    /* translate xml meta to view text */
     meta = xsltApplyStylesheet (_metaXsl, doc, param);
 
-    // save into character object
+    /* save into character object */
     xmlChar* metaString = NULL;
     xsltSaveResultToString (&metaString, &len, meta, _metaXsl);
-    //tomoe_char_setMeta (lttr, (const char*)metaString);
-*/    
- /*   free (metaString);
+    /*tomoe_char_setMeta (lttr, (const char*)metaString);*/
+#endif
+#if 0
+    free (metaString);
 
     xmlFreeDoc (meta);
 
     xmlUnlinkNode (node);
     xmlAddChild (p, node);
     xmlFreeDoc (doc);
-*/}
+#endif
+}
 
 void
 _parse_character (xmlNodePtr node, tomoe_char* lttr)
