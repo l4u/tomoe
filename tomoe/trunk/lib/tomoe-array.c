@@ -263,6 +263,7 @@ int
 tomoe_array_find (const TomoeArray* t_array, const void* p)
 {
     void* e;
+
     if (!t_array || !t_array->compare) return -1;
 
     e = bsearch(&p, t_array->p, t_array->len, sizeof(void*),
@@ -290,6 +291,7 @@ void
 tomoe_array_remove (TomoeArray* t_array, int index)
 {
     int i;
+
     if (!t_array || index < 0 || t_array->len <= index) return;
     if (t_array->free)
         t_array->free (t_array->p[index]);

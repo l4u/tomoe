@@ -152,6 +152,7 @@ TomoeChar*
 tomoe_char_new (tomoe_dict_interface* dict)
 {
     TomoeChar *p = calloc (1, sizeof (TomoeChar));
+
     if (!p) return NULL;
 
     p->ref       = 1;
@@ -346,10 +347,12 @@ TomoeCandidate*
 tomoe_candidate_new (void)
 {
     TomoeCandidate* cand;
+
     cand            = calloc (sizeof (TomoeCandidate), 1);
     cand->ref       = 1;
     cand->character = NULL;
     cand->score     = 0;
+
     return cand;
 }
 
