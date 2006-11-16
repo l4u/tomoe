@@ -44,14 +44,14 @@ typedef struct _tomoe_dict_cfg
     int         user;
 } tomoe_dict_cfg;
 
-tomoe_config* tomoe_config_new                 (const char* config_file);
-tomoe_config* tomoe_config_add_ref             (tomoe_config* t_config);
-void          tomoe_config_free                (tomoe_config* t_config);
-void          tomoe_config_load                (tomoe_config* t_config);
-void          tomoe_config_save                (tomoe_config* t_config);
-const char*   tomoe_config_get_filename        (tomoe_config* t_config);
-tomoe_array*  tomoe_config_get_dict_list       (tomoe_config* t_config);
-int           tomoe_config_get_default_user_db (tomoe_config *t_config);
+tomoe_config*   tomoe_config_new                 (const char* config_file);
+tomoe_config*   tomoe_config_add_ref             (tomoe_config* t_config);
+void            tomoe_config_free                (tomoe_config* t_config);
+void            tomoe_config_load                (tomoe_config* t_config);
+void            tomoe_config_save                (tomoe_config* t_config);
+const char*     tomoe_config_get_filename        (tomoe_config* t_config);
+tomoe_array*    tomoe_config_get_dict_list       (tomoe_config* t_config);
+int             tomoe_config_get_default_user_db (tomoe_config *t_config);
 
 #ifdef	__cplusplus
 }
