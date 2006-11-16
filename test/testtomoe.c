@@ -82,7 +82,7 @@ void outCharInfo (tomoe_char* chr, int score)
        int reading_num = tomoe_array_size (readings);
        for (j = 0; j < reading_num; j++)
        {
-           const char* r = tomoe_array_getConst (readings, j);
+           const char* r = tomoe_array_get_const (readings, j);
            fprintf (stdout, " %s", r);
        }
        fprintf (stdout, "\n");
@@ -118,7 +118,7 @@ void testStrokeMatch (tomoe_db* db)
                  candidate_num);
         for (i = 0; i < candidate_num; i++)
         {
-            const tomoe_candidate* p = (const tomoe_candidate*)tomoe_array_getConst (matched, i);
+            const tomoe_candidate* p = (const tomoe_candidate*)tomoe_array_get_const (matched, i);
             outCharInfo (p->character, p->score);
         }
     }

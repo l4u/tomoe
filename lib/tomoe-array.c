@@ -280,7 +280,7 @@ tomoe_array_get (tomoe_array* t_array, int index)
 }
 
 const void*
-tomoe_array_getConst (const tomoe_array* t_array, int index)
+tomoe_array_get_const (const tomoe_array* t_array, int index)
 {
     if (!t_array || index < 0 || t_array->len <= index) return NULL;
     return t_array->p[index];

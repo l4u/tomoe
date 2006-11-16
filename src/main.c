@@ -127,7 +127,7 @@ main (int argc, char **argv)
             for (i = 0; i < candidate_num; i++)
             {
 #if 0
-                const tomoe_candidate* p = (const tomoe_candidate*)tomoe_array_getConst (matched, i);
+                const tomoe_candidate* p = (const tomoe_candidate*)tomoe_array_get_const (matched, i);
                 if (i > 0)
                     fprintf (stdout, " ");
                 fprintf (stdout, " %s", p->character->letter);
