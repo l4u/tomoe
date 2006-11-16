@@ -75,8 +75,8 @@ void            tomoe_db_load_dict              (TomoeDB       *t_db,
                                                  const char    *filename,
                                                  int            editable);
 void            tomoe_db_load_dict_list         (TomoeDB       *t_db,
-                                                 tomoe_array   *list);
-tomoe_array*    tomoe_db_get_dict_list          (TomoeDB       *t_db);
+                                                 TomoeArray    *list);
+TomoeArray*     tomoe_db_get_dict_list          (TomoeDB       *t_db);
 void            tomoe_db_save                   (TomoeDB       *db);
 
 #if 0
@@ -90,7 +90,7 @@ TomoeDict*      tomoe_db_get_user_dict          (TomoeDB       *t_db,
  * @param input    - Pointer to tomoe_glyph matchkey.
  * @return The array of tomoe_candidate.
  */
-tomoe_array*    tomoe_db_search_by_strokes      (TomoeDB       *t_db,
+TomoeArray*     tomoe_db_search_by_strokes      (TomoeDB       *t_db,
                                                  TomoeGlyph    *input);
     
 /**
@@ -99,7 +99,7 @@ tomoe_array*    tomoe_db_search_by_strokes      (TomoeDB       *t_db,
  * @param reading  - Pointer to string matchkey
  * @return The array of tomoe_candidate.
  */
-tomoe_array*    tomoe_db_search_by_reading      (TomoeDB       *t_db,
+TomoeArray*     tomoe_db_search_by_reading      (TomoeDB       *t_db,
                                                  const char    *reading);
 #if 0
 /* optional */
@@ -109,7 +109,7 @@ void            tomoe_db_disable_dict           (TomoeDB       *t_db,
                                                  const char    *filename);
 int             tomoe_db_is_dict_enabled        (TomoeDB       *t_db,
                                                  const char    *filename);
-tomoe_array*    tomoe_db_get_dicts              (TomoeDB       *t_db);
+TomoeArray*     tomoe_db_get_dicts              (TomoeDB       *t_db);
 #endif 
 
 #ifdef	__cplusplus

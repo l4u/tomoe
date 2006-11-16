@@ -46,7 +46,7 @@ TomoeDB*
 tomoe_simple_load (const char* configFile)
 {
     TomoeDB* db = tomoe_db_new();
-    tomoe_array* list;
+    TomoeArray* list;
     TomoeConfig* cfg;
 
     if (!db) return NULL;

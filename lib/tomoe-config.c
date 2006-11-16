@@ -51,9 +51,9 @@ static void            _tomoe_create_config_dir (void);
 struct _TomoeConfig
 {
     int          ref;
-    char*        filename;
+    char        *filename;
     int          useSystemDictionaries;
-    tomoe_array* dictList;
+    TomoeArray  *dictList;
     int          defaultUserDB;
 };
 
@@ -214,7 +214,7 @@ tomoe_config_load (TomoeConfig* t_config)
     /* search in TOMOEDATADIR for additional dictionaries */
     if (t_config->useSystemDictionaries)
     {
-        tomoe_array* systemList = tomoe_array_new (NULL, NULL, NULL);
+        TomoeArray* systemList = tomoe_array_new (NULL, NULL, NULL);
         size_t cnt;
         glob_t glob_results;
         char **p;
@@ -288,7 +288,7 @@ tomoe_config_save (TomoeConfig *cfg)
     }
 }
 
-tomoe_array*
+TomoeArray*
 tomoe_config_get_dict_list (TomoeConfig* t_config)
 {
     if (!t_config) return NULL;

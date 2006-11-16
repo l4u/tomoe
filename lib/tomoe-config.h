@@ -50,7 +50,7 @@ void            tomoe_config_free                (TomoeConfig* t_config);
 void            tomoe_config_load                (TomoeConfig* t_config);
 void            tomoe_config_save                (TomoeConfig* t_config);
 const char*     tomoe_config_get_filename        (TomoeConfig* t_config);
-tomoe_array*    tomoe_config_get_dict_list       (TomoeConfig* t_config);
+TomoeArray*     tomoe_config_get_dict_list       (TomoeConfig* t_config);
 int             tomoe_config_get_default_user_db (TomoeConfig *t_config);
 
 #ifdef	__cplusplus
