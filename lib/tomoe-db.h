@@ -61,7 +61,7 @@ TomoeDB*       tomoe_db_add_ref                (TomoeDB       *t_db);
  * @brief Decrease reference count and free if zero.
  * @param t_db     - Pointer to the TomoeDB struct to free.
  */
-void            tomoe_db_free                   (TomoeDB      *t_db);
+void            tomoe_db_free                   (TomoeDB       *t_db);
 
 /**
  * @brief Load dictionary into database.
@@ -69,19 +69,19 @@ void            tomoe_db_free                   (TomoeDB      *t_db);
  * @param filename - Name of dictionary file to load.
  * @return The TomoeDB.
  */
-void            tomoe_db_add_dict               (TomoeDB      *t_db,
-                                                 tomoe_dict   *dict);
-void            tomoe_db_load_dict              (TomoeDB      *t_db,
-                                                 const char   *filename,
-                                                 int           editable);
-void            tomoe_db_load_dict_list         (TomoeDB      *t_db,
-                                                 tomoe_array  *list);
-tomoe_array*    tomoe_db_get_dict_list          (TomoeDB      *t_db);
-void            tomoe_db_save                   (TomoeDB      *db);
+void            tomoe_db_add_dict               (TomoeDB       *t_db,
+                                                 TomoeDict     *dict);
+void            tomoe_db_load_dict              (TomoeDB       *t_db,
+                                                 const char    *filename,
+                                                 int            editable);
+void            tomoe_db_load_dict_list         (TomoeDB       *t_db,
+                                                 tomoe_array   *list);
+tomoe_array*    tomoe_db_get_dict_list          (TomoeDB       *t_db);
+void            tomoe_db_save                   (TomoeDB       *db);
 
 #if 0
-tomoe_dict*     tomoe_db_get_user_dict          (TomoeDB      *t_db,
-                                                 const char   *filename);
+TomoeDict*      tomoe_db_get_user_dict          (TomoeDB       *t_db,
+                                                 const char    *filename);
 #endif
 
 /**
@@ -90,8 +90,8 @@ tomoe_dict*     tomoe_db_get_user_dict          (TomoeDB      *t_db,
  * @param input    - Pointer to tomoe_glyph matchkey.
  * @return The array of tomoe_candidate.
  */
-tomoe_array*    tomoe_db_search_by_strokes      (TomoeDB      *t_db,
-                                                 TomoeGlyph   *input);
+tomoe_array*    tomoe_db_search_by_strokes      (TomoeDB       *t_db,
+                                                 TomoeGlyph    *input);
     
 /**
  * @brief Match reading of tomoe_letter with input.
@@ -99,17 +99,17 @@ tomoe_array*    tomoe_db_search_by_strokes      (TomoeDB      *t_db,
  * @param reading  - Pointer to string matchkey
  * @return The array of tomoe_candidate.
  */
-tomoe_array*    tomoe_db_search_by_reading      (TomoeDB      *t_db,
-                                                 const char   *reading);
+tomoe_array*    tomoe_db_search_by_reading      (TomoeDB       *t_db,
+                                                 const char    *reading);
 #if 0
 /* optional */
-void            tomoe_db_enable_dict            (TomoeDB      *t_db,
-                                                 const char   *filename);
-void            tomoe_db_disable_dict           (TomoeDB      *t_db,
-                                                 const char   *filename);
-int             tomoe_db_is_dict_enabled        (TomoeDB      *t_db,
-                                                 const char   *filename);
-tomoe_array*    tomoe_db_get_dicts              (TomoeDB      *t_db);
+void            tomoe_db_enable_dict            (TomoeDB       *t_db,
+                                                 const char    *filename);
+void            tomoe_db_disable_dict           (TomoeDB       *t_db,
+                                                 const char    *filename);
+int             tomoe_db_is_dict_enabled        (TomoeDB       *t_db,
+                                                 const char    *filename);
+tomoe_array*    tomoe_db_get_dicts              (TomoeDB       *t_db);
 #endif 
 
 #ifdef	__cplusplus

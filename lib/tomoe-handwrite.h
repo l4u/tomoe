@@ -76,7 +76,7 @@ void                tomoe_hw_context_unref      (tomoe_hw_context *ctx);
  * @param dict - A tomoe dictionary to append. NULL pointer will be ignored.
  */
 void                tomoe_hw_append_dictionary  (tomoe_hw_context *ctx,
-                                                 tomoe_dict       *dict);
+                                                 TomoeDict        *dict);
 
 /**
  * @brief Remove a tomoe dictionary from a tomoe_hw_context.
@@ -84,7 +84,7 @@ void                tomoe_hw_append_dictionary  (tomoe_hw_context *ctx,
  * @param dict - A otmoe dictionary to remove. NULL pointer will be ignored.
  */
 void                tomoe_hw_remove_dictionary  (tomoe_hw_context *ctx,
-                                                 tomoe_dict       *dict);
+                                                 TomoeDict        *dict);
 
 /**
  * @brief Return number of dictionaries which is kept in a tomoe_hw_context.
@@ -95,13 +95,13 @@ unsigned int        tomoe_hw_get_number_of_dictionaries
                                                 (tomoe_hw_context *ctx);
 
 /**
- * @brief Return array of tomoe_dict poitners which is kept by a
+ * @brief Return array of TomoeDict poitners which is kept by a
  *        tomoe_hw_context.
  * @param ctx - Pointer to the tomoe_hw_context which keeps tomoe dictionaries.
- * @return An array of tomoe_dict pointers. The array is terminated by NULL
+ * @return An array of TomoeDict pointers. The array is terminated by NULL
  *         pointer. NULL will be returned if the context has no dictionary.
  */
-const tomoe_dict  **tomoe_hw_get_dictionaries   (tomoe_hw_context *ctx);
+const TomoeDict   **tomoe_hw_get_dictionaries   (tomoe_hw_context *ctx);
 
 void                tomoe_hw_push_point         (tomoe_hw_context *ctx,
                                                  unsigned int      x,
