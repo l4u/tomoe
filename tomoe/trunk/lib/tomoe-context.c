@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "tomoe-dict.h"
+#include "tomoe-recognizer.h"
 #include "tomoe-context.h"
 #include "tomoe-array.h"
 
@@ -32,6 +33,7 @@ struct _TomoeContext
 {
     int         ref;
     TomoeArray *dicts;
+    TomoeRecognizer *recognizer;
 };
 
 
@@ -44,6 +46,7 @@ tomoe_context_new(void)
     p->dicts = tomoe_array_new (NULL,
                                 (tomoe_addref_fn)tomoe_dict_add_ref,
                                 (tomoe_free_fn)tomoe_dict_free);
+    p->recognizer = tomoe_recognizer_new();
     return p;
 }
 
@@ -63,6 +66,7 @@ tomoe_context_free(TomoeContext* ctx)
     if (ctx->ref <= 0)
     {
         tomoe_array_free (ctx->dicts);
+        tomoe_recognizer_free (ctx->recognizer);
         free (ctx);
     }
 }
@@ -150,13 +154,13 @@ tomoe_context_search_by_strokes (TomoeContext* ctx, TomoeGlyph* input)
     if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
 
     dict = (TomoeDict*)tomoe_array_get (ctx->dicts, 0);
-    tmp = tomoe_dict_search_by_strokes (dict, input);
+    tmp = tomoe_recognizer_search(ctx->recognizer, dict, input);
     matched = tomoe_array_clone_empty (tmp);
     for (i = 0; i < num; i++)
     {
         TomoeArray* tmp;
         dict = (TomoeDict*)tomoe_array_get (ctx->dicts, i);
-        tmp = tomoe_dict_search_by_strokes (dict, input);
+        tmp = tomoe_recognizer_search(ctx->recognizer, dict, input);
         tomoe_array_merge (matched, tmp);
         tomoe_array_free (tmp);
     }

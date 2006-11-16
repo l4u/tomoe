@@ -36,7 +36,8 @@ pkginclude_HEADERS = \
 	tomoe-data-types.h \
 	tomoe-context.h \
 	tomoe-config.h \
-	tomoe-object.h
+	tomoe-object.h \
+	tomoe-recognizer.h
 
 lib_LTLIBRARIES = libtomoe.la
 libtomoe_la_SOURCES = \
@@ -46,7 +47,8 @@ libtomoe_la_SOURCES = \
 	tomoe-dict.c \
 	tomoe-context.c \
 	tomoe-config.c \
-	tomoe-object.c
+	tomoe-object.c \
+	tomoe-recognizer.c
 
 libtomoe_la_LDFLAGS =						\
   -version-info $(LT_VERSION_INFO)				\
