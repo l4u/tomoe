@@ -74,8 +74,7 @@ _int_array_copy (IntArray *a)
 
     ret->p = calloc (ret->len, sizeof (int));
  
-    for (i = 0; i < ret->len; i++)
-    {
+    for (i = 0; i < ret->len; i++) {
         ret->p[i] = a->p[i];
     }
 
@@ -99,8 +98,7 @@ _int_array_unref (IntArray *a)
         return;
  
     a->ref_count--;
-    if (a->ref_count == 0)
-    {
+    if (a->ref_count == 0) {
         if (a->p)
             free (a->p);
         a->p = NULL;
@@ -117,8 +115,7 @@ _int_array_find_data (IntArray *a, int i)
     if (!a || a->len == 0)
         return -1;
   
-    for (l = 0; l < a->len; l++)
-    {
+    for (l = 0; l < a->len; l++) {
         if (a->p[l] == i)
             return l;
     }
@@ -169,8 +166,7 @@ _pointer_array_unref (PointerArray *a)
         return;
  
     a->ref_count--;
-    if (a->ref_count == 0)
-    {
+    if (a->ref_count == 0) {
         if (a->p)
             free (a->p);
         a->p = NULL;
@@ -186,8 +182,7 @@ _pointer_array_find_data (PointerArray *a, void *p)
     if (!a)
       return -1;
   
-    for (l = 0; l < a->len; l++)
-    {
+    for (l = 0; l < a->len; l++) {
         if (a->p[l] == p)
             return l;
     }
@@ -230,8 +225,7 @@ tomoe_array_free(TomoeArray* t_array)
     if (!t_array) return;
 
     t_array->ref --;
-    if (t_array->ref <= 0)
-    {
+    if (t_array->ref <= 0) {
         if (t_array->free)
             for (i = 0; i < t_array->len; i++)
                 t_array->free(t_array->p[i]);
@@ -244,8 +238,7 @@ tomoe_array_append (TomoeArray* t_array, void* p)
 {
     if (!t_array) return NULL;
 
-    if (t_array->len == t_array->cap)
-    {
+    if (t_array->len == t_array->cap) {
         t_array->cap += t_array->cap / 2;
         t_array->p = realloc (t_array->p, sizeof (void*) * (t_array->cap));
     }
