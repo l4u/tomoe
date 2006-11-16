@@ -135,7 +135,7 @@ tomoe_db_save (tomoe_db *db)
 }
 
 tomoe_array*
-tomoe_db_search_by_strokes (tomoe_db* t_db, tomoe_glyph* input)
+tomoe_db_search_by_strokes (tomoe_db* t_db, TomoeGlyph* input)
 {
     int i, num;
     tomoe_array* tmp;

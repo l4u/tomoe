@@ -1,3 +1,9 @@
+2006-11-16  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* lib/tomoe-char.[ch], lib/tomoe-db.[ch], lib/tomoe-dict.[ch],
+	  lib/tomoe-handwrite.[ch], src/main.c, test/testtomoe.c:
+	Rename some struct.
+
 2006-11-16  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-array.[ch]: rename tomoe_array_getConst ->

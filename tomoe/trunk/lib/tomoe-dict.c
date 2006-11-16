@@ -78,20 +78,20 @@ typedef struct _cand_priv cand_priv;
 
 struct _cand_priv
 {
-    tomoe_candidate *cand;
+    TomoeCandidate  *cand;
     int              index;
     int_array       *adapted_strokes;
 };
 
-static cand_priv *cand_priv_new             (tomoe_char* character,
+static cand_priv *cand_priv_new             (TomoeChar*     character,
                                              int            index);
 static void       cand_priv_free            (cand_priv     *cand_p,
                                              tomoe_bool     free_candidate);
 
 static pointer_array
-                 *get_candidates            (const tomoe_dict*    t_dict,
-                                             tomoe_stroke  *input_stroke,
-                                             pointer_array *cands);
+                 *get_candidates            (const tomoe_dict* t_dict,
+                                             TomoeStroke*      input_stroke,
+                                             pointer_array    *cands);
 
 static int        match_stroke_num          (const tomoe_dict*    t_dict,
                                              int            letter_index,
@@ -99,13 +99,13 @@ static int        match_stroke_num          (const tomoe_dict*    t_dict,
                                              int_array     *adapted);
 
 void              _parse_readings           (xmlNodePtr       node,
-                                             tomoe_char*      chr);
+                                             TomoeChar*       chr);
 void              _parse_meta               (xmlNodePtr       node,
-                                             tomoe_char*      lttr);
+                                             TomoeChar*       lttr);
 void              _parse_character          (xmlNodePtr       node,
-                                             tomoe_char*      lttr);
+                                             TomoeChar*       lttr);
 void              _parse_strokelist         (xmlNodePtr       node,
-                                             tomoe_char*      lttr);
+                                             TomoeChar*       lttr);
 int               _check_dict_xsl           (const char*      filename);
 /* tomoe_dict private methods */
 void              _parse_tomoe_dict         (tomoe_dict*      t_dict,
@@ -158,7 +158,7 @@ tomoe_dict_new (const char* filename, tomoe_bool editable)
 
     for (i = 0; i < tomoe_array_size (t_dict->letters); i++)
     {
-        tomoe_char *chr = (tomoe_char*)tomoe_array_get (t_dict->letters, i);
+        TomoeChar *chr = (TomoeChar*)tomoe_array_get (t_dict->letters, i);
         tomoe_char_set_modified (chr, 0);
     }
     t_dict->modified = 0;
@@ -208,9 +208,9 @@ tomoe_dict_save (tomoe_dict* t_dict)
     for (i = 0; i < num; i++)
     {
         xmlNodePtr charNode = xmlNewChild (root, NULL, BAD_CAST "character", NULL);
-        tomoe_char* chr = (tomoe_char*)tomoe_array_get (t_dict->letters, i);
+        TomoeChar* chr = (TomoeChar*)tomoe_array_get (t_dict->letters, i);
         tomoe_array* readings = tomoe_char_get_readings (chr);
-        tomoe_glyph* glyph = tomoe_char_get_glyph (chr);
+        TomoeGlyph* glyph = tomoe_char_get_glyph (chr);
         xmlNodePtr meta = tomoe_char_get_xml_meta (chr);
         const char* code = tomoe_char_get_code (chr);
         xmlNewChild (charNode, NULL, BAD_CAST "literal", BAD_CAST code);
@@ -305,7 +305,7 @@ tomoe_dict_get_size (tomoe_dict* t_dict)
 }
 
 void
-tomoe_dict_add_char (tomoe_dict* t_dict, tomoe_char* add)
+tomoe_dict_add_char (tomoe_dict* t_dict, TomoeChar* add)
 {
     if (!t_dict || !add) return;
     tomoe_char_set_dict_interface (add, &t_dict->dict_interface);
@@ -315,7 +315,7 @@ tomoe_dict_add_char (tomoe_dict* t_dict, tomoe_char* add)
 }
 
 void
-tomoe_dict_insert (tomoe_dict *dict, int position, tomoe_char *insert)
+tomoe_dict_insert (tomoe_dict *dict, int position, TomoeChar *insert)
 {
     if (!dict || !insert) return;
     /*tomoe_array_insert (t_dict->letters, position, insert);*/ 
@@ -324,7 +324,7 @@ tomoe_dict_insert (tomoe_dict *dict, int position, tomoe_char *insert)
 }
 
 void
-tomoe_dict_remove_by_char (tomoe_dict* t_dict, tomoe_char* remove)
+tomoe_dict_remove_by_char (tomoe_dict* t_dict, TomoeChar* remove)
 {
     if (!t_dict) return;
     tomoe_array_remove (t_dict->letters, tomoe_dict_find_index (t_dict, remove));
@@ -340,13 +340,13 @@ tomoe_dict_remove_by_index (tomoe_dict* t_dict, int remove)
 }
 
 int
-tomoe_dict_find_index (tomoe_dict* t_dict, tomoe_char* find)
+tomoe_dict_find_index (tomoe_dict* t_dict, TomoeChar* find)
 {
     if (!t_dict) return -1;
     return tomoe_array_find (t_dict->letters, find);
 }
 
-tomoe_char*
+TomoeChar*
 tomoe_dict_char_by_index (tomoe_dict* t_dict, int index)
 {
     if (!t_dict) return NULL;
@@ -361,7 +361,7 @@ tomoe_dict_get_letters (tomoe_dict *t_dict)
 }
 
 tomoe_array*
-tomoe_dict_search_by_strokes (const tomoe_dict* t_dict, tomoe_glyph* input)
+tomoe_dict_search_by_strokes (const tomoe_dict* t_dict, TomoeGlyph* input)
 {
     tomoe_array* matched = tomoe_array_new((tomoe_compare_fn)tomoe_candidate_compare,
                                            (tomoe_addref_fn)tomoe_candidate_add_ref,
@@ -384,7 +384,7 @@ tomoe_dict_search_by_strokes (const tomoe_dict* t_dict, tomoe_glyph* input)
 
     for (i = 0; i < letters_num; i++)
     {
-        tomoe_char* p = (tomoe_char*)tomoe_array_get (letters, i);
+        TomoeChar* p = (TomoeChar*)tomoe_array_get (letters, i);
         cand_priv *cand = NULL;
 
         /* check for available glyph data */
@@ -433,12 +433,12 @@ tomoe_dict_search_by_strokes (const tomoe_dict* t_dict, tomoe_glyph* input)
 
         if (_int_array_find_data (matches, cand->index) < 0)
         {
-            const tomoe_char* a = tomoe_array_get(letters, cand->index);
+            const TomoeChar* a = tomoe_array_get(letters, cand->index);
             tomoe_bool b = TRUE;
 
             for (j = 0; j < (unsigned int) matches->len; j++)
             {
-                const tomoe_char* b = tomoe_array_get(letters, matches->p[j]);
+                const TomoeChar* b = tomoe_array_get(letters, matches->p[j]);
                 if (!tomoe_char_compare (&a, &b))
                 {
                     b = FALSE;
@@ -460,7 +460,7 @@ tomoe_dict_search_by_strokes (const tomoe_dict* t_dict, tomoe_glyph* input)
 
             if (_int_array_find_data (matches, index) >= 0)
             {
-                tomoe_candidate* cand = tomoe_candidate_new ();
+                TomoeCandidate* cand = tomoe_candidate_new ();
                 cand->character = tomoe_char_add_ref (((cand_priv*)cands->p[i])->cand->character);
                 cand->score     = ((cand_priv *)cands->p[i])->cand->score;
                 tomoe_array_append (matched, cand);
@@ -495,7 +495,7 @@ tomoe_dict_search_by_reading (const tomoe_dict* t_dict, const char* input)
 
     for (i = 0; i < letter_num; i++)
     {
-        tomoe_char* lttr = (tomoe_char*)tomoe_array_get (t_dict->letters, i);
+        TomoeChar* lttr = (TomoeChar*)tomoe_array_get (t_dict->letters, i);
         unsigned int j;
         unsigned int reading_num;
         tomoe_array* readings = tomoe_char_get_readings (lttr);
@@ -533,7 +533,7 @@ tomoe_dict_get_meta_xsl (tomoe_dict* t_dict)
 #define SQUARE_LENGTH(x, y) ((x) * (x) + (y) * (y))
 
 static int
-sq_dist (tomoe_point *p, tomoe_point *q)
+sq_dist (TomoePoint *p, TomoePoint *q)
 {
     return SQUARE_LENGTH (p->x - q->x, p->y - q->y);
 }
@@ -545,11 +545,11 @@ sq_dist (tomoe_point *p, tomoe_point *q)
  * *******************
  */
 static int 
-stroke_calculate_metrics (tomoe_stroke *strk, tomoe_metric **met)
+stroke_calculate_metrics (TomoeStroke *strk, tomoe_metric **met)
 {
     unsigned int i = 0;
-    tomoe_point p;
-    tomoe_point q;
+    TomoePoint p;
+    TomoePoint q;
     tomoe_metric *m;
 
     if (!strk) return 0;
@@ -579,12 +579,12 @@ stroke_calculate_metrics (tomoe_stroke *strk, tomoe_metric **met)
  */
 
 static cand_priv *
-cand_priv_new (tomoe_char* character, int index)
+cand_priv_new (TomoeChar* character, int index)
 {
     cand_priv *cand_p;
 
     cand_p                  = calloc (sizeof (cand_priv), 1);
-    cand_p->cand            = calloc (sizeof (tomoe_candidate), 1);
+    cand_p->cand            = calloc (sizeof (TomoeCandidate), 1);
     cand_p->cand->character = character;
     cand_p->cand->score     = 0;
     cand_p->index           = index;
@@ -617,21 +617,21 @@ cand_priv_free (cand_priv *cand_p, tomoe_bool free_candidate)
  */
 
 static int
-match_input_to_dict (tomoe_stroke *input_stroke, tomoe_stroke *dict_stroke)
+match_input_to_dict (TomoeStroke *input_stroke, TomoeStroke *dict_stroke)
 {
     int i_nop = 0;              /* input stroke number of points */
-    tomoe_point  *i_pts = NULL; /* input stroke points */
+    TomoePoint   *i_pts = NULL; /* input stroke points */
     tomoe_metric *i_met = NULL; /* input stroke metrics */
     int d_nop = 0;              /* dict stroke number of points */
-    tomoe_point  *d_pts = NULL; /* dict stroke points */
+    TomoePoint   *d_pts = NULL; /* dict stroke points */
     tomoe_metric *d_met = NULL; /* dict stroke metrics */
     int i_k_end = 0;
     int i_k = 0;
     int d_k = 0;
     int m = 0;
-    tomoe_point i_pt;
+    TomoePoint i_pt;
     tomoe_metric i_me;
-    tomoe_point d_pt;
+    TomoePoint d_pt;
     tomoe_metric d_me;
     int r = 0;
     int d = 0;
@@ -715,21 +715,21 @@ match_input_to_dict (tomoe_stroke *input_stroke, tomoe_stroke *dict_stroke)
 }
 
 static int
-match_dict_to_input (tomoe_stroke *dict_stroke, tomoe_stroke *input_stroke)
+match_dict_to_input (TomoeStroke *dict_stroke, TomoeStroke *input_stroke)
 {
     int           d_nop = 0;    /* dict stroke number of points */
-    tomoe_point  *d_pts = NULL; /* dict stroke points */
+    TomoePoint   *d_pts = NULL; /* dict stroke points */
     tomoe_metric *d_met = NULL; /* dict stroke metrics */
     int           i_nop = 0;    /* input stroke number of points */
-    tomoe_point  *i_pts = NULL; /* input stroke points */
+    TomoePoint   *i_pts = NULL; /* input stroke points */
     tomoe_metric *i_met = NULL; /* input stroke metrics */
     int d_k_end = 0;
     int d_k = 0;
     int i_k = 0;
     int m = 0;
-    tomoe_point d_pt;
+    TomoePoint d_pt;
     tomoe_metric d_me;
-    tomoe_point i_pt;
+    TomoePoint i_pt;
     tomoe_metric i_me;
     int r = 0;
     int d = 0;
@@ -811,19 +811,19 @@ match_dict_to_input (tomoe_stroke *dict_stroke, tomoe_stroke *input_stroke)
 }
 
 static pointer_array *
-get_candidates (const tomoe_dict* t_dict, tomoe_stroke *input_stroke, pointer_array *cands)
+get_candidates (const tomoe_dict* t_dict, TomoeStroke *input_stroke, pointer_array *cands)
 {
     pointer_array *rtn_cands;
     cand_priv     *cand;
     int            cand_index = 0;
-    tomoe_char*  lttr;
+    TomoeChar*     lttr;
     unsigned int   strk_index = 0;
-    tomoe_stroke   dict_stroke;
+    TomoeStroke    dict_stroke;
     int            i_nop = 0;    /* input stroke number of points */
-    tomoe_point   *i_pts = NULL; /* input stroke points */
+    TomoePoint    *i_pts = NULL; /* input stroke points */
     tomoe_metric  *i_met = NULL; /* input stroke metrics */
     int            d_nop = 0;    /* dict stroke number of points */
-    tomoe_point   *d_pts = NULL; /* dict stroke points */
+    TomoePoint    *d_pts = NULL; /* dict stroke points */
     tomoe_metric  *d_met = NULL; /* dict stroke metrics */
 
     rtn_cands = _pointer_array_new ();
@@ -941,7 +941,7 @@ match_stroke_num (const tomoe_dict* t_dict, int letter_index, int input_stroke_n
     tomoe_array* letters = t_dict->letters;
     int pj = 100;
     int adapted_num;
-    tomoe_char* chr = (tomoe_char*)tomoe_array_get (letters, letter_index);
+    TomoeChar* chr = (TomoeChar*)tomoe_array_get (letters, letter_index);
     int d_stroke_num = tomoe_char_get_glyph (chr)->stroke_num;
 
     if (!adapted)
@@ -969,7 +969,7 @@ match_stroke_num (const tomoe_dict* t_dict, int letter_index, int input_stroke_n
 }
 
 void
-_parse_readings (xmlNodePtr node, tomoe_char* chr)
+_parse_readings (xmlNodePtr node, TomoeChar* chr)
 {
     xmlNodePtr child;
     for (child = node->children; child; child = child->next)
@@ -983,7 +983,7 @@ _parse_readings (xmlNodePtr node, tomoe_char* chr)
 }
 
 void
-_parse_meta (xmlNodePtr node, tomoe_char* lttr)
+_parse_meta (xmlNodePtr node, TomoeChar* lttr)
 {
 #if 0
     xmlDocPtr doc;
@@ -1027,7 +1027,7 @@ _parse_meta (xmlNodePtr node, tomoe_char* lttr)
 }
 
 void
-_parse_character (xmlNodePtr node, tomoe_char* lttr)
+_parse_character (xmlNodePtr node, TomoeChar* lttr)
 {
     xmlNodePtr child;
     for (child = node->children; child; child = child->next)
@@ -1047,8 +1047,9 @@ _parse_character (xmlNodePtr node, tomoe_char* lttr)
 }
 
 void
-_parse_strokelist (xmlNodePtr node, tomoe_char* lttr)
+_parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
 {
+    TomoeGlyph *glyph;
     int stroke_num = 0;
     xmlNodePtr child;
     int j = 0;
@@ -1062,7 +1063,7 @@ _parse_strokelist (xmlNodePtr node, tomoe_char* lttr)
         return;
 
 
-    tomoe_glyph* glyph = calloc(1, sizeof (tomoe_glyph));
+    glyph = calloc(1, sizeof (TomoeGlyph));
     tomoe_glyph_init (glyph, stroke_num);
     tomoe_char_set_glyph (lttr, glyph);
 
@@ -1071,10 +1072,11 @@ _parse_strokelist (xmlNodePtr node, tomoe_char* lttr)
         if (child->type != XML_ELEMENT_NODE)
             continue;
 
-        tomoe_stroke* strk = &tomoe_char_get_glyph (lttr)->strokes[j];
+        TomoeStroke* strk = &tomoe_char_get_glyph (lttr)->strokes[j];
         int point_num = 0;
         int k;
         const char* p = (const char*) child->children->content;
+
         /* count stroke points */
         for (; *p; p++)
             if (*p == '(') 
@@ -1085,7 +1087,8 @@ _parse_strokelist (xmlNodePtr node, tomoe_char* lttr)
         tomoe_stroke_init (strk, point_num);
         for (k = 0; k < point_num; k++)
         {
-            tomoe_point* pnt = &strk->points[k];
+            TomoePoint* pnt = &strk->points[k];
+
             sscanf (p, " (%d %d)", &pnt->x, &pnt->y);
             p = strchr (p, ')') + 1;
         }
@@ -1154,7 +1157,7 @@ _parse_tomoe_dict (tomoe_dict* t_dict, xmlNodePtr root)
 
             if (0 == xmlStrcmp(node->name, BAD_CAST "character"))
             {
-                tomoe_char* chr = tomoe_char_new (&t_dict->dict_interface);
+                TomoeChar* chr = tomoe_char_new (&t_dict->dict_interface);
                 tomoe_array* readings = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
                                                          NULL,
                                                          (tomoe_free_fn)free);

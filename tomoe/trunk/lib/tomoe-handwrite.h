@@ -111,7 +111,7 @@ void                tomoe_hw_push_stroke        (tomoe_hw_context *ctx);
 void                tomoe_hw_pop_stroke         (tomoe_hw_context *ctx);
 unsigned int        tomoe_hw_get_number_of_strokes
                                                 (tomoe_hw_context *ctx);
-const tomoe_glyph  *tomoe_hw_get_glyph          (tomoe_hw_context *ctx);
+const TomoeGlyph   *tomoe_hw_get_glyph          (tomoe_hw_context *ctx);
 void                tomeo_hw_clear_glyph        (tomoe_hw_context *ctx);
 
 void                tomoe_hw_set_canvas_width   (tomoe_hw_context *ctx,
@@ -121,7 +121,7 @@ void                tomoe_hw_set_canvas_height  (tomoe_hw_context *ctx,
 unsigned int        tomoe_hw_get_canvas_width   (tomoe_hw_context *ctx);
 unsigned int        tomoe_hw_get_canvas_height  (tomoe_hw_context *ctx);
 
-const tomoe_candidate
+const TomoeCandidate
                   **tomoe_hw_get_candidates     (tomoe_hw_context *ctx);
 
 #ifdef	__cplusplus

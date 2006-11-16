@@ -112,11 +112,11 @@ int             tomoe_dict_get_size             (tomoe_dict*    t_dict);
  * @param add  - Pointer to the tomoe_char object.
  */
 void            tomoe_dict_add_char             (tomoe_dict*    t_dict,
-                                                 tomoe_char*    remove);
+                                                 TomoeChar*     remove);
 
 void            tomoe_dict_insert               (tomoe_dict    *dict,
                                                  int            position,
-                                                 tomoe_char    *insert);
+                                                 TomoeChar*     insert);
 
 /**
  * @brief Remove a character by a character object
@@ -124,7 +124,7 @@ void            tomoe_dict_insert               (tomoe_dict    *dict,
  * @param remove - Pointer to the tomoe_char object.
  */
 void            tomoe_dict_remove_by_char       (tomoe_dict*    t_dict,
-                                                 tomoe_char*    remove);
+                                                 TomoeChar*     remove);
 
 /**
  * @brief Remove a character by index
@@ -141,7 +141,7 @@ void            tomoe_dict_remove_by_index      (tomoe_dict*    t_dict,
  * @return Index of the character.
  */
 int             tomoe_dict_find_index           (tomoe_dict*    t_dict,
-                                                 tomoe_char*    find);
+                                                 TomoeChar*     find);
 
 /**
  * @brief Get a character by index
@@ -149,7 +149,7 @@ int             tomoe_dict_find_index           (tomoe_dict*    t_dict,
  * @param index - Index of the character.
  * @return tomoe_char object.
  */
-tomoe_char*     tomoe_dict_char_by_index        (tomoe_dict*    t_dict,
+TomoeChar*      tomoe_dict_char_by_index        (tomoe_dict*    t_dict,
                                                  int            index);
 
 /**
@@ -168,7 +168,7 @@ tomoe_array*    tomoe_dict_get_letters          (tomoe_dict    *t_dict);
  * @return The array of tomoe_candidate.
  */
 tomoe_array*    tomoe_dict_search_by_strokes    (const tomoe_dict* t_dict,
-                                                 tomoe_glyph*      input);
+                                                 TomoeGlyph*       input);
 
 /**
  * @brief Match reading of tomoe_char with input.
