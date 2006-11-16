@@ -48,7 +48,7 @@ typedef struct _TomoeDict TomoeDict;
  * @param editable - Editability of the dictionary.
  * @return Pointer to newly allocated TomoeDict object.
  */
-TomoeDict*      tomoe_dict_new                  (const char    *filename,
+TomoeDict      *tomoe_dict_new                  (const char    *filename,
                                                  TomoeBool      editable);
 
 /**
@@ -56,7 +56,7 @@ TomoeDict*      tomoe_dict_new                  (const char    *filename,
  * @param t_dict - Pointer to the TomoeDict object to increase reference count.
  * @return The TomoeDict.
  */
-TomoeDict*      tomoe_dict_add_ref              (TomoeDict     *t_dict);
+TomoeDict      *tomoe_dict_add_ref              (TomoeDict     *t_dict);
 
 /**
  * @brief Decrease reference count and free if zero.
@@ -77,14 +77,14 @@ void            tomoe_dict_save                 (TomoeDict     *t_dict);
  *         wasn't load from a file, or newly allocated in a program and it
  *         doesn't saved yet.
  */
-const char*     tomoe_dict_get_filename         (TomoeDict     *t_dict);
+const char     *tomoe_dict_get_filename         (TomoeDict     *t_dict);
 
 /**
  * @brief Get the dictionary name.
  * @param t_dict - Pointer to the TomoeDict object.
  * @return Name of the dictionary.
  */
-const char*     tomoe_dict_get_name             (TomoeDict     *t_dict);
+const char     *tomoe_dict_get_name             (TomoeDict     *t_dict);
 
 /**
  * @brief Get editable property.
@@ -95,14 +95,14 @@ TomoeBool       tomoe_dict_is_editable          (TomoeDict     *t_dict);
 
 TomoeBool       tomoe_dict_is_modified          (TomoeDict     *dict);
 void            tomoe_dict_set_modified         (TomoeDict     *dict,
-                                                 TomoeBool     modified);
+                                                 TomoeBool      modified);
 
 /**
  * @brief Get character count
  * @param t_dict - Pointer to the TomoeDict object.
  * @return Count of the characters.
  */
-int             tomoe_dict_get_size             (TomoeDict*    t_dict);
+int             tomoe_dict_get_size             (TomoeDict     *t_dict);
 
 /* Editable methods */
 
@@ -149,7 +149,7 @@ int             tomoe_dict_find_index           (TomoeDict     *t_dict,
  * @param index - Index of the character.
  * @return tomoe_char object.
  */
-TomoeChar*      tomoe_dict_char_by_index        (TomoeDict*    t_dict,
+TomoeChar      *tomoe_dict_char_by_index        (TomoeDict     *t_dict,
                                                  int            index);
 
 /**
@@ -157,7 +157,7 @@ TomoeChar*      tomoe_dict_char_by_index        (TomoeDict*    t_dict,
  * @param t_dict - Pointer to the TomoeDict struct.
  * @return The array of tomoe_char.
  */
-TomoeArray*     tomoe_dict_get_letters          (TomoeDict    *t_dict);
+TomoeArray     *tomoe_dict_get_letters          (TomoeDict     *t_dict);
 
 /* search methods */
 
@@ -167,7 +167,7 @@ TomoeArray*     tomoe_dict_get_letters          (TomoeDict    *t_dict);
  * @param input  - Pointer to tomoe_glyph matchkey.
  * @return The array of tomoe_candidate.
  */
-TomoeArray*     tomoe_dict_search_by_strokes    (const TomoeDict *t_dict,
+TomoeArray     *tomoe_dict_search_by_strokes    (const TomoeDict *t_dict,
                                                  TomoeGlyph      *input);
 
 /**
@@ -176,11 +176,11 @@ TomoeArray*     tomoe_dict_search_by_strokes    (const TomoeDict *t_dict,
  * @param input  - Pointer to string matchkey
  * @return The array of tomoe_candidate.
  */
-TomoeArray*     tomoe_dict_search_by_reading    (const TomoeDict *t_dict,
+TomoeArray     *tomoe_dict_search_by_reading    (const TomoeDict *t_dict,
                                                  const char      *input);
 
 #ifdef TOMOE_DICT__USE_XSL_METHODS
-xsltStylesheetPtr  tomoe_dict_get_meta_xsl      (TomoeDict     *t_dict);
+xsltStylesheetPtr  tomoe_dict_get_meta_xsl      (TomoeDict       *t_dict);
 #endif
 
 #ifdef	__cplusplus

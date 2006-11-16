@@ -48,14 +48,14 @@ typedef struct _TomoeDB TomoeDB;
  * @brief Create a database.
  * @return Pointer to newly allocated TomoeDB struct.
  */
-TomoeDB*       tomoe_db_new                    (void);
+TomoeDB        *tomoe_db_new                    (void);
 
 /**
  * @brief Increase reference count.
  * @param t_db     - Pointer to the TomoeDB struct to increase reference count.
  * @return The TomoeDB.
  */
-TomoeDB*       tomoe_db_add_ref                (TomoeDB       *t_db);
+TomoeDB        *tomoe_db_add_ref                (TomoeDB       *t_db);
 
 /**
  * @brief Decrease reference count and free if zero.
@@ -76,11 +76,11 @@ void            tomoe_db_load_dict              (TomoeDB       *t_db,
                                                  int            editable);
 void            tomoe_db_load_dict_list         (TomoeDB       *t_db,
                                                  TomoeArray    *list);
-TomoeArray*     tomoe_db_get_dict_list          (TomoeDB       *t_db);
+TomoeArray     *tomoe_db_get_dict_list          (TomoeDB       *t_db);
 void            tomoe_db_save                   (TomoeDB       *db);
 
 #if 0
-TomoeDict*      tomoe_db_get_user_dict          (TomoeDB       *t_db,
+TomoeDict      *tomoe_db_get_user_dict          (TomoeDB       *t_db,
                                                  const char    *filename);
 #endif
 
@@ -90,7 +90,7 @@ TomoeDict*      tomoe_db_get_user_dict          (TomoeDB       *t_db,
  * @param input    - Pointer to tomoe_glyph matchkey.
  * @return The array of tomoe_candidate.
  */
-TomoeArray*     tomoe_db_search_by_strokes      (TomoeDB       *t_db,
+TomoeArray     *tomoe_db_search_by_strokes      (TomoeDB       *t_db,
                                                  TomoeGlyph    *input);
     
 /**
@@ -99,7 +99,7 @@ TomoeArray*     tomoe_db_search_by_strokes      (TomoeDB       *t_db,
  * @param reading  - Pointer to string matchkey
  * @return The array of tomoe_candidate.
  */
-TomoeArray*     tomoe_db_search_by_reading      (TomoeDB       *t_db,
+TomoeArray     *tomoe_db_search_by_reading      (TomoeDB       *t_db,
                                                  const char    *reading);
 #if 0
 /* optional */
