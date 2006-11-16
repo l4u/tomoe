@@ -39,7 +39,7 @@ extern "C" {
  *
  * Boolean type used in tomoe library.
  */
-typedef int tomoe_bool;
+typedef int TomoeBool;
 
 #ifndef FALSE
 #define FALSE 0
