@@ -326,12 +326,12 @@ tomoe_array_merge (tomoe_array* this, tomoe_array* append)
 }
 
 tomoe_array*
-tomoe_array_cloneEmpty (const tomoe_array* this)
+tomoe_array_clone_empty (const tomoe_array* this)
 {
     if (!this) return NULL;
     return tomoe_array_new (this->compare, this->addref, this->free);
 }
 
 /*
-vi:ts=2:nowrap:ai:expandtab
+vi:ts=4:nowrap:ai:expandtab
 */

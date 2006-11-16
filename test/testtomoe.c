@@ -72,10 +72,10 @@ read_test_data ()
 void outCharInfo (tomoe_char* chr, int score)
 {
    int j;
-   tomoe_array* readings = tomoe_char_getReadings (chr);
-   const char* meta = tomoe_char_getMeta (chr);
+   tomoe_array* readings = tomoe_char_get_readings (chr);
+   const char* meta = tomoe_char_get_meta (chr);
 
-   fprintf (stdout, "character:%s [%d] ", tomoe_char_getCode (chr), score);
+   fprintf (stdout, "character:%s [%d] ", tomoe_char_get_code (chr), score);
    fflush (stdout);
    if (readings)
    {
@@ -170,9 +170,9 @@ void testUserDB (tomoe_db* db)
     fprintf (stdout, "dictSize %d; create character \"（＾o＾）／\" with reading \"やった\" and add to dictionary\n", 
              tomoe_dict_getSize (myDict));
     chr = tomoe_char_new (NULL);
-    tomoe_char_setCode (chr, "（＾o＾）／");
+    tomoe_char_set_code (chr, "（＾o＾）／");
     tomoe_array_append (readings, strdup ("やった"));
-    tomoe_char_setReadings (chr, readings);
+    tomoe_char_set_readings (chr, readings);
     tomoe_dict_addChar (myDict, chr);
 
     tomoe_db_addDict (db, myDict);
@@ -181,7 +181,7 @@ void testUserDB (tomoe_db* db)
     testReadingMatch (db, "やった");
 
     fprintf (stdout, "update character to \"\\\\（＾o＾）//\"\n");
-    tomoe_char_setCode (chr, "\\\\（＾o＾）//");
+    tomoe_char_set_code (chr, "\\\\（＾o＾）//");
     fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_getSize (myDict));
     testReadingMatch (db, "やった");
 
@@ -228,5 +228,5 @@ main (int argc, char **argv)
     return 0;
 }
 /*
-vi:ts=2:nowrap:ai:expandtab
+vi:ts=4:nowrap:ai:expandtab
 */

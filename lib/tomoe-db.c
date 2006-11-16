@@ -148,7 +148,7 @@ tomoe_db_searchByStrokes (tomoe_db* this, tomoe_glyph* input)
 
     dict = (tomoe_dict*)tomoe_array_get (this->dicts, 0);
     tmp = tomoe_dict_searchByStrokes (dict, input);
-    matched = tomoe_array_cloneEmpty (tmp);
+    matched = tomoe_array_clone_empty (tmp);
     for (i = 0; i < num; i++)
     {
         tomoe_array* tmp;
@@ -176,7 +176,7 @@ tomoe_db_searchByReading (tomoe_db* this, const char* input)
 
     dict = (tomoe_dict*)tomoe_array_get (this->dicts, 0);
     tmp = tomoe_dict_searchByReading (dict, input);
-    reading = tomoe_array_cloneEmpty (tmp);
+    reading = tomoe_array_clone_empty (tmp);
     for (i = 0; i < num; i++)
     {
         dict = (tomoe_dict*)tomoe_array_get (this->dicts, i);

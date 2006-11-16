@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-// TODO remove from tomoe, replace by tomoe_array
+/* TODO remove from tomoe, replace by tomoe_array */
 typedef struct _int_array int_array;
 
 struct _int_array
@@ -50,7 +50,7 @@ int        _int_array_find_data   (int_array *a, int i);
 
 void       _int_array_unref       (int_array *a);
 
-// TODO remove from tomoe, replace by tomoe_array
+/* TODO remove from tomoe, replace by tomoe_array */
 typedef struct _pointer_array pointer_array;
 
 struct _pointer_array
@@ -191,10 +191,14 @@ void           tomoe_array_merge          (tomoe_array*       t_array,
  * @param t_array - Pointer to the tomoe_array.
  * @return Pointer to the newly allocated tomoe_array.
  */
-tomoe_array*   tomoe_array_cloneEmpty     (const tomoe_array* t_array);
+tomoe_array*   tomoe_array_clone_empty    (const tomoe_array* t_array);
 
 #ifdef	__cplusplus
 }
 #endif
 
 #endif /* __TOMOE_ARRAY_H__ */
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/
