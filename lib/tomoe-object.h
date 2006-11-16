@@ -49,7 +49,7 @@ typedef struct _tomoe_type_info
 {
     char                  *name;
     size_t                 class_size;
-   // tomoe_class_init_fn    class_init;
+    /* tomoe_class_init_fn    class_init; */
     tomoe_inst_init_fn     base_init;
     tomoe_inst_init_fn     base_finalize;
     tomoe_inst_init_fn     inst_init;

@@ -327,14 +327,14 @@ tomoe_char_set_xml_meta (tomoe_char* this, xmlNodePtr meta)
     tomoe_char_set_modified(this, 1);
 }
 
-/*
+#if 0
 void
 tomoe_char_setMetaXsl (tomoe_char* this, xsltStylesheetPtr metaXsl)
 {
     if (!this) return;
-    this->metaXsl = metaXsl; // TODO link to tomoe_dict instead of metaXsl
+    this->metaXsl = metaXsl; /* TODO link to tomoe_dict instead of metaXsl */
 }
-*/
+#endif
 
 int
 tomoe_char_compare (const tomoe_char** a, const tomoe_char** b)
