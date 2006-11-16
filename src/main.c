@@ -103,7 +103,7 @@ main (int argc, char **argv)
     /* FIXME! read arguments */
 
     tomoe_init ();
-    tomoe_db* db = tomoe_simple_load (NULL);
+    TomoeDB* db = tomoe_simple_load (NULL);
     if (!db) exit (1);
 
     while (1)

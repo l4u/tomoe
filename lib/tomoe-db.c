@@ -28,18 +28,18 @@
 #include "tomoe-db.h"
 #include "tomoe-array.h"
 
-struct _tomoe_db
+struct _TomoeDB
 {
     int          ref;
     tomoe_array* dicts;
 };
 
 
-tomoe_db*
+TomoeDB*
 tomoe_db_new(void)
 {
-    tomoe_db* p;
-    p        = calloc (1, sizeof(tomoe_db));
+    TomoeDB* p;
+    p        = calloc (1, sizeof(TomoeDB));
     p->ref   = 1;
     p->dicts = tomoe_array_new (NULL,
                                 (tomoe_addref_fn)tomoe_dict_add_ref,
@@ -47,8 +47,8 @@ tomoe_db_new(void)
     return p;
 }
 
-tomoe_db*
-tomoe_db_add_ref(tomoe_db* t_db)
+TomoeDB*
+tomoe_db_add_ref(TomoeDB* t_db)
 {
     if (!t_db) return NULL;
     t_db->ref ++;
@@ -56,7 +56,7 @@ tomoe_db_add_ref(tomoe_db* t_db)
 }
 
 void
-tomoe_db_free(tomoe_db* t_db)
+tomoe_db_free(TomoeDB* t_db)
 {
     if (!t_db) return;
     t_db->ref--;
@@ -68,14 +68,14 @@ tomoe_db_free(tomoe_db* t_db)
 }
 
 void
-tomoe_db_add_dict (tomoe_db* t_db, tomoe_dict* dict)
+tomoe_db_add_dict (TomoeDB* t_db, tomoe_dict* dict)
 {
     if (!t_db || !dict) return;
     tomoe_array_append (t_db->dicts, tomoe_dict_add_ref (dict));
 }
 
 void
-tomoe_db_load_dict (tomoe_db* t_db, const char *filename, int editable)
+tomoe_db_load_dict (TomoeDB* t_db, const char *filename, int editable)
 {
     tomoe_dict* dict;
 
@@ -91,7 +91,7 @@ tomoe_db_load_dict (tomoe_db* t_db, const char *filename, int editable)
 }
 
 void
-tomoe_db_load_dict_list (tomoe_db* t_db, tomoe_array* list)
+tomoe_db_load_dict_list (TomoeDB* t_db, tomoe_array* list)
 {
     int i;
     for (i = 0; i < tomoe_array_size (list); i++)
@@ -113,14 +113,14 @@ tomoe_db_load_dict_list (tomoe_db* t_db, tomoe_array* list)
 }
 
 tomoe_array*
-tomoe_db_get_dict_list (tomoe_db* t_db)
+tomoe_db_get_dict_list (TomoeDB* t_db)
 {
     if (!t_db) return NULL;
     return tomoe_array_add_ref(t_db->dicts);
 }
 
 void
-tomoe_db_save (tomoe_db *db)
+tomoe_db_save (TomoeDB *db)
 {
     int i;
 
@@ -135,7 +135,7 @@ tomoe_db_save (tomoe_db *db)
 }
 
 tomoe_array*
-tomoe_db_search_by_strokes (tomoe_db* t_db, TomoeGlyph* input)
+tomoe_db_search_by_strokes (TomoeDB* t_db, TomoeGlyph* input)
 {
     int i, num;
     tomoe_array* tmp;
@@ -163,7 +163,7 @@ tomoe_db_search_by_strokes (tomoe_db* t_db, TomoeGlyph* input)
 }
 
 tomoe_array*
-tomoe_db_search_by_reading (tomoe_db* t_db, const char* input)
+tomoe_db_search_by_reading (TomoeDB* t_db, const char* input)
 {
     int i, num;
     tomoe_array* reading;

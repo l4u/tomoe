@@ -42,10 +42,10 @@ tomoe_init (void)
     LIBXML_TEST_VERSION
 }
 
-tomoe_db*
+TomoeDB*
 tomoe_simple_load (const char* configFile)
 {
-    tomoe_db* db = tomoe_db_new();
+    TomoeDB* db = tomoe_db_new();
     tomoe_array* list;
     tomoe_config* cfg;
 
