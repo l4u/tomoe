@@ -166,7 +166,7 @@ dnl make sure xml2-config is executable,
 dnl test version and init our variables
 dnl
 
-AC_DEFUN(VERSION_TO_NUMBER,
+AC_DEFUN([VERSION_TO_NUMBER],
 [`$1 | sed -e 's/libxml //' | awk 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 1000 + [$]2) * 1000 + [$]3;}'`])
 if ${XML_CONFIG} --libs print > /dev/null 2>&1
 then
