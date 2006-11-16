@@ -34,11 +34,11 @@
 #include "tomoe-char.h"
 #include "tomoe-dict.h"
 
-struct _tomoe_char
+struct _TomoeChar
 {
     int                   ref;
     char                 *charCode;
-    tomoe_glyph          *glyph;
+    TomoeGlyph           *glyph;
     tomoe_array          *readings;
     xmlNodePtr            xmlMeta;
     char                 *meta;
@@ -46,10 +46,10 @@ struct _tomoe_char
     tomoe_bool            modified;
 };
 
-tomoe_stroke *
+TomoeStroke *
 tomoe_stroke_new (void)
 {
-    tomoe_stroke *strk = calloc (1, sizeof (tomoe_stroke));
+    TomoeStroke *strk = calloc (1, sizeof (TomoeStroke));
 
     if (strk)
         tomoe_stroke_init (strk, 0);
@@ -58,16 +58,16 @@ tomoe_stroke_new (void)
 }
 
 void
-tomoe_stroke_init (tomoe_stroke *strk, int point_num)
+tomoe_stroke_init (TomoeStroke *strk, int point_num)
 {
     if (!strk) return;
 
     strk->point_num = point_num;
-    strk->points    = calloc (point_num, sizeof (tomoe_point));
+    strk->points    = calloc (point_num, sizeof (TomoePoint));
 }
 
 void
-tomoe_stroke_clear (tomoe_stroke *strk)
+tomoe_stroke_clear (TomoeStroke *strk)
 {
     if (!strk) return;
 
@@ -79,7 +79,7 @@ tomoe_stroke_clear (tomoe_stroke *strk)
 }
 
 void
-tomoe_stroke_free (tomoe_stroke *strk)
+tomoe_stroke_free (TomoeStroke *strk)
 {
     if (!strk) return;
 
@@ -87,10 +87,10 @@ tomoe_stroke_free (tomoe_stroke *strk)
     free (strk);
 }
 
-tomoe_glyph *
+TomoeGlyph *
 tomoe_glyph_new (void)
 {
-    tomoe_glyph *glyph = calloc (1, sizeof (tomoe_glyph));
+    TomoeGlyph *glyph = calloc (1, sizeof (TomoeGlyph));
 
     if (glyph)
         tomoe_glyph_init (glyph, 0);
@@ -99,16 +99,16 @@ tomoe_glyph_new (void)
 }
 
 void
-tomoe_glyph_init (tomoe_glyph *glyph, int stroke_num)
+tomoe_glyph_init (TomoeGlyph *glyph, int stroke_num)
 {
     if (!glyph) return;
 
     glyph->stroke_num = stroke_num;
-    glyph->strokes    = calloc (stroke_num, sizeof (tomoe_stroke));
+    glyph->strokes    = calloc (stroke_num, sizeof (TomoeStroke));
 }
 
 void
-tomoe_glyph_clear (tomoe_glyph *glyph)
+tomoe_glyph_clear (TomoeGlyph *glyph)
 {
     unsigned int i;
 
@@ -125,7 +125,7 @@ tomoe_glyph_clear (tomoe_glyph *glyph)
 }
 
 void
-tomoe_glyph_free (tomoe_glyph *glyph)
+tomoe_glyph_free (TomoeGlyph *glyph)
 {
     if (!glyph) return;
 
@@ -148,10 +148,10 @@ TOMOE_CLASS_IMPL (TomoeCandidate)
 
 /* TomoeCandidate *p = TomoeCandidate_new (); ...*/
 #endif
-tomoe_char*
+TomoeChar*
 tomoe_char_new (tomoe_dict_interface* dict)
 {
-    tomoe_char *p = calloc (1, sizeof (tomoe_char));
+    TomoeChar *p = calloc (1, sizeof (TomoeChar));
     if (!p) return NULL;
 
     p->ref       = 1;
@@ -165,8 +165,8 @@ tomoe_char_new (tomoe_dict_interface* dict)
     return p;
 }
 
-tomoe_char*
-tomoe_char_add_ref (tomoe_char* t_char)
+TomoeChar*
+tomoe_char_add_ref (TomoeChar* t_char)
 {
     if (!t_char) return NULL;
     t_char->ref ++;
@@ -174,7 +174,7 @@ tomoe_char_add_ref (tomoe_char* t_char)
 }
 
 void
-tomoe_char_free (tomoe_char *t_char)
+tomoe_char_free (TomoeChar *t_char)
 {
     if (!t_char) return;
 
@@ -190,14 +190,14 @@ tomoe_char_free (tomoe_char *t_char)
 }
 
 const char*
-tomoe_char_get_code (const tomoe_char* t_char)
+tomoe_char_get_code (const TomoeChar* t_char)
 {
     if (!t_char) return NULL;
     return t_char->charCode;
 }
 
 void
-tomoe_char_set_code (tomoe_char* t_char, const char* code)
+tomoe_char_set_code (TomoeChar* t_char, const char* code)
 {
     if (!t_char) return;
     free (t_char->charCode);
@@ -206,14 +206,14 @@ tomoe_char_set_code (tomoe_char* t_char, const char* code)
 }
 
 tomoe_array*
-tomoe_char_get_readings (tomoe_char* t_char)
+tomoe_char_get_readings (TomoeChar* t_char)
 {
     if (!t_char) return NULL;
     return t_char->readings;
 }
 
 void
-tomoe_char_set_readings (tomoe_char* t_char, tomoe_array* readings)
+tomoe_char_set_readings (TomoeChar* t_char, tomoe_array* readings)
 {
     if (!t_char) return;
     tomoe_array_free (t_char->readings);
@@ -221,15 +221,15 @@ tomoe_char_set_readings (tomoe_char* t_char, tomoe_array* readings)
     tomoe_char_set_modified(t_char, 1);
 }
 
-tomoe_glyph*
-tomoe_char_get_glyph (tomoe_char* t_char)
+TomoeGlyph*
+tomoe_char_get_glyph (TomoeChar* t_char)
 {
     if (!t_char) return NULL;
     return t_char->glyph; 
 }
 
 void
-tomoe_char_set_glyph (tomoe_char* t_char, tomoe_glyph* glyph)
+tomoe_char_set_glyph (TomoeChar* t_char, TomoeGlyph* glyph)
 {
     if (!t_char) return;
     tomoe_glyph_free (t_char->glyph);
@@ -238,7 +238,7 @@ tomoe_char_set_glyph (tomoe_char* t_char, tomoe_glyph* glyph)
 }
 
 const char*
-tomoe_char_get_meta (tomoe_char* t_char)
+tomoe_char_get_meta (TomoeChar* t_char)
 {
     xmlDocPtr doc;
     xmlDocPtr meta;
@@ -280,14 +280,14 @@ tomoe_char_get_meta (tomoe_char* t_char)
 }
 
 void
-tomoe_char_set_dict_interface (tomoe_char *chr, tomoe_dict_interface *parent)
+tomoe_char_set_dict_interface (TomoeChar *chr, tomoe_dict_interface *parent)
 {
     if (!chr) return;
     chr->parent = parent;
 }
 
 tomoe_bool
-tomoe_char_is_editable (tomoe_char *chr)
+tomoe_char_is_editable (TomoeChar *chr)
 {
     if (!chr) return 0;
     if (!chr->parent) return 1;
@@ -295,14 +295,14 @@ tomoe_char_is_editable (tomoe_char *chr)
 }
 
 tomoe_bool
-tomoe_char_get_modified (tomoe_char *chr)
+tomoe_char_get_modified (TomoeChar *chr)
 {
     if (!chr) return 0;
     return chr->modified;
 }
 
 void
-tomoe_char_set_modified (tomoe_char *chr, tomoe_bool modified)
+tomoe_char_set_modified (TomoeChar *chr, tomoe_bool modified)
 {
     if (!chr) return;
     chr->modified = modified;
@@ -311,14 +311,14 @@ tomoe_char_set_modified (tomoe_char *chr, tomoe_bool modified)
 }
 
 xmlNodePtr
-tomoe_char_get_xml_meta (tomoe_char* t_char)
+tomoe_char_get_xml_meta (TomoeChar* t_char)
 {
     if (!t_char) return NULL;
     return t_char->xmlMeta; /* TODO addRef?? */
 }
 
 void
-tomoe_char_set_xml_meta (tomoe_char* t_char, xmlNodePtr meta)
+tomoe_char_set_xml_meta (TomoeChar* t_char, xmlNodePtr meta)
 {
     if (!t_char) return;
     if (t_char->xmlMeta) xmlFreeNode (t_char->xmlMeta);
@@ -329,7 +329,7 @@ tomoe_char_set_xml_meta (tomoe_char* t_char, xmlNodePtr meta)
 
 #if 0
 void
-tomoe_char_setMetaXsl (tomoe_char* t_char, xsltStylesheetPtr metaXsl)
+tomoe_char_setMetaXsl (TomoeChar* t_char, xsltStylesheetPtr metaXsl)
 {
     if (!t_char) return;
     t_char->metaXsl = metaXsl; /* TODO link to tomoe_dict instead of metaXsl */
@@ -337,24 +337,24 @@ tomoe_char_setMetaXsl (tomoe_char* t_char, xsltStylesheetPtr metaXsl)
 #endif
 
 int
-tomoe_char_compare (const tomoe_char** a, const tomoe_char** b)
+tomoe_char_compare (const TomoeChar** a, const TomoeChar** b)
 {
     return strcmp ((*a)->charCode, (*b)->charCode);
 }
 
-tomoe_candidate*
+TomoeCandidate*
 tomoe_candidate_new (void)
 {
-    tomoe_candidate* cand;
-    cand            = calloc (sizeof (tomoe_candidate), 1);
+    TomoeCandidate* cand;
+    cand            = calloc (sizeof (TomoeCandidate), 1);
     cand->ref       = 1;
     cand->character = NULL;
     cand->score     = 0;
     return cand;
 }
 
-tomoe_candidate*
-tomoe_candidate_add_ref (tomoe_candidate* t_cand)
+TomoeCandidate*
+tomoe_candidate_add_ref (TomoeCandidate* t_cand)
 {
     if (!t_cand) return NULL;
     t_cand->ref ++;
@@ -362,7 +362,7 @@ tomoe_candidate_add_ref (tomoe_candidate* t_cand)
 }
 
 void
-tomoe_candidate_free (tomoe_candidate* t_cand)
+tomoe_candidate_free (TomoeCandidate* t_cand)
 {
     if (!t_cand) return;
     t_cand->ref --;
@@ -374,7 +374,7 @@ tomoe_candidate_free (tomoe_candidate* t_cand)
 }
 
 int
-tomoe_candidate_compare (const tomoe_candidate** a, const tomoe_candidate** b)
+tomoe_candidate_compare (const TomoeCandidate** a, const TomoeCandidate** b)
 {
     int score_a = a[0]->score;
     int score_b = b[0]->score;
@@ -391,8 +391,8 @@ tomoe_string_compare (const char** a, const char** b)
 }
 
 /*
-implementation_tomoe_array (tomoe_candidateArray,
-                            const tomoe_candidate*,
+implementation_tomoe_array (TomoeCandidateArray,
+                            const TomoeCandidate*,
                             tomoe_candidate_compare,
                             tomoe_candidate_addRef,
                             tomoe_candidate_free);

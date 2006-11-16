@@ -5,8 +5,8 @@
 #include <string.h>
 #include "tomoe.h"
 
-static tomoe_glyph * read_test_data ();
-void outCharInfo (tomoe_char* chr, int score);
+static TomoeGlyph * read_test_data ();
+void outCharInfo (TomoeChar* chr, int score);
 void testStrokeMatch (tomoe_db* db);
 void testReadingMatch (tomoe_db* db, const char* reading);
 void testUserDB (tomoe_db* db);
@@ -14,7 +14,7 @@ void testUserDB (tomoe_db* db);
 #define LINE_BUF_SIZE 4096
 static char line_buf[LINE_BUF_SIZE];
 
-static tomoe_glyph *
+static TomoeGlyph *
 read_test_data ()
 {
     char *p = NULL;
@@ -22,12 +22,12 @@ read_test_data ()
     int point_num  = 0;
     int j = 0;
     int k = 0;
-    tomoe_stroke *strk = NULL;
-    tomoe_point  *pnt  = NULL;
+    TomoeStroke *strk = NULL;
+    TomoePoint  *pnt  = NULL;
     FILE *fp = stdin;
-    tomoe_glyph *test_glyph = NULL;
+    TomoeGlyph *test_glyph = NULL;
 
-    test_glyph = calloc (1, sizeof (tomoe_glyph));
+    test_glyph = calloc (1, sizeof (TomoeGlyph));
 
     while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL)
     {
@@ -41,7 +41,7 @@ read_test_data ()
             continue;
         }
         sscanf (p + 1, "%d", &stroke_num);
-        strk = calloc (stroke_num, sizeof (tomoe_stroke));
+        strk = calloc (stroke_num, sizeof (TomoeStroke));
 
         for (j = 0; j < stroke_num; j++)
         {
@@ -50,7 +50,7 @@ read_test_data ()
             p = strchr (p, ' ');
 
             strk[j].point_num = point_num;
-            pnt = calloc (point_num, sizeof (tomoe_point));
+            pnt = calloc (point_num, sizeof (TomoePoint));
             strk[j].points = pnt;
             for (k = 0; k < point_num; k++)
             {
@@ -69,7 +69,7 @@ read_test_data ()
     return NULL;
 }
 
-void outCharInfo (tomoe_char* chr, int score)
+void outCharInfo (TomoeChar* chr, int score)
 {
    int j;
    tomoe_array* readings = tomoe_char_get_readings (chr);
@@ -94,7 +94,7 @@ void outCharInfo (tomoe_char* chr, int score)
 
 void testStrokeMatch (tomoe_db* db)
 {
-    tomoe_glyph *test_glyph = NULL;
+    TomoeGlyph *test_glyph = NULL;
     int i, candidate_num = 0;
     tomoe_array* matched = NULL;
 
@@ -118,7 +118,7 @@ void testStrokeMatch (tomoe_db* db)
                  candidate_num);
         for (i = 0; i < candidate_num; i++)
         {
-            const tomoe_candidate* p = (const tomoe_candidate*)tomoe_array_get_const (matched, i);
+            const TomoeCandidate* p = (const TomoeCandidate*)tomoe_array_get_const (matched, i);
             outCharInfo (p->character, p->score);
         }
     }
@@ -151,7 +151,7 @@ void testReadingMatch (tomoe_db* db, const char* reading)
                  candidate_num);
         for (i = 0; i < candidate_num; i++)
         {
-            tomoe_char* p = (tomoe_char*)tomoe_array_get (matched, i);
+            TomoeChar* p = (TomoeChar*)tomoe_array_get (matched, i);
             outCharInfo (p, 0);
         }
     }
@@ -161,7 +161,7 @@ void testReadingMatch (tomoe_db* db, const char* reading)
 
 void testUserDB (tomoe_db* db)
 {
-    tomoe_char* chr;
+    TomoeChar* chr;
     tomoe_dict* myDict = tomoe_dict_new ("../data/userdb.xml", 1);
     tomoe_array* readings = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
                                              NULL,

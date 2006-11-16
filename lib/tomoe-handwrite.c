@@ -32,8 +32,8 @@ struct _tomoe_hw_context
     tomoe_dict  **dict;
     unsigned int  dict_num;
 
-    tomoe_glyph  *glyph;
-    tomoe_glyph  *normalized_glyph;
+    TomoeGlyph   *glyph;
+    TomoeGlyph   *normalized_glyph;
 
     unsigned int  canvas_width;
     unsigned int  canvas_height;
@@ -147,8 +147,8 @@ tomoe_hw_get_dictionaries (tomoe_hw_context *ctx)
 void
 tomoe_hw_push_point (tomoe_hw_context *ctx, unsigned int x, unsigned int y)
 {
-    tomoe_stroke *stroke = NULL;
-    tomoe_point *point = NULL;
+    TomoeStroke *stroke = NULL;
+    TomoePoint  *point = NULL;
 
     if (!ctx) return;
 
@@ -156,7 +156,7 @@ tomoe_hw_push_point (tomoe_hw_context *ctx, unsigned int x, unsigned int y)
         ctx->glyph->stroke_num++;
         ctx->glyph->strokes
             = realloc (ctx->glyph->strokes,
-                       sizeof (tomoe_stroke) * ctx->glyph->stroke_num);
+                       sizeof (TomoeStroke) * ctx->glyph->stroke_num);
         stroke = &ctx->glyph->strokes[ctx->glyph->stroke_num - 1];
         tomoe_stroke_init (stroke, 0);
         ctx->stroke_is_pending = TRUE;
@@ -166,7 +166,7 @@ tomoe_hw_push_point (tomoe_hw_context *ctx, unsigned int x, unsigned int y)
 
     stroke->point_num++;
     stroke->points = realloc (stroke->points,
-                              sizeof (tomoe_stroke) * stroke->point_num);
+                              sizeof (TomoeStroke) * stroke->point_num);
     point = &stroke->points[stroke->point_num - 1];
 
     point->x = x;
@@ -176,7 +176,7 @@ tomoe_hw_push_point (tomoe_hw_context *ctx, unsigned int x, unsigned int y)
 void
 tomoe_hw_pop_point (tomoe_hw_context *ctx)
 {
-    tomoe_stroke *stroke = NULL;
+    TomoeStroke *stroke = NULL;
 
     if (!ctx) return;
     if (!ctx->stroke_is_pending) return;
@@ -186,13 +186,13 @@ tomoe_hw_pop_point (tomoe_hw_context *ctx)
 
     stroke->point_num--;
     stroke->points = realloc (stroke->points,
-                              sizeof (tomoe_stroke) * stroke->point_num);
+                              sizeof (TomoeStroke) * stroke->point_num);
 
     if (stroke->point_num < 1 || !stroke->points) {
         ctx->glyph->stroke_num--;
         ctx->glyph->strokes
             = realloc (ctx->glyph->strokes,
-                       sizeof (tomoe_stroke) * ctx->glyph->stroke_num);
+                       sizeof (TomoeStroke) * ctx->glyph->stroke_num);
         ctx->stroke_is_pending = FALSE;
     }
 }
@@ -214,7 +214,7 @@ tomoe_hw_pop_stroke (tomoe_hw_context *ctx)
     ctx->glyph->stroke_num--;
     ctx->glyph->strokes
         = realloc (ctx->glyph->strokes,
-                   sizeof (tomoe_stroke) * ctx->glyph->stroke_num);
+                   sizeof (TomoeStroke) * ctx->glyph->stroke_num);
     ctx->stroke_is_pending = FALSE;
 }
 
@@ -226,7 +226,7 @@ tomoe_hw_get_number_of_strokes (tomoe_hw_context *ctx)
     return ctx->glyph->stroke_num;
 }
 
-const tomoe_glyph *
+const TomoeGlyph *
 tomoe_hw_get_glyph (tomoe_hw_context *ctx)
 {
     if (!ctx) return NULL;
@@ -271,7 +271,7 @@ tomoe_hw_get_canvas_height (tomoe_hw_context *ctx)
     return ctx->canvas_height;
 }
 
-const tomoe_candidate **
+const TomoeCandidate **
 tomoe_hw_get_candidates (tomoe_hw_context *ctx)
 {
     unsigned int i;
@@ -292,7 +292,7 @@ tomoe_hw_get_candidates (tomoe_hw_context *ctx)
  * Functions for normalizing handwrited glyph.
  */
 static unsigned int
-get_distance (tomoe_point *first, tomoe_point *last, tomoe_point **most)
+get_distance (TomoePoint *first, TomoePoint *last, TomoePoint **most)
 {
     /*
      * Getting distance 
@@ -304,7 +304,7 @@ get_distance (tomoe_point *first, tomoe_point *last, tomoe_point **most)
     unsigned int dist = 0;
     unsigned int max  = 0;
     unsigned int denominator;
-    tomoe_point *p;
+    TomoePoint *p;
 
     *most = NULL;
     if (first == last)
@@ -335,9 +335,9 @@ get_distance (tomoe_point *first, tomoe_point *last, tomoe_point **most)
 }
 
 static void
-get_vertex (tomoe_stroke *dest, tomoe_point *first, tomoe_point *last)
+get_vertex (TomoeStroke *dest, TomoePoint *first, TomoePoint *last)
 {
-    tomoe_point *most = NULL;
+    TomoePoint *most = NULL;
     unsigned int dist;
     unsigned int error = 300 * 300 / 400; /* 5% */ /* FIXME! */
 
@@ -379,8 +379,8 @@ normalize_strokes (tomoe_hw_context *ctx)
 
     for (i = 0; i < ctx->glyph->stroke_num; i++)
     {
-        tomoe_stroke *dest = &ctx->normalized_glyph->strokes[i];
-        tomoe_stroke *stroke = &ctx->glyph->strokes[i];
+        TomoeStroke *dest = &ctx->normalized_glyph->strokes[i];
+        TomoeStroke *stroke = &ctx->glyph->strokes[i];
 
         /* First point is always used. */
         tomoe_stroke_init (dest, 1);

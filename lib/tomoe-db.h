@@ -91,7 +91,7 @@ tomoe_dict*     tomoe_db_get_user_dict          (tomoe_db*     t_db,
  * @return The array of tomoe_candidate.
  */
 tomoe_array*    tomoe_db_search_by_strokes      (tomoe_db*     t_db,
-                                                 tomoe_glyph*  input);
+                                                 TomoeGlyph*   input);
     
 /**
  * @brief Match reading of tomoe_letter with input.

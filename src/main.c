@@ -26,17 +26,17 @@
 #include <string.h>
 #include "tomoe.h"
 
-static tomoe_glyph * read_glyph (void);
+static TomoeGlyph * read_glyph (void);
 
 #define LINE_BUF_SIZE 4096
 static char line_buf[LINE_BUF_SIZE];
 
-static tomoe_glyph *
+static TomoeGlyph *
 read_glyph (void)
 {
     char *p = NULL;
     FILE *fp = stdin;
-    tomoe_glyph *glyph = NULL;
+    TomoeGlyph *glyph = NULL;
 
     glyph = tomoe_glyph_new ();
 
@@ -44,8 +44,8 @@ read_glyph (void)
     {
         int stroke_num = 0;
         int j = 0;
-        tomoe_stroke *strk = NULL;
-        tomoe_point  *pnt  = NULL;
+        TomoeStroke *strk = NULL;
+        TomoePoint  *pnt  = NULL;
 
         if (strstr (p, "EOF") != NULL)
         {
@@ -60,7 +60,7 @@ read_glyph (void)
 
         sscanf (p + 1, "%d", &stroke_num);
         glyph->stroke_num = stroke_num;
-        strk = calloc (stroke_num, sizeof (tomoe_stroke));
+        strk = calloc (stroke_num, sizeof (TomoeStroke));
         glyph->strokes = strk;
 
         for (j = 0; j < stroke_num; j++)
@@ -73,7 +73,7 @@ read_glyph (void)
             p = strchr (p, ' ');
 
             strk[j].point_num = point_num;
-            pnt = calloc (point_num, sizeof (tomoe_point));
+            pnt = calloc (point_num, sizeof (TomoePoint));
             strk[j].points = pnt;
             for (k = 0; k < point_num; k++)
             {
@@ -108,7 +108,7 @@ main (int argc, char **argv)
 
     while (1)
     {
-        tomoe_glyph *glyph;
+        TomoeGlyph *glyph;
         tomoe_array* matched = NULL;
         int candidate_num = 0;
 
