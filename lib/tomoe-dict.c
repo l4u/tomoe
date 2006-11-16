@@ -80,23 +80,23 @@ struct _cand_priv
 {
     TomoeCandidate  *cand;
     int              index;
-    int_array       *adapted_strokes;
+    IntArray        *adapted_strokes;
 };
 
-static cand_priv *cand_priv_new             (TomoeChar*     character,
-                                             int            index);
-static void       cand_priv_free            (cand_priv     *cand_p,
-                                             TomoeBool      free_candidate);
+static cand_priv *cand_priv_new             (TomoeChar*       character,
+                                             int              index);
+static void       cand_priv_free            (cand_priv       *cand_p,
+                                             TomoeBool        free_candidate);
 
-static pointer_array
-                 *get_candidates            (const TomoeDict* t_dict,
-                                             TomoeStroke*      input_stroke,
-                                             pointer_array    *cands);
+static PointerArray
+                 *get_candidates            (const TomoeDict *t_dict,
+                                             TomoeStroke*     input_stroke,
+                                             PointerArray    *cands);
 
-static int        match_stroke_num          (const TomoeDict*    t_dict,
-                                             int            letter_index,
-                                             int            input_stroke_num,
-                                             int_array     *adapted);
+static int        match_stroke_num          (const TomoeDict *t_dict,
+                                             int              letter_index,
+                                             int              input_stroke_num,
+                                             IntArray        *adapted);
 
 void              _parse_readings           (xmlNodePtr       node,
                                              TomoeChar*       chr);
@@ -367,9 +367,9 @@ tomoe_dict_search_by_strokes (const TomoeDict* t_dict, TomoeGlyph* input)
                                           (tomoe_addref_fn)tomoe_candidate_add_ref,
                                            (tomoe_free_fn)tomoe_candidate_free);
     unsigned int i, j; 
-    int_array *matches = NULL;
-    pointer_array *cands = NULL;
-    pointer_array *first_cands = NULL;
+    IntArray *matches = NULL;
+    PointerArray *cands = NULL;
+    PointerArray *first_cands = NULL;
     unsigned int letters_num = 0;
     TomoeArray* letters = NULL;
 
@@ -405,7 +405,7 @@ tomoe_dict_search_by_strokes (const TomoeDict* t_dict, TomoeGlyph* input)
 
     for (i = 0; i < (unsigned int) input->stroke_num; i++)
     {
-        pointer_array *verbose_cands;
+        PointerArray *verbose_cands;
 
         verbose_cands = get_candidates (t_dict, &input->strokes[i], cands);
         _pointer_array_unref (cands);
@@ -416,7 +416,7 @@ tomoe_dict_search_by_strokes (const TomoeDict* t_dict, TomoeGlyph* input)
     for (i = 0; i < (unsigned int) cands->len; i++)
     {
         cand_priv *cand;
-        int_array *adapted;
+        IntArray *adapted;
         int pj;
 
         cand = cands->p[i];
@@ -810,10 +810,10 @@ match_dict_to_input (TomoeStroke *dict_stroke, TomoeStroke *input_stroke)
     return d;
 }
 
-static pointer_array *
-get_candidates (const TomoeDict* t_dict, TomoeStroke *input_stroke, pointer_array *cands)
+static PointerArray *
+get_candidates (const TomoeDict* t_dict, TomoeStroke *input_stroke, PointerArray *cands)
 {
-    pointer_array *rtn_cands;
+    PointerArray  *rtn_cands;
     cand_priv     *cand;
     int            cand_index = 0;
     TomoeChar*     lttr;
@@ -835,7 +835,7 @@ get_candidates (const TomoeDict* t_dict, TomoeStroke *input_stroke, pointer_arra
     for (cand_index = 0; cand_index < cands->len; cand_index++)
     {
         TomoeBool match_flag = FALSE;
-        int_array *adapted = NULL;
+        IntArray *adapted = NULL;
         TomoeArray* letters = t_dict->letters;
 
         cand = cands->p[cand_index];
@@ -936,7 +936,7 @@ get_candidates (const TomoeDict* t_dict, TomoeStroke *input_stroke, pointer_arra
 }
 
 static int
-match_stroke_num (const TomoeDict* t_dict, int letter_index, int input_stroke_num, int_array *adapted)
+match_stroke_num (const TomoeDict* t_dict, int letter_index, int input_stroke_num, IntArray *adapted)
 {
     TomoeArray* letters = t_dict->letters;
     int pj = 100;

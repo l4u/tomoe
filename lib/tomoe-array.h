@@ -33,39 +33,39 @@ extern "C" {
 #endif
 
 /* TODO remove from tomoe, replace by TomoeArray */
-typedef struct _int_array int_array;
+typedef struct _IntArray IntArray;
 
-struct _int_array
+struct _IntArray
 {
     int *p;
     int  len;
     int  ref_count;
 };
 
-int_array*      _int_array_new                  (void);
-int_array*      _int_array_append_data          (int_array *a, int i);
-int_array*      _int_array_ref                  (int_array *a);
-int_array*      _int_array_copy                 (int_array *a);
-int             _int_array_find_data            (int_array *a, int i);
+IntArray*       _int_array_new                  (void);
+IntArray*       _int_array_append_data          (IntArray *a, int i);
+IntArray*       _int_array_ref                  (IntArray *a);
+IntArray*       _int_array_copy                 (IntArray *a);
+int             _int_array_find_data            (IntArray *a, int i);
 
-void            _int_array_unref                (int_array *a);
+void            _int_array_unref                (IntArray *a);
 
 /* TODO remove from tomoe, replace by TomoeArray */
-typedef struct _pointer_array pointer_array;
+typedef struct _PointerArray PointerArray;
 
-struct _pointer_array
+struct _PointerArray
 {
     void **p;
     int    len;
     int    ref_count;
 };
 
-pointer_array*  _pointer_array_new              (void);
-pointer_array*  _pointer_array_append_data      (pointer_array *a, void *p);
-pointer_array*  _pointer_array_ref              (pointer_array *a);
-int             _pointer_array_find_data        (pointer_array *a, void *p);
+PointerArray*   _pointer_array_new              (void);
+PointerArray*   _pointer_array_append_data      (PointerArray *a, void *p);
+PointerArray*   _pointer_array_ref              (PointerArray *a);
+int             _pointer_array_find_data        (PointerArray *a, void *p);
 
-void            _pointer_array_unref            (pointer_array *a);
+void            _pointer_array_unref            (PointerArray *a);
 
 /**
  * @typedef typedef struct _TomoeArray TomoeArray;

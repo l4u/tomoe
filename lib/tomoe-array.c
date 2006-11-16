@@ -36,12 +36,12 @@ struct _TomoeArray
     tomoe_free_fn      free;
 };
 
-int_array *
+IntArray *
 _int_array_new (void)
 {
-    int_array *a;
+    IntArray *a;
 
-    a = calloc (sizeof (int_array), 1);
+    a = calloc (sizeof (IntArray), 1);
     a->len = 0;
     a->p = NULL;
     a->ref_count = 1;
@@ -49,8 +49,8 @@ _int_array_new (void)
     return a;
 }
 
-int_array *
-_int_array_append_data (int_array *a, int i)
+IntArray *
+_int_array_append_data (IntArray *a, int i)
 {
     if (!a)
         return NULL;
@@ -62,11 +62,11 @@ _int_array_append_data (int_array *a, int i)
     return a;
 }
 
-int_array *
-_int_array_copy (int_array *a)
+IntArray *
+_int_array_copy (IntArray *a)
 {
     int i;
-    int_array *ret;
+    IntArray *ret;
 
     ret = _int_array_new ();
 
@@ -82,8 +82,8 @@ _int_array_copy (int_array *a)
     return ret;
 }
 
-int_array *
-_int_array_ref (int_array *a)
+IntArray *
+_int_array_ref (IntArray *a)
 {
     if (!a)
         return NULL;
@@ -93,7 +93,7 @@ _int_array_ref (int_array *a)
 }
 
 void
-_int_array_unref (int_array *a)
+_int_array_unref (IntArray *a)
 {
     if (!a)
         return;
@@ -110,7 +110,7 @@ _int_array_unref (int_array *a)
 }
 
 int
-_int_array_find_data (int_array *a, int i)
+_int_array_find_data (IntArray *a, int i)
 {
     int l;
 
@@ -126,12 +126,12 @@ _int_array_find_data (int_array *a, int i)
     return -1;
 }
 
-pointer_array *
+PointerArray *
 _pointer_array_new (void)
 {
-    pointer_array *a;
+    PointerArray *a;
 
-    a = calloc (sizeof (pointer_array), 1);
+    a = calloc (sizeof (PointerArray), 1);
     a->len = 0;
     a->p = NULL;
     a->ref_count = 1;
@@ -139,8 +139,8 @@ _pointer_array_new (void)
     return a;
 }
 
-pointer_array *
-_pointer_array_append_data (pointer_array *a, void *p)
+PointerArray *
+_pointer_array_append_data (PointerArray *a, void *p)
 {
     if (!a)
         return NULL;
@@ -152,8 +152,8 @@ _pointer_array_append_data (pointer_array *a, void *p)
     return a;
 }
 
-pointer_array *
-_pointer_array_ref (pointer_array *a)
+PointerArray *
+_pointer_array_ref (PointerArray *a)
 {
     if (!a)
         return NULL;
@@ -163,7 +163,7 @@ _pointer_array_ref (pointer_array *a)
 }
 
 void
-_pointer_array_unref (pointer_array *a)
+_pointer_array_unref (PointerArray *a)
 {
     if (!a)
         return;
@@ -180,7 +180,7 @@ _pointer_array_unref (pointer_array *a)
 }
 
 int
-_pointer_array_find_data (pointer_array *a, void *p)
+_pointer_array_find_data (PointerArray *a, void *p)
 {
     int l;
     if (!a)
