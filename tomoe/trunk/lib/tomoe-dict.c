@@ -173,7 +173,7 @@ tomoe_dict_save (TomoeDict* t_dict)
     {
         xmlNodePtr charNode = xmlNewChild (root, NULL, BAD_CAST "character", NULL);
         TomoeChar* chr = (TomoeChar*)tomoe_array_get (t_dict->letters, i);
-        TomoeArray* readings = tomoe_char_get_readings (chr);
+        GPtrArray *readings = tomoe_char_get_readings (chr);
         TomoeGlyph* glyph = tomoe_char_get_glyph (chr);
         xmlNodePtr meta = tomoe_char_get_xml_meta (chr);
         const char* code = tomoe_char_get_code (chr);
@@ -197,12 +197,12 @@ tomoe_dict_save (TomoeDict* t_dict)
                 xmlNewChild (strokelistNode, NULL, BAD_CAST "s", BAD_CAST buf);
             }
         }
-        if (readings)
+        if (readings->len)
         {
-            unsigned int readings_num = tomoe_array_size (readings);
+            guint readings_num = readings->len;
             xmlNodePtr readingsNode = xmlNewChild (charNode, NULL, BAD_CAST "readings", NULL);
             for (k = 0; k < readings_num; k++)
-                xmlNewChild (readingsNode, NULL, BAD_CAST "r", tomoe_array_get (readings, k));
+                xmlNewChild (readingsNode, NULL, BAD_CAST "r", g_ptr_array_index (readings, k));
         }
         if (meta)
         {
@@ -335,20 +335,19 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
 
     for (i = 0; i < letter_num; i++)
     {
-        TomoeChar* lttr = (TomoeChar*)tomoe_array_get (t_dict->letters, i);
-        unsigned int j;
-        unsigned int reading_num;
-        TomoeArray* readings = tomoe_char_get_readings (lttr);
+        TomoeChar *lttr = (TomoeChar*)tomoe_array_get (t_dict->letters, i);
+        guint reading_num, j;
+        GPtrArray *readings = tomoe_char_get_readings (lttr);
 
         /* check for available reading data */
-        if (!readings)
+        if (!readings->len)
             continue;
 
-        reading_num = tomoe_array_size (readings);
+        reading_num = readings->len;
 
         for (j = 0; j < reading_num; j++)
         {
-            const char* r = (const char*)tomoe_array_get (readings, j);
+            const char* r = (const char*)g_ptr_array_index (readings, j);
             if (0 == strcmp (r, input))
                 tomoe_array_append (reading, lttr);
         }
@@ -372,8 +371,8 @@ _parse_readings (xmlNodePtr node, TomoeChar* chr)
     {
         if (child->type == XML_ELEMENT_NODE)
         {
-            TomoeArray* readings = tomoe_char_get_readings (chr);
-            tomoe_array_append (readings, strdup ((const char*)child->children->content));
+            GPtrArray *readings = tomoe_char_get_readings (chr);
+            g_ptr_array_add (readings, strdup ((const char*)child->children->content));
         }
     }
 }
@@ -553,12 +552,9 @@ _parse_tomoe_dict (TomoeDict* t_dict, xmlNodePtr root)
 
             if (0 == xmlStrcmp(node->name, BAD_CAST "character"))
             {
-                TomoeChar* chr = tomoe_char_new (&t_dict->dict_interface);
-                TomoeArray* readings = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
-                                                        NULL,
-                                                        (tomoe_free_fn)free);
+                TomoeChar *chr = tomoe_char_new (&t_dict->dict_interface);
+                GPtrArray *readings = g_ptr_array_new ();
                 tomoe_char_set_readings (chr, readings);
-                tomoe_array_free (readings);
 
                 _parse_character (node, chr);
                 tomoe_char_set_dict_interface (chr, &t_dict->dict_interface);

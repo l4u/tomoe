@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <glib.h>
 #include "tomoe.h"
 
 static TomoeGlyph * read_test_data ();
@@ -72,17 +73,16 @@ read_test_data ()
 void outCharInfo (TomoeChar* chr, int score)
 {
    int j;
-   TomoeArray* readings = tomoe_char_get_readings (chr);
+   GPtrArray* readings = tomoe_char_get_readings (chr);
    const char* meta = tomoe_char_get_meta (chr);
 
    fprintf (stdout, "character:%s [%d] ", tomoe_char_get_code (chr), score);
    fflush (stdout);
-   if (readings)
+   if (readings->len)
    {
-       int reading_num = tomoe_array_size (readings);
-       for (j = 0; j < reading_num; j++)
+       for (j = 0; j < readings->len; j++)
        {
-           const char* r = tomoe_array_get_const (readings, j);
+           const char* r = g_ptr_array_index (readings, j);
            fprintf (stdout, " %s", r);
        }
        fprintf (stdout, "\n");
@@ -163,15 +163,14 @@ void testUserDict (TomoeContext* ctx)
 {
     TomoeChar* chr;
     TomoeDict* myDict = tomoe_dict_new ("../data/userdb.xml", 1);
-    TomoeArray* readings = tomoe_array_new ((tomoe_compare_fn)tomoe_string_compare,
-                                             NULL,
-                                             (tomoe_free_fn)free);
+    GPtrArray* readings = g_ptr_array_new ();
+    gint i;
 
     fprintf (stdout, "dictSize %d; create character \"（＾o＾）／\" with reading \"やった\" and add to dictionary\n", 
              tomoe_dict_get_size (myDict));
     chr = tomoe_char_new (NULL);
     tomoe_char_set_code (chr, "（＾o＾）／");
-    tomoe_array_append (readings, strdup ("やった"));
+    g_ptr_array_add (readings, g_strdup ("やった"));
     tomoe_char_set_readings (chr, readings);
     tomoe_dict_add_char (myDict, chr);
 
@@ -186,8 +185,17 @@ void testUserDict (TomoeContext* ctx)
     testReadingMatch (ctx, "やった");
 
     fprintf (stdout, "update reading to \"yey\"\n");
-    tomoe_array_remove (readings, tomoe_array_find (readings, "やった"));
-    tomoe_array_append (readings, "yey");
+# warning FIXME! we need some new nice interface
+    for (i = 0; readings->len; i++) {
+    	const gchar *remove_reading = "やった";
+	gchar *reading = g_ptr_array_index (readings, i);
+	if (reading && !strcmp (reading, remove_reading))
+	{
+		g_ptr_array_remove (readings, reading);
+		g_free (reading);
+	}
+    }
+    g_ptr_array_add (readings, g_strdup ("yey"));
     fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_get_size (myDict));
     testReadingMatch (ctx, "やった");
     fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_get_size (myDict));
