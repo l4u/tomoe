@@ -96,12 +96,12 @@ tomoe_context_load_dict (TomoeContext* ctx, const char *filename, int editable)
 }
 
 void
-tomoe_context_load_dict_list (TomoeContext* ctx, TomoeArray* list)
+tomoe_context_load_dict_list (TomoeContext* ctx, const GPtrArray* list)
 {
     int i;
-    for (i = 0; i < tomoe_array_size (list); i++)
+    for (i = 0; i < list->len; i++)
     {
-        TomoeDictCfg* p = tomoe_array_get (list, i);
+        TomoeDictCfg* p = g_ptr_array_index (list, i);
         if (p->dontLoad) continue;
 
         if (p->user)

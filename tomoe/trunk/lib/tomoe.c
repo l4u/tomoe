@@ -27,10 +27,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <libxml/xmlreader.h>
+#include <glib/garray.h>
 #include "tomoe.h"
 #include "tomoe-dict.h"
 #include "tomoe-context.h"
-#include "tomoe-array.h"
 #include "tomoe-config.h"
 
 /* 
@@ -46,7 +46,7 @@ TomoeContext*
 tomoe_simple_load (const char* configFile)
 {
     TomoeContext* ctx = tomoe_context_new();
-    TomoeArray* list;
+    const GPtrArray* list;
     TomoeConfig* cfg;
 
     if (!ctx) return NULL;
