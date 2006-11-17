@@ -265,6 +265,8 @@ AC_SUBST(LIBXSLT_LIBS)
 AC_SUBST(LIBXSLT_CFLAGS)
 
 
+AC_PATH_PROG(XSLTPROC, xsltproc, none)
+
 dnl **************************************************************
 dnl Checks for libraries.
 dnl **************************************************************
