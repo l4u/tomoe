@@ -31,6 +31,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <libxml/xmlreader.h>
+#include <glib.h>
 #include <glob.h>
 
 #include "tomoe-config.h"
@@ -44,8 +45,8 @@ static const char* systemConfigFile = TOMOESYSCONFDIR "/config.xml";
 static const char* defaultConfigFile = "/config.xml";
 
 static TomoeDictCfg*   _tomoe_dict_cfg_new      (void);
-static void            _tomoe_dict_cfg_free     (TomoeDictCfg* p);
-static int             _tomoe_dict_cfg_cmp      (const TomoeDictCfg** a, const TomoeDictCfg** b);
+static void            _tomoe_dict_cfg_free     (gpointer data, gpointer user_data);
+static gint            _tomoe_dict_cfg_cmp      (gconstpointer a, gconstpointer b);
 static void            _tomoe_create_config_dir (void);
 
 struct _TomoeConfig
@@ -53,7 +54,7 @@ struct _TomoeConfig
     int          ref;
     char        *filename;
     int          useSystemDictionaries;
-    TomoeArray  *dictList;
+    GPtrArray   *dict_list;
     int          defaultUserDB;
 };
 
@@ -64,9 +65,7 @@ tomoe_config_new (const char* configFile)
 
     p           = calloc (1, sizeof (TomoeConfig));
     p->ref      = 1;
-    p->dictList = tomoe_array_new ((tomoe_compare_fn)_tomoe_dict_cfg_cmp,
-                                   NULL,
-                                   (tomoe_free_fn)_tomoe_dict_cfg_free);
+    p->dict_list = g_ptr_array_new ();
 
     /* check config file */
     if (configFile && 0 == access (configFile, F_OK | R_OK)) {
@@ -121,7 +120,8 @@ tomoe_config_free (TomoeConfig* t_config)
     if (t_config->ref <= 0)
     {
         free (t_config->filename);
-        tomoe_array_free (t_config->dictList);
+        g_ptr_array_foreach (t_config->dict_list, _tomoe_dict_cfg_free, NULL);
+        g_ptr_array_free (t_config->dict_list, FALSE);
         free (t_config);
     }
 }
@@ -180,7 +180,7 @@ tomoe_config_load (TomoeConfig* t_config)
                 /*if (access (dcfg->filename, F_OK | R_OK)) FIXME*/
                 {/*fprintf(stdout, "..access ok\n");*/
                     dcfg->writeAccess = /*access (dcfg->filename, W_OK) ? */dcfg->user/* : 0*/;
-                    tomoe_array_append (t_config->dictList, dcfg);
+                    g_ptr_array_add (t_config->dict_list, dcfg);
                 }
                 /*
                 else
@@ -192,11 +192,11 @@ tomoe_config_load (TomoeConfig* t_config)
     }
     xmlFreeDoc (doc);
 
-    tomoe_array_sort (t_config->dictList);
+    g_ptr_array_sort (t_config->dict_list, _tomoe_dict_cfg_cmp);
 
     if (defaultUserDB) {
-        for (i = 0; i < tomoe_array_size (t_config->dictList); i++) {
-            TomoeDictCfg* dcfg = (TomoeDictCfg*)tomoe_array_get (t_config->dictList, i);
+        for (i = 0; i < t_config->dict_list->len; i++) {
+            TomoeDictCfg* dcfg = (TomoeDictCfg*)g_ptr_array_index (t_config->dict_list, i);
 
             if (strcmp (defaultUserDB, dcfg->filename) == 0) {
                 t_config->defaultUserDB = i;
@@ -207,7 +207,6 @@ tomoe_config_load (TomoeConfig* t_config)
 
     /* search in TOMOEDATADIR for additional dictionaries */
     if (t_config->useSystemDictionaries) {
-        TomoeArray* systemList = tomoe_array_new (NULL, NULL, NULL);
         size_t cnt;
         glob_t glob_results;
         char **p;
@@ -217,28 +216,33 @@ tomoe_config_load (TomoeConfig* t_config)
         for (p = glob_results.gl_pathv, cnt = glob_results.gl_pathc;
              cnt; p++, cnt--)
         {
-            TomoeDictCfg* dcfg = _tomoe_dict_cfg_new ();
-            char* slash;
+            gchar *filename;
+            gint i;
+            gboolean dup = FALSE;
 
-            dcfg->writeAccess = 0;
-            dcfg->dontLoad = 0;
-            dcfg->user = 0;
-            slash = strrchr ( *p, '/');
-            if (slash) {
-                dcfg->filename = strdup (slash + 1);
-                if (-1 == tomoe_array_find (t_config->dictList, dcfg)) {
-                    tomoe_array_append (systemList, dcfg);
-                    continue;
+            filename = g_path_get_basename (*p);
+
+            for (i = 0; i < t_config->dict_list->len; i++) {
+                TomoeDictCfg *dcfg = g_ptr_array_index (t_config->dict_list, i);
+                if (!strcmp (dcfg->filename, filename)) {
+                    dup = TRUE;
                 }
             }
 
-            _tomoe_dict_cfg_free (dcfg);
+            if (!dup ) {
+                TomoeDictCfg* dcfg = _tomoe_dict_cfg_new ();
+                dcfg->writeAccess = 0;
+                dcfg->dontLoad = 0;
+                dcfg->user = 0;
+                dcfg->filename = filename;
+                g_ptr_array_add (t_config->dict_list, dcfg);
+            } else {
+                g_free (filename);
+            }
         }
         globfree (&glob_results);
 
-        tomoe_array_merge (t_config->dictList, systemList);
-        tomoe_array_sort (t_config->dictList);
-        tomoe_array_free (systemList);
+        g_ptr_array_sort (t_config->dict_list, _tomoe_dict_cfg_cmp);
     }
 }
 
@@ -262,9 +266,9 @@ tomoe_config_save (TomoeConfig *cfg)
             xmlNewChild (root, NULL, BAD_CAST "useSystemDictionaries", NULL);
 
 
-        for (i = 0; i < tomoe_array_size (cfg->dictList); i++) {
+        for (i = 0; i < cfg->dict_list->len; i++) {
             xmlNodePtr node = xmlNewChild (root, NULL, BAD_CAST "dictionary", NULL);
-            TomoeDictCfg *dict = (TomoeDictCfg*)tomoe_array_get (cfg->dictList, i);
+            TomoeDictCfg *dict = (TomoeDictCfg*)g_ptr_array_index (cfg->dict_list, i);
 
             xmlNewProp (node, BAD_CAST "file", BAD_CAST dict->filename);
             if (!dict->user)
@@ -278,11 +282,11 @@ tomoe_config_save (TomoeConfig *cfg)
     }
 }
 
-TomoeArray*
+const GPtrArray*
 tomoe_config_get_dict_list (TomoeConfig* t_config)
 {
     if (!t_config) return NULL;
-    return tomoe_array_add_ref (t_config->dictList);
+    return t_config->dict_list;
 }
 
 int
@@ -302,18 +306,22 @@ _tomoe_dict_cfg_new (void)
 }
 
 static void
-_tomoe_dict_cfg_free (TomoeDictCfg* p)
+_tomoe_dict_cfg_free (gpointer data, gpointer user_data)
 {
-    if (!p) return;
+    TomoeDictCfg *p = (TomoeDictCfg*) data;
+    if (!data) return;
     free (p->filename);
     free (p);
 }
 
 static int
-_tomoe_dict_cfg_cmp (const TomoeDictCfg** a, const TomoeDictCfg** b)
+_tomoe_dict_cfg_cmp (gconstpointer a, gconstpointer b)
 {
-    return (*a)->user == (*b)->user ? strcmp((*a)->filename, (*b)->filename) 
-                                    : (*b)->user - (*a)->user;
+    TomoeDictCfg *ca, *cb;
+    ca = (TomoeDictCfg*) a;
+    cb = (TomoeDictCfg*) b;
+    return ca->user == cb->user ? strcmp(ca->filename, cb->filename) 
+                                : cb->user - ca->user;
 }
 
 static void

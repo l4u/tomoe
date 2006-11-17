@@ -70,12 +70,12 @@ void            tomoe_context_free                   (TomoeContext       *ctx);
  * @return The TomoeContext.
  */
 void            tomoe_context_add_dict               (TomoeContext       *ctx,
-                                                      TomoeDict     *dict);
+                                                      TomoeDict          *dict);
 void            tomoe_context_load_dict              (TomoeContext       *ctx,
-                                                      const char    *filename,
-                                                      int            editable);
+                                                      const char         *filename,
+                                                      int                 editable);
 void            tomoe_context_load_dict_list         (TomoeContext       *ctx,
-                                                      TomoeArray    *list);
+                                                      const GPtrArray    *list);
 TomoeArray     *tomoe_context_get_dict_list          (TomoeContext       *ctx);
 void            tomoe_context_save                   (TomoeContext       *ctx);
 

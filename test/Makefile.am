@@ -27,6 +27,7 @@ AM_CPPFLAGS = \
 	-DTOMOEDATADIR=\""$(top_srcdir)"/data\"
 
 INCLUDES = \
+	$(GLIB_CFLAGS) \
 	-I$(top_srcdir)/lib \
 	-I$(top_builddir)/lib
 
@@ -36,6 +37,7 @@ noinst_PROGRAMS = \
 testtomoe_SOURCES = \
 	testtomoe.c
 testtomoe_LDADD = \
+	$(GLIB_LIBS) \
 	$(top_builddir)/lib/libtomoe.la \
 	-lm
 
