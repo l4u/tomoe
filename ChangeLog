@@ -1,3 +1,7 @@
+2006-11-17  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-recognizer.[ch]: added missing files.
+
 2006-11-16  Kouhei Sutou  <kou@cozmixng.org>
 
 	* configure.in: added gmodule check.
