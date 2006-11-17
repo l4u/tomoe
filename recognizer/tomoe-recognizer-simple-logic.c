@@ -663,7 +663,7 @@ match_stroke_num (TomoeDict* dict, int letter_index, int input_stroke_num, IntAr
     return pj;
 }
 
-IntArray *
+static IntArray *
 _int_array_new (void)
 {
     IntArray *a;
@@ -676,7 +676,7 @@ _int_array_new (void)
     return a;
 }
 
-IntArray *
+static IntArray *
 _int_array_append_data (IntArray *a, int i)
 {
     if (!a)
@@ -689,7 +689,7 @@ _int_array_append_data (IntArray *a, int i)
     return a;
 }
 
-IntArray *
+static IntArray *
 _int_array_copy (IntArray *a)
 {
     int i;
@@ -708,7 +708,7 @@ _int_array_copy (IntArray *a)
     return ret;
 }
 
-IntArray *
+static IntArray *
 _int_array_ref (IntArray *a)
 {
     if (!a)
@@ -718,7 +718,7 @@ _int_array_ref (IntArray *a)
     return a;
 }
 
-void
+static void
 _int_array_unref (IntArray *a)
 {
     if (!a)
@@ -734,7 +734,7 @@ _int_array_unref (IntArray *a)
     }
 }
 
-int
+static int
 _int_array_find_data (IntArray *a, int i)
 {
     int l;
@@ -750,7 +750,7 @@ _int_array_find_data (IntArray *a, int i)
     return -1;
 }
 
-PointerArray *
+static PointerArray *
 _pointer_array_new (void)
 {
     PointerArray *a;
@@ -763,7 +763,7 @@ _pointer_array_new (void)
     return a;
 }
 
-PointerArray *
+static PointerArray *
 _pointer_array_append_data (PointerArray *a, void *p)
 {
     if (!a)
@@ -776,7 +776,7 @@ _pointer_array_append_data (PointerArray *a, void *p)
     return a;
 }
 
-PointerArray *
+static PointerArray *
 _pointer_array_ref (PointerArray *a)
 {
     if (!a)
@@ -786,7 +786,7 @@ _pointer_array_ref (PointerArray *a)
     return a;
 }
 
-void
+static void
 _pointer_array_unref (PointerArray *a)
 {
     if (!a)
@@ -802,7 +802,7 @@ _pointer_array_unref (PointerArray *a)
     }
 }
 
-int
+static int
 _pointer_array_find_data (PointerArray *a, void *p)
 {
     int l;
