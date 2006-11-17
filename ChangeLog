@@ -1,5 +1,9 @@
 2006-11-17  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
+	* lib/tomoe-context.c: db -> ctx.
+
+2006-11-17  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
 	* recognizer/tomoe-recognizer-simple-logic.c: append static.
 
 2006-11-17  Hiroyuki Ikezoe  <poincare@ikezoe.net>
