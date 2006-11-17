@@ -32,41 +32,6 @@
 extern "C" {
 #endif
 
-/* TODO remove from tomoe, replace by TomoeArray */
-typedef struct _IntArray IntArray;
-
-struct _IntArray
-{
-    int *p;
-    int  len;
-    int  ref_count;
-};
-
-IntArray       *_int_array_new                  (void);
-IntArray       *_int_array_append_data          (IntArray *a, int i);
-IntArray       *_int_array_ref                  (IntArray *a);
-IntArray       *_int_array_copy                 (IntArray *a);
-int             _int_array_find_data            (IntArray *a, int i);
-
-void            _int_array_unref                (IntArray *a);
-
-/* TODO remove from tomoe, replace by TomoeArray */
-typedef struct _PointerArray PointerArray;
-
-struct _PointerArray
-{
-    void **p;
-    int    len;
-    int    ref_count;
-};
-
-PointerArray   *_pointer_array_new              (void);
-PointerArray   *_pointer_array_append_data      (PointerArray *a, void *p);
-PointerArray   *_pointer_array_ref              (PointerArray *a);
-int             _pointer_array_find_data        (PointerArray *a, void *p);
-
-void            _pointer_array_unref            (PointerArray *a);
-
 /**
  * @typedef typedef struct _TomoeArray TomoeArray;
  *

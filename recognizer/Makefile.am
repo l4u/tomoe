@@ -32,7 +32,7 @@ INCLUDES = $(GLIB_CFLAGS)
 recognizer_LTLIBRARIES = libsimple.la
 
 libsimple_la_SOURCES = \
-	tomoe-recognizer-simple.c
+	tomoe-recognizer-simple.c tomoe-recognizer-simple-logic.c
 
 libsimple_la_LDFLAGS =						\
   -version-info $(LT_VERSION_INFO)				\
