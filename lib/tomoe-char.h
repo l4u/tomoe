@@ -34,7 +34,7 @@ extern "C" {
 
 #include "tomoe-data-types.h"
 #include "tomoe-object.h"
-#include "tomoe-array.h"
+#include <glib/garray.h>
 
 typedef struct _TomoePoint     TomoePoint;
 typedef struct _TomoeStroke    TomoeStroke;
@@ -163,23 +163,23 @@ TomoeChar      *tomoe_char_add_ref              (TomoeChar*     t_char);
  * @brief Decrease reference count and free if zero.
  * @param t_char - Pointer to the tomoe_letter struct to free.
  */
-void            tomoe_char_free                 (TomoeChar*     t_char);
+void             tomoe_char_free                 (TomoeChar*     t_char);
 
-const char     *tomoe_char_get_code             (const TomoeChar *t_char);
-void            tomoe_char_set_code             (TomoeChar*     t_char,
-                                                 const char*    code);
-TomoeArray     *tomoe_char_get_readings         (TomoeChar*     t_char);
-void            tomoe_char_set_readings         (TomoeChar*     t_char,
-                                                 TomoeArray*    readings);
-TomoeGlyph     *tomoe_char_get_glyph            (TomoeChar*     t_char);
-void            tomoe_char_set_glyph            (TomoeChar*     t_char,
-                                                 TomoeGlyph*    glyph);
-const char     *tomoe_char_get_meta             (TomoeChar*     t_char);
-void            tomoe_char_set_dict_interface   (TomoeChar*     chr,
-                                                 tomoe_dict_interface *parent);
-TomoeBool       tomoe_char_is_editable          (TomoeChar*     chr);
-TomoeBool       tomoe_char_is_modified          (TomoeChar*     chr);
-void            tomoe_char_set_modified         (TomoeChar*     chr,
+const char      *tomoe_char_get_code             (const TomoeChar *t_char);
+void             tomoe_char_set_code             (TomoeChar*     t_char,
+                                                  const char*    code);
+GPtrArray       *tomoe_char_get_readings         (TomoeChar*     t_char);
+void             tomoe_char_set_readings         (TomoeChar*     t_char,
+                                                  GPtrArray*     readings);
+TomoeGlyph      *tomoe_char_get_glyph            (TomoeChar*     t_char);
+void             tomoe_char_set_glyph            (TomoeChar*     t_char,
+                                                  TomoeGlyph*    glyph);
+const char      *tomoe_char_get_meta             (TomoeChar*     t_char);
+void             tomoe_char_set_dict_interface   (TomoeChar*     chr,
+                                                  tomoe_dict_interface *parent);
+TomoeBool        tomoe_char_is_editable          (TomoeChar*     chr);
+TomoeBool        tomoe_char_is_modified          (TomoeChar*     chr);
+void             tomoe_char_set_modified         (TomoeChar*     chr,
                                                  TomoeBool      modified);
 
 #ifdef TOMOE_CHAR__USE_XML_METHODS
