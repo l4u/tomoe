@@ -20,49 +20,30 @@
  *  $Id$
  */
 
-#include <stdio.h>
-#include <math.h>
+/**
+ *  @file tomoe-recognizer-simple-logic.h
+ *  @brief Provide a set of API to recognize handwriting.
+ */
 
-#include "tomoe-recognizer-impl.h"
-#include "tomoe-recognizer-simple-logic.h"
+#ifndef __TOMOE_RECOGNIZER_SIMPLE_LOGIC_IMPL_H__
+#define __TOMOE_RECOGNIZER_SIMPLE_LOGIC_IMPL_H__
 
-typedef struct _TomoeRecognizerSimple TomoeRecognizerSimple;
+#ifdef	__cplusplus
+extern "C" {
+#endif
 
-struct _TomoeRecognizerSimple
-{
-    int ref;
-};
+#include "tomoe-dict.h"
 
+TomoeArray *_tomoe_recognizer_simple_get_candidates (void       *context, 
+                                                     TomoeDict  *dict,
+                                                     TomoeGlyph *input);
 
-void *
-tomoe_recognizer_impl_new (void)
-{
-    TomoeRecognizerSimple *recognizer;
-    recognizer = calloc (1, sizeof (TomoeRecognizerSimple));
-    if (!recognizer) return NULL;
-
-    recognizer->ref = 1;
-    return recognizer;
+#ifdef	__cplusplus
 }
+#endif
 
-void
-tomoe_recognizer_impl_free (void *context)
-{
-    TomoeRecognizerSimple *recognizer = context;
-    if (!recognizer) return;
-    free (recognizer);
-}
+#endif /* __TOMOE_RECOGNIZER_SIMPLE_LOGIC_H__ */
 
-TomoeArray *
-tomoe_recognizer_impl_search (void *context, TomoeDict *dict, TomoeGlyph *input)
-{
-    /* TomoeRecognizerSimple *recognizer = context; */
-    TomoeArray* matched;
-
-    matched = _tomoe_recognizer_simple_get_candidates (context, dict, input);
-
-    return matched;
-}
 /*
 vi:ts=4:nowrap:ai:expandtab
 */
