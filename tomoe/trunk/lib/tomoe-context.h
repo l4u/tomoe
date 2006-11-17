@@ -77,7 +77,7 @@ void            tomoe_context_load_dict              (TomoeContext       *ctx,
 void            tomoe_context_load_dict_list         (TomoeContext       *ctx,
                                                       TomoeArray    *list);
 TomoeArray     *tomoe_context_get_dict_list          (TomoeContext       *ctx);
-void            tomoe_context_save                   (TomoeContext       *db);
+void            tomoe_context_save                   (TomoeContext       *ctx);
 
 #if 0
 TomoeDict      *tomoe_context_get_user_dict          (TomoeContext       *ctx,

@@ -127,15 +127,15 @@ tomoe_context_get_dict_list (TomoeContext* ctx)
 }
 
 void
-tomoe_context_save (TomoeContext *db)
+tomoe_context_save (TomoeContext *ctx)
 {
     int i;
 
-    if (!db) return;
+    if (!ctx) return;
 
-    for (i = 0; i < tomoe_array_size (db->dicts); i++)
+    for (i = 0; i < tomoe_array_size (ctx->dicts); i++)
     {
-        TomoeDict *dict = (TomoeDict*)tomoe_array_get (db->dicts, i);
+        TomoeDict *dict = (TomoeDict*)tomoe_array_get (ctx->dicts, i);
         if (tomoe_dict_is_modified (dict))
             tomoe_dict_save (dict);
     }
