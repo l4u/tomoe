@@ -1,3 +1,9 @@
+2006-11-17  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* lib/tomoe-array.[ch]: _IntArray and _PointerArray are moved into
+	tomoe-recognizer-simple-logic.c:
+	* recognizer/tomoe-recognizer-simple-logic.[ch]: New files.
+
 2006-11-17  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-recognizer.[ch]: added missing files.
