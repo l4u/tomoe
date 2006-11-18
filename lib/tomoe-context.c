@@ -146,39 +146,48 @@ tomoe_context_save (TomoeContext *ctx)
     }
 }
 
-TomoeArray*
-tomoe_context_search_by_strokes (TomoeContext* ctx, TomoeGlyph* input)
-{
-    guint i, num;
-    TomoeArray* tmp;
-    TomoeArray* matched;
-    TomoeDict* dict;
-
-    if (!ctx) return tomoe_array_new (NULL, NULL, NULL);
-    num = ctx->dicts->len;
-    if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
-
-    dict = (TomoeDict*)g_ptr_array_index (ctx->dicts, 0);
-    tmp = tomoe_recognizer_search(ctx->recognizer, dict, input);
-    matched = tomoe_array_clone_empty (tmp);
-    for (i = 0; i < num; i++) {
-        TomoeArray* tmp;
-        dict = (TomoeDict*)g_ptr_array_index (ctx->dicts, i);
-        tmp = tomoe_recognizer_search(ctx->recognizer, dict, input);
-        tomoe_array_merge (matched, tmp);
-        tomoe_array_free (tmp);
-    }
-    tomoe_array_sort (matched);
-
-    return matched;
-}
-
 #warning FIXME!
 static void
 ptr_array_merge_func (gpointer data, gpointer user_data)
 {
     GPtrArray *p = (GPtrArray *) user_data;
     g_ptr_array_add (p, data);
+}
+
+static gint
+_candidate_compare_func (gconstpointer a, gconstpointer b)
+{
+    return tomoe_candidate_compare (a, b);
+}
+
+GPtrArray*
+tomoe_context_search_by_strokes (TomoeContext* ctx, TomoeGlyph* input)
+{
+    guint i, num;
+    TomoeDict* dict;
+    GPtrArray* matched = g_ptr_array_new ();
+
+    if (!ctx) return matched;
+    num = ctx->dicts->len;
+    if (num == 0) return matched;
+
+    for (i = 0; i < num; i++) {
+        gint tmp_len, j;
+        TomoeArray* tmp;
+        dict = (TomoeDict*)g_ptr_array_index (ctx->dicts, i);
+        tmp = tomoe_recognizer_search(ctx->recognizer, dict, input);
+	if (!tmp) continue;
+
+        tmp_len = tomoe_array_size (tmp);
+        for (j = 0; j < tmp_len; j++) {
+	    TomoeCandidate *data = tomoe_array_get (tmp, j);
+	    g_ptr_array_add (matched, data);
+	}
+        tomoe_array_free (tmp);
+    }
+    g_ptr_array_sort (matched, _candidate_compare_func);
+
+    return matched;
 }
 
 GPtrArray*
