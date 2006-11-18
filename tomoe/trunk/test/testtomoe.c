@@ -96,7 +96,7 @@ void testStrokeMatch (TomoeContext* ctx)
 {
     TomoeGlyph *test_glyph = NULL;
     int i, candidate_num = 0;
-    TomoeArray* matched = NULL;
+    GPtrArray* matched = NULL;
 
     test_glyph = read_test_data ();
 
@@ -104,7 +104,7 @@ void testStrokeMatch (TomoeContext* ctx)
         goto END;
 
     matched = tomoe_context_search_by_strokes (ctx, test_glyph);
-    candidate_num = tomoe_array_size (matched);
+    candidate_num = matched->len;
 
     if (candidate_num != 0)
     {
@@ -118,18 +118,18 @@ void testStrokeMatch (TomoeContext* ctx)
                  candidate_num);
         for (i = 0; i < candidate_num; i++)
         {
-            const TomoeCandidate* p = (const TomoeCandidate*)tomoe_array_get_const (matched, i);
+            const TomoeCandidate* p = (const TomoeCandidate*) g_ptr_array_index (matched, i);
             outCharInfo (p->character, p->score);
         }
     }
     else
         fprintf (stdout, "No Candidate found!\n");
-
+#warning FIXME! plug memory leak!
 END:
     if (!test_glyph)
         tomoe_glyph_free (test_glyph);
     if (matched)
-        tomoe_array_free (matched);
+        g_ptr_array_free (matched, TRUE);
 }
 
 void testReadingMatch (TomoeContext* ctx, const char* reading)

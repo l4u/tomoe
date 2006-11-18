@@ -109,7 +109,7 @@ main (int argc, char **argv)
     while (1)
     {
         TomoeGlyph *glyph;
-        TomoeArray* matched = NULL;
+        GPtrArray* matched = NULL;
         int candidate_num = 0;
 
         glyph = read_glyph ();
@@ -118,7 +118,7 @@ main (int argc, char **argv)
             break;
 
         matched = tomoe_context_search_by_strokes (ctx, glyph);
-        candidate_num = tomoe_array_size (matched);
+        candidate_num = matched->len;
 
         if (candidate_num != 0 && matched)
         {
@@ -137,7 +137,7 @@ main (int argc, char **argv)
         }
 
         tomoe_glyph_free (glyph);
-        tomoe_array_free (matched);
+        g_ptr_array_free (matched, TRUE);
     }
 
     tomoe_context_free (ctx);
