@@ -340,7 +340,7 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
 
         /* check for available reading data */
         if (!readings->len) {
-	    g_ptr_array_free (readings, TRUE);
+            g_ptr_array_free (readings, TRUE);
             continue;
 	}
 
@@ -351,7 +351,7 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
             if (0 == strcmp (r, input))
                 g_ptr_array_add (reading, lttr);
         }
-	g_ptr_array_free (readings, TRUE);
+        g_ptr_array_free (readings, TRUE);
     }
 
     return reading;
@@ -372,8 +372,8 @@ _parse_readings (xmlNodePtr node, TomoeChar* chr)
         if (child->type == XML_ELEMENT_NODE) {
             GPtrArray *readings = tomoe_char_get_readings (chr);
             g_ptr_array_add (readings, strdup ((const char*)child->children->content));
-	    tomoe_char_set_readings (chr, readings);
-	    g_ptr_array_free (readings, TRUE);
+            tomoe_char_set_readings (chr, readings);
+            g_ptr_array_free (readings, TRUE);
         }
     }
 }
@@ -535,7 +535,7 @@ _parse_tomoe_dict (TomoeDict* t_dict, xmlNodePtr root)
                 free (path);
             } else if (0 == xmlStrcmp(prop->name, BAD_CAST "name")) {
                 t_dict->name = strdup ((const char*) prop->children->content);
-	    }
+            }
         }
 
         /* read character nodes */

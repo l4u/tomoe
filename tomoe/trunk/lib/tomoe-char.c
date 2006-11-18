@@ -235,7 +235,7 @@ tomoe_char_set_readings (TomoeChar* t_char, GPtrArray* readings)
 
     if (t_char->readings) {
         g_ptr_array_free (t_char->readings, TRUE);
-	t_char->readings = NULL;
+        t_char->readings = NULL;
     }
 
     t_char->readings = g_ptr_array_new ();
