@@ -124,8 +124,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
     if (!letters) return NULL;
     letters_num = letters->len;
 
-    for (i = 0; i < letters_num; i++)
-    {
+    for (i = 0; i < letters_num; i++) {
         TomoeChar *p = (TomoeChar *) g_ptr_array_index (letters, i);
         cand_priv *cand = NULL;
 
@@ -145,8 +144,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
     cands = first_cands;
     first_cands = _pointer_array_ref(first_cands);
 
-    for (i = 0; i < (unsigned int)input->stroke_num; i++)
-    {
+    for (i = 0; i < (unsigned int)input->stroke_num; i++) {
         PointerArray *verbose_cands;
 
         verbose_cands = get_candidates(dict, &input->strokes[i], cands);
@@ -155,8 +153,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
     }
 
     matches = _int_array_new();
-    for (i = 0; i < (unsigned int)cands->len; i++)
-    {
+    for (i = 0; i < (unsigned int)cands->len; i++) {
         cand_priv *cand;
         IntArray *adapted;
         int pj;
@@ -171,35 +168,28 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
         if (pj != 0)
             cand->cand->score = cand->cand->score / pj;
 
-        if (_int_array_find_data(matches, cand->index) < 0)
-        {
+        if (_int_array_find_data(matches, cand->index) < 0) {
             const TomoeChar *a = g_ptr_array_index (letters, cand->index);
             TomoeBool b = TRUE;
 
-            for (j = 0; j < (unsigned int)matches->len; j++)
-            {
+            for (j = 0; j < (unsigned int)matches->len; j++) {
                 const TomoeChar *b = g_ptr_array_index (letters, matches->p[j]);
-                if (!tomoe_char_compare(a, b))
-                {
+                if (!tomoe_char_compare(a, b)) {
                     b = FALSE;
                     break;
                 }
             }
-            if (b)
-            {
+            if (b) {
                 matches = _int_array_append_data(matches, cand->index);
             }
         }
     }
 
-    if (cands->len > 0)
-    {
-        for (i = 0; i < (unsigned int)cands->len; i++)
-        {
+    if (cands->len > 0) {
+        for (i = 0; i < (unsigned int)cands->len; i++) {
             int index = ((cand_priv *)cands->p[i])->index;
 
-            if (_int_array_find_data(matches, index) >= 0)
-            {
+            if (_int_array_find_data(matches, index) >= 0) {
                 TomoeCandidate* cand = tomoe_candidate_new();
                 cand->character = tomoe_char_add_ref(((cand_priv*)cands->p[i])->cand->character);
                 cand->score     = ((cand_priv *)cands->p[i])->cand->score;
@@ -214,8 +204,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
 
     _pointer_array_unref (cands);
 
-    for (i = 0; i < (unsigned int) first_cands->len; i++)
-    {
+    for (i = 0; i < (unsigned int) first_cands->len; i++) {
         cand_priv_free (first_cands->p[i], TRUE);
     }
 
@@ -241,8 +230,7 @@ stroke_calculate_metrics (TomoeStroke *strk, tomoe_metric **met)
 
     m = calloc (strk->point_num - 1, sizeof (tomoe_metric));
  
-    for (i = 0; i < strk->point_num - 1; i++)
-    {
+    for (i = 0; i < strk->point_num - 1; i++) {
         p = strk->points[i];
         q = strk->points[i + 1];
         m[i].a     = q.x - p.x;
@@ -348,61 +336,47 @@ match_input_to_dict (TomoeStroke *input_stroke, TomoeStroke *dict_stroke)
      * if the length between last point and second last point is lesser than
      * LIMIT_LENGTH, the last itinerary assumes "hane".
      */
-    if (sq_dist(&i_pts[i_nop - 1], &i_pts[i_nop - 2]) < LIMIT_LENGTH)
-    {
+    if (sq_dist(&i_pts[i_nop - 1], &i_pts[i_nop - 2]) < LIMIT_LENGTH) {
         i_k_end = i_nop - 2;
-    }
-    else
-    {
+    } else {
         i_k_end = i_nop - 1;
     }
   
     m = 0;
-    for (i_k = 1; i_k < i_k_end; i_k++)
-    {
+    for (i_k = 1; i_k < i_k_end; i_k++) {
         i_pt = i_pts[i_k];
         i_me = i_met[i_k];
-        for (d_k = m; d_k < d_nop; d_k++)
-        {
+        for (d_k = m; d_k < d_nop; d_k++) {
             d_pt = d_pts[d_k];
             d = sq_dist(&i_pt, &d_pt);
-            if (d_k < d_nop - 1)
-            {
+            if (d_k < d_nop - 1) {
                 d_me = d_met[d_k];
                 if (d < LIMIT_LENGTH &&
-                    abs (i_me.angle - d_me.angle) < M_PI_2)
-                {
+                    abs (i_me.angle - d_me.angle) < M_PI_2) {
                     m = d_k;
                     ret += d;
                     break;
-                }
-                else
-                {
+                } else {
                     /* Distance between each characteristic points and line */
                     r = d_me.a * i_pt.x + d_me.b * i_pt.y - d_me.e;
                     d = abs (d_me.a * i_pt.y - d_me.b * i_pt.x - d_me.c);
                     if (0 <= r && r <= d_me.d * d_me.d &&
                         d < LIMIT_LENGTH * d_me.d &&
-                        abs (i_me.angle - d_me.angle) < M_PI_2)
-                    {
+                        abs (i_me.angle - d_me.angle) < M_PI_2) {
                         m = d_k;
                         ret += d;
                         break;
                     }
                 }
-            }
-            else
-            {
-                if (d < LIMIT_LENGTH)
-                {
+            } else {
+                if (d < LIMIT_LENGTH) {
                     m = d_k;
                     ret += d;
                     break;
                 }
             }
         }
-        if (d_k >= d_nop)
-        {
+        if (d_k >= d_nop) {
             free (i_met);
             free (d_met);
             return -1;
@@ -445,60 +419,46 @@ match_dict_to_input (TomoeStroke *dict_stroke, TomoeStroke *input_stroke)
      * if the length between last point and second last point is lesser than
      * LIMIT_LENGTH, the last itineraryassumes "hane".
      */
-    if (sq_dist (&d_pts[d_nop - 1], &d_pts[d_nop - 2]) < LIMIT_LENGTH)
-    {
+    if (sq_dist (&d_pts[d_nop - 1], &d_pts[d_nop - 2]) < LIMIT_LENGTH) {
         d_k_end = d_nop - 2;
-    }
-    else
-    {
+    } else {
         d_k_end = d_nop - 1;
     }
     m = 0;
-    for (d_k = 1; d_k < d_k_end - 1; d_k++) /* note difference: -1 */
-    {
+    for (d_k = 1; d_k < d_k_end - 1; d_k++) /* note difference: -1 */ {
         d_pt = d_pts[d_k];
         d_me = d_met[d_k];
-        for (i_k = m; i_k < i_nop; i_k++)
-        {
+        for (i_k = m; i_k < i_nop; i_k++) {
             i_pt = i_pts[i_k];
             d = sq_dist (&d_pt, &i_pt);
-            if (i_k < i_nop - 1)
-            {
+            if (i_k < i_nop - 1) {
                 i_me = i_met[i_k];
                 if (d < LIMIT_LENGTH &&
-                    abs (d_me.angle - i_me.angle) < M_PI_2)
-                {
+                    abs (d_me.angle - i_me.angle) < M_PI_2) {
                     m = i_k;
                     ret += d;
                     break;
-                }
-                else
-                {
+                } else {
                     /* Distance between each characteristic points and line */
                     r = i_me.a * d_pt.x + i_me.b * d_pt.y - i_me.e;
                     d = abs (i_me.a * d_pt.y - i_me.b * d_pt.x - i_me.c);
                     if (0 <= r && r <= i_me.d * i_me.d &&
                         d < LIMIT_LENGTH * i_me.d &&
-                        abs (d_me.angle - i_me.angle) < M_PI_2)
-                    {
+                        abs (d_me.angle - i_me.angle) < M_PI_2) {
                         m = i_k;
                         ret += d;
                         break;
                     }
                 }
-            }
-            else
-            {
-                if (d < LIMIT_LENGTH)
-                {
+            } else {
+                if (d < LIMIT_LENGTH) {
                     m = i_k;
                     ret += d;
                     break;
                 }
             }
         }
-        if (i_k >= i_nop)
-        {
+        if (i_k >= i_nop) {
             free (i_met);
             free (d_met);
             return -1;
@@ -531,8 +491,7 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
     i_pts = input_stroke->points;
     stroke_calculate_metrics (input_stroke, &i_met);
 
-    for (cand_index = 0; cand_index < cands->len; cand_index++)
-    {
+    for (cand_index = 0; cand_index < cands->len; cand_index++) {
         TomoeBool match_flag = FALSE;
         IntArray *adapted = NULL;
         const GPtrArray *letters = tomoe_dict_get_letters(dict);
@@ -543,15 +502,13 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
 
         for (strk_index = 0;
              strk_index < tomoe_char_get_glyph (lttr)->stroke_num;
-             strk_index++)
-        {
+             strk_index++) {
             int d1 = 0, d2 = 0;
             int d3 = 0, d4 = 0;
             int score1 = 0, score2 = 0;
             int score3 = 0;
 
-            if (_int_array_find_data (adapted, strk_index) >= 0)
-            {
+            if (_int_array_find_data (adapted, strk_index) >= 0) {
                 continue;
             }
 
@@ -571,8 +528,7 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
             cand->cand->score += score3;
             if (d1 > LIMIT_LENGTH ||
                 d2 > LIMIT_LENGTH ||
-                abs (d_nop - i_nop) > 3)
-            {
+                abs (d_nop - i_nop) > 3) {
                 free (d_met);
                 continue;
             }
@@ -582,8 +538,7 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
             /* threshold is (angle of bigining line) % 45[degree] (PI/4)*/
             if (d1 > LIMIT_LENGTH &&
                 d2 > LIMIT_LENGTH &&
-                abs (d_met[0].angle - i_met[0].angle) > M_PI_4)
-            {
+                abs (d_met[0].angle - i_met[0].angle) > M_PI_4) {
                 free (d_met);
                 continue;
             }
@@ -593,8 +548,7 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
              * (Compare handwriting data with dictionary data)
              */
             score1 = match_input_to_dict (input_stroke, &dict_stroke);
-            if (score1 < 0)
-            {
+            if (score1 < 0) {
                 free (d_met);
                 cand->cand->score = cand->cand->score * 2;
                 continue;
@@ -606,8 +560,7 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
              * (Compare dictionary data with handwriting data)
              */
             score2 = match_dict_to_input (&dict_stroke, input_stroke);
-            if (score2 < 0)
-            {
+            if (score2 < 0) {
                 free (d_met);
                 cand->cand->score = cand->cand->score * 2;
                 continue;
@@ -622,8 +575,7 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
             free (d_met);
         }
 
-        if (match_flag)
-        {
+        if (match_flag) {
             _pointer_array_append_data (rtn_cands, cand);
         }
         _int_array_unref (adapted);
@@ -648,17 +600,14 @@ match_stroke_num (TomoeDict* dict, int letter_index, int input_stroke_num, IntAr
 
     adapted_num = adapted->len;
 
-    if (d_stroke_num - input_stroke_num >= 3)
-    {
+    if (d_stroke_num - input_stroke_num >= 3) {
         int i, j;
 
         pj = 100;
 
-        for (i = 0; i < adapted_num; i++)
-        {
+        for (i = 0; i < adapted_num; i++) {
             j = adapted->p[i];
-            if (j - pj >= 3)
-            {
+            if (j - pj >= 3) {
                 return -1;
             }
             pj = j;
