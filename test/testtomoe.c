@@ -30,22 +30,17 @@ read_test_data ()
 
     test_glyph = calloc (1, sizeof (TomoeGlyph));
 
-    while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL)
-    {
-        if (strstr (p, "EOF") != NULL)
-        {
+    while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL) {
+        if (strstr (p, "EOF") != NULL) {
             return NULL;
         }
 
-        if (p[0] != ':')
-        {
-            continue;
-        }
+        if (p[0] != ':') continue;
+
         sscanf (p + 1, "%d", &stroke_num);
         strk = calloc (stroke_num, sizeof (TomoeStroke));
 
-        for (j = 0; j < stroke_num; j++)
-        {
+        for (j = 0; j < stroke_num; j++) {
             p = fgets (line_buf, LINE_BUF_SIZE, fp);
             sscanf (p, "%d", &point_num);
             p = strchr (p, ' ');
@@ -53,8 +48,7 @@ read_test_data ()
             strk[j].point_num = point_num;
             pnt = calloc (point_num, sizeof (TomoePoint));
             strk[j].points = pnt;
-            for (k = 0; k < point_num; k++)
-            {
+            for (k = 0; k < point_num; k++) {
                 int x, y;
                 sscanf (p, " (%d %d)", &x, &y);
                 p = strchr (p, ')') + 1;
@@ -73,15 +67,13 @@ read_test_data ()
 void outCharInfo (TomoeChar* chr, int score)
 {
    int j;
-   GPtrArray* readings = tomoe_char_get_readings (chr);
-   const char* meta = tomoe_char_get_meta (chr);
+   GPtrArray *readings = tomoe_char_get_readings (chr);
+   const char *meta = tomoe_char_get_meta (chr);
 
    fprintf (stdout, "character:%s [%d] ", tomoe_char_get_code (chr), score);
    fflush (stdout);
-   if (readings->len)
-   {
-       for (j = 0; j < readings->len; j++)
-       {
+   if (readings->len) {
+       for (j = 0; j < readings->len; j++) {
            const char* r = g_ptr_array_index (readings, j);
            fprintf (stdout, " %s", r);
        }
@@ -95,7 +87,7 @@ void outCharInfo (TomoeChar* chr, int score)
 void testStrokeMatch (TomoeContext* ctx)
 {
     TomoeGlyph *test_glyph = NULL;
-    int i, candidate_num = 0;
+    guint i, candidate_num = 0;
     GPtrArray* matched = NULL;
 
     test_glyph = read_test_data ();
@@ -106,24 +98,21 @@ void testStrokeMatch (TomoeContext* ctx)
     matched = tomoe_context_search_by_strokes (ctx, test_glyph);
     candidate_num = matched->len;
 
-    if (candidate_num != 0)
-    {
-        if (!matched)
-        {
+    if (candidate_num != 0) {
+        if (!matched) {
             fprintf (stderr, "Candidate list is NULL!\n");
             goto END;
         }
 
         fprintf (stdout, "The number of matched characters: %d\n",
                  candidate_num);
-        for (i = 0; i < candidate_num; i++)
-        {
+        for (i = 0; i < candidate_num; i++) {
             const TomoeCandidate* p = (const TomoeCandidate*) g_ptr_array_index (matched, i);
             outCharInfo (p->character, p->score);
         }
-    }
-    else
+    } else {
         fprintf (stdout, "No Candidate found!\n");
+    }
 #warning FIXME! plug memory leak!
 END:
     if (!test_glyph)
@@ -137,26 +126,23 @@ void testReadingMatch (TomoeContext* ctx, const char* reading)
     GPtrArray* matched = tomoe_context_search_by_reading (ctx, reading);
     guint candidate_num = matched->len;
 
-    if (candidate_num != 0)
-    {
-        int i;
+    if (candidate_num != 0) {
+        guint i;
 
-        if (!matched)
-        {
+        if (!matched) {
             fprintf (stderr, "Candidate list is NULL!\n");
             return;
         }
 
         fprintf (stdout, "The number of matched characters: %d\n",
                  candidate_num);
-        for (i = 0; i < candidate_num; i++)
-        {
+        for (i = 0; i < candidate_num; i++) {
             TomoeChar* p = (TomoeChar*)g_ptr_array_index (matched, i);
             outCharInfo (p, 0);
         }
-    }
-    else
+    } else {
         fprintf (stdout, "No Candidate found!\n");
+    }
 }
 
 void testUserDict (TomoeContext* ctx)
@@ -188,12 +174,11 @@ void testUserDict (TomoeContext* ctx)
 # warning FIXME! we need some new nice interface
     for (i = 0; readings->len; i++) {
     	const gchar *remove_reading = "やった";
-	gchar *reading = g_ptr_array_index (readings, i);
-	if (reading && !strcmp (reading, remove_reading))
-	{
-		gchar *p = g_ptr_array_remove_index (readings, i);
-		g_free (p);
-	}
+        gchar *reading = g_ptr_array_index (readings, i);
+        if (reading && !strcmp (reading, remove_reading)) {
+            gchar *p = g_ptr_array_remove_index (readings, i);
+            g_free (p);
+        }
     }
     g_ptr_array_add (readings, g_strdup ("yey"));
     tomoe_char_set_readings (chr, readings);
