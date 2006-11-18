@@ -103,15 +103,13 @@ void
 tomoe_context_load_dict_list (TomoeContext* ctx, const GPtrArray* list)
 {
     int i;
-    for (i = 0; i < list->len; i++)
-    {
+    for (i = 0; i < list->len; i++) {
         TomoeDictCfg* p = g_ptr_array_index (list, i);
         if (p->dontLoad) continue;
 
-        if (p->user)
+        if (p->user) {
             tomoe_context_load_dict (ctx, p->filename, p->writeAccess);
-        else
-        {
+        } else {
             char* file = calloc (strlen (p->filename) +
                                  strlen (TOMOEDATADIR) + 2,
                                  sizeof (char));
@@ -137,8 +135,7 @@ tomoe_context_save (TomoeContext *ctx)
 
     if (!ctx) return;
 
-    for (i = 0; i < ctx->dicts->len; i++)
-    {
+    for (i = 0; i < ctx->dicts->len; i++) {
         TomoeDict *dict = (TomoeDict*) g_ptr_array_index (ctx->dicts, i);
         if (tomoe_dict_is_modified (dict))
             tomoe_dict_save (dict);
