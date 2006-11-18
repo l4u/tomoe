@@ -191,11 +191,13 @@ void testUserDict (TomoeContext* ctx)
 	gchar *reading = g_ptr_array_index (readings, i);
 	if (reading && !strcmp (reading, remove_reading))
 	{
-		g_ptr_array_remove (readings, reading);
-		g_free (reading);
+		gchar *p = g_ptr_array_remove_index (readings, i);
+		g_free (p);
 	}
     }
     g_ptr_array_add (readings, g_strdup ("yey"));
+    tomoe_char_set_readings (chr, readings);
+    g_ptr_array_free (readings);
     fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_get_size (myDict));
     testReadingMatch (ctx, "やった");
     fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_get_size (myDict));
