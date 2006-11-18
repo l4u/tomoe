@@ -33,6 +33,7 @@
 #include <libxslt/xsltInternals.h>
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
+#include <glib.h>
 
 #define TOMOE_CHAR__USE_XML_METHODS
 #define TOMOE_DICT__USE_XSL_METHODS
@@ -352,6 +353,7 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
 
         /* check for available reading data */
         if (!readings->len) {
+	    g_ptr_array_foreach (readings, (GFunc) g_free, NULL);
             g_ptr_array_free (readings, TRUE);
             continue;
 	}
@@ -367,6 +369,7 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
         }
 	if (find)
             g_ptr_array_add (reading, tomoe_char_add_ref (lttr));
+	g_ptr_array_foreach (readings, (GFunc) g_free, NULL);
         g_ptr_array_free (readings, TRUE);
     }
 
@@ -389,6 +392,7 @@ _parse_readings (xmlNodePtr node, TomoeChar* chr)
             GPtrArray *readings = tomoe_char_get_readings (chr);
             g_ptr_array_add (readings, strdup ((const char*)child->children->content));
             tomoe_char_set_readings (chr, readings);
+	    g_ptr_array_foreach (readings, (GFunc) g_free, NULL);
             g_ptr_array_free (readings, TRUE);
         }
     }
