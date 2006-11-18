@@ -131,6 +131,16 @@ tomoe_dict_new (const char* filename, TomoeBool editable)
     return t_dict;
 }
 
+static void
+_letter_free_func (gpointer data, gpointer user_data)
+{
+    TomoeChar *c = (TomoeChar *) data;
+
+    if (!data) return;
+
+    tomoe_char_free (c);
+}
+
 void
 tomoe_dict_free (TomoeDict* t_dict)
 {
@@ -138,7 +148,8 @@ tomoe_dict_free (TomoeDict* t_dict)
 
     t_dict->ref --;
     if (t_dict->ref <= 0) {
-        g_ptr_array_free (t_dict->letters, TRUE);
+	g_ptr_array_foreach (t_dict->letters, _letter_free_func, NULL);
+        g_ptr_array_free (t_dict->letters, FALSE);
         free (t_dict->filename);
         if (t_dict->metaXsl)
             xsltFreeStylesheet (t_dict->metaXsl);
@@ -268,7 +279,7 @@ tomoe_dict_add_char (TomoeDict* t_dict, TomoeChar* add)
 {
     if (!t_dict || !add) return;
     tomoe_char_set_dict_interface (add, &t_dict->dict_interface);
-    g_ptr_array_add (t_dict->letters, add);
+    g_ptr_array_add (t_dict->letters, tomoe_char_add_ref (add));
     g_ptr_array_sort (t_dict->letters, _letter_compare_func);
     tomoe_dict_set_modified (t_dict, 1);
 }
@@ -349,7 +360,7 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
         for (j = 0; j < reading_num; j++) {
             const char* r = (const char*) g_ptr_array_index (readings, j);
             if (0 == strcmp (r, input))
-                g_ptr_array_add (reading, lttr);
+                g_ptr_array_add (reading, tomoe_char_add_ref (lttr));
         }
         g_ptr_array_free (readings, TRUE);
     }
@@ -545,14 +556,12 @@ _parse_tomoe_dict (TomoeDict* t_dict, xmlNodePtr root)
 
             if (0 == xmlStrcmp(node->name, BAD_CAST "character")) {
                 TomoeChar *chr = tomoe_char_new (&t_dict->dict_interface);
-                GPtrArray *readings = g_ptr_array_new ();
-                tomoe_char_set_readings (chr, readings);
-		g_ptr_array_free (readings, TRUE);
 
                 _parse_character (node, chr);
                 tomoe_char_set_dict_interface (chr, &t_dict->dict_interface);
                 if (tomoe_char_get_code (chr))
-                    g_ptr_array_add (t_dict->letters, chr);
+                    g_ptr_array_add (t_dict->letters, tomoe_char_add_ref (chr));
+		tomoe_char_free (chr);
             }
         }
     }

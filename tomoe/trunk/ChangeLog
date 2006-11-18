@@ -1,5 +1,10 @@
 2006-11-18  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
+	* lib/tomoe-char.c, lib/tomoe-dict.c, test/testtomoe.c: Plugged memory
+	leaks partially.
+
+2006-11-18  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
 	* lib/tomoe-array.[ch]: Removed.
 	* lib/tomoe-context.[ch], lib/tomoe-recognizer-impl.h,
 	lib/tomoe-recognizer.[ch], recognizer/tomoe-recognizer-simple.c,
