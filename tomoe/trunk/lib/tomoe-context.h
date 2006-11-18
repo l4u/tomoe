@@ -109,7 +109,7 @@ void            tomoe_context_disable_dict           (TomoeContext       *ctx,
                                                       const char    *filename);
 int             tomoe_context_is_dict_enabled        (TomoeContext       *ctx,
                                                       const char    *filename);
-TomoeArray*     tomoe_context_get_dicts              (TomoeContext       *ctx);
+GPtrArray*      tomoe_context_get_dicts              (TomoeContext       *ctx);
 #endif
 
 #ifdef	__cplusplus

@@ -29,7 +29,6 @@
 
 #define LIMIT_LENGTH ((300 * 0.25) * (300 * 0.25))
 
-/* TODO remove from tomoe, replace by TomoeArray */
 typedef struct _IntArray IntArray;
 
 struct _IntArray
@@ -39,7 +38,6 @@ struct _IntArray
     int  ref_count;
 };
 
-/* TODO remove from tomoe, replace by TomoeArray */
 typedef struct _PointerArray PointerArray;
 
 struct _PointerArray
@@ -101,13 +99,17 @@ static int             match_stroke_num                (TomoeDict *t_dict,
                                                         IntArray        *adapted);
 
 
-TomoeArray *
+static gint
+_candidate_compare_func (gconstpointer a, gconstpointer b)
+{
+    return tomoe_candidate_compare (a, b);
+}
+
+GPtrArray *
 _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGlyph *input)
 {
     /* TomoeRecognizerSimple *recognizer = context; */
-    TomoeArray* matched = tomoe_array_new((tomoe_compare_fn)tomoe_candidate_compare,
-                                          (tomoe_addref_fn)tomoe_candidate_add_ref,
-                                          (tomoe_free_fn)tomoe_candidate_free);
+    GPtrArray *matched = g_ptr_array_new ();
     guint i, j;
     IntArray *matches = NULL;
     PointerArray *cands = NULL;
@@ -193,14 +195,13 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
                 TomoeCandidate* cand = tomoe_candidate_new();
                 cand->character = tomoe_char_add_ref(((cand_priv*)cands->p[i])->cand->character);
                 cand->score     = ((cand_priv *)cands->p[i])->cand->score;
-                tomoe_array_append (matched, cand);
-                tomoe_candidate_free (cand);
+                g_ptr_array_add (matched, cand);
             }
         }
     }
     _int_array_unref (matches);
 
-    tomoe_array_sort (matched);
+    g_ptr_array_sort (matched, _candidate_compare_func);
 
     _pointer_array_unref (cands);
 

@@ -33,7 +33,6 @@ extern "C" {
 #endif
 
 #include "tomoe-dict.h"
-#include "tomoe-array.h"
 
 typedef struct _TomoeRecognizer TomoeRecognizer;
 
@@ -48,7 +47,7 @@ void             tomoe_recognizer_free    (TomoeRecognizer *recognizer);
  * @param input  - Pointer to tomoe_glyph matchkey.
  * @return The array of tomoe_candidate.
  */
-TomoeArray      *tomoe_recognizer_search  (const TomoeRecognizer *recognizer,
+GPtrArray       *tomoe_recognizer_search  (const TomoeRecognizer *recognizer,
                                            TomoeDict *dict,
                                            TomoeGlyph *inputs);
 

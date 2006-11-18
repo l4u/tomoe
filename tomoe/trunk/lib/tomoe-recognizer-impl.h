@@ -33,18 +33,17 @@ extern "C" {
 #endif
 
 #include "tomoe-dict.h"
-#include "tomoe-array.h"
 
 typedef void       *(*TomoeRecognizerNewFunc)    (void);
 typedef void        (*TomoeRecognizerFreeFunc)   (void *recognizer);
-typedef TomoeArray *(*TomoeRecognizerSearchFunc) (void *recognizer,
+typedef GPtrArray  *(*TomoeRecognizerSearchFunc) (void *recognizer,
                                                   TomoeDict *dict,
                                                   TomoeGlyph *input);
 
 
 void       *tomoe_recognizer_impl_new    (void);
 void        tomoe_recognizer_impl_free   (void *context);
-TomoeArray *tomoe_recognizer_impl_search (void *context,
+GPtrArray  *tomoe_recognizer_impl_search (void *context,
                                           TomoeDict *dict,
                                           TomoeGlyph *input);
 
