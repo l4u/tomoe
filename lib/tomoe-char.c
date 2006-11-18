@@ -181,10 +181,16 @@ tomoe_char_free (TomoeChar *t_char)
 
     t_char->ref --;
     if (t_char->ref <= 0) {
-        free (t_char->charCode);
-        tomoe_glyph_free (t_char->glyph);
-        if (t_char->xmlMeta) xmlFreeNode (t_char->xmlMeta);
-        free (t_char->meta);
+        if (t_char->charCode) free (t_char->charCode);
+	if (t_char->glyph)    tomoe_glyph_free (t_char->glyph);
+        if (t_char->xmlMeta)  xmlFreeNode (t_char->xmlMeta);
+	if (t_char->meta)     free (t_char->meta);
+	if (t_char->readings) g_ptr_array_free (t_char->readings, TRUE);
+	t_char->charCode = NULL;
+	t_char->glyph    = NULL;
+	t_char->xmlMeta  = NULL;
+	t_char->meta     = NULL;
+	t_char->readings = NULL;
         free (t_char);
     }
 }

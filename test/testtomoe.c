@@ -123,7 +123,7 @@ END:
 
 void testReadingMatch (TomoeContext* ctx, const char* reading)
 {
-    GPtrArray* matched = tomoe_context_search_by_reading (ctx, reading);
+    GPtrArray *matched = tomoe_context_search_by_reading (ctx, reading);
     guint candidate_num = matched->len;
 
     if (candidate_num != 0) {
@@ -143,6 +143,8 @@ void testReadingMatch (TomoeContext* ctx, const char* reading)
     } else {
         fprintf (stdout, "No Candidate found!\n");
     }
+
+    g_ptr_array_free (matched, TRUE);
 }
 
 void testUserDict (TomoeContext* ctx)
