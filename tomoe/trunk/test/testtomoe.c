@@ -134,8 +134,8 @@ END:
 
 void testReadingMatch (TomoeContext* ctx, const char* reading)
 {
-    TomoeArray* matched = tomoe_context_search_by_reading (ctx, reading);
-    int candidate_num = tomoe_array_size(matched);
+    GPtrArray* matched = tomoe_context_search_by_reading (ctx, reading);
+    guint candidate_num = matched->len;
 
     if (candidate_num != 0)
     {
@@ -151,7 +151,7 @@ void testReadingMatch (TomoeContext* ctx, const char* reading)
                  candidate_num);
         for (i = 0; i < candidate_num; i++)
         {
-            TomoeChar* p = (TomoeChar*)tomoe_array_get (matched, i);
+            TomoeChar* p = (TomoeChar*)g_ptr_array_index (matched, i);
             outCharInfo (p, 0);
         }
     }

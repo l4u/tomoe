@@ -35,6 +35,7 @@ extern "C" {
 #include "tomoe-data-types.h"
 #include "tomoe-dict.h"
 #include "tomoe-config.h"
+#include "tomoe-array.h"
 
 /**
  * @typedef typedef struct _TomoeContext TomoeContext;
@@ -91,7 +92,7 @@ TomoeDict      *tomoe_context_get_user_dict          (TomoeContext       *ctx,
  * @return The array of tomoe_candidate.
  */
 TomoeArray     *tomoe_context_search_by_strokes      (TomoeContext       *ctx,
-                                                      TomoeGlyph    *input);
+                                                      TomoeGlyph         *input);
 
 /**
  * @brief Match reading of tomoe_letter with input.
@@ -99,8 +100,8 @@ TomoeArray     *tomoe_context_search_by_strokes      (TomoeContext       *ctx,
  * @param reading  - Pointer to string matchkey
  * @return The array of tomoe_candidate.
  */
-TomoeArray     *tomoe_context_search_by_reading      (TomoeContext       *ctx,
-                                                      const char    *reading);
+GPtrArray      *tomoe_context_search_by_reading      (TomoeContext       *ctx,
+                                                      const char         *reading);
 #if 0
 /* optional */
 void            tomoe_context_enable_dict            (TomoeContext       *ctx,

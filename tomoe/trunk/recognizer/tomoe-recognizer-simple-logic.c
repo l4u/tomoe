@@ -108,12 +108,12 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
     TomoeArray* matched = tomoe_array_new((tomoe_compare_fn)tomoe_candidate_compare,
                                           (tomoe_addref_fn)tomoe_candidate_add_ref,
                                           (tomoe_free_fn)tomoe_candidate_free);
-    unsigned int i, j;
+    guint i, j;
     IntArray *matches = NULL;
     PointerArray *cands = NULL;
     PointerArray *first_cands = NULL;
     unsigned int letters_num = 0;
-    TomoeArray* letters = NULL;
+    const GPtrArray *letters = NULL;
 
     if (!input) return 0;
     if (!input->stroke_num) return 0;
@@ -122,11 +122,11 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
     first_cands = _pointer_array_new ();
     letters = tomoe_dict_get_letters(dict);
     if (!letters) return NULL;
-    letters_num = tomoe_array_size (letters);
+    letters_num = letters->len;
 
     for (i = 0; i < letters_num; i++)
     {
-        TomoeChar *p = (TomoeChar *)tomoe_array_get(letters, i);
+        TomoeChar *p = (TomoeChar *) g_ptr_array_index (letters, i);
         cand_priv *cand = NULL;
 
         /* check for available glyph data */
@@ -173,12 +173,12 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
 
         if (_int_array_find_data(matches, cand->index) < 0)
         {
-            const TomoeChar *a = tomoe_array_get(letters, cand->index);
+            const TomoeChar *a = g_ptr_array_index (letters, cand->index);
             TomoeBool b = TRUE;
 
             for (j = 0; j < (unsigned int)matches->len; j++)
             {
-                const TomoeChar *b = tomoe_array_get(letters, matches->p[j]);
+                const TomoeChar *b = g_ptr_array_index (letters, matches->p[j]);
                 if (!tomoe_char_compare(a, b))
                 {
                     b = FALSE;
@@ -535,11 +535,11 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
     {
         TomoeBool match_flag = FALSE;
         IntArray *adapted = NULL;
-        TomoeArray *letters = tomoe_dict_get_letters(dict);
+        const GPtrArray *letters = tomoe_dict_get_letters(dict);
 
         cand = cands->p[cand_index];
         adapted = _int_array_copy (cand->adapted_strokes);
-        lttr = tomoe_array_get (letters, cand->index);
+        lttr = g_ptr_array_index (letters, cand->index);
 
         for (strk_index = 0;
              strk_index < tomoe_char_get_glyph (lttr)->stroke_num;
@@ -637,10 +637,10 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
 static int
 match_stroke_num (TomoeDict* dict, int letter_index, int input_stroke_num, IntArray *adapted)
 {
-    TomoeArray *letters = tomoe_dict_get_letters(dict);
+    const GPtrArray *letters = tomoe_dict_get_letters(dict);
     int pj = 100;
     int adapted_num;
-    TomoeChar* chr = (TomoeChar*)tomoe_array_get (letters, letter_index);
+    TomoeChar* chr = (TomoeChar*) g_ptr_array_index (letters, letter_index);
     int d_stroke_num = tomoe_char_get_glyph (chr)->stroke_num;
 
     if (!adapted)
