@@ -1,3 +1,8 @@
+2006-11-18  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* lib/tomoe-char.[ch], lib/tomoe-dict.c, recognizer/recognizer-simple-logic.c,
+	test/testtomoe.c: Use GPtrArray instead of TomoeArray.
+
 2006-11-17  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-char.[ch], tomoe-dict.c, test/testtomoe.c: Use

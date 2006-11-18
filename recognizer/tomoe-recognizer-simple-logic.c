@@ -72,14 +72,18 @@ struct _cand_priv
 
 static IntArray       *_int_array_new                  (void);
 static IntArray       *_int_array_append_data          (IntArray *a, int i);
+#if 0
 static IntArray       *_int_array_ref                  (IntArray *a);
+#endif
 static IntArray       *_int_array_copy                 (IntArray *a);
 static int             _int_array_find_data            (IntArray *a, int i);
 static void            _int_array_unref                (IntArray *a);
 static PointerArray   *_pointer_array_new              (void);
 static PointerArray   *_pointer_array_append_data      (PointerArray *a, void *p);
 static PointerArray   *_pointer_array_ref              (PointerArray *a);
+#if 0
 static int             _pointer_array_find_data        (PointerArray *a, void *p);
+#endif
 static void            _pointer_array_unref            (PointerArray *a);
 
 static cand_priv      *cand_priv_new                   (TomoeChar*       character,
@@ -175,7 +179,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
             for (j = 0; j < (unsigned int)matches->len; j++)
             {
                 const TomoeChar *b = tomoe_array_get(letters, matches->p[j]);
-                if (!tomoe_char_compare(&a, &b))
+                if (!tomoe_char_compare(a, b))
                 {
                     b = FALSE;
                     break;
@@ -708,6 +712,7 @@ _int_array_copy (IntArray *a)
     return ret;
 }
 
+#if 0
 static IntArray *
 _int_array_ref (IntArray *a)
 {
@@ -717,7 +722,7 @@ _int_array_ref (IntArray *a)
 
     return a;
 }
-
+#endif
 static void
 _int_array_unref (IntArray *a)
 {
@@ -802,6 +807,7 @@ _pointer_array_unref (PointerArray *a)
     }
 }
 
+#if 0
 static int
 _pointer_array_find_data (PointerArray *a, void *p)
 {
@@ -816,7 +822,7 @@ _pointer_array_find_data (PointerArray *a, void *p)
 
     return -1;
 }
-
+#endif
 /*
 vi:ts=4:nowrap:ai:expandtab
 */

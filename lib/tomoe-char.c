@@ -28,6 +28,7 @@
 #include <libxslt/xsltInternals.h>
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
+#include <glib.h>
 
 #define TOMOE_CHAR__USE_XML_METHODS
 #define TOMOE_DICT__USE_XSL_METHODS
@@ -204,11 +205,27 @@ tomoe_char_set_code (TomoeChar* t_char, const char* code)
     tomoe_char_set_modified (t_char, 1);
 }
 
+static void
+_copy_reading_func (gpointer data, gpointer user_data)
+{
+    GPtrArray *new = (GPtrArray *) user_data;
+    const gchar *reading = (const gchar*) data;
+
+    g_ptr_array_add (new, g_strdup (reading));
+}
+
+#warning FIXME! this interface is too bad. We need TomoeCharReading object?
 GPtrArray*
 tomoe_char_get_readings (TomoeChar* t_char)
 {
+    GPtrArray *readings;
     if (!t_char) return NULL;
-    return t_char->readings;
+
+    readings = g_ptr_array_new ();
+    if (t_char->readings) {
+        g_ptr_array_foreach (t_char->readings, _copy_reading_func, readings);
+    }
+    return readings;
 }
 
 void
@@ -218,9 +235,14 @@ tomoe_char_set_readings (TomoeChar* t_char, GPtrArray* readings)
 
     if (t_char->readings) {
         g_ptr_array_free (t_char->readings, TRUE);
+	t_char->readings = NULL;
     }
 
-    t_char->readings = readings;
+    t_char->readings = g_ptr_array_new ();
+    if (readings) {
+        g_ptr_array_foreach (readings, _copy_reading_func, t_char->readings);
+    }
+
     tomoe_char_set_modified(t_char, 1);
 }
 
@@ -339,10 +361,12 @@ tomoe_char_setMetaXsl (TomoeChar* t_char, xsltStylesheetPtr metaXsl)
 }
 #endif
 
-int
-tomoe_char_compare (const TomoeChar** a, const TomoeChar** b)
+gint
+tomoe_char_compare (const TomoeChar *a, const TomoeChar *b)
 {
-    return strcmp ((*a)->charCode, (*b)->charCode);
+    if (!a || !b) return 0;
+    if (!a->charCode || !b->charCode) return 0;
+    return strcmp (a->charCode, b->charCode);
 }
 
 TomoeCandidate*
@@ -378,10 +402,10 @@ tomoe_candidate_free (TomoeCandidate* t_cand)
 }
 
 int
-tomoe_candidate_compare (const TomoeCandidate** a, const TomoeCandidate** b)
+tomoe_candidate_compare (const TomoeCandidate *a, const TomoeCandidate *b)
 {
-    int score_a = a[0]->score;
-    int score_b = b[0]->score;
+    int score_a = a->score;
+    int score_b = b->score;
 
     return score_a > score_b ? 1
         : score_a < score_b ? - 1

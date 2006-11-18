@@ -169,8 +169,7 @@ tomoe_dict_save (TomoeDict* t_dict)
         xmlNewProp (root, BAD_CAST "meta", BAD_CAST t_dict->meta_xsl_file);
 
     num = tomoe_array_size (t_dict->letters);
-    for (i = 0; i < num; i++)
-    {
+    for (i = 0; i < num; i++) {
         xmlNodePtr charNode = xmlNewChild (root, NULL, BAD_CAST "character", NULL);
         TomoeChar* chr = (TomoeChar*)tomoe_array_get (t_dict->letters, i);
         GPtrArray *readings = tomoe_char_get_readings (chr);
@@ -180,16 +179,13 @@ tomoe_dict_save (TomoeDict* t_dict)
         xmlNewChild (charNode, NULL, BAD_CAST "literal", BAD_CAST code);
         unsigned int k;
 
-        if (glyph)
-        {
+        if (glyph) {
             xmlNodePtr strokelistNode = xmlNewChild (charNode, NULL, BAD_CAST "strokelist", NULL);
-            for (k = 0; k < glyph->stroke_num; k++)
-            {
+            for (k = 0; k < glyph->stroke_num; k++) {
                 unsigned int j;
                 char buf[256]; /* FIXME overrun possible */
                 strcpy (buf, "");
-                for (j = 0; j < glyph->strokes[k].point_num; j++)
-                {
+                for (j = 0; j < glyph->strokes[k].point_num; j++) {
                     char buf2[32];
                     sprintf (buf2, "(%d %d) ", glyph->strokes[k].points[j].x, glyph->strokes[k].points[j].y);
                     strcat (buf, buf2);
@@ -197,18 +193,17 @@ tomoe_dict_save (TomoeDict* t_dict)
                 xmlNewChild (strokelistNode, NULL, BAD_CAST "s", BAD_CAST buf);
             }
         }
-        if (readings->len)
-        {
+        if (readings->len) {
             guint readings_num = readings->len;
             xmlNodePtr readingsNode = xmlNewChild (charNode, NULL, BAD_CAST "readings", NULL);
             for (k = 0; k < readings_num; k++)
                 xmlNewChild (readingsNode, NULL, BAD_CAST "r", g_ptr_array_index (readings, k));
         }
-        if (meta)
-        {
+        if (meta) {
             xmlAddChild (charNode, xmlCopyNode (meta, 1));
         }
 
+        g_ptr_array_free (readings, TRUE);
         tomoe_char_set_modified (chr, 0);
     }
 
@@ -333,24 +328,25 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
     int letter_num = tomoe_array_size (t_dict->letters);
     int i;
 
-    for (i = 0; i < letter_num; i++)
-    {
+    for (i = 0; i < letter_num; i++) {
         TomoeChar *lttr = (TomoeChar*)tomoe_array_get (t_dict->letters, i);
         guint reading_num, j;
         GPtrArray *readings = tomoe_char_get_readings (lttr);
 
         /* check for available reading data */
-        if (!readings->len)
+        if (!readings->len) {
+	    g_ptr_array_free (readings, TRUE);
             continue;
+	}
 
         reading_num = readings->len;
 
-        for (j = 0; j < reading_num; j++)
-        {
+        for (j = 0; j < reading_num; j++) {
             const char* r = (const char*)g_ptr_array_index (readings, j);
             if (0 == strcmp (r, input))
                 tomoe_array_append (reading, lttr);
         }
+	g_ptr_array_free (readings, TRUE);
     }
 
     return reading;
@@ -367,12 +363,12 @@ void
 _parse_readings (xmlNodePtr node, TomoeChar* chr)
 {
     xmlNodePtr child;
-    for (child = node->children; child; child = child->next)
-    {
-        if (child->type == XML_ELEMENT_NODE)
-        {
+    for (child = node->children; child; child = child->next) {
+        if (child->type == XML_ELEMENT_NODE) {
             GPtrArray *readings = tomoe_char_get_readings (chr);
             g_ptr_array_add (readings, strdup ((const char*)child->children->content));
+	    tomoe_char_set_readings (chr, readings);
+	    g_ptr_array_free (readings, TRUE);
         }
     }
 }
@@ -425,8 +421,7 @@ void
 _parse_character (xmlNodePtr node, TomoeChar* lttr)
 {
     xmlNodePtr child;
-    for (child = node->children; child; child = child->next)
-    {
+    for (child = node->children; child; child = child->next) {
         if (child->type != XML_ELEMENT_NODE)
             continue;
 
@@ -462,8 +457,7 @@ _parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
     tomoe_glyph_init (glyph, stroke_num);
     tomoe_char_set_glyph (lttr, glyph);
 
-    for (child = node->children; child; child = child->next)
-    {
+    for (child = node->children; child; child = child->next) {
         if (child->type != XML_ELEMENT_NODE)
             continue;
 
@@ -480,8 +474,7 @@ _parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
         /* parse stroke */
         p = (const char*) child->children->content;
         tomoe_stroke_init (strk, point_num);
-        for (k = 0; k < point_num; k++)
-        {
+        for (k = 0; k < point_num; k++) {
             TomoePoint* pnt = &strk->points[k];
 
             sscanf (p, " (%d %d)", &pnt->x, &pnt->y);
@@ -555,6 +548,7 @@ _parse_tomoe_dict (TomoeDict* t_dict, xmlNodePtr root)
                 TomoeChar *chr = tomoe_char_new (&t_dict->dict_interface);
                 GPtrArray *readings = g_ptr_array_new ();
                 tomoe_char_set_readings (chr, readings);
+		g_ptr_array_free (readings, TRUE);
 
                 _parse_character (node, chr);
                 tomoe_char_set_dict_interface (chr, &t_dict->dict_interface);
