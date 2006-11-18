@@ -347,6 +347,7 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
     for (i = 0; i < letter_num; i++) {
         TomoeChar *lttr = (TomoeChar*) g_ptr_array_index (t_dict->letters, i);
         guint reading_num, j;
+	gboolean find = FALSE;
         GPtrArray *readings = tomoe_char_get_readings (lttr);
 
         /* check for available reading data */
@@ -359,9 +360,13 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
 
         for (j = 0; j < reading_num; j++) {
             const char* r = (const char*) g_ptr_array_index (readings, j);
-            if (0 == strcmp (r, input))
-                g_ptr_array_add (reading, tomoe_char_add_ref (lttr));
+            if (0 == strcmp (r, input)) {
+	        find = TRUE;
+		break;
+	    }
         }
+	if (find)
+            g_ptr_array_add (reading, tomoe_char_add_ref (lttr));
         g_ptr_array_free (readings, TRUE);
     }
 
