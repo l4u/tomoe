@@ -185,7 +185,10 @@ tomoe_char_free (TomoeChar *t_char)
 	if (t_char->glyph)    tomoe_glyph_free (t_char->glyph);
         if (t_char->xmlMeta)  xmlFreeNode (t_char->xmlMeta);
 	if (t_char->meta)     free (t_char->meta);
-	if (t_char->readings) g_ptr_array_free (t_char->readings, TRUE);
+	if (t_char->readings) {
+	    g_ptr_array_foreach (t_char->readings, (GFunc) g_free, NULL);
+	    g_ptr_array_free (t_char->readings, FALSE);
+        }
 	t_char->charCode = NULL;
 	t_char->glyph    = NULL;
 	t_char->xmlMeta  = NULL;
@@ -240,6 +243,7 @@ tomoe_char_set_readings (TomoeChar* t_char, GPtrArray* readings)
     if (!t_char) return;
 
     if (t_char->readings) {
+	g_ptr_array_foreach (t_char->readings, (GFunc) g_free, NULL);
         g_ptr_array_free (t_char->readings, TRUE);
         t_char->readings = NULL;
     }
