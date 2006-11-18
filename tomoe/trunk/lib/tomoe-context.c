@@ -32,7 +32,7 @@
 struct _TomoeContext
 {
     int         ref;
-    TomoeArray *dicts;
+    GPtrArray  *dicts;
     TomoeRecognizer *recognizer;
 };
 
@@ -43,9 +43,7 @@ tomoe_context_new(void)
     TomoeContext* p;
     p        = calloc (1, sizeof(TomoeContext));
     p->ref   = 1;
-    p->dicts = tomoe_array_new (NULL,
-                                (tomoe_addref_fn)tomoe_dict_add_ref,
-                                (tomoe_free_fn)tomoe_dict_free);
+    p->dicts = g_ptr_array_new ();
     p->recognizer = tomoe_recognizer_new();
     return p;
 }
@@ -57,15 +55,22 @@ tomoe_context_add_ref(TomoeContext* ctx)
     ctx->ref++;
     return ctx;
 }
+static void
+_dict_free (gpointer data, gpointer user_data)
+{
+    TomoeDict *dict = (TomoeDict *) data;
+
+    tomoe_dict_free (dict);
+}
 
 void
 tomoe_context_free(TomoeContext* ctx)
 {
     if (!ctx) return;
     ctx->ref--;
-    if (ctx->ref <= 0)
-    {
-        tomoe_array_free (ctx->dicts);
+    if (ctx->ref <= 0) {
+        g_ptr_array_foreach (ctx->dicts, _dict_free, NULL);
+        g_ptr_array_free (ctx->dicts, FALSE);
         tomoe_recognizer_free (ctx->recognizer);
         free (ctx);
     }
@@ -75,7 +80,7 @@ void
 tomoe_context_add_dict (TomoeContext* ctx, TomoeDict* dict)
 {
     if (!ctx || !dict) return;
-    tomoe_array_append (ctx->dicts, tomoe_dict_add_ref (dict));
+    g_ptr_array_add (ctx->dicts, dict);
 }
 
 void
@@ -91,7 +96,7 @@ tomoe_context_load_dict (TomoeContext* ctx, const char *filename, int editable)
     fflush (stdout);
     dict = tomoe_dict_new (filename, editable);
     if (dict)
-        tomoe_array_append (ctx->dicts, dict);
+        g_ptr_array_add (ctx->dicts, dict);
     printf (" ok\n");
 }
 
@@ -119,23 +124,23 @@ tomoe_context_load_dict_list (TomoeContext* ctx, const GPtrArray* list)
     }
 }
 
-TomoeArray*
+const GPtrArray*
 tomoe_context_get_dict_list (TomoeContext* ctx)
 {
     if (!ctx) return NULL;
-    return tomoe_array_add_ref(ctx->dicts);
+    return ctx->dicts;
 }
 
 void
 tomoe_context_save (TomoeContext *ctx)
 {
-    int i;
+    guint i;
 
     if (!ctx) return;
 
-    for (i = 0; i < tomoe_array_size (ctx->dicts); i++)
+    for (i = 0; i < ctx->dicts->len; i++)
     {
-        TomoeDict *dict = (TomoeDict*)tomoe_array_get (ctx->dicts, i);
+        TomoeDict *dict = (TomoeDict*) g_ptr_array_index (ctx->dicts, i);
         if (tomoe_dict_is_modified (dict))
             tomoe_dict_save (dict);
     }
@@ -144,22 +149,21 @@ tomoe_context_save (TomoeContext *ctx)
 TomoeArray*
 tomoe_context_search_by_strokes (TomoeContext* ctx, TomoeGlyph* input)
 {
-    int i, num;
+    guint i, num;
     TomoeArray* tmp;
     TomoeArray* matched;
     TomoeDict* dict;
 
     if (!ctx) return tomoe_array_new (NULL, NULL, NULL);
-    num = tomoe_array_size (ctx->dicts);
+    num = ctx->dicts->len;
     if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
 
-    dict = (TomoeDict*)tomoe_array_get (ctx->dicts, 0);
+    dict = (TomoeDict*)g_ptr_array_index (ctx->dicts, 0);
     tmp = tomoe_recognizer_search(ctx->recognizer, dict, input);
     matched = tomoe_array_clone_empty (tmp);
-    for (i = 0; i < num; i++)
-    {
+    for (i = 0; i < num; i++) {
         TomoeArray* tmp;
-        dict = (TomoeDict*)tomoe_array_get (ctx->dicts, i);
+        dict = (TomoeDict*)g_ptr_array_index (ctx->dicts, i);
         tmp = tomoe_recognizer_search(ctx->recognizer, dict, input);
         tomoe_array_merge (matched, tmp);
         tomoe_array_free (tmp);
@@ -180,18 +184,17 @@ ptr_array_merge_func (gpointer data, gpointer user_data)
 GPtrArray*
 tomoe_context_search_by_reading (TomoeContext* ctx, const char* input)
 {
-    gint i, num;
+    guint i, num;
     GPtrArray *reading = g_ptr_array_new ();
 
     if (!ctx) return reading;
-    num = tomoe_array_size (ctx->dicts);
+    num = ctx->dicts->len;
     if (num == 0) return reading;
 
-    for (i = 0; i < num; i++)
-    {
+    for (i = 0; i < num; i++) {
         GPtrArray *tmp;
     	TomoeDict *dict;
-        dict = (TomoeDict*)tomoe_array_get (ctx->dicts, i);
+        dict = (TomoeDict*) g_ptr_array_index (ctx->dicts, i);
         tmp = tomoe_dict_search_by_reading (dict, input);
 	if (tmp) {
             g_ptr_array_foreach (tmp, ptr_array_merge_func, reading);

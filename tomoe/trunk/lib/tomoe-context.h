@@ -70,15 +70,15 @@ void            tomoe_context_free                   (TomoeContext       *ctx);
  * @param filename - Name of dictionary file to load.
  * @return The TomoeContext.
  */
-void            tomoe_context_add_dict               (TomoeContext       *ctx,
+void             tomoe_context_add_dict               (TomoeContext       *ctx,
                                                       TomoeDict          *dict);
-void            tomoe_context_load_dict              (TomoeContext       *ctx,
+void             tomoe_context_load_dict              (TomoeContext       *ctx,
                                                       const char         *filename,
                                                       int                 editable);
-void            tomoe_context_load_dict_list         (TomoeContext       *ctx,
+void             tomoe_context_load_dict_list         (TomoeContext       *ctx,
                                                       const GPtrArray    *list);
-TomoeArray     *tomoe_context_get_dict_list          (TomoeContext       *ctx);
-void            tomoe_context_save                   (TomoeContext       *ctx);
+const GPtrArray *tomoe_context_get_dict_list          (TomoeContext       *ctx);
+void             tomoe_context_save                   (TomoeContext       *ctx);
 
 #if 0
 TomoeDict      *tomoe_context_get_user_dict          (TomoeContext       *ctx,
