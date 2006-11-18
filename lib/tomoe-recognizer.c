@@ -197,11 +197,11 @@ tomoe_recognizer_add_ref (TomoeRecognizer *recognizer)
     return recognizer;
 }
 
-TomoeArray *
+GPtrArray *
 tomoe_recognizer_search (const TomoeRecognizer *recognizer,
                          TomoeDict *dict, TomoeGlyph *input)
 {
-    TomoeArray *result = NULL;
+    GPtrArray *result = NULL;
     TomoeRecognizerSearchFunc search_func;
     TomoeRecognizerSearchFunc *search_func_p;
     gpointer *p;

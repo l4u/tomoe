@@ -33,11 +33,10 @@ extern "C" {
 #endif
 
 #include "tomoe-dict.h"
-#include "tomoe-array.h"
 
-TomoeArray *_tomoe_recognizer_simple_get_candidates (void       *context, 
-                                                     TomoeDict  *dict,
-                                                     TomoeGlyph *input);
+GPtrArray *_tomoe_recognizer_simple_get_candidates (void       *context, 
+                                                    TomoeDict  *dict,
+                                                    TomoeGlyph *input);
 
 #ifdef	__cplusplus
 }

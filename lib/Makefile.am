@@ -31,7 +31,6 @@ INCLUDES = $(LIBXML_CFLAGS) $(LIBXSLT_CFLAGS) $(GLIB_CFLAGS)
 
 pkginclude_HEADERS = \
 	tomoe.h \
-	tomoe-array.h \
 	tomoe-char.h \
 	tomoe-dict.h \
 	tomoe-data-types.h \
@@ -43,7 +42,6 @@ pkginclude_HEADERS = \
 lib_LTLIBRARIES = libtomoe.la
 libtomoe_la_SOURCES = \
 	tomoe.c \
-	tomoe-array.c \
 	tomoe-char.c \
 	tomoe-dict.c \
 	tomoe-context.c \

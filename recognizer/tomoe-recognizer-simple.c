@@ -53,11 +53,11 @@ tomoe_recognizer_impl_free (void *context)
     free (recognizer);
 }
 
-TomoeArray *
+GPtrArray *
 tomoe_recognizer_impl_search (void *context, TomoeDict *dict, TomoeGlyph *input)
 {
     /* TomoeRecognizerSimple *recognizer = context; */
-    TomoeArray* matched;
+    GPtrArray* matched;
 
     matched = _tomoe_recognizer_simple_get_candidates (context, dict, input);
 

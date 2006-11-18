@@ -27,7 +27,6 @@
 #include "tomoe-dict.h"
 #include "tomoe-recognizer.h"
 #include "tomoe-context.h"
-#include "tomoe-array.h"
 
 struct _TomoeContext
 {
@@ -148,10 +147,17 @@ tomoe_context_save (TomoeContext *ctx)
 
 #warning FIXME!
 static void
-ptr_array_merge_func (gpointer data, gpointer user_data)
+_ptr_array_merge_func (gpointer data, gpointer user_data)
 {
     GPtrArray *p = (GPtrArray *) user_data;
     g_ptr_array_add (p, data);
+}
+
+static void
+_candidate_merge_func (gpointer data, gpointer user_data)
+{
+    GPtrArray *p = (GPtrArray *) user_data;
+    g_ptr_array_add (p, tomoe_candidate_add_ref ((TomoeCandidate *) data));
 }
 
 static gint
@@ -172,18 +178,14 @@ tomoe_context_search_by_strokes (TomoeContext *ctx, TomoeGlyph *input)
     if (num == 0) return matched;
 
     for (i = 0; i < num; i++) {
-        gint tmp_len, j;
-        TomoeArray *tmp;
+        GPtrArray *tmp;
         dict = (TomoeDict*)g_ptr_array_index (ctx->dicts, i);
         tmp = tomoe_recognizer_search(ctx->recognizer, dict, input);
-    	if (!tmp) continue;
 
-        tmp_len = tomoe_array_size (tmp);
-        for (j = 0; j < tmp_len; j++) {
-            TomoeCandidate *data = tomoe_array_get (tmp, j);
-            g_ptr_array_add (matched, tomoe_candidate_add_ref (data));
+        if (tmp) {
+            g_ptr_array_foreach (tmp, _candidate_merge_func, matched);
+            g_ptr_array_free (tmp, FALSE);
         }
-        tomoe_array_free (tmp);
     }
     g_ptr_array_sort (matched, _candidate_compare_func);
 
@@ -206,7 +208,7 @@ tomoe_context_search_by_reading (TomoeContext *ctx, const char *input)
         dict = (TomoeDict*) g_ptr_array_index (ctx->dicts, i);
         tmp = tomoe_dict_search_by_reading (dict, input);
         if (tmp) {
-            g_ptr_array_foreach (tmp, ptr_array_merge_func, reading);
+            g_ptr_array_foreach (tmp, _ptr_array_merge_func, reading);
             g_ptr_array_free (tmp, FALSE);
         }
     }
