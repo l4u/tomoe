@@ -180,8 +180,8 @@ tomoe_context_search_by_strokes (TomoeContext* ctx, TomoeGlyph* input)
 
         tmp_len = tomoe_array_size (tmp);
         for (j = 0; j < tmp_len; j++) {
-                TomoeCandidate *data = tomoe_array_get (tmp, j);
-                g_ptr_array_add (matched, data);
+            TomoeCandidate *data = tomoe_array_get (tmp, j);
+            g_ptr_array_add (matched, data);
         }
         tomoe_array_free (tmp);
     }
