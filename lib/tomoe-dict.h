@@ -38,7 +38,7 @@ extern "C" {
 
 #include "tomoe-data-types.h"
 #include "tomoe-char.h"
-#include "tomoe-array.h"
+#include <glib/garray.h>
 
 typedef struct _TomoeDict TomoeDict;
 
@@ -102,7 +102,7 @@ void            tomoe_dict_set_modified         (TomoeDict     *dict,
  * @param t_dict - Pointer to the TomoeDict object.
  * @return Count of the characters.
  */
-int             tomoe_dict_get_size             (TomoeDict     *t_dict);
+guint           tomoe_dict_get_size             (TomoeDict     *t_dict);
 
 /* Editable methods */
 
@@ -140,7 +140,7 @@ void            tomoe_dict_remove_by_index      (TomoeDict     *t_dict,
  * @param find - Pointer to the tomoe_char object.
  * @return Index of the character.
  */
-int             tomoe_dict_find_index           (TomoeDict     *t_dict,
+glong           tomoe_dict_find_index           (TomoeDict     *t_dict,
                                                  TomoeChar     *find);
 
 /**
@@ -153,20 +153,20 @@ TomoeChar      *tomoe_dict_char_by_index        (TomoeDict     *t_dict,
                                                  int            index);
 
 /**
- * @brief Return an array of tomoe_char which is kept in a TomoeDict.
+ * @brief Return an GPtrArray of tomoe_char which is kept in a TomoeDict.
  * @param t_dict - Pointer to the TomoeDict struct.
  * @return The array of tomoe_char.
  */
-TomoeArray     *tomoe_dict_get_letters          (TomoeDict     *t_dict);
+const GPtrArray *tomoe_dict_get_letters          (TomoeDict     *t_dict);
 
 /* search methods */
 /**
  * @brief Match reading of tomoe_char with input.
  * @param t_dict   - Pointer to the TomoeDict object.
  * @param input  - Pointer to string matchkey
- * @return The array of tomoe_candidate.
+ * @return The GPtrArray of tomoe_candidate.
  */
-TomoeArray     *tomoe_dict_search_by_reading    (const TomoeDict *t_dict,
+GPtrArray      *tomoe_dict_search_by_reading    (const TomoeDict *t_dict,
                                                  const char      *input);
 
 #ifdef TOMOE_DICT__USE_XSL_METHODS

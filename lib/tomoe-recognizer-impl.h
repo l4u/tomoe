@@ -33,6 +33,7 @@ extern "C" {
 #endif
 
 #include "tomoe-dict.h"
+#include "tomoe-array.h"
 
 typedef void       *(*TomoeRecognizerNewFunc)    (void);
 typedef void        (*TomoeRecognizerFreeFunc)   (void *recognizer);

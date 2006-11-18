@@ -169,27 +169,34 @@ tomoe_context_search_by_strokes (TomoeContext* ctx, TomoeGlyph* input)
     return matched;
 }
 
-TomoeArray*
+#warning FIXME!
+static void
+ptr_array_merge_func (gpointer data, gpointer user_data)
+{
+    GPtrArray *p = (GPtrArray *) user_data;
+    g_ptr_array_add (p, data);
+}
+
+GPtrArray*
 tomoe_context_search_by_reading (TomoeContext* ctx, const char* input)
 {
-    int i, num;
-    TomoeArray* reading;
-    TomoeArray* tmp;
-    TomoeDict*   dict;
+    gint i, num;
+    GPtrArray *reading = g_ptr_array_new ();
 
-    if (!ctx) return tomoe_array_new (NULL, NULL, NULL);
+    if (!ctx) return reading;
     num = tomoe_array_size (ctx->dicts);
-    if (num == 0) return tomoe_array_new (NULL, NULL, NULL);
+    if (num == 0) return reading;
 
-    dict = (TomoeDict*)tomoe_array_get (ctx->dicts, 0);
-    tmp = tomoe_dict_search_by_reading (dict, input);
-    reading = tomoe_array_clone_empty (tmp);
     for (i = 0; i < num; i++)
     {
+        GPtrArray *tmp;
+    	TomoeDict *dict;
         dict = (TomoeDict*)tomoe_array_get (ctx->dicts, i);
         tmp = tomoe_dict_search_by_reading (dict, input);
-        tomoe_array_merge (reading, tmp);
-        tomoe_array_free (tmp);
+	if (tmp) {
+            g_ptr_array_foreach (tmp, ptr_array_merge_func, reading);
+            g_ptr_array_free (tmp, FALSE);
+	}
     }
     /*tomoe_array_sort (reading);*/
 

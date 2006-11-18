@@ -33,6 +33,7 @@ extern "C" {
 #endif
 
 #include "tomoe-dict.h"
+#include "tomoe-array.h"
 
 typedef struct _TomoeRecognizer TomoeRecognizer;
 
