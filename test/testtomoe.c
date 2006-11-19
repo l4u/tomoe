@@ -84,6 +84,14 @@ void outCharInfo (TomoeChar* chr, int score)
    fprintf (stdout, "\n");
 }
 
+static void
+_candidate_free_func (gpointer data, gpointer user_data)
+{
+    TomoeCandidate *cand = (TomoeCandidate *) data;
+
+    tomoe_candidate_free (cand);
+}
+
 void testStrokeMatch (TomoeContext* ctx)
 {
     TomoeGlyph *test_glyph = NULL;
@@ -174,7 +182,7 @@ void testUserDict (TomoeContext* ctx)
 
     fprintf (stdout, "update reading to \"yey\"\n");
 # warning FIXME! we need some new nice interface
-    for (i = 0; readings->len; i++) {
+    for (i = readings->len - 1; i >= 0; i--) {
     	const gchar *remove_reading = "やった";
         gchar *reading = g_ptr_array_index (readings, i);
         if (reading && !strcmp (reading, remove_reading)) {
@@ -184,7 +192,9 @@ void testUserDict (TomoeContext* ctx)
     }
     g_ptr_array_add (readings, g_strdup ("yey"));
     tomoe_char_set_readings (chr, readings);
+    g_ptr_array_foreach (readings, (GFunc) g_free, NULL); 
     g_ptr_array_free (readings, TRUE);
+
     fprintf (stdout, "dictSize %d; reading search with やった:\n", tomoe_dict_get_size (myDict));
     testReadingMatch (ctx, "やった");
     fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_get_size (myDict));
@@ -195,9 +205,8 @@ void testUserDict (TomoeContext* ctx)
     fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_get_size (myDict));
     testReadingMatch (ctx, "yey");
 
-    tomoe_dict_save (myDict);
-
     tomoe_char_free (chr);
+    tomoe_dict_save (myDict);
     tomoe_dict_free (myDict);
 }
 
