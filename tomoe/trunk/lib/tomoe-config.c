@@ -35,6 +35,7 @@
 #include <glob.h>
 
 #include "tomoe-config.h"
+#include "glib-utils.h"
 
 static const xmlChar* defaultConfig  = BAD_CAST "<?xml version=\"1.0\" standalone=\"no\"?>" \
                                 "	<tomoeConfig>" \
@@ -120,8 +121,7 @@ tomoe_config_free (TomoeConfig* t_config)
     if (t_config->ref <= 0)
     {
         free (t_config->filename);
-        g_ptr_array_foreach (t_config->dict_list, _tomoe_dict_cfg_free, NULL);
-        g_ptr_array_free (t_config->dict_list, TRUE);
+        TOMOE_PTR_ARRAY_FREE_ALL (t_config->dict_list, _tomoe_dict_cfg_free);
         free (t_config);
     }
 }

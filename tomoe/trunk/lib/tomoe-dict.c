@@ -39,6 +39,7 @@
 #define TOMOE_DICT__USE_XSL_METHODS
 #include "tomoe-dict.h"
 #include "tomoe-char.h"
+#include "glib-utils.h"
 
 #define LIMIT_LENGTH ((300 * 0.25) * (300 * 0.25))
 #define LINE_BUF_SIZE 4096
@@ -147,8 +148,7 @@ tomoe_dict_free (TomoeDict* t_dict)
 
     t_dict->ref --;
     if (t_dict->ref <= 0) {
-	g_ptr_array_foreach (t_dict->letters, _letter_free_func, NULL);
-        g_ptr_array_free (t_dict->letters, TRUE);
+	TOMOE_PTR_ARRAY_FREE_ALL (t_dict->letters, _letter_free_func);
         free (t_dict->filename);
         if (t_dict->metaXsl)
             xsltFreeStylesheet (t_dict->metaXsl);
@@ -213,8 +213,7 @@ tomoe_dict_save (TomoeDict* t_dict)
             xmlAddChild (charNode, xmlCopyNode (meta, 1));
         }
 
-	g_ptr_array_foreach (readings, (GFunc) g_free, NULL);
-        g_ptr_array_free (readings, TRUE);
+	TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
         tomoe_char_set_modified (chr, 0);
     }
 
@@ -357,8 +356,7 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
 
         /* check for available reading data */
         if (!readings->len) {
-	    g_ptr_array_foreach (readings, (GFunc) g_free, NULL);
-            g_ptr_array_free (readings, TRUE);
+	    TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
             continue;
 	}
 
@@ -373,8 +371,7 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
         }
 	if (find)
             g_ptr_array_add (reading, tomoe_char_add_ref (lttr));
-	g_ptr_array_foreach (readings, (GFunc) g_free, NULL);
-        g_ptr_array_free (readings, TRUE);
+	TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
     }
 
     return reading;
@@ -396,8 +393,7 @@ _parse_readings (xmlNodePtr node, TomoeChar* chr)
             GPtrArray *readings = tomoe_char_get_readings (chr);
             g_ptr_array_add (readings, strdup ((const char*)child->children->content));
             tomoe_char_set_readings (chr, readings);
-	    g_ptr_array_foreach (readings, (GFunc) g_free, NULL);
-            g_ptr_array_free (readings, TRUE);
+	    TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
         }
     }
 }
@@ -571,7 +567,6 @@ _parse_tomoe_dict (TomoeDict* t_dict, xmlNodePtr root)
                 TomoeChar *chr = tomoe_char_new (&t_dict->dict_interface);
 
                 _parse_character (node, chr);
-                tomoe_char_set_dict_interface (chr, &t_dict->dict_interface);
                 if (tomoe_char_get_code (chr))
                     g_ptr_array_add (t_dict->letters, tomoe_char_add_ref (chr));
 		tomoe_char_free (chr);

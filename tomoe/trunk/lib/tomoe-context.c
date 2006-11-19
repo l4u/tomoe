@@ -27,6 +27,7 @@
 #include "tomoe-dict.h"
 #include "tomoe-recognizer.h"
 #include "tomoe-context.h"
+#include "glib-utils.h"
 
 struct _TomoeContext
 {
@@ -68,8 +69,7 @@ tomoe_context_free(TomoeContext* ctx)
     if (!ctx) return;
     ctx->ref--;
     if (ctx->ref <= 0) {
-        g_ptr_array_foreach (ctx->dicts, _dict_free, NULL);
-        g_ptr_array_free (ctx->dicts, TRUE);
+        TOMOE_PTR_ARRAY_FREE_ALL (ctx->dicts, _dict_free);
         tomoe_recognizer_free (ctx->recognizer);
         free (ctx);
     }

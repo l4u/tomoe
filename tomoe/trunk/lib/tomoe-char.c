@@ -34,6 +34,7 @@
 #define TOMOE_DICT__USE_XSL_METHODS
 #include "tomoe-char.h"
 #include "tomoe-dict.h"
+#include "glib-utils.h"
 
 struct _TomoeChar
 {
@@ -186,8 +187,7 @@ tomoe_char_free (TomoeChar *t_char)
         if (t_char->xmlMeta)  xmlFreeNode (t_char->xmlMeta);
 	if (t_char->meta)     free (t_char->meta);
 	if (t_char->readings) {
-	    g_ptr_array_foreach (t_char->readings, (GFunc) g_free, NULL);
-	    g_ptr_array_free (t_char->readings, TRUE);
+	    TOMOE_PTR_ARRAY_FREE_ALL (t_char->readings, g_free);
         }
 	t_char->charCode = NULL;
 	t_char->glyph    = NULL;
@@ -243,8 +243,7 @@ tomoe_char_set_readings (TomoeChar* t_char, GPtrArray* readings)
     if (!t_char) return;
 
     if (t_char->readings) {
-	g_ptr_array_foreach (t_char->readings, (GFunc) g_free, NULL);
-        g_ptr_array_free (t_char->readings, TRUE);
+        TOMOE_PTR_ARRAY_FREE_ALL (t_char->readings, g_free);
         t_char->readings = NULL;
     }
 
