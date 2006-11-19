@@ -1,5 +1,11 @@
 2006-11-19  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
+	* lib/glib-utils.h: New file.
+	* lib/tomoe-char.c, lib/tomoe-context.c, lib/tomoe-config,
+	lib/tomoe-dict.c: Use TOMOE_PTR_ARRAY_FREE_ALL.
+
+2006-11-19  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
 	* lib/tomoe-dict.c: Plugged a memory leak.
 
 2006-11-19  Hiroyuki Ikezoe  <poincare@ikezoe.net>
