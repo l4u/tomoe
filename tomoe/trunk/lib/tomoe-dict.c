@@ -137,8 +137,6 @@ _letter_free_func (gpointer data, gpointer user_data)
 {
     TomoeChar *c = (TomoeChar *) data;
 
-    if (!data) return;
-
     tomoe_char_free (c);
 }
 
@@ -150,7 +148,7 @@ tomoe_dict_free (TomoeDict* t_dict)
     t_dict->ref --;
     if (t_dict->ref <= 0) {
 	g_ptr_array_foreach (t_dict->letters, _letter_free_func, NULL);
-        g_ptr_array_free (t_dict->letters, FALSE);
+        g_ptr_array_free (t_dict->letters, TRUE);
         free (t_dict->filename);
         if (t_dict->metaXsl)
             xsltFreeStylesheet (t_dict->metaXsl);
@@ -215,6 +213,7 @@ tomoe_dict_save (TomoeDict* t_dict)
             xmlAddChild (charNode, xmlCopyNode (meta, 1));
         }
 
+	g_ptr_array_foreach (readings, (GFunc) g_free, NULL);
         g_ptr_array_free (readings, TRUE);
         tomoe_char_set_modified (chr, 0);
     }
@@ -299,14 +298,18 @@ tomoe_dict_remove_by_char (TomoeDict* t_dict, TomoeChar* remove)
 {
     if (!t_dict) return;
     g_ptr_array_remove_index (t_dict->letters, tomoe_dict_find_index (t_dict, remove));
+    tomoe_char_free (remove);
     tomoe_dict_set_modified (t_dict, 1);
 }
 
 void
 tomoe_dict_remove_by_index (TomoeDict* t_dict, int remove)
 {
+    TomoeChar *c;
+
     if (!t_dict) return;
-    g_ptr_array_remove_index (t_dict->letters, remove);
+    c = (TomoeChar *) g_ptr_array_remove_index (t_dict->letters, remove);
+    tomoe_char_free (c);
     tomoe_dict_set_modified (t_dict, 1);
 }
 

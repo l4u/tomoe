@@ -121,7 +121,7 @@ tomoe_config_free (TomoeConfig* t_config)
     {
         free (t_config->filename);
         g_ptr_array_foreach (t_config->dict_list, _tomoe_dict_cfg_free, NULL);
-        g_ptr_array_free (t_config->dict_list, FALSE);
+        g_ptr_array_free (t_config->dict_list, TRUE);
         free (t_config);
     }
 }

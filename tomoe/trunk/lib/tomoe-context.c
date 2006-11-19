@@ -69,7 +69,7 @@ tomoe_context_free(TomoeContext* ctx)
     ctx->ref--;
     if (ctx->ref <= 0) {
         g_ptr_array_foreach (ctx->dicts, _dict_free, NULL);
-        g_ptr_array_free (ctx->dicts, FALSE);
+        g_ptr_array_free (ctx->dicts, TRUE);
         tomoe_recognizer_free (ctx->recognizer);
         free (ctx);
     }
@@ -79,7 +79,7 @@ void
 tomoe_context_add_dict (TomoeContext* ctx, TomoeDict* dict)
 {
     if (!ctx || !dict) return;
-    g_ptr_array_add (ctx->dicts, dict);
+    g_ptr_array_add (ctx->dicts, tomoe_dict_add_ref (dict));
 }
 
 void
@@ -94,8 +94,10 @@ tomoe_context_load_dict (TomoeContext* ctx, const char *filename, int editable)
              filename, editable ? "yes" : "no");
     fflush (stdout);
     dict = tomoe_dict_new (filename, editable);
-    if (dict)
-        g_ptr_array_add (ctx->dicts, dict);
+    if (dict) {
+        tomoe_context_add_dict (ctx, dict);
+        tomoe_dict_free (dict);
+    }
     printf (" ok\n");
 }
 
@@ -182,7 +184,7 @@ tomoe_context_search_by_strokes (TomoeContext *ctx, TomoeGlyph *input)
 
         if (tmp) {
             g_ptr_array_foreach (tmp, _candidate_merge_func, matched);
-            g_ptr_array_free (tmp, FALSE);
+            g_ptr_array_free (tmp, TRUE);
         }
     }
     g_ptr_array_sort (matched, _candidate_compare_func);
@@ -207,7 +209,7 @@ tomoe_context_search_by_reading (TomoeContext *ctx, const char *input)
         tmp = tomoe_dict_search_by_reading (dict, input);
         if (tmp) {
             g_ptr_array_foreach (tmp, _ptr_array_merge_func, reading);
-            g_ptr_array_free (tmp, FALSE);
+            g_ptr_array_free (tmp, TRUE);
         }
     }
     /*tomoe_array_sort (reading);*/

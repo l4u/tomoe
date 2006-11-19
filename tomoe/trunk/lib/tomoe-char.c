@@ -187,7 +187,7 @@ tomoe_char_free (TomoeChar *t_char)
 	if (t_char->meta)     free (t_char->meta);
 	if (t_char->readings) {
 	    g_ptr_array_foreach (t_char->readings, (GFunc) g_free, NULL);
-	    g_ptr_array_free (t_char->readings, FALSE);
+	    g_ptr_array_free (t_char->readings, TRUE);
         }
 	t_char->charCode = NULL;
 	t_char->glyph    = NULL;
