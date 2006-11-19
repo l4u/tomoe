@@ -220,6 +220,7 @@ tomoe_dict_save (TomoeDict* t_dict)
 
     xmlSaveFormatFileEnc(t_dict->filename, doc, "UTF-8", 1);
     xmlFreeDoc (doc);
+    xmlCleanupCharEncodingHandlers();
     tomoe_dict_set_modified (t_dict, 0);
 }
 
