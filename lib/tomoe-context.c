@@ -119,7 +119,7 @@ tomoe_context_load_dict_list (TomoeContext* ctx, const GPtrArray* list)
             strcat (file, "/");
             strcat (file, p->filename);
             tomoe_context_load_dict (ctx, file, p->writeAccess);
-	    free (file);
+            free (file);
         }
     }
 }
