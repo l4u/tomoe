@@ -44,8 +44,8 @@ struct _TomoeChar
     GPtrArray            *readings;
     xmlNodePtr            xmlMeta;
     char                 *meta;
-    tomoe_dict_interface *parent;
-    gboolean             modified;
+    TomoeDict            *parent;
+    gboolean              modified;
 };
 
 TomoeStroke *
@@ -135,7 +135,7 @@ tomoe_glyph_free (TomoeGlyph *glyph)
 }
 
 TomoeChar*
-tomoe_char_new (tomoe_dict_interface* dict)
+tomoe_char_new (TomoeDict *dict)
 {
     TomoeChar *p = calloc (1, sizeof (TomoeChar));
 
@@ -268,7 +268,7 @@ tomoe_char_get_meta (TomoeChar* t_char)
     if (!t_char) return NULL;
     if (t_char->meta) return t_char->meta;
     if (!t_char->xmlMeta) return "";
-    if (!t_char->parent->get_meta_xsl (t_char->parent->instance)) return "";
+    if (!tomoe_dict_get_meta_xsl(t_char->parent)) return "";
 
     /* create xml doc and include meta xml block */
     doc = xmlNewDoc(BAD_CAST "1.0");
@@ -279,11 +279,11 @@ tomoe_char_get_meta (TomoeChar* t_char)
     xmlAddChild (root, t_char->xmlMeta);
 
     /* translate xml meta to view text */
-    meta = xsltApplyStylesheet (t_char->parent->get_meta_xsl (t_char->parent->instance), doc, param);
+    meta = xsltApplyStylesheet (tomoe_dict_get_meta_xsl(t_char->parent), doc, param);
 
     /* save into character object */
     xmlChar* metaString = NULL;
-    xsltSaveResultToString (&metaString, &len, meta, t_char->parent->get_meta_xsl (t_char->parent->instance));
+    xsltSaveResultToString (&metaString, &len, meta, tomoe_dict_get_meta_xsl(t_char->parent));
 
     /* change of meta is invariant */
     t_char->meta = strdup ((const char*)metaString);
@@ -299,7 +299,7 @@ tomoe_char_get_meta (TomoeChar* t_char)
 }
 
 void
-tomoe_char_set_dict_interface (TomoeChar *chr, tomoe_dict_interface *parent)
+tomoe_char_set_dict (TomoeChar *chr, TomoeDict *parent)
 {
     if (!chr) return;
     chr->parent = parent;
@@ -310,7 +310,7 @@ tomoe_char_is_editable (TomoeChar *chr)
 {
     if (!chr) return 0;
     if (!chr->parent) return 1;
-    return chr->parent->is_editable (chr->parent->instance);
+    return tomoe_dict_is_editable(chr->parent);
 }
 
 gboolean
@@ -326,7 +326,7 @@ tomoe_char_set_modified (TomoeChar *chr, gboolean modified)
     if (!chr) return;
     chr->modified = modified;
     if (chr->parent && modified == 1)
-        chr->parent->set_modified (chr->parent->instance, 1);
+        tomoe_dict_set_modified(chr->parent, TRUE);
 }
 
 xmlNodePtr

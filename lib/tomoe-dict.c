@@ -51,7 +51,6 @@ extern int xmlLoadExtDtdDefaultValue;
 struct _TomoeDict
 {
     int                  ref;
-    tomoe_dict_interface dict_interface;
 
     char*                filename;
     char*                name;
@@ -99,10 +98,6 @@ tomoe_dict_new (const char* filename, gboolean editable)
     t_dict->name                        = NULL;
     t_dict->filename                    = strdup (filename);
     t_dict->editable                    = editable;
-    t_dict->dict_interface.instance     = t_dict;
-    t_dict->dict_interface.get_meta_xsl = (tomoe_dict_interface_get_meta_xsl)tomoe_dict_get_meta_xsl;
-    t_dict->dict_interface.is_editable  = (tomoe_dict_interface_is_editable)tomoe_dict_is_editable;
-    t_dict->dict_interface.set_modified = (tomoe_dict_interface_set_modified)tomoe_dict_set_modified;
 
     if (0 == _check_dict_xsl (filename)) {
         /* native tomoe dictionary */
@@ -278,7 +273,7 @@ void
 tomoe_dict_add_char (TomoeDict* t_dict, TomoeChar* add)
 {
     if (!t_dict || !add) return;
-    tomoe_char_set_dict_interface (add, &t_dict->dict_interface);
+    tomoe_char_set_dict (add, t_dict);
     g_ptr_array_add (t_dict->letters, tomoe_char_add_ref (add));
     g_ptr_array_sort (t_dict->letters, _letter_compare_func);
     tomoe_dict_set_modified (t_dict, 1);
@@ -564,7 +559,7 @@ _parse_tomoe_dict (TomoeDict* t_dict, xmlNodePtr root)
                 continue;
 
             if (0 == xmlStrcmp(node->name, BAD_CAST "character")) {
-                TomoeChar *chr = tomoe_char_new (&t_dict->dict_interface);
+                TomoeChar *chr = tomoe_char_new (t_dict);
 
                 _parse_character (node, chr);
                 if (tomoe_char_get_code (chr))

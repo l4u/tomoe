@@ -34,6 +34,8 @@ G_BEGIN_DECLS
 
 #include <glib/garray.h>
 
+typedef struct _TomoeDict TomoeDict;
+
 typedef struct _TomoePoint     TomoePoint;
 typedef struct _TomoeStroke    TomoeStroke;
 typedef struct _TomoeGlyph     TomoeGlyph;
@@ -78,23 +80,6 @@ void            tomoe_candidate_free            (TomoeCandidate  *t_cand);
 int             tomoe_candidate_compare         (const TomoeCandidate *a,
                                                  const TomoeCandidate *b);
 
-#ifdef TOMOE_DICT__USE_XSL_METHODS
-typedef xsltStylesheetPtr  (*tomoe_dict_interface_get_meta_xsl) (void*);
-#else
-typedef void*              (*tomoe_dict_interface_get_meta_xsl) (void*);
-#endif
-typedef gboolean           (*tomoe_dict_interface_is_editable)  (void*);
-typedef void               (*tomoe_dict_interface_set_modified) (void*,
-                                                                 gboolean);
-
-typedef struct _tomoe_dict_interface
-{
-    void*                                instance;
-    tomoe_dict_interface_get_meta_xsl    get_meta_xsl;
-    tomoe_dict_interface_is_editable     is_editable;
-    tomoe_dict_interface_set_modified    set_modified;
-} tomoe_dict_interface;
-
 TomoeStroke    *tomoe_stroke_new                (void);
 void            tomoe_stroke_init               (TomoeStroke   *strk,
                                                  int            point_num);
@@ -136,7 +121,7 @@ unsigned int    tomoe_glyph_get_number_of_strokes
  * @brief Create a tomoe letter.
  * @return Pointer to newly allocated tomoe_letter struct.
  */
-TomoeChar      *tomoe_char_new                  (tomoe_dict_interface *dict);
+TomoeChar      *tomoe_char_new                  (TomoeDict     *dict);
 
 /**
  * @brief Increase reference count.
@@ -162,7 +147,7 @@ void            tomoe_char_set_glyph            (TomoeChar*     t_char,
                                                  TomoeGlyph*    glyph);
 const char     *tomoe_char_get_meta             (TomoeChar*     t_char);
 void            tomoe_char_set_dict_interface   (TomoeChar*     chr,
-                                                 tomoe_dict_interface *parent);
+                                                 TomoeDict     *parent);
 gboolean        tomoe_char_is_editable          (TomoeChar*     chr);
 gboolean        tomoe_char_is_modified          (TomoeChar*     chr);
 void            tomoe_char_set_modified         (TomoeChar*     chr,
