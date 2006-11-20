@@ -88,19 +88,20 @@ static void tomoe_dict_get_property   (GObject         *object,
                                        guint            prop_id,
                                        GValue          *value,
                                        GParamSpec      *pspec);
-static void _parse_readings           (xmlNodePtr       node,
+static void parse_readings            (xmlNodePtr       node,
                                        TomoeChar*       chr);
-static void _parse_character          (xmlNodePtr       node,
+static void parse_character           (xmlNodePtr       node,
                                        TomoeChar*       lttr);
-static void _parse_strokelist         (xmlNodePtr       node,
+static void parse_strokelist          (xmlNodePtr       node,
                                        TomoeChar*       lttr);
-static int  _check_dict_xsl           (const char*      filename);
-/* tomoe_dict private methods */
-static void _parse_tomoe_dict         (TomoeDict*       t_dict,
+static int  check_dict_xsl            (const char*      filename);
+static void parse_tomoe_dict          (TomoeDict*       t_dict,
                                        xmlNodePtr       root);
-static void _parse_alien_dict         (TomoeDict*       t_dict,
+static void parse_alien_dict          (TomoeDict*       t_dict,
                                        const char*      filename);
-static gint _letter_compare_func      (gconstpointer    a,
+static void letter_free_func          (gpointer         data,
+                                       gpointer         user_data);
+static gint letter_compare_func       (gconstpointer    a,
                                        gconstpointer    b);
 
 
@@ -184,23 +185,23 @@ tomoe_dict_new (const char* filename, gboolean editable)
                         NULL);
     priv = TOMOE_DICT_GET_PRIVATE (dict);
 
-    if (0 == _check_dict_xsl (filename)) {
+    if (0 == check_dict_xsl (filename)) {
         /* native tomoe dictionary */
         xmlDocPtr doc = xmlParseFile (filename);
 
         if (doc)
-            _parse_tomoe_dict (dict, xmlDocGetRootElement (doc));
+            parse_tomoe_dict (dict, xmlDocGetRootElement (doc));
 
         xmlFreeDoc (doc);
     }
     else /* non native dictionary */
-        _parse_alien_dict (dict, filename);
+        parse_alien_dict (dict, filename);
 
     xsltCleanupGlobals ();
     xmlCleanupParser ();
 
     if (priv->letters) {
-        g_ptr_array_sort (priv->letters, _letter_compare_func);
+        g_ptr_array_sort (priv->letters, letter_compare_func);
     }
 
     for (i = 0; i < priv->letters->len; i++) {
@@ -210,14 +211,6 @@ tomoe_dict_new (const char* filename, gboolean editable)
     priv->modified = FALSE;
 
     return dict;
-}
-
-static void
-_letter_free_func (gpointer data, gpointer user_data)
-{
-    TomoeChar *c = (TomoeChar *) data;
-
-    tomoe_char_free (c);
 }
 
 static void
@@ -231,7 +224,7 @@ tomoe_dict_finalize (GObject *object)
 
     g_free(priv->name);
     g_free(priv->filename);
-    TOMOE_PTR_ARRAY_FREE_ALL(priv->letters, _letter_free_func);
+    TOMOE_PTR_ARRAY_FREE_ALL(priv->letters, letter_free_func);
     if (priv->metaXsl)
         xsltFreeStylesheet(priv->metaXsl);
     g_free(priv->meta_xsl_filename);
@@ -423,7 +416,7 @@ tomoe_dict_add_char (TomoeDict* dict, TomoeChar* add)
 
     priv = TOMOE_DICT_GET_PRIVATE(dict);
     g_ptr_array_add (priv->letters, tomoe_char_add_ref (add));
-    g_ptr_array_sort (priv->letters, _letter_compare_func);
+    g_ptr_array_sort (priv->letters, letter_compare_func);
     tomoe_dict_set_modified (dict, TRUE);
 }
 
@@ -540,8 +533,8 @@ tomoe_dict_get_meta_xsl (TomoeDict* dict)
     return TOMOE_DICT_GET_PRIVATE(dict)->metaXsl;
 }
 
-void
-_parse_readings (xmlNodePtr node, TomoeChar* chr)
+static void
+parse_readings (xmlNodePtr node, TomoeChar* chr)
 {
     xmlNodePtr child;
     for (child = node->children; child; child = child->next) {
@@ -554,8 +547,8 @@ _parse_readings (xmlNodePtr node, TomoeChar* chr)
     }
 }
 
-void
-_parse_character (xmlNodePtr node, TomoeChar* lttr)
+static void
+parse_character (xmlNodePtr node, TomoeChar* lttr)
 {
     xmlNodePtr child;
     for (child = node->children; child; child = child->next) {
@@ -563,9 +556,9 @@ _parse_character (xmlNodePtr node, TomoeChar* lttr)
             continue;
 
         if (0 == xmlStrcmp (child->name, BAD_CAST "readings"))
-            _parse_readings (child, lttr);
+            parse_readings (child, lttr);
         else if (0 == xmlStrcmp (child->name, BAD_CAST "strokelist"))
-            _parse_strokelist (child, lttr);
+            parse_strokelist (child, lttr);
         else if (0 == xmlStrcmp (child->name, BAD_CAST "literal"))
             tomoe_char_set_code (lttr, (const char*) child->children->content);
         else if (0 == xmlStrcmp (child->name, BAD_CAST "meta"))
@@ -573,8 +566,8 @@ _parse_character (xmlNodePtr node, TomoeChar* lttr)
     }
 }
 
-void
-_parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
+static void
+parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
 {
     TomoeGlyph *glyph;
     int stroke_num = 0;
@@ -623,8 +616,8 @@ _parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
     }
 }
 
-int
-_check_dict_xsl (const char* filename)
+static int
+check_dict_xsl (const char* filename)
 {
     char* xslname = NULL;
     int len;
@@ -644,8 +637,8 @@ _check_dict_xsl (const char* filename)
     return 1;
 }
 
-void
-_parse_tomoe_dict (TomoeDict* dict, xmlNodePtr root)
+static void
+parse_tomoe_dict (TomoeDict* dict, xmlNodePtr root)
 {
     TomoeDictPrivate *priv;
 
@@ -681,7 +674,7 @@ _parse_tomoe_dict (TomoeDict* dict, xmlNodePtr root)
             if (0 == xmlStrcmp(node->name, BAD_CAST "character")) {
                 TomoeChar *chr = tomoe_char_new (dict);
 
-                _parse_character (node, chr);
+                parse_character (node, chr);
                 if (tomoe_char_get_code (chr))
                     g_ptr_array_add (priv->letters, tomoe_char_add_ref (chr));
                 tomoe_char_free (chr);
@@ -690,8 +683,8 @@ _parse_tomoe_dict (TomoeDict* dict, xmlNodePtr root)
     }
 }
 
-void
-_parse_alien_dict (TomoeDict* dict, const char* filename)
+static void
+parse_alien_dict (TomoeDict* dict, const char* filename)
 {
     char* xslname = strdup (filename);
     int len;
@@ -712,7 +705,7 @@ _parse_alien_dict (TomoeDict* dict, const char* filename)
     res = xsltApplyStylesheet (cur, doc, param);
 
     /* load native dictionary */
-    _parse_tomoe_dict (dict, xmlDocGetRootElement (res));
+    parse_tomoe_dict (dict, xmlDocGetRootElement (res));
 
     xsltFreeStylesheet (cur);
     xmlFreeDoc (res);
@@ -720,8 +713,16 @@ _parse_alien_dict (TomoeDict* dict, const char* filename)
 
 }
 
+static void
+letter_free_func (gpointer data, gpointer user_data)
+{
+    TomoeChar *c = (TomoeChar *) data;
+
+    tomoe_char_free (c);
+}
+
 static gint
-_letter_compare_func (gconstpointer a, gconstpointer b)
+letter_compare_func (gconstpointer a, gconstpointer b)
 {
     TomoeChar *ca = *(TomoeChar **) a;
     TomoeChar *cb = *(TomoeChar **) b;
