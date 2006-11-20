@@ -41,12 +41,15 @@ G_BEGIN_DECLS
  */
 void       tomoe_init          (void);
 
-TomoeContext *tomoe_simple_load   (const char* config_file);
-
 /**
  * @brief Finalize tomoe library.
  */
 void       tomoe_quit          (void);
+
+/*
+ * FIXME: will be renamed and be moved to tomoe-context.h
+ */
+TomoeContext *tomoe_simple_load (const char* config_file);
 
 G_END_DECLS
 
