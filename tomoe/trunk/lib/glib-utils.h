@@ -28,10 +28,10 @@
 
 G_BEGIN_DECLS
 
-#define TOMOE_PTR_ARRAY_FREE_ALL(p_array, free_func) \
-{\
-    g_ptr_array_foreach (p_array, (GFunc) (free_func), NULL);\
-    g_ptr_array_free (p_array, TRUE);\
+#define TOMOE_PTR_ARRAY_FREE_ALL(p_array, free_func)            \
+{                                                               \
+    g_ptr_array_foreach (p_array, (GFunc) (free_func), NULL);   \
+    g_ptr_array_free (p_array, TRUE);                           \
 }
 
 G_END_DECLS

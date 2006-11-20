@@ -32,7 +32,6 @@
 
 G_BEGIN_DECLS
 
-#include "tomoe-data-types.h"
 #include "tomoe-dict.h"
 #include "tomoe-config.h"
 

@@ -33,7 +33,6 @@ pkginclude_HEADERS = \
 	tomoe.h \
 	tomoe-char.h \
 	tomoe-dict.h \
-	tomoe-data-types.h \
 	tomoe-context.h \
 	tomoe-config.h \
 	tomoe-object.h \

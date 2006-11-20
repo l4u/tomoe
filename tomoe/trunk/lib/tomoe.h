@@ -34,7 +34,6 @@
 
 G_BEGIN_DECLS
 
-#include "tomoe-data-types.h"
 #include "tomoe-context.h"
 
 /**

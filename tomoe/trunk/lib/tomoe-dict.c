@@ -57,11 +57,11 @@ struct _TomoeDict
     char*                name;
     char*                encoding;
     char*                lang;
-    TomoeBool            editable;
+    gboolean            editable;
     GPtrArray           *letters;
     xsltStylesheetPtr    metaXsl;
     char                *meta_xsl_file;
-    TomoeBool            modified;
+    gboolean            modified;
 };
 
 void              _parse_readings           (xmlNodePtr       node,
@@ -82,7 +82,7 @@ static gint       _letter_compare_func      (gconstpointer    a,
                                              gconstpointer    b);
 
 TomoeDict*
-tomoe_dict_new (const char* filename, TomoeBool editable)
+tomoe_dict_new (const char* filename, gboolean editable)
 {
     TomoeDict* t_dict = NULL;
     int i;
@@ -246,14 +246,14 @@ tomoe_dict_get_name (TomoeDict* t_dict)
     return t_dict->name;
 }
 
-TomoeBool
+gboolean
 tomoe_dict_is_editable (TomoeDict* t_dict)
 {
     if (!t_dict) return 0;
     return t_dict->editable;
 }
 
-TomoeBool
+gboolean
 tomoe_dict_is_modified (TomoeDict *dict)
 {
     if (!dict) return 0;
@@ -261,7 +261,7 @@ tomoe_dict_is_modified (TomoeDict *dict)
 }
 
 void
-tomoe_dict_set_modified (TomoeDict *dict, TomoeBool modified)
+tomoe_dict_set_modified (TomoeDict *dict, gboolean modified)
 {
     if (!dict) return;
     dict->modified = modified;

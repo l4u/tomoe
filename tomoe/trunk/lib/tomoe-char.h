@@ -32,7 +32,6 @@
 
 G_BEGIN_DECLS
 
-#include "tomoe-data-types.h"
 #include "tomoe-object.h"
 #include <glib/garray.h>
 
@@ -97,9 +96,9 @@ typedef xsltStylesheetPtr  (*tomoe_dict_interface_get_meta_xsl) (void*);
 #else
 typedef void*              (*tomoe_dict_interface_get_meta_xsl) (void*);
 #endif
-typedef TomoeBool          (*tomoe_dict_interface_is_editable)  (void*);
+typedef gboolean           (*tomoe_dict_interface_is_editable)  (void*);
 typedef void               (*tomoe_dict_interface_set_modified) (void*,
-                                                                 TomoeBool);
+                                                                 gboolean);
 
 typedef struct _tomoe_dict_interface
 {
@@ -177,10 +176,10 @@ void             tomoe_char_set_glyph            (TomoeChar*     t_char,
 const char      *tomoe_char_get_meta             (TomoeChar*     t_char);
 void             tomoe_char_set_dict_interface   (TomoeChar*     chr,
                                                   tomoe_dict_interface *parent);
-TomoeBool        tomoe_char_is_editable          (TomoeChar*     chr);
-TomoeBool        tomoe_char_is_modified          (TomoeChar*     chr);
+gboolean        tomoe_char_is_editable          (TomoeChar*     chr);
+gboolean        tomoe_char_is_modified          (TomoeChar*     chr);
 void             tomoe_char_set_modified         (TomoeChar*     chr,
-                                                 TomoeBool      modified);
+                                                  gboolean      modified);
 
 #ifdef TOMOE_CHAR__USE_XML_METHODS
 xmlNodePtr      tomoe_char_get_xml_meta         (TomoeChar*     t_char);

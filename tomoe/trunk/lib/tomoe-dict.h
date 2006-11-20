@@ -36,7 +36,6 @@
 
 G_BEGIN_DECLS
 
-#include "tomoe-data-types.h"
 #include "tomoe-char.h"
 #include <glib/garray.h>
 
@@ -49,7 +48,7 @@ typedef struct _TomoeDict TomoeDict;
  * @return Pointer to newly allocated TomoeDict object.
  */
 TomoeDict      *tomoe_dict_new                  (const char    *filename,
-                                                 TomoeBool      editable);
+                                                 gboolean      editable);
 
 /**
  * @brief Increase reference count.
@@ -91,11 +90,11 @@ const char     *tomoe_dict_get_name             (TomoeDict     *t_dict);
  * @param t_dict - Pointer to the TomoeDict object.
  * @return 1 - is editable, 0 - is not editable
  */
-TomoeBool       tomoe_dict_is_editable          (TomoeDict     *t_dict);
+gboolean        tomoe_dict_is_editable          (TomoeDict     *t_dict);
 
-TomoeBool       tomoe_dict_is_modified          (TomoeDict     *dict);
+gboolean        tomoe_dict_is_modified          (TomoeDict     *dict);
 void            tomoe_dict_set_modified         (TomoeDict     *dict,
-                                                 TomoeBool      modified);
+                                                 gboolean      modified);
 
 /**
  * @brief Get character count

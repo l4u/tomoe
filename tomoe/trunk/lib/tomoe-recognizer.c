@@ -20,6 +20,8 @@
  *  $Id$
  */
 
+#include <stdlib.h>
+
 #include <gmodule.h>
 #include "tomoe-recognizer.h"
 #include "tomoe-recognizer-impl.h"
