@@ -76,20 +76,12 @@ tomoe_context_new(void)
 }
 
 static void
-_dict_free (gpointer data, gpointer user_data)
-{
-    TomoeDict *dict = (TomoeDict *) data;
-
-    g_object_unref (dict);
-}
-
-static void
 tomoe_context_dispose (GObject *object)
 {
     TomoeContextPrivate *priv = TOMOE_CONTEXT_GET_PRIVATE (object);
 
     if (priv->dicts) {
-        TOMOE_PTR_ARRAY_FREE_ALL (priv->dicts, _dict_free);
+        TOMOE_PTR_ARRAY_FREE_ALL (priv->dicts, g_object_unref);
     }
 
     if (priv->recognizer) {
