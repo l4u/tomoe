@@ -121,9 +121,11 @@ tomoe_config_constructor (GType type, guint n_props,
         const gchar *home = g_get_home_dir ();
 
         if (!home) {
-            priv->filename = NULL;
+            /* use system configuration file */
+            priv->filename = g_strdup (system_config_file);
         } else {
             _tomoe_create_config_dir ();
+
             priv->filename = g_build_filename (home, "."PACKAGE, default_config_file, NULL);
             /* if not found, use systemConfigFile */
             if (!g_file_test (priv->filename, G_FILE_TEST_EXISTS) &&
@@ -412,6 +414,9 @@ tomoe_config_get_default_user_db (TomoeConfig *config)
     return priv->default_user_db;
 }
 
+/*
+ * TomoeDictCfg code
+ */
 static TomoeDictCfg*
 _tomoe_dict_cfg_new (void)
 {
