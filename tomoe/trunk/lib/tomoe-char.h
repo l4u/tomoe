@@ -37,28 +37,7 @@ G_BEGIN_DECLS
 typedef struct _TomoeDict TomoeDict;
 
 typedef struct _TomoeChar      TomoeChar;
-typedef struct _TomoePoint     TomoePoint;
-typedef struct _TomoeStroke    TomoeStroke;
-typedef struct _TomoeGlyph     TomoeGlyph;
 typedef struct _TomoeCandidate TomoeCandidate;
-
-struct _TomoePoint
-{
-    int           x;
-    int           y;
-};
-
-struct _TomoeStroke
-{
-    unsigned int  point_num;
-    TomoePoint   *points;
-};
-
-struct _TomoeGlyph
-{
-    unsigned int  stroke_num;
-    TomoeStroke  *strokes;
-};
 
 struct _TomoeCandidate
 {
@@ -154,9 +133,31 @@ int             tomoe_candidate_compare         (const TomoeCandidate *a,
 
 /*
  *
- *  Functions for handwriting related features.
+ *  API for handwriting recognition related features.
  *
  */
+typedef struct _TomoePoint     TomoePoint;
+typedef struct _TomoeStroke    TomoeStroke;
+typedef struct _TomoeGlyph     TomoeGlyph;
+
+struct _TomoePoint
+{
+    int           x;
+    int           y;
+};
+
+struct _TomoeStroke
+{
+    unsigned int  point_num;
+    TomoePoint   *points;
+};
+
+struct _TomoeGlyph
+{
+    unsigned int  stroke_num;
+    TomoeStroke  *strokes;
+};
+
 TomoeStroke    *tomoe_stroke_new                (void);
 void            tomoe_stroke_init               (TomoeStroke   *strk,
                                                  int            point_num);
