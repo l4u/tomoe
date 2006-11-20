@@ -163,7 +163,9 @@ _candidate_merge_func (gpointer data, gpointer user_data)
 static gint
 _candidate_compare_func (gconstpointer a, gconstpointer b)
 {
-    return tomoe_candidate_compare (a, b);
+    TomoeCandidate *ca = *(TomoeCandidate **) a;
+    TomoeCandidate *cb = *(TomoeCandidate **) b;
+    return tomoe_candidate_compare (ca, cb);
 }
 
 GPtrArray *

@@ -608,7 +608,9 @@ _parse_alien_dict (TomoeDict* t_dict, const char* filename)
 static gint
 _letter_compare_func (gconstpointer a, gconstpointer b)
 {
-    return tomoe_char_compare (a, b);
+    TomoeChar *ca = *(TomoeChar **) a;
+    TomoeChar *cb = *(TomoeChar **) b;
+    return tomoe_char_compare (ca, cb);
 }
 
 /*
