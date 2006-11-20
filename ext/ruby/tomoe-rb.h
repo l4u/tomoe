@@ -30,6 +30,9 @@
 
 G_BEGIN_DECLS
 
+#define RVAL2TCTX(obj) (TOMOE_CONTEXT(RVAL2GOBJ(obj)))
+#define RVAL2TDIC(obj) (TOMOE_DICT(RVAL2GOBJ(obj)))
+
 void Init_tomoe(void);
 void Init_tomoe_char(VALUE mTomoe);
 void Init_tomoe_config(VALUE mTomoe);

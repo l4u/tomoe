@@ -1,5 +1,8 @@
 2006-11-20  Kouhei Sutou  <kou@cozmixng.org>
 
+	* ext/ruby/tomoe-rb-context.c: added Context#add_dict and
+	Context#load_config.
+
 	* lib/tomoe-context.[ch]: moved dictionary list related APIs to
 	...
 	* lib/tomoe-shelf.[ch]: ... here.
