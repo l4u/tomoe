@@ -27,9 +27,9 @@
 #ifndef __TOMOE_OBJECT_H__
 #define __TOMOE_OBJECT_H__
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
+#include <glib-object.h>
+
+G_BEGIN_DECLS
 
 #include "tomoe-data-types.h"
 
@@ -84,9 +84,7 @@ tomoe_class_type tomoe_register_class_type (tomoe_type_info typeinfo);
 #define TOMOE_CLASS_PRIV_END };
 
 
-#ifdef	__cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* __TOMOE_OBJECT_H__ */
 

@@ -28,9 +28,9 @@
 #ifndef __TOMOE_CONTEXT_H__
 #define __TOMOE_CONTEXT_H__
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
+#include <glib-object.h>
+
+G_BEGIN_DECLS
 
 #include "tomoe-data-types.h"
 #include "tomoe-dict.h"
@@ -112,9 +112,7 @@ int             tomoe_context_is_dict_enabled        (TomoeContext       *ctx,
 GPtrArray*      tomoe_context_get_dicts              (TomoeContext       *ctx);
 #endif
 
-#ifdef	__cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* __TOMOE_CONTEXT_H__ */
 

@@ -28,9 +28,9 @@
 #ifndef __TOMOE_RECOGNIZER_H__
 #define __TOMOE_RECOGNIZER_H__
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
+#include <glib-object.h>
+
+G_BEGIN_DECLS
 
 #include "tomoe-dict.h"
 
@@ -51,9 +51,7 @@ GPtrArray       *tomoe_recognizer_search  (const TomoeRecognizer *recognizer,
                                            TomoeDict *dict,
                                            TomoeGlyph *inputs);
 
-#ifdef	__cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* __TOMOE_RECOGNIZER_H__ */
 

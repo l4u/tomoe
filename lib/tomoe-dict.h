@@ -32,9 +32,9 @@
 #ifndef __TOMOE_DICT_H__
 #define __TOMOE_DICT_H__
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
+#include <glib-object.h>
+
+G_BEGIN_DECLS
 
 #include "tomoe-data-types.h"
 #include "tomoe-char.h"
@@ -173,9 +173,7 @@ GPtrArray      *tomoe_dict_search_by_reading    (const TomoeDict *t_dict,
 xsltStylesheetPtr  tomoe_dict_get_meta_xsl      (TomoeDict       *t_dict);
 #endif
 
-#ifdef	__cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* __TOMOE_DICT_H__ */
 

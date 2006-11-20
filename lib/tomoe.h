@@ -30,9 +30,9 @@
 #ifndef __TOMOE_H__
 #define __TOMOE_H__
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
+#include <glib.h>
+
+G_BEGIN_DECLS
 
 #include "tomoe-data-types.h"
 #include "tomoe-context.h"
@@ -49,9 +49,7 @@ TomoeContext *tomoe_simple_load   (const char* config_file);
  */
 void       tomoe_quit          (void);
 
-#ifdef	__cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* __TOMOE_H__ */
 

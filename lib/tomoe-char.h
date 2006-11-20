@@ -28,9 +28,9 @@
 #ifndef __TOMOE_CHAR_H__
 #define __TOMOE_CHAR_H__
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
+#include <glib-object.h>
+
+G_BEGIN_DECLS
 
 #include "tomoe-data-types.h"
 #include "tomoe-object.h"
@@ -209,9 +209,7 @@ gint            tomoe_char_compare              (const TomoeChar *a,
 int             tomoe_string_compare            (const char **a,
                                                  const char **b);
 
-#ifdef	__cplusplus
-}
-#endif
+G_END_DECLS
 
 /*interface_tomoe_array (TomoeCandidateArray, const TomoeCandidate*);*/
 
