@@ -43,10 +43,10 @@
 typedef struct _TomoeConfigPrivate	TomoeConfigPrivate;
 struct _TomoeConfigPrivate
 {
-    char        *filename;
-    int          use_system_dictionaries;
+    gchar        *filename;
+    gint          use_system_dictionaries;
     GPtrArray   *dict_list;
-    int          default_user_db;
+    gint          default_user_db;
 };
 
 enum
@@ -204,9 +204,9 @@ tomoe_config_finalize (GObject *object)
 
 static void
 tomoe_config_set_property (GObject      *object,
-			    guint         prop_id,
-			    const GValue *value,
-			    GParamSpec   *pspec)
+                           guint         prop_id,
+                           const GValue *value,
+                           GParamSpec   *pspec)
 {
     TomoeConfigPrivate *priv = TOMOE_CONFIG_GET_PRIVATE (object);
 
@@ -223,9 +223,9 @@ tomoe_config_set_property (GObject      *object,
 
 static void
 tomoe_config_get_property (GObject    *object,
-			    guint       prop_id,
-			    GValue     *value,
-			    GParamSpec *pspec)
+                           guint       prop_id,
+                           GValue     *value,
+                           GParamSpec *pspec)
 {
     TomoeConfigPrivate *priv = TOMOE_CONFIG_GET_PRIVATE (object);
 
@@ -439,11 +439,11 @@ _tomoe_dict_cfg_free (gpointer data, gpointer user_data)
 {
     TomoeDictCfg *p = (TomoeDictCfg*) data;
     if (!data) return;
-    free (p->filename);
-    free (p);
+    g_free (p->filename);
+    g_free (p);
 }
 
-static int
+static gint
 _tomoe_dict_cfg_cmp (gconstpointer a, gconstpointer b)
 {
     TomoeDictCfg *ca, *cb;
