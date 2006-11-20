@@ -213,7 +213,7 @@ tomoe_dict_save (TomoeDict* t_dict)
             xmlAddChild (charNode, xmlCopyNode (meta, 1));
         }
 
-	TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
+        TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
         tomoe_char_set_modified (chr, 0);
     }
 
@@ -351,27 +351,27 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
     for (i = 0; i < letter_num; i++) {
         TomoeChar *lttr = (TomoeChar*) g_ptr_array_index (t_dict->letters, i);
         guint reading_num, j;
-	gboolean find = FALSE;
+        gboolean find = FALSE;
         GPtrArray *readings = tomoe_char_get_readings (lttr);
 
         /* check for available reading data */
         if (!readings->len) {
-	    TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
-            continue;
-	}
+                TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
+                continue;
+        }
 
         reading_num = readings->len;
 
         for (j = 0; j < reading_num; j++) {
             const char* r = (const char*) g_ptr_array_index (readings, j);
             if (0 == strcmp (r, input)) {
-	        find = TRUE;
-		break;
-	    }
+                find = TRUE;
+                break;
+            }
         }
-	if (find)
-            g_ptr_array_add (reading, tomoe_char_add_ref (lttr));
-	TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
+        if (find)
+                g_ptr_array_add (reading, tomoe_char_add_ref (lttr));
+        TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
     }
 
     return reading;
@@ -393,7 +393,7 @@ _parse_readings (xmlNodePtr node, TomoeChar* chr)
             GPtrArray *readings = tomoe_char_get_readings (chr);
             g_ptr_array_add (readings, strdup ((const char*)child->children->content));
             tomoe_char_set_readings (chr, readings);
-	    TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
+            TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
         }
     }
 }
@@ -569,7 +569,7 @@ _parse_tomoe_dict (TomoeDict* t_dict, xmlNodePtr root)
                 _parse_character (node, chr);
                 if (tomoe_char_get_code (chr))
                     g_ptr_array_add (t_dict->letters, tomoe_char_add_ref (chr));
-		tomoe_char_free (chr);
+                tomoe_char_free (chr);
             }
         }
     }
