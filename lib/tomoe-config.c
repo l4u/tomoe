@@ -108,19 +108,13 @@ tomoe_config_constructor (GType type, guint n_props,
 {
     GObject *object;
     TomoeConfigPrivate *priv;
-    gchar *current_dir, *filename = NULL;
     GObjectClass *klass = G_OBJECT_CLASS (tomoe_config_parent_class);
 
     object = klass->constructor (type, n_props, props);
     priv = TOMOE_CONFIG_GET_PRIVATE (object);
 
-    current_dir = g_get_current_dir ();
-
-    if (priv->filename)
-        filename = g_build_filename (current_dir, priv->filename, NULL);
-
     /* check config file */
-    if (!priv->filename || !g_file_test (filename, G_FILE_TEST_EXISTS)) {
+    if (!priv->filename || !g_file_test (priv->filename, G_FILE_TEST_EXISTS)) {
         /* use ~/.tomoe/config.xml */
         const gchar *home = g_get_home_dir ();
 
@@ -152,7 +146,6 @@ tomoe_config_constructor (GType type, guint n_props,
             }
         }
     }
-    g_free (current_dir);
 
 	return object;
 }
