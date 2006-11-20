@@ -24,16 +24,11 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <libxml/xmlreader.h>
 #include <glib.h>
 #include <glib/gi18n.h>
-#include <glob.h>
 
 #include "tomoe-config.h"
 #include "glib-utils.h"
@@ -274,7 +269,7 @@ tomoe_config_load (TomoeConfig *config)
 
                 for (prop = node->properties; prop; prop = prop->next) {
                     if (0 == xmlStrcmp(prop->name, BAD_CAST "file"))
-                        defaultUserDB = strdup ((const char*)prop->children->content);
+                        defaultUserDB = g_strdup ((const gchar*)prop->children->content);
                 }
             } else if (0 == xmlStrcmp(node->name, BAD_CAST "dictionary")) {
                 xmlAttrPtr prop;
@@ -285,7 +280,7 @@ tomoe_config_load (TomoeConfig *config)
                 dcfg->user = 1;
                 for (prop = node->properties; prop; prop = prop->next) {
                     if (0 == xmlStrcmp(prop->name, BAD_CAST "file"))
-                        dcfg->filename = strdup ((const char*)prop->children->content);
+                        dcfg->filename = g_strdup ((const gchar*)prop->children->content);
                     else if (0 == xmlStrcmp(prop->name, BAD_CAST "dontLoad"))
                         dcfg->dontLoad = xmlStrcmp(prop->children->content, BAD_CAST "yes") ? 0 : 1;
                     else if (0 == xmlStrcmp(prop->name, BAD_CAST "system"))
@@ -324,21 +319,15 @@ tomoe_config_load (TomoeConfig *config)
 
     /* search in TOMOEDATADIR for additional dictionaries */
     if (priv->use_system_dictionaries) {
-        size_t cnt;
-        glob_t glob_results;
-        char **p;
+        const gchar *filename;
+        GDir *gdir;
 
-        glob (TOMOEDATADIR "/*.xml", 0, 0, &glob_results);
-
-        for (p = glob_results.gl_pathv, cnt = glob_results.gl_pathc;
-             cnt; p++, cnt--)
-        {
-            gchar *filename;
-            gint i;
+        gdir = g_dir_open (TOMOEDATADIR, 0, NULL);
+        while ((filename = g_dir_read_name (gdir))) {
             gboolean dup = FALSE;
 
-            filename = g_path_get_basename (*p);
-
+            if (!g_str_has_suffix (filename, ".xml"))
+                continue;
             for (i = 0; i < priv->dict_list->len; i++) {
                 TomoeDictCfg *dcfg = g_ptr_array_index (priv->dict_list, i);
                 if (!strcmp (dcfg->filename, filename)) {
@@ -351,13 +340,11 @@ tomoe_config_load (TomoeConfig *config)
                 dcfg->writeAccess = 0;
                 dcfg->dontLoad = 0;
                 dcfg->user = 0;
-                dcfg->filename = filename;
+                dcfg->filename = g_strdup (filename);
                 g_ptr_array_add (priv->dict_list, dcfg);
-            } else {
-                g_free (filename);
             }
         }
-        globfree (&glob_results);
+        g_dir_close (gdir);
 
         g_ptr_array_sort (priv->dict_list, _tomoe_dict_cfg_cmp);
     }
