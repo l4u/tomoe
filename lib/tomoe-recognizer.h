@@ -43,13 +43,10 @@ G_BEGIN_DECLS
 
 typedef struct _TomoeRecognizer TomoeRecognizer;
 typedef struct _TomoeRecognizerClass TomoeRecognizerClass;
-typedef struct _TomoeRecognizerPrivate TomoeRecognizerPrivate;
 
 struct _TomoeRecognizer
 {
     GObject object;
-
-    TomoeRecognizerPrivate *private_data;
 };
 
 struct _TomoeRecognizerClass
