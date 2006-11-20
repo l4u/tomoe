@@ -175,16 +175,17 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
 
         if (_int_array_find_data(matches, cand->index) < 0) {
             const TomoeChar *a = g_ptr_array_index (letters, cand->index);
-            gboolean b = TRUE;
+            gboolean f = TRUE;
 
             for (j = 0; j < (unsigned int)matches->len; j++) {
                 const TomoeChar *b = g_ptr_array_index (letters, matches->p[j]);
                 if (!tomoe_char_compare(a, b)) {
-                    b = FALSE;
+                    f = FALSE;
                     break;
                 }
             }
-            if (b) {
+
+            if (f) {
                 matches = _int_array_append_data(matches, cand->index);
             }
         }
