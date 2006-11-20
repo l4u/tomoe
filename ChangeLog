@@ -1,5 +1,9 @@
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
+	* lib/tomoe-dict.c: Fixed crash.
+
+2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
 	* lib/tomoe-dict.c, lib/tomoe-context.c: Fixed crash.
 
 2006-11-20  Kouhei Sutou  <kou@cozmixng.org>
