@@ -54,20 +54,20 @@ struct _TomoeConfigClass
 
 typedef struct _TomoeDictCfg
 {
-    char       *filename;
-    int         dontLoad;
-    int         writeAccess;
-    int         user;
+    gchar       *filename;
+    gint         dontLoad;
+    gint         writeAccess;
+    gint         user;
 } TomoeDictCfg;
 
 GType            tomoe_config_get_type (void) G_GNUC_CONST;
 
 TomoeConfig     *tomoe_config_new                 (const char   *config_file);
-void             tomoe_config_load                (TomoeConfig  *t_config);
-void             tomoe_config_save                (TomoeConfig  *t_config);
-const char      *tomoe_config_get_filename        (TomoeConfig  *t_config);
-const GPtrArray *tomoe_config_get_dict_list       (TomoeConfig  *t_config);
-int              tomoe_config_get_default_user_db (TomoeConfig  *t_config);
+void             tomoe_config_load                (TomoeConfig  *config);
+void             tomoe_config_save                (TomoeConfig  *config);
+const gchar     *tomoe_config_get_filename        (TomoeConfig  *config);
+const GPtrArray *tomoe_config_get_dict_list       (TomoeConfig  *config);
+gint             tomoe_config_get_default_user_db (TomoeConfig  *config);
 
 G_END_DECLS
 
