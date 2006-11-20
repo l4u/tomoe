@@ -217,8 +217,9 @@ main (int argc, char **argv)
 
     tomoe_init ();
 
-    ctx = tomoe_simple_load ("test-config.xml");
+    ctx = tomoe_context_new();
     if (!ctx) exit (1);
+    tomoe_context_load_config (ctx, "test-config.xml");
 
     if (argc == 2 && 0 == strcmp (argv[1], "stroke"))
         testStrokeMatch (ctx);
