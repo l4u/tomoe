@@ -35,6 +35,7 @@
 G_BEGIN_DECLS
 
 #include "tomoe-context.h"
+#include "tomoe-recognizer.h"
 
 /**
  * @brief Initialize tomoe library.

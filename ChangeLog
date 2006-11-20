@@ -1,3 +1,7 @@
+2006-11-20  Kouhei Sutou  <kou@cozmixng.org>
+
+	* configure.in, Makefile.am, ext/: added bindings for Ruby.
+
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-context.c: Use g_object_unref instead of _dict_free_func.
