@@ -103,8 +103,10 @@ main (int argc, char **argv)
     /* FIXME! read arguments */
 
     tomoe_init ();
-    TomoeContext* ctx = tomoe_simple_load (NULL);
+    TomoeContext* ctx = tomoe_context_new();
     if (!ctx) exit (1);
+
+    tomoe_context_load_config(ctx, NULL);
 
     while (1)
     {
