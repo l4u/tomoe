@@ -36,7 +36,7 @@
 
 G_BEGIN_DECLS
 
-#include "tomoe-char.h"
+#include <tomoe-char.h>
 
 #define TOMOE_TYPE_DICT            (tomoe_dict_get_type ())
 #define TOMOE_DICT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_DICT, TomoeDict))
