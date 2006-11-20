@@ -28,11 +28,9 @@
 #ifndef __TOMOE_CONFIG_H__
 #define __TOMOE_CONFIG_H__
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
+#include <glib-object.h>
 
-#include <glib/garray.h>
+G_BEGIN_DECLS
 
 typedef struct _TomoeConfig TomoeConfig;
 
@@ -53,9 +51,7 @@ const char      *tomoe_config_get_filename        (TomoeConfig  *t_config);
 const GPtrArray *tomoe_config_get_dict_list       (TomoeConfig  *t_config);
 int              tomoe_config_get_default_user_db (TomoeConfig  *t_config);
 
-#ifdef	__cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* __TOMOE_CONFIG_H__ */
 

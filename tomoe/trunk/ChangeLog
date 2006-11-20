@@ -1,3 +1,7 @@
+2006-11-20  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/: used G_BEGIN_DECLS and G_END_DECLS.
+
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-dict.c: Fixed crash.

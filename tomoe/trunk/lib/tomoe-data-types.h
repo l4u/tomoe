@@ -30,9 +30,9 @@
 #ifndef __TOMOE_DATA_TYPES_H__
 #define __TOMOE_DATA_TYPES_H__
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
+#include <glib.h>
+
+G_BEGIN_DECLS
 
 #include <stdlib.h>
 
@@ -51,8 +51,6 @@ typedef int TomoeBool;
 #define TRUE  1
 #endif
 
-#ifdef	__cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* __TOMOE_DATA_TYPES_H__ */

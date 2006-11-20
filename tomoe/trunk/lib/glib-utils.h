@@ -24,11 +24,9 @@
 #ifndef __GLIB_UTILS_H__
 #define __GLIB_UTILS_H__
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 #include <glib/garray.h>
+
+G_BEGIN_DECLS
 
 #define TOMOE_PTR_ARRAY_FREE_ALL(p_array, free_func) \
 {\
@@ -36,9 +34,7 @@ extern "C" {
     g_ptr_array_free (p_array, TRUE);\
 }
 
-#ifdef	__cplusplus
-}
-#endif
+G_END_DECLS
 
 #endif /* __GLIB_UTILS_H__ */
 
