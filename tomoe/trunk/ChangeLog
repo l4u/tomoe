@@ -1,5 +1,7 @@
 2006-11-20  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-object.[ch]: removed.
+
 	* configure.in, lib/tomoe.c, lib/tomoe-recognizer.[ch]: used GObject.
 	* lib/tomoe-context.c: used g_object_unref instead of
 	tomoe_recognizer_{add_ref,free}.
