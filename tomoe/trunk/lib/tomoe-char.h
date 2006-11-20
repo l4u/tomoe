@@ -100,27 +100,27 @@ GType           tomoe_char_get_type (void) G_GNUC_CONST;
 TomoeChar      *tomoe_char_new                  (TomoeDict     *dict);
 
 const char     *tomoe_char_get_code             (const TomoeChar *t_char);
-void            tomoe_char_set_code             (TomoeChar*     t_char,
-                                                 const char*    code);
-GPtrArray      *tomoe_char_get_readings         (TomoeChar*     t_char);
-void            tomoe_char_set_readings         (TomoeChar*     t_char,
-                                                 GPtrArray*     readings);
-TomoeGlyph     *tomoe_char_get_glyph            (TomoeChar*     t_char);
-void            tomoe_char_set_glyph            (TomoeChar*     t_char,
-                                                 TomoeGlyph*    glyph);
-const char     *tomoe_char_get_meta             (TomoeChar*     t_char);
-void            tomoe_char_set_dict             (TomoeChar*     chr,
+void            tomoe_char_set_code             (TomoeChar     *t_char,
+                                                 const char    *code);
+GPtrArray      *tomoe_char_get_readings         (TomoeChar     *t_char);
+void            tomoe_char_set_readings         (TomoeChar     *t_char,
+                                                 GPtrArray     *readings);
+TomoeGlyph     *tomoe_char_get_glyph            (TomoeChar     *t_char);
+void            tomoe_char_set_glyph            (TomoeChar     *t_char,
+                                                 TomoeGlyph    *glyph);
+const char     *tomoe_char_get_meta             (TomoeChar     *t_char);
+void            tomoe_char_set_dict             (TomoeChar     *chr,
                                                  TomoeDict     *parent);
-gboolean        tomoe_char_is_editable          (TomoeChar*     chr);
-gboolean        tomoe_char_is_modified          (TomoeChar*     chr);
-void            tomoe_char_set_modified         (TomoeChar*     chr,
-                                                 gboolean      modified);
+gboolean        tomoe_char_is_editable          (TomoeChar     *chr);
+gboolean        tomoe_char_is_modified          (TomoeChar     *chr);
+void            tomoe_char_set_modified         (TomoeChar     *chr,
+                                                 gboolean       modified);
 
 #ifdef TOMOE_CHAR__USE_XML_METHODS
-xmlNodePtr      tomoe_char_get_xml_meta         (TomoeChar*     t_char);
-void            tomoe_char_set_xml_meta         (TomoeChar*     t_char,
+xmlNodePtr      tomoe_char_get_xml_meta         (TomoeChar     *t_char);
+void            tomoe_char_set_xml_meta         (TomoeChar     *t_char,
                                                  xmlNodePtr     meta);
-void            tomoe_char_set_meta_xsl         (TomoeChar*     t_char,
+void            tomoe_char_set_meta_xsl         (TomoeChar     *t_char,
                                                  xsltStylesheetPtr  metaXsl);
 #endif
 
