@@ -47,11 +47,6 @@ void       tomoe_init          (void);
  */
 void       tomoe_quit          (void);
 
-/*
- * FIXME: will be renamed and be moved to tomoe-context.h
- */
-TomoeContext *tomoe_simple_load (const char* config_file);
-
 G_END_DECLS
 
 #endif /* __TOMOE_H__ */

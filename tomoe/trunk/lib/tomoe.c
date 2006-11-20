@@ -49,24 +49,6 @@ tomoe_init (void)
     }
 }
 
-TomoeContext*
-tomoe_simple_load (const char* configFile)
-{
-    TomoeContext* ctx = tomoe_context_new();
-    const GPtrArray* list;
-    TomoeConfig* cfg;
-
-    if (!ctx) return NULL;
-
-    cfg = tomoe_config_new (configFile);
-    tomoe_config_load (cfg);
-    list = tomoe_config_get_dict_list (cfg);
-    tomoe_context_load_dict_list (ctx, list);
-    g_object_unref (cfg);
-
-    return ctx;
-}
-
 /* finalize tomoe */
 void 
 tomoe_quit (void)

@@ -36,7 +36,8 @@ pkginclude_HEADERS = \
 	tomoe-config.h \
 	tomoe-dict.h \
 	tomoe-handwrite.h \
-	tomoe-recognizer.h
+	tomoe-recognizer.h \
+	tomoe-shelf.h
 
 lib_LTLIBRARIES = libtomoe.la
 libtomoe_la_SOURCES = \
@@ -48,7 +49,8 @@ libtomoe_la_SOURCES = \
 	tomoe-dict.c \
 	tomoe-handwrite.c \
 	tomoe-recognizer.c \
-	tomoe-recognizer-impl.h
+	tomoe-recognizer-impl.h \
+	tomoe-shelf.c
 
 libtomoe_la_LDFLAGS =						\
   -version-info $(LT_VERSION_INFO)				\
