@@ -61,7 +61,6 @@ static const xmlChar* defaultConfig  = BAD_CAST "<?xml version=\"1.0\" standalon
 static const gchar *system_config_file = TOMOESYSCONFDIR "/config.xml";
 static const gchar *default_config_file = "/config.xml";
 
-static void     tomoe_config_finalize     (GObject       *object);
 static void     tomoe_config_dispose      (GObject       *object);
 static GObject *tomoe_config_constructor  (GType                  type,
                                            guint                  n_props,
@@ -87,7 +86,6 @@ tomoe_config_class_init (TomoeConfigClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->finalize     = tomoe_config_finalize;
     gobject_class->dispose      = tomoe_config_dispose;
     gobject_class->constructor  = tomoe_config_constructor;
 	gobject_class->set_property = tomoe_config_set_property;
@@ -190,13 +188,6 @@ tomoe_config_dispose (GObject *object)
 
 	if (G_OBJECT_CLASS (tomoe_config_parent_class)->dispose)
 		G_OBJECT_CLASS (tomoe_config_parent_class)->dispose (object);
-}
-
-static void
-tomoe_config_finalize (GObject *object)
-{
-	if (G_OBJECT_CLASS (tomoe_config_parent_class)->finalize)
-		G_OBJECT_CLASS (tomoe_config_parent_class)->finalize (object);
 }
 
 static void

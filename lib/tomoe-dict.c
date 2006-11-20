@@ -79,7 +79,7 @@ enum
 
 G_DEFINE_TYPE (TomoeDict, tomoe_dict, G_TYPE_OBJECT)
 
-static void tomoe_dict_finalize       (GObject         *object);
+static void tomoe_dict_dispose        (GObject         *object);
 static void tomoe_dict_set_property   (GObject         *object,
                                        guint            prop_id,
                                        const GValue    *value,
@@ -113,7 +113,7 @@ tomoe_dict_class_init (TomoeDictClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->finalize = tomoe_dict_finalize;
+    gobject_class->dispose = tomoe_dict_dispose;
     gobject_class->set_property = tomoe_dict_set_property;
     gobject_class->get_property = tomoe_dict_get_property;
 
@@ -214,7 +214,7 @@ tomoe_dict_new (const char* filename, gboolean editable)
 }
 
 static void
-tomoe_dict_finalize (GObject *object)
+tomoe_dict_dispose (GObject *object)
 {
     TomoeDict *dict;
     TomoeDictPrivate *priv;
@@ -224,12 +224,13 @@ tomoe_dict_finalize (GObject *object)
 
     g_free(priv->name);
     g_free(priv->filename);
-    TOMOE_PTR_ARRAY_FREE_ALL(priv->letters, letter_free_func);
+    if (priv->letters)
+        TOMOE_PTR_ARRAY_FREE_ALL(priv->letters, letter_free_func);
     if (priv->metaXsl)
         xsltFreeStylesheet(priv->metaXsl);
     g_free(priv->meta_xsl_filename);
 
-    G_OBJECT_CLASS (tomoe_dict_parent_class)->finalize (object);
+    G_OBJECT_CLASS (tomoe_dict_parent_class)->dispose (object);
 }
 
 static void

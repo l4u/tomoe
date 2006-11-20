@@ -36,7 +36,6 @@ struct _TomoeContextPrivate
 
 G_DEFINE_TYPE (TomoeContext, tomoe_context, G_TYPE_OBJECT)
 
-static void tomoe_context_finalize     (GObject *object);
 static void tomoe_context_dispose      (GObject *object);
 
 static void
@@ -46,7 +45,6 @@ tomoe_context_class_init (TomoeContextClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->finalize = tomoe_context_finalize;
     gobject_class->dispose  = tomoe_context_dispose;
 
     g_type_class_add_private (gobject_class, sizeof (TomoeContextPrivate));
@@ -88,15 +86,6 @@ tomoe_context_dispose (GObject *object)
     priv->recognizer = NULL;
 
     G_OBJECT_CLASS (tomoe_context_parent_class)->dispose (object);
-}
-
-static void
-tomoe_context_finalize (GObject *object)
-{
-    TomoeContext *context;
-    context = TOMOE_CONTEXT (object);
-
-    G_OBJECT_CLASS (tomoe_context_parent_class)->finalize (object);
 }
 
 void
