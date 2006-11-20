@@ -32,7 +32,6 @@
 
 G_BEGIN_DECLS
 
-#include "tomoe-object.h"
 #include <glib/garray.h>
 
 typedef struct _TomoePoint     TomoePoint;
