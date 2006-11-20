@@ -20,10 +20,6 @@
  *  $Id$
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "tomoe-dict.h"
 #include "tomoe-recognizer.h"
 #include "tomoe-context.h"
@@ -120,21 +116,17 @@ tomoe_context_load_dict (TomoeContext *context, const char *filename, int editab
     if (!context) return;
     if (!filename) return;
 
-    fprintf (stdout, "load dictionary '%s' editable: %s...",
-             filename, editable ? "yes" : "no");
-    fflush (stdout);
     dict = tomoe_dict_new (filename, editable);
     if (dict) {
         tomoe_context_add_dict (context, dict);
         g_object_unref (dict);
     }
-    printf (" ok\n");
 }
 
 void
 tomoe_context_load_dict_list (TomoeContext *context, const GPtrArray *list)
 {
-    int i;
+    gint i;
     for (i = 0; i < list->len; i++) {
         TomoeDictCfg* p = g_ptr_array_index (list, i);
         if (p->dontLoad) continue;
@@ -153,8 +145,9 @@ const GPtrArray*
 tomoe_context_get_dict_list (TomoeContext* context)
 {
     TomoeContextPrivate *priv;
+    g_return_val_if_fail (context, NULL);
+
     priv = TOMOE_CONTEXT_GET_PRIVATE (context);
-    if (!context) return NULL;
     return priv->dicts;
 }
 
