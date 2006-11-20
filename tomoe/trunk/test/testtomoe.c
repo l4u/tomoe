@@ -205,7 +205,7 @@ void testUserDict (TomoeContext* ctx)
     fprintf (stdout, "dictSize %d; reading search with yey:\n", tomoe_dict_get_size (myDict));
     testReadingMatch (ctx, "yey");
 
-    tomoe_char_free (chr);
+    g_object_unref (G_OBJECT (chr));
     tomoe_dict_save (myDict);
     g_object_unref (myDict);
 }

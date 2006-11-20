@@ -193,7 +193,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
 
             if (_int_array_find_data(matches, index) >= 0) {
                 TomoeCandidate* cand = tomoe_candidate_new();
-                cand->character = tomoe_char_add_ref(((cand_priv*)cands->p[i])->cand->character);
+                cand->character = g_object_ref(G_OBJECT (((cand_priv*)cands->p[i])->cand->character));
                 cand->score     = ((cand_priv *)cands->p[i])->cand->score;
                 g_ptr_array_add (matched, cand);
             }
