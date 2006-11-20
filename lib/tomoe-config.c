@@ -414,7 +414,7 @@ tomoe_config_get_dict_list (TomoeConfig *config)
     return priv->dict_list;
 }
 
-int
+gint
 tomoe_config_get_default_user_db (TomoeConfig *config)
 {
     TomoeConfigPrivate *priv;

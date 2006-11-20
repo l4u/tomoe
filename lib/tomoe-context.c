@@ -150,14 +150,9 @@ tomoe_context_load_dict_list (TomoeContext *context, const GPtrArray *list)
         if (p->user) {
             tomoe_context_load_dict (context, p->filename, p->writeAccess);
         } else {
-            char *file = calloc (strlen (p->filename) +
-                                 strlen (TOMOEDATADIR) + 2,
-                                 sizeof (char));
-            strcpy (file, TOMOEDATADIR);
-            strcat (file, "/");
-            strcat (file, p->filename);
-            tomoe_context_load_dict (context, file, p->writeAccess);
-            free (file);
+            gchar *filename = g_build_filename (TOMOEDATADIR, p->filename, NULL);
+            tomoe_context_load_dict (context, filename, p->writeAccess);
+            g_free (filename);
         }
     }
 }
