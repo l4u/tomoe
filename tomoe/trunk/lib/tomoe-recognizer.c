@@ -30,8 +30,10 @@
 #define RECOGNIZER_FREE_FUNC "tomoe_recognizer_impl_free"
 #define RECOGNIZER_SEARCH_FUNC "tomoe_recognizer_impl_search"
 
-#define TOMOE_RECOGNIZER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_RECOGNIZER, TomoeRecognizerPrivate))
+#define TOMOE_RECOGNIZER_GET_PRIVATE(obj) \
+  (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_RECOGNIZER, TomoeRecognizerPrivate))
 
+typedef struct _TomoeRecognizerPrivate TomoeRecognizerPrivate;
 struct _TomoeRecognizerPrivate
 {
     GModule *module;
@@ -57,10 +59,10 @@ tomoe_recognizer_class_init (TomoeRecognizerClass *klass)
 static void
 tomoe_recognizer_init (TomoeRecognizer *recognizer)
 {
-    recognizer->private_data = TOMOE_RECOGNIZER_GET_PRIVATE (recognizer);
+    TomoeRecognizerPrivate *priv = TOMOE_RECOGNIZER_GET_PRIVATE (recognizer);
 
-    recognizer->private_data->module = NULL;
-    recognizer->private_data->context = NULL;
+    priv->module = NULL;
+    priv->context = NULL;
 }
 
 static void
@@ -130,8 +132,10 @@ tomoe_recognizer_load(TomoeRecognizer *recognizer, const char *name)
         new_func_p = &new_func;
         p = (gpointer *)new_func_p;
         if (tomoe_recognizer_load_func(module, RECOGNIZER_NEW_FUNC, p)) {
-            recognizer->private_data->context = new_func();
-            recognizer->private_data->module = module;
+            TomoeRecognizerPrivate *priv;
+            priv = TOMOE_RECOGNIZER_GET_PRIVATE (recognizer);
+            priv->context = new_func();
+            priv->module = module;
             success = TRUE;
         } else {
             tomoe_recognizer_close_module(module, NULL);
@@ -178,10 +182,11 @@ tomoe_recognizer_finalize (GObject *object)
 {
     TomoeRecognizer *recognizer;
     recognizer = TOMOE_RECOGNIZER (object);
+    TomoeRecognizerPrivate *priv;
 
-    if (recognizer->private_data->module) {
-        tomoe_recognizer_close_module(recognizer->private_data->module,
-                                      recognizer->private_data->context);
+    priv = TOMOE_RECOGNIZER_GET_PRIVATE (recognizer);
+    if (priv->module) {
+        tomoe_recognizer_close_module(priv->module, priv->context);
     }
 
     G_OBJECT_CLASS (tomoe_recognizer_parent_class)->finalize (object);
@@ -194,15 +199,17 @@ tomoe_recognizer_search (const TomoeRecognizer *recognizer,
     GPtrArray *result = NULL;
     TomoeRecognizerSearchFunc search_func;
     TomoeRecognizerSearchFunc *search_func_p;
+    TomoeRecognizerPrivate *priv;
     gpointer *p;
 
     search_func_p = &search_func;
     p = (gpointer *)search_func_p;
-    if (tomoe_recognizer_load_func(recognizer->private_data->module,
+    priv = TOMOE_RECOGNIZER_GET_PRIVATE (recognizer);
+    if (tomoe_recognizer_load_func(priv->module,
                                    RECOGNIZER_SEARCH_FUNC, p)) {
-        result = search_func(recognizer->private_data->context, dict, input);
+        result = search_func(priv->context, dict, input);
     } else {
-        tomoe_recognizer_show_error(recognizer->private_data->module);
+        tomoe_recognizer_show_error(priv->module);
     }
 
     return result;

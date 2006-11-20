@@ -1,5 +1,7 @@
 2006-11-20  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-recognizer.[ch]: hid private class.
+
 	* lib/tomoe-object.[ch]: removed.
 
 	* configure.in, lib/tomoe.c, lib/tomoe-recognizer.[ch]: used GObject.
