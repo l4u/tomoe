@@ -39,7 +39,14 @@
 void
 tomoe_init (void)
 {
-    LIBXML_TEST_VERSION
+    static gboolean initialized = FALSE;
+
+    if (!initialized) {
+        GTypeDebugFlags debug_flag = G_TYPE_DEBUG_NONE;
+
+        LIBXML_TEST_VERSION;
+        g_type_init_with_debug_flags (debug_flag);
+    }
 }
 
 TomoeContext*
