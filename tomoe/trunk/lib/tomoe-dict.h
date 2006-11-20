@@ -39,8 +39,6 @@ G_BEGIN_DECLS
 #include "tomoe-char.h"
 #include <glib/garray.h>
 
-typedef struct _TomoeDict TomoeDict;
-
 /**
  * @brief Create a dictionary from a file.
  * @param filename - Name of dictionary file to load.
