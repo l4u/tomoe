@@ -33,6 +33,7 @@
 G_BEGIN_DECLS
 
 #include <glib/garray.h>
+#include <tomoe-handwrite.h>
 
 /* FIXME: remove TomoeDict dependency */
 typedef struct _TomoeDict TomoeDict;
@@ -64,32 +65,6 @@ struct _TomoeCandidate
     TomoeChar    *character;
     int           score;
 };
-
-/*
- *  Data types for handwriting recognition related features.
- */
-typedef struct _TomoePoint     TomoePoint;
-typedef struct _TomoeStroke    TomoeStroke;
-typedef struct _TomoeGlyph     TomoeGlyph;
-
-struct _TomoePoint
-{
-    int           x;
-    int           y;
-};
-
-struct _TomoeStroke
-{
-    unsigned int  point_num;
-    TomoePoint   *points;
-};
-
-struct _TomoeGlyph
-{
-    unsigned int  stroke_num;
-    TomoeStroke  *strokes;
-};
-
 
 GType           tomoe_char_get_type (void) G_GNUC_CONST;
 
@@ -153,24 +128,6 @@ void            tomoe_candidate_free            (TomoeCandidate  *t_cand);
  */
 int             tomoe_candidate_compare         (const TomoeCandidate *a,
                                                  const TomoeCandidate *b);
-
-
-/*
- *
- *  API for handwriting recognition related features.
- *
- */
-TomoeStroke    *tomoe_stroke_new                (void);
-void            tomoe_stroke_init               (TomoeStroke   *strk,
-                                                 int            point_num);
-void            tomoe_stroke_clear              (TomoeStroke   *strk);
-void            tomoe_stroke_free               (TomoeStroke   *strk);
-
-TomoeGlyph     *tomoe_glyph_new                 (void);
-void            tomoe_glyph_init                (TomoeGlyph    *glyph,
-                                                 int            stroke_num);
-void            tomoe_glyph_clear               (TomoeGlyph    *glyph);
-void            tomoe_glyph_free                (TomoeGlyph    *glyph);
 
 G_END_DECLS
 
