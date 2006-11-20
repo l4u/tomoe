@@ -21,7 +21,7 @@
  */
 
 #include <stdio.h>
-#include <math.h>
+#include <stdlib.h>
 
 #include "tomoe-recognizer-impl.h"
 #include "tomoe-recognizer-simple-logic.h"
