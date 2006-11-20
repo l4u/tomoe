@@ -85,37 +85,12 @@ void            tomoe_stroke_init               (TomoeStroke   *strk,
                                                  int            point_num);
 void            tomoe_stroke_clear              (TomoeStroke   *strk);
 void            tomoe_stroke_free               (TomoeStroke   *strk);
-#if 0
-void            tomoe_stoke_ref                 (TomoeStroke   *strk);
-void            tomoe_stoke_unref               (TomoeStroke   *strk);
-unsigned int    tomoe_stroke_get_number_of_points
-                                                (TomoeStroke   *strk);
-void            tomoe_stroke_push_point         (TomoeStroke   *strk,
-                                                 ?);
-void            tomoe_stroke_pop_point          (TomoeStroke   *strk);
-?               tomoe_stroke_get_point          (TomoeStroke   *strk,
-                                                 unsigned int   idx);
-void            tomoe_stroke_set_point          (TomoeStroke   *strk,
-                                                 unsigned int   idx,
-                                                 ?);
-#endif
 
 TomoeGlyph     *tomoe_glyph_new                 (void);
 void            tomoe_glyph_init                (TomoeGlyph    *glyph,
                                                  int            stroke_num);
 void            tomoe_glyph_clear               (TomoeGlyph    *glyph);
-/**
- * @brief Free an allocated TomoeGlyph struct.
- * @param glyph - pointer to TomoeGlyph struct to free. NULL pointer will be
- *                ignored.
- */
 void            tomoe_glyph_free                (TomoeGlyph    *glyph);
-#if 0
-void            tomoe_glyph_ref                 (TomoeGlyph    *glyph);
-void            tomoe_glyph_unref               (TomoeGlyph    *glyph);
-unsigned int    tomoe_glyph_get_number_of_strokes
-                                                (TomoeGlyph    *glyph);
-#endif
 
 /**
  * @brief Create a tomoe letter.
