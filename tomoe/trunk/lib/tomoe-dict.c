@@ -321,7 +321,7 @@ tomoe_dict_find_index (TomoeDict* t_dict, TomoeChar* find)
     if (!t_dict) return -1;
     for (i = 0; i < t_dict->letters->len; i++) {
         TomoeChar *letter = g_ptr_array_index (t_dict->letters, i);
-        if (!_letter_compare_func (letter, find))
+        if (tomoe_char_compare (letter, find))
             return (glong)i;
     }
     return -1;
