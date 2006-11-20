@@ -1,3 +1,9 @@
+2006-11-20  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* lib/tomoe-char.[ch]: GObjectize.
+	* lib/tomoe-dict.c, recognizer/tomoe-recognizer-simple-logic.c,
+	  test/testtomoe.c: Follow above change.
+
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-config.c: Use GDir instead of Glob.

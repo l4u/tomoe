@@ -415,7 +415,7 @@ tomoe_dict_add_char (TomoeDict* dict, TomoeChar* add)
     tomoe_char_set_dict (add, dict);
 
     priv = TOMOE_DICT_GET_PRIVATE(dict);
-    g_ptr_array_add (priv->letters, tomoe_char_add_ref (add));
+    g_ptr_array_add (priv->letters, g_object_ref (G_OBJECT (add)));
     g_ptr_array_sort (priv->letters, letter_compare_func);
     tomoe_dict_set_modified (dict, TRUE);
 }
@@ -436,7 +436,7 @@ tomoe_dict_remove_by_char (TomoeDict* dict, TomoeChar* remove)
 
     g_ptr_array_remove_index (TOMOE_DICT_GET_PRIVATE(dict)->letters,
                               tomoe_dict_find_index (dict, remove));
-    tomoe_char_free (remove);
+    g_object_unref (G_OBJECT (remove));
     tomoe_dict_set_modified (dict, TRUE);
 }
 
@@ -450,7 +450,7 @@ tomoe_dict_remove_by_index (TomoeDict* dict, int remove)
 
     priv = TOMOE_DICT_GET_PRIVATE(dict);
     c = (TomoeChar *) g_ptr_array_remove_index (priv->letters, remove);
-    tomoe_char_free (c);
+    g_object_unref (G_OBJECT (c));
     tomoe_dict_set_modified (dict, TRUE);
 }
 
@@ -519,7 +519,7 @@ tomoe_dict_search_by_reading (const TomoeDict* dict, const char* input)
             }
         }
         if (find)
-            g_ptr_array_add (reading, tomoe_char_add_ref (lttr));
+            g_ptr_array_add (reading, g_object_ref (G_OBJECT (lttr)));
         TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
     }
 
@@ -673,8 +673,8 @@ parse_tomoe_dict (TomoeDict* dict, xmlNodePtr root)
 
                 parse_character (node, chr);
                 if (tomoe_char_get_code (chr))
-                    g_ptr_array_add (priv->letters, tomoe_char_add_ref (chr));
-                tomoe_char_free (chr);
+                    g_ptr_array_add (priv->letters, g_object_ref (G_OBJECT (chr)));
+                g_object_unref (G_OBJECT (chr));
             }
         }
     }
@@ -715,7 +715,7 @@ letter_free_func (gpointer data, gpointer user_data)
 {
     TomoeChar *c = (TomoeChar *) data;
 
-    tomoe_char_free (c);
+    g_object_unref (G_OBJECT (c));
 }
 
 static gint

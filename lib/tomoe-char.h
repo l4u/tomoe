@@ -34,10 +34,29 @@ G_BEGIN_DECLS
 
 #include <glib/garray.h>
 
+/* FIXME: remove TomoeDict dependency */
 typedef struct _TomoeDict TomoeDict;
 
+#define TOMOE_TYPE_CHAR            (tomoe_char_get_type ())
+#define TOMOE_CHAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_CHAR, TomoeChar))
+#define TOMOE_CHAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_CHAR, TomoeCharClass))
+#define TOMOE_IS_CHAR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TOMOE_TYPE_CHAR))
+#define TOMOE_IS_CHAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_CHAR))
+#define TOMOE_CHAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_CHAR, TomoeCharClass))
+
 typedef struct _TomoeChar      TomoeChar;
+typedef struct _TomoeCharClass TomoeCharClass;
 typedef struct _TomoeCandidate TomoeCandidate;
+
+struct _TomoeChar
+{
+    GObject object;
+};
+
+struct _TomoeCharClass
+{
+    GObjectClass parent_class;
+};
 
 struct _TomoeCandidate
 {
@@ -72,24 +91,13 @@ struct _TomoeGlyph
 };
 
 
+GType           tomoe_char_get_type (void) G_GNUC_CONST;
+
 /**
  * @brief Create a tomoe letter.
  * @return Pointer to newly allocated tomoe_letter struct.
  */
 TomoeChar      *tomoe_char_new                  (TomoeDict     *dict);
-
-/**
- * @brief Increase reference count.
- * @param t_char - Pointer to the tomoe_letter struct to increase reference count.
- * @return The tomoe_letter.
- */
-TomoeChar      *tomoe_char_add_ref              (TomoeChar*     t_char);
-
-/**
- * @brief Decrease reference count and free if zero.
- * @param t_char - Pointer to the tomoe_letter struct to free.
- */
-void            tomoe_char_free                 (TomoeChar*     t_char);
 
 const char     *tomoe_char_get_code             (const TomoeChar *t_char);
 void            tomoe_char_set_code             (TomoeChar*     t_char,
