@@ -35,7 +35,6 @@ pkginclude_HEADERS = \
 	tomoe-dict.h \
 	tomoe-context.h \
 	tomoe-config.h \
-	tomoe-object.h \
 	tomoe-recognizer.h
 
 lib_LTLIBRARIES = libtomoe.la
@@ -46,7 +45,6 @@ libtomoe_la_SOURCES = \
 	tomoe-dict.c \
 	tomoe-context.c \
 	tomoe-config.c \
-	tomoe-object.c \
 	tomoe-recognizer.c \
 	tomoe-recognizer-impl.h
 
