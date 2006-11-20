@@ -47,7 +47,6 @@ typedef struct _TomoeDict TomoeDict;
 
 typedef struct _TomoeChar      TomoeChar;
 typedef struct _TomoeCharClass TomoeCharClass;
-typedef struct _TomoeCandidate TomoeCandidate;
 
 struct _TomoeChar
 {
@@ -57,13 +56,6 @@ struct _TomoeChar
 struct _TomoeCharClass
 {
     GObjectClass parent_class;
-};
-
-struct _TomoeCandidate
-{
-    int           ref;
-    TomoeChar    *character;
-    int           score;
 };
 
 GType           tomoe_char_get_type (void) G_GNUC_CONST;
@@ -107,27 +99,6 @@ void            tomoe_char_set_meta_xsl         (TomoeChar     *t_char,
  */
 gint            tomoe_char_compare              (const TomoeChar *a,
                                                  const TomoeChar *b);
-
-
-/*
- *
- *  Functions for TomoeCandidate.
- *
- */
-TomoeCandidate *tomoe_candidate_new             (void);
-
-TomoeCandidate *tomoe_candidate_add_ref         (TomoeCandidate  *t_cand);
-
-void            tomoe_candidate_free            (TomoeCandidate  *t_cand);
-
-/**
- * @brief Compare two TomoeCandidate.
- * @param a - 1st TomoeCandidate object to compare.
- * @param b - 2nd TomoeCandidate object to compare.
- * @return -1 a < b, 0 a= b, 1 a > b
- */
-int             tomoe_candidate_compare         (const TomoeCandidate *a,
-                                                 const TomoeCandidate *b);
 
 G_END_DECLS
 

@@ -25,6 +25,7 @@
 #include <math.h>
 #include "tomoe-char.h"
 #include "tomoe-dict.h"
+#include "tomoe-candidate.h"
 #include "tomoe-recognizer-simple-logic.h"
 
 #define LIMIT_LENGTH ((300 * 0.25) * (300 * 0.25))

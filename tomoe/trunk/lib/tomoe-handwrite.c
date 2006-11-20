@@ -21,6 +21,7 @@
  *  $Id$
  */
 
+#include <stdlib.h>
 #include "tomoe-handwrite.h"
 
 TomoeStroke *

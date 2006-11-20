@@ -367,49 +367,6 @@ tomoe_char_compare (const TomoeChar *a, const TomoeChar *b)
     return strcmp (priv_a->charCode, priv_b->charCode);
 }
 
-TomoeCandidate*
-tomoe_candidate_new (void)
-{
-    TomoeCandidate* cand;
-
-    cand            = calloc (sizeof (TomoeCandidate), 1);
-    cand->ref       = 1;
-    cand->character = NULL;
-    cand->score     = 0;
-
-    return cand;
-}
-
-TomoeCandidate*
-tomoe_candidate_add_ref (TomoeCandidate* t_cand)
-{
-    if (!t_cand) return NULL;
-    t_cand->ref ++;
-    return t_cand;
-}
-
-void
-tomoe_candidate_free (TomoeCandidate* t_cand)
-{
-    if (!t_cand) return;
-    t_cand->ref --;
-    if (t_cand->ref <= 0) {
-        g_object_unref (G_OBJECT (t_cand->character));
-        free (t_cand);
-    }
-}
-
-int
-tomoe_candidate_compare (const TomoeCandidate *a, const TomoeCandidate *b)
-{
-    int score_a = a->score;
-    int score_b = b->score;
-
-    return score_a > score_b ? 1
-        : score_a < score_b ? - 1
-        : 0;
-}
-
 /*
 vi:ts=4:nowrap:ai:expandtab
 */

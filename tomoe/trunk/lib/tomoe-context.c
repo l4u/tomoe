@@ -24,6 +24,7 @@
 #include "tomoe-recognizer.h"
 #include "tomoe-context.h"
 #include "tomoe-shelf.h"
+#include "tomoe-candidate.h"
 #include "glib-utils.h"
 
 #define TOMOE_CONTEXT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_CONTEXT, TomoeContextPrivate))

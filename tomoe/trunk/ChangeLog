@@ -1,3 +1,17 @@
+2006-11-20  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* lib/tomoe-candidate.[ch]: Split from tomo-char.[ch].
+	* lib/Makefile.am, lib/tomoe-context.[ch]: Add above files.
+	* lib/tomoe-char.[ch], recognizer/tomoe-recognizer-simple-logic.c:
+	Follow above changes.
+	* lib/tomoe-handwrite.c: include stdlib.h
+
+2006-11-20  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* lib/tomoe-context.h, lib/tomoe-dict.h, lib/tomoe-recognizer-impl.h,
+	  lib/tomoe-recognizer.h, lib/tomoe-shelf.h, lib/tomoe.h:
+	Fix include path.
+
 2006-11-20  Kouhei Sutou  <kou@cozmixng.org>
 
 	* ext/ruby/tomoe-rb-context.c: added Context#add_dict and
