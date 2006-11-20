@@ -32,7 +32,25 @@
 
 G_BEGIN_DECLS
 
+#define TOMOE_TYPE_CONFIG            (tomoe_config_get_type ())
+#define TOMOE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_CONFIG, TomoeConfig))
+#define TOMOE_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_CONFIG, TomoeConfigClass))
+#define TOMOE_IS_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TOMOE_TYPE_CONFIG))
+#define TOMOE_IS_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_CONFIG))
+#define TOMOE_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_CONFIG, TomoeConfigClass))
+
 typedef struct _TomoeConfig TomoeConfig;
+typedef struct _TomoeConfigClass TomoeConfigClass;
+
+struct _TomoeConfig
+{
+    GObject object;
+};
+
+struct _TomoeConfigClass
+{
+    GObjectClass parent_class;
+};
 
 typedef struct _TomoeDictCfg
 {
@@ -42,9 +60,9 @@ typedef struct _TomoeDictCfg
     int         user;
 } TomoeDictCfg;
 
+GType            tomoe_config_get_type (void) G_GNUC_CONST;
+
 TomoeConfig     *tomoe_config_new                 (const char   *config_file);
-TomoeConfig     *tomoe_config_add_ref             (TomoeConfig  *t_config);
-void             tomoe_config_free                (TomoeConfig  *t_config);
 void             tomoe_config_load                (TomoeConfig  *t_config);
 void             tomoe_config_save                (TomoeConfig  *t_config);
 const char      *tomoe_config_get_filename        (TomoeConfig  *t_config);
