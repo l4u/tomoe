@@ -33,20 +33,36 @@
 
 G_BEGIN_DECLS
 
+#define TOMOE_TYPE_CANDIDATE            (tomoe_candidate_get_type ())
+#define TOMOE_CANDIDATE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_CANDIDATE, TomoeCandidate))
+#define TOMOE_CANDIDATE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_CANDIDATE, TomoeCandidateClass))
+#define TOMOE_IS_CANDIDATE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TOMOE_TYPE_CANDIDATE))
+#define TOMOE_IS_CANDIDATE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_CANDIDATE))
+#define TOMOE_CANDIDATE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_CANDIDATE, TomoeCandidateClass))
+
 typedef struct _TomoeCandidate TomoeCandidate;
+typedef struct _TomoeCandidateClass TomoeCandidateClass;
 
 struct _TomoeCandidate
 {
-    int           ref;
-    TomoeChar    *character;
-    int           score;
+    GObject       object;
 };
 
-TomoeCandidate *tomoe_candidate_new             (void);
+struct _TomoeCandidateClass
+{
+    GObjectClass parent_class;
+};
 
-TomoeCandidate *tomoe_candidate_add_ref         (TomoeCandidate  *t_cand);
+GType           tomoe_candidate_get_type        (void) G_GNUC_CONST;
 
-void            tomoe_candidate_free            (TomoeCandidate  *t_cand);
+TomoeCandidate *tomoe_candidate_new             (TomoeChar      *t_char);
+
+TomoeChar      *tomoe_candidate_get_char        (TomoeCandidate *cand);
+
+void            tomoe_candidate_set_score       (TomoeCandidate *cand,
+                                                 gint            score);
+
+gint            tomoe_candidate_get_score       (TomoeCandidate *cand);
 
 /**
  * @brief Compare two TomoeCandidate.
@@ -54,7 +70,7 @@ void            tomoe_candidate_free            (TomoeCandidate  *t_cand);
  * @param b - 2nd TomoeCandidate object to compare.
  * @return -1 a < b, 0 a= b, 1 a > b
  */
-int             tomoe_candidate_compare         (const TomoeCandidate *a,
+gint            tomoe_candidate_compare         (const TomoeCandidate *a,
                                                  const TomoeCandidate *b);
 
 G_END_DECLS

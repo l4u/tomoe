@@ -171,7 +171,7 @@ static void
 _candidate_merge_func (gpointer data, gpointer user_data)
 {
     GPtrArray *p = (GPtrArray *) user_data;
-    g_ptr_array_add (p, tomoe_candidate_add_ref ((TomoeCandidate *) data));
+    g_ptr_array_add (p, g_object_ref (G_OBJECT (data)));
 }
 
 static gint
