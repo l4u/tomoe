@@ -1,5 +1,7 @@
 2006-11-20  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-dict.c: removed _ prefix and added static.
+
 	* lib/tomoe-dict.[ch]: made TomoeDict GObject.
 	* lib/tomoe-context.c, test/testtomoe.c: followed new API.
 
@@ -15,7 +17,6 @@
 
 	* lib/tomoe-char.h: Removed unused code. I'll add it again.
 
->>>>>>> 1.137
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-context.[ch]: GObjectize.
