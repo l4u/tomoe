@@ -79,15 +79,16 @@ TOMOE_CLASS_BEGIN (TomoeCandidate, TomoeObject)
 TOMOE_CLASS_END
 #endif
 
+TomoeCandidate *tomoe_candidate_new             (void);
+TomoeCandidate *tomoe_candidate_add_ref         (TomoeCandidate  *t_cand);
+void            tomoe_candidate_free            (TomoeCandidate  *t_cand);
+
 /**
  * @brief Compare two TomoeCandidate.
  * @param a - Pointer to the tomoe_candidate 1 pointer.
  * @param b - Pointer to the tomoe_candidate 2 pointer.
  * @return -1 a < b, 0 a= b, 1 a > b
  */
-TomoeCandidate *tomoe_candidate_new             (void);
-TomoeCandidate *tomoe_candidate_add_ref         (TomoeCandidate  *t_cand);
-void            tomoe_candidate_free            (TomoeCandidate  *t_cand);
 int             tomoe_candidate_compare         (const TomoeCandidate *a,
                                                  const TomoeCandidate *b);
 
