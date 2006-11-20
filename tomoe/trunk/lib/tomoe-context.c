@@ -70,7 +70,7 @@ tomoe_context_free(TomoeContext* ctx)
     ctx->ref--;
     if (ctx->ref <= 0) {
         TOMOE_PTR_ARRAY_FREE_ALL (ctx->dicts, _dict_free);
-        tomoe_recognizer_free (ctx->recognizer);
+        g_object_unref (ctx->recognizer);
         free (ctx);
     }
 }

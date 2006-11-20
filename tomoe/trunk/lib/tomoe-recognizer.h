@@ -34,11 +34,31 @@ G_BEGIN_DECLS
 
 #include "tomoe-dict.h"
 
-typedef struct _TomoeRecognizer TomoeRecognizer;
+#define TOMOE_TYPE_RECOGNIZER            (tomoe_recognizer_get_type ())
+#define TOMOE_RECOGNIZER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_RECOGNIZER, TomoeRecognizer))
+#define TOMOE_RECOGNIZER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_RECOGNIZER, TomoeRecognizerClass))
+#define TOMOE_IS_RECOGNIZER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TOMOE_TYPE_RECOGNIZER))
+#define TOMOE_IS_RECOGNIZER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_RECOGNIZER))
+#define TOMOE_RECOGNIZER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_RECOGNIZER, TomoeRecognizerClass))
 
-TomoeRecognizer *tomoe_recognizer_new     (void);
-TomoeRecognizer *tomoe_recognizer_add_ref (TomoeRecognizer *recognizer);
-void             tomoe_recognizer_free    (TomoeRecognizer *recognizer);
+typedef struct _TomoeRecognizer TomoeRecognizer;
+typedef struct _TomoeRecognizerClass TomoeRecognizerClass;
+typedef struct _TomoeRecognizerPrivate TomoeRecognizerPrivate;
+
+struct _TomoeRecognizer
+{
+    GObject object;
+
+    TomoeRecognizerPrivate *private_data;
+};
+
+struct _TomoeRecognizerClass
+{
+    GObjectClass parent_class;
+};
+
+GType            tomoe_recognizer_get_type (void) G_GNUC_CONST;
+TomoeRecognizer *tomoe_recognizer_new      (void);
 
 /**
  * @brief Match strokes of tomoe_char with input.
@@ -47,9 +67,9 @@ void             tomoe_recognizer_free    (TomoeRecognizer *recognizer);
  * @param input  - Pointer to tomoe_glyph matchkey.
  * @return The array of tomoe_candidate.
  */
-GPtrArray       *tomoe_recognizer_search  (const TomoeRecognizer *recognizer,
-                                           TomoeDict *dict,
-                                           TomoeGlyph *inputs);
+GPtrArray       *tomoe_recognizer_search   (const TomoeRecognizer *recognizer,
+                                            TomoeDict *dict,
+                                            TomoeGlyph *inputs);
 
 G_END_DECLS
 

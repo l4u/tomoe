@@ -1,3 +1,9 @@
+2006-11-20  Kouhei Sutou  <kou@cozmixng.org>
+
+	* configure.in, lib/tomoe.c, lib/tomoe-recognizer.[ch]: used GObject.
+	* lib/tomoe-context.c: used g_object_unref instead of
+	tomoe_recognizer_{add_ref,free}.
+
 2006-11-20  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe-char.h: Minor fix.

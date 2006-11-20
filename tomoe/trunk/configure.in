@@ -297,7 +297,7 @@ AC_CHECK_FUNCS([setlocale strchr strtol uname memmove strerror])
 dnl **************************************************************
 dnl Check for GLib.
 dnl **************************************************************
-AM_PATH_GLIB_2_0(2.6.0, [], [], [gmodule])
+AM_PATH_GLIB_2_0(2.6.0, [], [], [gmodule gobject])
 
 dnl **************************************************************
 dnl Configure for recognizers.
