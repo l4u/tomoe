@@ -88,16 +88,16 @@ tomoe_config_class_init (TomoeConfigClass *klass)
 
     gobject_class->dispose      = tomoe_config_dispose;
     gobject_class->constructor  = tomoe_config_constructor;
-	gobject_class->set_property = tomoe_config_set_property;
-	gobject_class->get_property = tomoe_config_get_property;
+    gobject_class->set_property = tomoe_config_set_property;
+    gobject_class->get_property = tomoe_config_get_property;
 
-	g_object_class_install_property (gobject_class,
+    g_object_class_install_property (gobject_class,
                                      PROP_FILENAME,
                                      g_param_spec_string ("filename",
                                          N_("Filename"),
                                          N_("The Filename for storing user settings"),
                                          NULL,
-                                         G_PARAM_READWRITE));
+                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
     g_type_class_add_private (gobject_class, sizeof (TomoeConfigPrivate));
 }
@@ -106,15 +106,21 @@ static GObject *
 tomoe_config_constructor (GType type, guint n_props,
                           GObjectConstructParam *props)
 {
-	GObject *object;
+    GObject *object;
     TomoeConfigPrivate *priv;
-	GObjectClass *klass = G_OBJECT_CLASS (tomoe_config_parent_class);
+    gchar *current_dir, *filename = NULL;
+    GObjectClass *klass = G_OBJECT_CLASS (tomoe_config_parent_class);
 
-	object = klass->constructor (type, n_props, props);
+    object = klass->constructor (type, n_props, props);
     priv = TOMOE_CONFIG_GET_PRIVATE (object);
 
+    current_dir = g_get_current_dir ();
+
+    if (priv->filename)
+        filename = g_build_filename (current_dir, priv->filename, NULL);
+
     /* check config file */
-    if (!priv->filename || !g_file_test (priv->filename, G_FILE_TEST_EXISTS)) {
+    if (!priv->filename || !g_file_test (filename, G_FILE_TEST_EXISTS)) {
         /* use ~/.tomoe/config.xml */
         const gchar *home = g_get_home_dir ();
 
@@ -146,6 +152,7 @@ tomoe_config_constructor (GType type, guint n_props,
             }
         }
     }
+    g_free (current_dir);
 
 	return object;
 }
@@ -198,15 +205,15 @@ tomoe_config_set_property (GObject      *object,
 {
     TomoeConfigPrivate *priv = TOMOE_CONFIG_GET_PRIVATE (object);
 
-	switch (prop_id) {
-	case PROP_FILENAME:
-		priv->filename = g_value_dup_string (value);
-		break;
+    switch (prop_id) {
+        case PROP_FILENAME:
+            priv->filename = g_value_dup_string (value);
+            break;
 
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+            break;
+    }
 }
 
 static void
@@ -217,15 +224,15 @@ tomoe_config_get_property (GObject    *object,
 {
     TomoeConfigPrivate *priv = TOMOE_CONFIG_GET_PRIVATE (object);
 
-	switch (prop_id) {
-	case PROP_FILENAME:
-		g_value_set_string (value, priv->filename);
-		break;
+    switch (prop_id) {
+        case PROP_FILENAME:
+            g_value_set_string (value, priv->filename);
+            break;
 
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+            break;
+    }
 }
 
 void
