@@ -125,8 +125,10 @@ void testStrokeMatch (TomoeContext* ctx)
 END:
     if (!test_glyph)
         tomoe_glyph_free (test_glyph);
-    if (matched)
+    if (matched) {
+        g_ptr_array_foreach (matched, (GFunc) g_object_unref, NULL);
         g_ptr_array_free (matched, TRUE);
+    }
 }
 
 void testReadingMatch (TomoeContext* ctx, const char* reading)
@@ -152,6 +154,7 @@ void testReadingMatch (TomoeContext* ctx, const char* reading)
         fprintf (stdout, "No Candidate found!\n");
     }
 
+    g_ptr_array_foreach (matched, (GFunc) g_object_unref, NULL);
     g_ptr_array_free (matched, TRUE);
 }
 
