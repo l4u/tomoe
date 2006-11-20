@@ -36,10 +36,10 @@ G_BEGIN_DECLS
 
 typedef struct _TomoeDict TomoeDict;
 
+typedef struct _TomoeChar      TomoeChar;
 typedef struct _TomoePoint     TomoePoint;
 typedef struct _TomoeStroke    TomoeStroke;
 typedef struct _TomoeGlyph     TomoeGlyph;
-typedef struct _TomoeChar      TomoeChar;
 typedef struct _TomoeCandidate TomoeCandidate;
 
 struct _TomoePoint
@@ -66,31 +66,6 @@ struct _TomoeCandidate
     TomoeChar    *character;
     int           score;
 };
-
-TomoeCandidate *tomoe_candidate_new             (void);
-TomoeCandidate *tomoe_candidate_add_ref         (TomoeCandidate  *t_cand);
-void            tomoe_candidate_free            (TomoeCandidate  *t_cand);
-
-/**
- * @brief Compare two TomoeCandidate.
- * @param a - Pointer to the tomoe_candidate 1 pointer.
- * @param b - Pointer to the tomoe_candidate 2 pointer.
- * @return -1 a < b, 0 a= b, 1 a > b
- */
-int             tomoe_candidate_compare         (const TomoeCandidate *a,
-                                                 const TomoeCandidate *b);
-
-TomoeStroke    *tomoe_stroke_new                (void);
-void            tomoe_stroke_init               (TomoeStroke   *strk,
-                                                 int            point_num);
-void            tomoe_stroke_clear              (TomoeStroke   *strk);
-void            tomoe_stroke_free               (TomoeStroke   *strk);
-
-TomoeGlyph     *tomoe_glyph_new                 (void);
-void            tomoe_glyph_init                (TomoeGlyph    *glyph,
-                                                 int            stroke_num);
-void            tomoe_glyph_clear               (TomoeGlyph    *glyph);
-void            tomoe_glyph_free                (TomoeGlyph    *glyph);
 
 /**
  * @brief Create a tomoe letter.
@@ -155,9 +130,46 @@ gint            tomoe_char_compare              (const TomoeChar *a,
 int             tomoe_string_compare            (const char **a,
                                                  const char **b);
 
-G_END_DECLS
 
-/*interface_tomoe_array (TomoeCandidateArray, const TomoeCandidate*);*/
+/*
+ *
+ *  Functions for TomoeCandidate.
+ *
+ */
+TomoeCandidate *tomoe_candidate_new             (void);
+
+TomoeCandidate *tomoe_candidate_add_ref         (TomoeCandidate  *t_cand);
+
+void            tomoe_candidate_free            (TomoeCandidate  *t_cand);
+
+/**
+ * @brief Compare two TomoeCandidate.
+ * @param a - 1st TomoeCandidate object to compare.
+ * @param b - 2nd TomoeCandidate object to compare.
+ * @return -1 a < b, 0 a= b, 1 a > b
+ */
+int             tomoe_candidate_compare         (const TomoeCandidate *a,
+                                                 const TomoeCandidate *b);
+
+
+/*
+ *
+ *  Functions for handwriting related features.
+ *
+ */
+TomoeStroke    *tomoe_stroke_new                (void);
+void            tomoe_stroke_init               (TomoeStroke   *strk,
+                                                 int            point_num);
+void            tomoe_stroke_clear              (TomoeStroke   *strk);
+void            tomoe_stroke_free               (TomoeStroke   *strk);
+
+TomoeGlyph     *tomoe_glyph_new                 (void);
+void            tomoe_glyph_init                (TomoeGlyph    *glyph,
+                                                 int            stroke_num);
+void            tomoe_glyph_clear               (TomoeGlyph    *glyph);
+void            tomoe_glyph_free                (TomoeGlyph    *glyph);
+
+G_END_DECLS
 
 #endif /* __TOMOE_CHAR_H__ */
 
