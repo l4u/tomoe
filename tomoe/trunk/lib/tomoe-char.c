@@ -52,7 +52,6 @@ struct _TomoeCharPrivate
 
 G_DEFINE_TYPE (TomoeChar, tomoe_char, G_TYPE_OBJECT)
 
-static void tomoe_char_finalize     (GObject *object);
 static void tomoe_char_dispose      (GObject *object);
 
 static void
@@ -62,7 +61,6 @@ tomoe_char_class_init (TomoeCharClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->finalize = tomoe_char_finalize;
     gobject_class->dispose  = tomoe_char_dispose;
 
     g_type_class_add_private (gobject_class, sizeof (TomoeCharPrivate));
@@ -119,15 +117,6 @@ tomoe_char_dispose (GObject *object)
     priv->parent   = NULL;
 
     G_OBJECT_CLASS (tomoe_char_parent_class)->dispose (object);
-}
-
-static void
-tomoe_char_finalize (GObject *object)
-{
-    TomoeChar *context;
-    context = TOMOE_CHAR (object);
-
-    G_OBJECT_CLASS (tomoe_char_parent_class)->finalize (object);
 }
 
 const char*
