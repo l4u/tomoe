@@ -1,3 +1,8 @@
+2006-11-20  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-dict.[ch]: made TomoeDict GObject.
+	* lib/tomoe-context.c, test/testtomoe.c: followed new API.
+
 2006-11-20  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe.h: tomoe_simple_load(): Mark as FIXME.
@@ -10,6 +15,7 @@
 
 	* lib/tomoe-char.h: Removed unused code. I'll add it again.
 
+>>>>>>> 1.137
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-context.[ch]: GObjectize.

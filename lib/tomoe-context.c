@@ -80,7 +80,7 @@ _dict_free (gpointer data, gpointer user_data)
 {
     TomoeDict *dict = (TomoeDict *) data;
 
-    tomoe_dict_free (dict);
+    g_object_unref (dict);
 }
 
 static void
@@ -134,7 +134,7 @@ tomoe_context_load_dict (TomoeContext *context, const char *filename, int editab
     dict = tomoe_dict_new (filename, editable);
     if (dict) {
         tomoe_context_add_dict (context, dict);
-        tomoe_dict_free (dict);
+        g_object_unref (dict);
     }
     printf (" ok\n");
 }
