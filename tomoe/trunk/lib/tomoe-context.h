@@ -79,10 +79,6 @@ void             tomoe_context_load_dict_list         (TomoeContext       *ctx,
 const GPtrArray *tomoe_context_get_dict_list          (TomoeContext       *ctx);
 void             tomoe_context_save                   (TomoeContext       *ctx);
 
-#if 0
-TomoeDict      *tomoe_context_get_user_dict          (TomoeContext       *ctx,
-                                                      const char    *filename);
-#endif
 
 /**
  * @brief Match strokes of tomoe_letter with input.
@@ -101,17 +97,6 @@ GPtrArray      *tomoe_context_search_by_strokes      (TomoeContext       *ctx,
  */
 GPtrArray      *tomoe_context_search_by_reading      (TomoeContext       *ctx,
                                                       const char         *reading);
-#if 0
-/* optional */
-void            tomoe_context_enable_dict            (TomoeContext       *ctx,
-                                                      const char    *filename);
-void            tomoe_context_disable_dict           (TomoeContext       *ctx,
-                                                      const char    *filename);
-int             tomoe_context_is_dict_enabled        (TomoeContext       *ctx,
-                                                      const char    *filename);
-GPtrArray*      tomoe_context_get_dicts              (TomoeContext       *ctx);
-#endif
-
 G_END_DECLS
 
 #endif /* __TOMOE_CONTEXT_H__ */
