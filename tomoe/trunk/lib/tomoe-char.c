@@ -133,22 +133,7 @@ tomoe_glyph_free (TomoeGlyph *glyph)
     tomoe_glyph_clear (glyph);
     free (glyph);
 }
-#ifdef USE_TOMOE_OBJECT
-TOMOE_CLASS_PRIV_BEGIN (TomoeCandidate)
-    /* private class members
-       int priv_number;
-       ...
-    */
-TOMOE_CLASS_PRIV_END
 
-/* TomoeCandidate_new, TomoeCandidate_getType (type registration) */
-TOMOE_CLASS_IMPL (TomoeCandidate)
-
-/* class methds */
-/* ... */
-
-/* TomoeCandidate *p = TomoeCandidate_new (); ...*/
-#endif
 TomoeChar*
 tomoe_char_new (tomoe_dict_interface* dict)
 {
