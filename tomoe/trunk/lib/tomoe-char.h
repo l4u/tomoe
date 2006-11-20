@@ -65,19 +65,6 @@ struct _TomoeCandidate
     int           score;
 };
 
-#if 0
-TOMOE_CLASS_BEGIN (TomoeCandidate, TomoeObject)
-    /* public class members */
-    tomoe_char *character;
-    int         score;
-    /* TOMOE_CLASS_VIRTUAL_SECTION */
-    /* section for virtual methods 
-    typedef (void) (*myvirt) (void);
-    ....
-    */
-TOMOE_CLASS_END
-#endif
-
 TomoeCandidate *tomoe_candidate_new             (void);
 TomoeCandidate *tomoe_candidate_add_ref         (TomoeCandidate  *t_cand);
 void            tomoe_candidate_free            (TomoeCandidate  *t_cand);
@@ -162,24 +149,24 @@ TomoeChar      *tomoe_char_add_ref              (TomoeChar*     t_char);
  * @brief Decrease reference count and free if zero.
  * @param t_char - Pointer to the tomoe_letter struct to free.
  */
-void             tomoe_char_free                 (TomoeChar*     t_char);
+void            tomoe_char_free                 (TomoeChar*     t_char);
 
-const char      *tomoe_char_get_code             (const TomoeChar *t_char);
-void             tomoe_char_set_code             (TomoeChar*     t_char,
-                                                  const char*    code);
-GPtrArray       *tomoe_char_get_readings         (TomoeChar*     t_char);
-void             tomoe_char_set_readings         (TomoeChar*     t_char,
-                                                  GPtrArray*     readings);
-TomoeGlyph      *tomoe_char_get_glyph            (TomoeChar*     t_char);
-void             tomoe_char_set_glyph            (TomoeChar*     t_char,
-                                                  TomoeGlyph*    glyph);
-const char      *tomoe_char_get_meta             (TomoeChar*     t_char);
-void             tomoe_char_set_dict_interface   (TomoeChar*     chr,
-                                                  tomoe_dict_interface *parent);
+const char     *tomoe_char_get_code             (const TomoeChar *t_char);
+void            tomoe_char_set_code             (TomoeChar*     t_char,
+                                                 const char*    code);
+GPtrArray      *tomoe_char_get_readings         (TomoeChar*     t_char);
+void            tomoe_char_set_readings         (TomoeChar*     t_char,
+                                                 GPtrArray*     readings);
+TomoeGlyph     *tomoe_char_get_glyph            (TomoeChar*     t_char);
+void            tomoe_char_set_glyph            (TomoeChar*     t_char,
+                                                 TomoeGlyph*    glyph);
+const char     *tomoe_char_get_meta             (TomoeChar*     t_char);
+void            tomoe_char_set_dict_interface   (TomoeChar*     chr,
+                                                 tomoe_dict_interface *parent);
 gboolean        tomoe_char_is_editable          (TomoeChar*     chr);
 gboolean        tomoe_char_is_modified          (TomoeChar*     chr);
-void             tomoe_char_set_modified         (TomoeChar*     chr,
-                                                  gboolean      modified);
+void            tomoe_char_set_modified         (TomoeChar*     chr,
+                                                 gboolean      modified);
 
 #ifdef TOMOE_CHAR__USE_XML_METHODS
 xmlNodePtr      tomoe_char_get_xml_meta         (TomoeChar*     t_char);
