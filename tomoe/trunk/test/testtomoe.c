@@ -89,7 +89,7 @@ _candidate_free_func (gpointer data, gpointer user_data)
 {
     TomoeCandidate *cand = (TomoeCandidate *) data;
 
-    tomoe_candidate_free (cand);
+    g_object_unref (G_OBJECT (cand));
 }
 
 void testStrokeMatch (TomoeContext* ctx)
@@ -115,8 +115,8 @@ void testStrokeMatch (TomoeContext* ctx)
         fprintf (stdout, "The number of matched characters: %d\n",
                  candidate_num);
         for (i = 0; i < candidate_num; i++) {
-            const TomoeCandidate* p = (const TomoeCandidate*) g_ptr_array_index (matched, i);
-            outCharInfo (p->character, p->score);
+            TomoeCandidate* p = (TomoeCandidate*) g_ptr_array_index (matched, i);
+            outCharInfo (tomoe_candidate_get_char (p), tomoe_candidate_get_score (p));
         }
     } else {
         fprintf (stdout, "No Candidate found!\n");

@@ -23,47 +23,124 @@
 
 #include "tomoe-candidate.h"
 
-TomoeCandidate*
-tomoe_candidate_new (void)
-{
-    TomoeCandidate* cand;
+#define TOMOE_CANDIDATE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_CANDIDATE, TomoeCandidatePrivate))
 
-    cand            = calloc (sizeof (TomoeCandidate), 1);
-    cand->ref       = 1;
-    cand->character = NULL;
-    cand->score     = 0;
+typedef struct _TomoeCandidatePrivate	TomoeCandidatePrivate;
+struct _TomoeCandidatePrivate
+{
+    TomoeChar    *character;
+    gint          score;
+};
+
+G_DEFINE_TYPE (TomoeCandidate, tomoe_candidate, G_TYPE_OBJECT)
+
+static void tomoe_candidate_dispose (GObject *object);
+
+static void
+tomoe_candidate_class_init (TomoeCandidateClass *klass)
+{
+    GObjectClass *gobject_class;
+
+    gobject_class = G_OBJECT_CLASS (klass);
+
+    gobject_class->dispose = tomoe_candidate_dispose;
+
+    g_type_class_add_private (gobject_class, sizeof (TomoeCandidatePrivate));
+}
+
+static void
+tomoe_candidate_init (TomoeCandidate *cand)
+{
+    TomoeCandidatePrivate *priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
+
+    priv->character = NULL;
+    priv->score     = 0;
+}
+
+static void
+tomoe_candidate_dispose (GObject *object)
+{
+    TomoeCandidatePrivate *priv = TOMOE_CANDIDATE_GET_PRIVATE (object);
+
+    if (priv->character)
+        g_object_unref (G_OBJECT (priv->character));
+    priv->character = NULL;
+
+    G_OBJECT_CLASS (tomoe_candidate_parent_class)->dispose (object);
+}
+
+TomoeCandidate*
+tomoe_candidate_new (TomoeChar *t_char)
+{
+    TomoeCandidate *cand;
+    TomoeCandidatePrivate *priv;
+
+    cand = g_object_new(TOMOE_TYPE_CANDIDATE,
+                        /* "tomoe-char", t_char, */
+                        NULL);
+
+    /* FIXME: use property */
+    if (t_char) {
+        priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
+        priv->character = g_object_ref (G_OBJECT (t_char));
+    }
 
     return cand;
 }
 
-TomoeCandidate*
-tomoe_candidate_add_ref (TomoeCandidate* t_cand)
+TomoeChar *
+tomoe_candidate_get_char (TomoeCandidate *cand)
 {
-    if (!t_cand) return NULL;
-    t_cand->ref ++;
-    return t_cand;
+    TomoeCandidatePrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_CANDIDATE (cand), NULL);
+
+    priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
+    g_return_val_if_fail (priv, NULL);
+
+    return priv->character;
 }
 
 void
-tomoe_candidate_free (TomoeCandidate* t_cand)
+tomoe_candidate_set_score (TomoeCandidate *cand, gint score)
 {
-    if (!t_cand) return;
-    t_cand->ref --;
-    if (t_cand->ref <= 0) {
-        g_object_unref (G_OBJECT (t_cand->character));
-        free (t_cand);
-    }
+    TomoeCandidatePrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_CANDIDATE (cand));
+
+    priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
+    g_return_if_fail (priv);
+
+    priv->score = score;
 }
 
-int
+gint
+tomoe_candidate_get_score (TomoeCandidate *cand)
+{
+    TomoeCandidatePrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_CANDIDATE (cand), 0);
+
+    priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
+    g_return_val_if_fail (priv, 0);
+
+    return priv->score;
+}
+
+gint
 tomoe_candidate_compare (const TomoeCandidate *a, const TomoeCandidate *b)
 {
-    int score_a = a->score;
-    int score_b = b->score;
+    TomoeCandidatePrivate *priv_a, *priv_b;
 
-    return score_a > score_b ? 1
-        : score_a < score_b ? - 1
-        : 0;
+    if (!TOMOE_IS_CANDIDATE (a) || !TOMOE_IS_CANDIDATE (b)) return 0;
+
+    priv_a = TOMOE_CANDIDATE_GET_PRIVATE (a);
+    priv_b = TOMOE_CANDIDATE_GET_PRIVATE (b);
+    if (!priv_a || !priv_b) return 0;
+
+    return priv_a->score > priv_b->score ? 1
+         : priv_a->score < priv_b->score ? - 1
+         : 0;
 }
 
 /*

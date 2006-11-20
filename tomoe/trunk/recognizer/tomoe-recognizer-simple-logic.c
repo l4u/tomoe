@@ -169,7 +169,9 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
             continue;
 
         if (pj != 0)
-            cand->cand->score = cand->cand->score / pj;
+            tomoe_candidate_set_score (
+                cand->cand,
+                tomoe_candidate_get_score (cand->cand) / pj);
 
         if (_int_array_find_data(matches, cand->index) < 0) {
             const TomoeChar *a = g_ptr_array_index (letters, cand->index);
@@ -193,9 +195,9 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
             int index = ((cand_priv *)cands->p[i])->index;
 
             if (_int_array_find_data(matches, index) >= 0) {
-                TomoeCandidate* cand = tomoe_candidate_new();
-                cand->character = g_object_ref(G_OBJECT (((cand_priv*)cands->p[i])->cand->character));
-                cand->score     = ((cand_priv *)cands->p[i])->cand->score;
+                TomoeCandidate *c = ((cand_priv*)cands->p[i])->cand;
+                TomoeCandidate *cand = tomoe_candidate_new (tomoe_candidate_get_char (c));
+                tomoe_candidate_set_score (cand, tomoe_candidate_get_score (c));
                 g_ptr_array_add (matched, cand);
             }
         }
@@ -259,9 +261,7 @@ cand_priv_new (TomoeChar* character, int index)
     cand_priv *cand_p;
 
     cand_p                  = calloc (sizeof (cand_priv), 1);
-    cand_p->cand            = calloc (sizeof (TomoeCandidate), 1);
-    cand_p->cand->character = character;
-    cand_p->cand->score     = 0;
+    cand_p->cand            = tomoe_candidate_new (character);
     cand_p->index           = index;
     cand_p->adapted_strokes = _int_array_new ();
 
@@ -278,7 +278,7 @@ cand_priv_free (cand_priv *cand_p, gboolean free_candidate)
     cand_p->adapted_strokes = NULL;
 
     if (free_candidate)
-        free (cand_p->cand);
+        g_object_unref (G_OBJECT (cand_p->cand));
     cand_p->cand = NULL;
 
     free (cand_p);
@@ -527,7 +527,9 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
             d1 = sq_dist (&i_pts[0], &d_pts[0]);
             d2 = sq_dist (&i_pts[i_nop - 1], &d_pts[d_nop - 1]);
             score3 = (d1 + d2);
-            cand->cand->score += score3;
+            tomoe_candidate_set_score (
+                cand->cand,
+                tomoe_candidate_get_score (cand->cand) + score3);
             if (d1 > LIMIT_LENGTH ||
                 d2 > LIMIT_LENGTH ||
                 abs (d_nop - i_nop) > 3) {
@@ -552,10 +554,14 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
             score1 = match_input_to_dict (input_stroke, &dict_stroke);
             if (score1 < 0) {
                 free (d_met);
-                cand->cand->score = cand->cand->score * 2;
+                tomoe_candidate_set_score (
+                    cand->cand,
+                    tomoe_candidate_get_score (cand->cand) * 2);
                 continue;
             }
-            cand->cand->score += score1;
+            tomoe_candidate_set_score (
+                cand->cand,
+                tomoe_candidate_get_score (cand->cand) + score1);
 
             /*
              * Distance and angle of each characteristic points:
@@ -564,10 +570,14 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
             score2 = match_dict_to_input (&dict_stroke, input_stroke);
             if (score2 < 0) {
                 free (d_met);
-                cand->cand->score = cand->cand->score * 2;
+                tomoe_candidate_set_score (
+                    cand->cand,
+                    tomoe_candidate_get_score (cand->cand) * 2);
                 continue;
             }
-            cand->cand->score += score2;
+            tomoe_candidate_set_score (
+                cand->cand,
+                tomoe_candidate_get_score (cand->cand) + score2);
 
             _int_array_append_data (cand->adapted_strokes, strk_index);
             match_flag = TRUE;
