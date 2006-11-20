@@ -62,7 +62,7 @@ tomoe_simple_load (const char* configFile)
     tomoe_config_load (cfg);
     list = tomoe_config_get_dict_list (cfg);
     tomoe_context_load_dict_list (ctx, list);
-    tomoe_config_free (cfg);
+    g_object_unref (cfg);
 
     return ctx;
 }
