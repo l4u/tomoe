@@ -143,10 +143,11 @@ tomoe_context_get_dict_list (TomoeContext* context)
 void
 tomoe_context_save (TomoeContext *context)
 {
-    TomoeContextPrivate *priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+    TomoeContextPrivate *priv;
     guint i;
 
-    if (!context) return;
+    g_return_if_fail (context);
+    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
 
     for (i = 0; i < priv->dicts->len; i++) {
         TomoeDict *dict = (TomoeDict*) g_ptr_array_index (priv->dicts, i);
