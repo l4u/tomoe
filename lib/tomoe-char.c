@@ -410,12 +410,6 @@ tomoe_candidate_compare (const TomoeCandidate *a, const TomoeCandidate *b)
         : 0;
 }
 
-int
-tomoe_string_compare (const char** a, const char** b)
-{
-    return strcmp(*a, *b);
-}
-
 
 TomoeStroke *
 tomoe_stroke_new (void)
