@@ -1,5 +1,9 @@
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
+	* lib/tomoe-context.c: Use g_object_unref instead of _dict_free_func.
+
+2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
 	* lib/tomoe-dict.c: Use g_build_filename.
 
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
