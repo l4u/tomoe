@@ -148,7 +148,7 @@ tomoe_dict_free (TomoeDict* t_dict)
 
     t_dict->ref --;
     if (t_dict->ref <= 0) {
-	TOMOE_PTR_ARRAY_FREE_ALL (t_dict->letters, _letter_free_func);
+        TOMOE_PTR_ARRAY_FREE_ALL (t_dict->letters, _letter_free_func);
         free (t_dict->filename);
         if (t_dict->metaXsl)
             xsltFreeStylesheet (t_dict->metaXsl);
@@ -356,8 +356,8 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
 
         /* check for available reading data */
         if (!readings->len) {
-                TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
-                continue;
+            TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
+            continue;
         }
 
         reading_num = readings->len;
@@ -370,7 +370,7 @@ tomoe_dict_search_by_reading (const TomoeDict* t_dict, const char* input)
             }
         }
         if (find)
-                g_ptr_array_add (reading, tomoe_char_add_ref (lttr));
+            g_ptr_array_add (reading, tomoe_char_add_ref (lttr));
         TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
     }
 
