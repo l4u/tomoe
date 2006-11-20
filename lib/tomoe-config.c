@@ -118,8 +118,7 @@ tomoe_config_free (TomoeConfig* t_config)
 {
     if (!t_config) return;
     t_config->ref--;
-    if (t_config->ref <= 0)
-    {
+    if (t_config->ref <= 0) {
         free (t_config->filename);
         TOMOE_PTR_ARRAY_FREE_ALL (t_config->dict_list, _tomoe_dict_cfg_free);
         free (t_config);
