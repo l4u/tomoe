@@ -43,10 +43,10 @@
 typedef struct _TomoeConfigPrivate	TomoeConfigPrivate;
 struct _TomoeConfigPrivate
 {
-    gchar        *filename;
-    gint          use_system_dictionaries;
+    gchar       *filename;
+    gint         use_system_dictionaries;
     GPtrArray   *dict_list;
-    gint          default_user_db;
+    gint         default_user_db;
 };
 
 enum
@@ -121,8 +121,7 @@ tomoe_config_constructor (GType type, guint n_props,
     priv = TOMOE_CONFIG_GET_PRIVATE (object);
 
     /* check config file */
-    if (priv->filename && g_file_test (priv->filename, G_FILE_TEST_EXISTS)) {
-    } else {
+    if (!priv->filename || !g_file_test (priv->filename, G_FILE_TEST_EXISTS)) {
         /* use ~/.tomoe/config.xml */
         const gchar *home = g_get_home_dir ();
 
@@ -171,7 +170,8 @@ tomoe_config_new (const char *config_file)
     TomoeConfig *config;
 
     config = g_object_new(TOMOE_TYPE_CONFIG, 
-                          "filename", config_file);
+                          "filename", config_file,
+                          NULL);
 
     return config;
 }
