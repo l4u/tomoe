@@ -134,16 +134,6 @@ gint            tomoe_char_compare              (const TomoeChar *a,
                                                  const TomoeChar *b);
 
 
-/**
- * @brief Compare two ansi strings.
- * @param a - Pointer to string 1.
- * @param b - Pointer to string 2.
- * @return -1 a < b, 0 a= b, 1 a > b
- */
-int             tomoe_string_compare            (const char **a,
-                                                 const char **b);
-
-
 /*
  *
  *  Functions for TomoeCandidate.
