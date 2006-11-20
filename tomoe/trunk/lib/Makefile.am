@@ -40,6 +40,7 @@ pkginclude_HEADERS = \
 
 lib_LTLIBRARIES = libtomoe.la
 libtomoe_la_SOURCES = \
+	glib-utils.h \
 	tomoe.c \
 	tomoe-char.c \
 	tomoe-dict.c \
