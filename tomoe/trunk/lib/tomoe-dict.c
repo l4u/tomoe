@@ -99,8 +99,6 @@ static void parse_tomoe_dict          (TomoeDict*       t_dict,
                                        xmlNodePtr       root);
 static void parse_alien_dict          (TomoeDict*       t_dict,
                                        const char*      filename);
-static void letter_free_func          (gpointer         data,
-                                       gpointer         user_data);
 static gint letter_compare_func       (gconstpointer    a,
                                        gconstpointer    b);
 
@@ -225,7 +223,7 @@ tomoe_dict_dispose (GObject *object)
     g_free(priv->name);
     g_free(priv->filename);
     if (priv->letters)
-        TOMOE_PTR_ARRAY_FREE_ALL(priv->letters, letter_free_func);
+        TOMOE_PTR_ARRAY_FREE_ALL(priv->letters, g_object_unref);
     if (priv->metaXsl)
         xsltFreeStylesheet(priv->metaXsl);
     g_free(priv->meta_xsl_filename);
@@ -709,14 +707,6 @@ parse_alien_dict (TomoeDict* dict, const char* filename)
     xmlFreeDoc (res);
     xmlFreeDoc (doc);
 
-}
-
-static void
-letter_free_func (gpointer data, gpointer user_data)
-{
-    TomoeChar *c = (TomoeChar *) data;
-
-    g_object_unref (G_OBJECT (c));
 }
 
 static gint
