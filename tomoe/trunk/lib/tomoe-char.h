@@ -46,6 +46,32 @@ struct _TomoeCandidate
     int           score;
 };
 
+/*
+ *  Data types for handwriting recognition related features.
+ */
+typedef struct _TomoePoint     TomoePoint;
+typedef struct _TomoeStroke    TomoeStroke;
+typedef struct _TomoeGlyph     TomoeGlyph;
+
+struct _TomoePoint
+{
+    int           x;
+    int           y;
+};
+
+struct _TomoeStroke
+{
+    unsigned int  point_num;
+    TomoePoint   *points;
+};
+
+struct _TomoeGlyph
+{
+    unsigned int  stroke_num;
+    TomoeStroke  *strokes;
+};
+
+
 /**
  * @brief Create a tomoe letter.
  * @return Pointer to newly allocated tomoe_letter struct.
@@ -136,28 +162,6 @@ int             tomoe_candidate_compare         (const TomoeCandidate *a,
  *  API for handwriting recognition related features.
  *
  */
-typedef struct _TomoePoint     TomoePoint;
-typedef struct _TomoeStroke    TomoeStroke;
-typedef struct _TomoeGlyph     TomoeGlyph;
-
-struct _TomoePoint
-{
-    int           x;
-    int           y;
-};
-
-struct _TomoeStroke
-{
-    unsigned int  point_num;
-    TomoePoint   *points;
-};
-
-struct _TomoeGlyph
-{
-    unsigned int  stroke_num;
-    TomoeStroke  *strokes;
-};
-
 TomoeStroke    *tomoe_stroke_new                (void);
 void            tomoe_stroke_init               (TomoeStroke   *strk,
                                                  int            point_num);
