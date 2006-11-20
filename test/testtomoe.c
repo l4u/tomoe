@@ -229,7 +229,7 @@ main (int argc, char **argv)
     else
         fprintf (stdout, "testtomoe [stroke|reading|userdict]\n");
 
-    tomoe_context_free (ctx);
+    g_object_unref (ctx);
     tomoe_quit ();
     return 0;
 }

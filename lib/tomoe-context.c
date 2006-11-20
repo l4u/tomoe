@@ -29,32 +29,52 @@
 #include "tomoe-context.h"
 #include "glib-utils.h"
 
-struct _TomoeContext
+#define TOMOE_CONTEXT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_CONTEXT, TomoeContextPrivate))
+
+typedef struct _TomoeContextPrivate	TomoeContextPrivate;
+struct _TomoeContextPrivate
 {
-    int         ref;
     GPtrArray  *dicts;
     TomoeRecognizer *recognizer;
 };
 
+G_DEFINE_TYPE (TomoeContext, tomoe_context, G_TYPE_OBJECT)
+
+static void tomoe_context_finalize     (GObject *object);
+static void tomoe_context_dispose      (GObject *object);
+
+static void
+tomoe_context_class_init (TomoeContextClass *klass)
+{
+    GObjectClass *gobject_class;
+
+    gobject_class = G_OBJECT_CLASS (klass);
+
+    gobject_class->finalize = tomoe_context_finalize;
+    gobject_class->dispose  = tomoe_context_dispose;
+
+    g_type_class_add_private (gobject_class, sizeof (TomoeContextPrivate));
+}
+
+static void
+tomoe_context_init (TomoeContext *context)
+{
+    TomoeContextPrivate *priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+
+    priv->dicts      = g_ptr_array_new ();
+    priv->recognizer = tomoe_recognizer_new ();
+}
 
 TomoeContext*
 tomoe_context_new(void)
 {
-    TomoeContext* p;
-    p        = calloc (1, sizeof(TomoeContext));
-    p->ref   = 1;
-    p->dicts = g_ptr_array_new ();
-    p->recognizer = tomoe_recognizer_new();
-    return p;
+    TomoeContext *context;
+
+    context = g_object_new(TOMOE_TYPE_CONTEXT, NULL);
+
+    return context;
 }
 
-TomoeContext*
-tomoe_context_add_ref(TomoeContext* ctx)
-{
-    if (!ctx) return NULL;
-    ctx->ref++;
-    return ctx;
-}
 static void
 _dict_free (gpointer data, gpointer user_data)
 {
@@ -63,31 +83,49 @@ _dict_free (gpointer data, gpointer user_data)
     tomoe_dict_free (dict);
 }
 
-void
-tomoe_context_free(TomoeContext* ctx)
+static void
+tomoe_context_dispose (GObject *object)
 {
-    if (!ctx) return;
-    ctx->ref--;
-    if (ctx->ref <= 0) {
-        TOMOE_PTR_ARRAY_FREE_ALL (ctx->dicts, _dict_free);
-        g_object_unref (ctx->recognizer);
-        free (ctx);
+    TomoeContextPrivate *priv = TOMOE_CONTEXT_GET_PRIVATE (object);
+
+    if (priv->dicts) {
+        TOMOE_PTR_ARRAY_FREE_ALL (priv->dicts, _dict_free);
     }
+
+    if (priv->recognizer) {
+        g_object_unref (priv->recognizer);
+    }
+
+    priv->dicts      = NULL;
+    priv->recognizer = NULL;
+
+    G_OBJECT_CLASS (tomoe_context_parent_class)->dispose (object);
 }
 
-void
-tomoe_context_add_dict (TomoeContext* ctx, TomoeDict* dict)
+static void
+tomoe_context_finalize (GObject *object)
 {
-    if (!ctx || !dict) return;
-    g_ptr_array_add (ctx->dicts, tomoe_dict_add_ref (dict));
+    TomoeContext *context;
+    context = TOMOE_CONTEXT (object);
+
+    G_OBJECT_CLASS (tomoe_context_parent_class)->finalize (object);
 }
 
 void
-tomoe_context_load_dict (TomoeContext* ctx, const char *filename, int editable)
+tomoe_context_add_dict (TomoeContext *context, TomoeDict *dict)
+{
+    TomoeContextPrivate *priv;
+    g_return_if_fail (context || dict);
+    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+    g_ptr_array_add (priv->dicts, g_object_ref (dict));
+}
+
+void
+tomoe_context_load_dict (TomoeContext *context, const char *filename, int editable)
 {
     TomoeDict* dict;
 
-    if (!ctx) return;
+    if (!context) return;
     if (!filename) return;
 
     fprintf (stdout, "load dictionary '%s' editable: %s...",
@@ -95,14 +133,14 @@ tomoe_context_load_dict (TomoeContext* ctx, const char *filename, int editable)
     fflush (stdout);
     dict = tomoe_dict_new (filename, editable);
     if (dict) {
-        tomoe_context_add_dict (ctx, dict);
+        tomoe_context_add_dict (context, dict);
         tomoe_dict_free (dict);
     }
     printf (" ok\n");
 }
 
 void
-tomoe_context_load_dict_list (TomoeContext* ctx, const GPtrArray* list)
+tomoe_context_load_dict_list (TomoeContext *context, const GPtrArray *list)
 {
     int i;
     for (i = 0; i < list->len; i++) {
@@ -110,7 +148,7 @@ tomoe_context_load_dict_list (TomoeContext* ctx, const GPtrArray* list)
         if (p->dontLoad) continue;
 
         if (p->user) {
-            tomoe_context_load_dict (ctx, p->filename, p->writeAccess);
+            tomoe_context_load_dict (context, p->filename, p->writeAccess);
         } else {
             char *file = calloc (strlen (p->filename) +
                                  strlen (TOMOEDATADIR) + 2,
@@ -118,28 +156,31 @@ tomoe_context_load_dict_list (TomoeContext* ctx, const GPtrArray* list)
             strcpy (file, TOMOEDATADIR);
             strcat (file, "/");
             strcat (file, p->filename);
-            tomoe_context_load_dict (ctx, file, p->writeAccess);
+            tomoe_context_load_dict (context, file, p->writeAccess);
             free (file);
         }
     }
 }
 
 const GPtrArray*
-tomoe_context_get_dict_list (TomoeContext* ctx)
+tomoe_context_get_dict_list (TomoeContext* context)
 {
-    if (!ctx) return NULL;
-    return ctx->dicts;
+    TomoeContextPrivate *priv;
+    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+    if (!context) return NULL;
+    return priv->dicts;
 }
 
 void
-tomoe_context_save (TomoeContext *ctx)
+tomoe_context_save (TomoeContext *context)
 {
+    TomoeContextPrivate *priv = TOMOE_CONTEXT_GET_PRIVATE (context);
     guint i;
 
-    if (!ctx) return;
+    if (!context) return;
 
-    for (i = 0; i < ctx->dicts->len; i++) {
-        TomoeDict *dict = (TomoeDict*) g_ptr_array_index (ctx->dicts, i);
+    for (i = 0; i < priv->dicts->len; i++) {
+        TomoeDict *dict = (TomoeDict*) g_ptr_array_index (priv->dicts, i);
         if (tomoe_dict_is_modified (dict))
             tomoe_dict_save (dict);
     }
@@ -169,20 +210,22 @@ _candidate_compare_func (gconstpointer a, gconstpointer b)
 }
 
 GPtrArray *
-tomoe_context_search_by_strokes (TomoeContext *ctx, TomoeGlyph *input)
+tomoe_context_search_by_strokes (TomoeContext *context, TomoeGlyph *input)
 {
+    TomoeContextPrivate *priv;
     guint i, num;
     TomoeDict *dict;
     GPtrArray *matched = g_ptr_array_new ();
 
-    if (!ctx) return matched;
-    num = ctx->dicts->len;
+    if (!context) return matched;
+    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+    num = priv->dicts->len;
     if (num == 0) return matched;
 
     for (i = 0; i < num; i++) {
         GPtrArray *tmp;
-        dict = (TomoeDict*)g_ptr_array_index (ctx->dicts, i);
-        tmp = tomoe_recognizer_search(ctx->recognizer, dict, input);
+        dict = (TomoeDict*)g_ptr_array_index (priv->dicts, i);
+        tmp = tomoe_recognizer_search (priv->recognizer, dict, input);
 
         if (tmp) {
             g_ptr_array_foreach (tmp, _candidate_merge_func, matched);
@@ -195,19 +238,21 @@ tomoe_context_search_by_strokes (TomoeContext *ctx, TomoeGlyph *input)
 }
 
 GPtrArray *
-tomoe_context_search_by_reading (TomoeContext *ctx, const char *input)
+tomoe_context_search_by_reading (TomoeContext *context, const char *input)
 {
     guint i, num;
+    TomoeContextPrivate *priv;
     GPtrArray *reading = g_ptr_array_new ();
 
-    if (!ctx) return reading;
-    num = ctx->dicts->len;
+    if (!context) return reading;
+    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+    num = priv->dicts->len;
     if (num == 0) return reading;
 
     for (i = 0; i < num; i++) {
         GPtrArray *tmp;
     	TomoeDict *dict;
-        dict = (TomoeDict*) g_ptr_array_index (ctx->dicts, i);
+        dict = (TomoeDict*) g_ptr_array_index (priv->dicts, i);
         tmp = tomoe_dict_search_by_reading (dict, input);
         if (tmp) {
             g_ptr_array_foreach (tmp, _ptr_array_merge_func, reading);
