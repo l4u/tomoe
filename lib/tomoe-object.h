@@ -31,8 +31,6 @@
 
 G_BEGIN_DECLS
 
-#include "tomoe-data-types.h"
-
 typedef struct _TomoeObject
 {
 } TomoeObject;
