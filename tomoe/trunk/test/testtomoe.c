@@ -207,7 +207,7 @@ void testUserDict (TomoeContext* ctx)
 
     tomoe_char_free (chr);
     tomoe_dict_save (myDict);
-    tomoe_dict_free (myDict);
+    g_object_unref (myDict);
 }
 
 int
