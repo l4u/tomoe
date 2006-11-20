@@ -32,6 +32,7 @@
 
 G_BEGIN_DECLS
 
+#include <tomoe-candidate.h>
 #include <tomoe-dict.h>
 #include <tomoe-config.h>
 
