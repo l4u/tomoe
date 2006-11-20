@@ -42,7 +42,7 @@ struct _TomoeRecognizerPrivate
 
 G_DEFINE_TYPE (TomoeRecognizer, tomoe_recognizer, G_TYPE_OBJECT)
 
-static void tomoe_recognizer_finalize     (GObject *object);
+static void tomoe_recognizer_dispose     (GObject *object);
 
 static void
 tomoe_recognizer_class_init (TomoeRecognizerClass *klass)
@@ -51,7 +51,7 @@ tomoe_recognizer_class_init (TomoeRecognizerClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
 
-  gobject_class->finalize = tomoe_recognizer_finalize;
+  gobject_class->dispose = tomoe_recognizer_dispose;
 
   g_type_class_add_private (gobject_class, sizeof (TomoeRecognizerPrivate));
 }
@@ -178,7 +178,7 @@ tomoe_recognizer_new (void)
 }
 
 static void
-tomoe_recognizer_finalize (GObject *object)
+tomoe_recognizer_dispose (GObject *object)
 {
     TomoeRecognizer *recognizer;
     recognizer = TOMOE_RECOGNIZER (object);
@@ -189,7 +189,7 @@ tomoe_recognizer_finalize (GObject *object)
         tomoe_recognizer_close_module(priv->module, priv->context);
     }
 
-    G_OBJECT_CLASS (tomoe_recognizer_parent_class)->finalize (object);
+    G_OBJECT_CLASS (tomoe_recognizer_parent_class)->dispose (object);
 }
 
 GPtrArray *
