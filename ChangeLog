@@ -1,3 +1,7 @@
+2006-11-20  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* lib/Makefile.am: add glib-utils.h
+
 2006-11-20  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-data-types.h: removed. use gboolean instead.
