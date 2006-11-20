@@ -99,13 +99,13 @@ tomoe_char_dispose (GObject *object)
     TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (object);
 
     if (priv->charCode)
-        free (priv->charCode);
+        g_free (priv->charCode);
     if (priv->glyph)
         tomoe_glyph_free (priv->glyph);
     if (priv->xmlMeta)
         xmlFreeNode (priv->xmlMeta);
     if (priv->meta)
-        free (priv->meta);
+        g_free (priv->meta);
     if (priv->readings)
         TOMOE_PTR_ARRAY_FREE_ALL (priv->readings, g_free);
 
@@ -138,8 +138,8 @@ tomoe_char_set_code (TomoeChar* t_char, const char* code)
     g_return_if_fail (TOMOE_IS_CHAR (t_char));
 
     priv = TOMOE_CHAR_GET_PRIVATE (t_char);
-    free (priv->charCode);
-    priv->charCode = code ? strdup (code) : NULL;
+    g_free (priv->charCode);
+    priv->charCode = code ? g_strdup (code) : NULL;
     tomoe_char_set_modified (t_char, 1);
 }
 
@@ -252,7 +252,7 @@ tomoe_char_get_meta (TomoeChar* t_char)
     xsltSaveResultToString (&metaString, &len, meta, tomoe_dict_get_meta_xsl(priv->parent));
 
     /* change of meta is invariant */
-    priv->meta = strdup ((const char*)metaString);
+    priv->meta = g_strdup ((const char*)metaString);
 
     xmlFreeDoc (meta);
     xmlUnlinkNode (priv->xmlMeta);
@@ -338,7 +338,7 @@ tomoe_char_set_xml_meta (TomoeChar* t_char, xmlNodePtr meta)
     priv = TOMOE_CHAR_GET_PRIVATE (t_char);
 
     if (priv->xmlMeta) xmlFreeNode (priv->xmlMeta);
-    free (priv->meta);
+    g_free (priv->meta);
     priv->xmlMeta = meta; /* TODO addRef?? */
     tomoe_char_set_modified(t_char, 1);
 }
