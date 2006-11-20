@@ -35,32 +35,33 @@ G_BEGIN_DECLS
 #include "tomoe-dict.h"
 #include "tomoe-config.h"
 
-/**
- * @typedef typedef struct _TomoeContext TomoeContext;
- *
- * A struct type which represents tomoe database. All members in it should be
- * accessed through tomoe_dict_* functions.
- */
+#define TOMOE_TYPE_CONTEXT            (tomoe_context_get_type ())
+#define TOMOE_CONTEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_CONTEXT, TomoeContext))
+#define TOMOE_CONTEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_CONTEXT, TomoeContextClass))
+#define TOMOE_IS_CONTEXT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TOMOE_TYPE_CONTEXT))
+#define TOMOE_IS_CONTEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_CONTEXT))
+#define TOMOE_CONTEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_CONTEXT, TomoeContextClass))
+
 typedef struct _TomoeContext TomoeContext;
+typedef struct _TomoeContextClass TomoeContextClass;
+
+struct _TomoeContext
+{
+    GObject object;
+};
+
+struct _TomoeContextClass
+{
+    GObjectClass parent_class;
+};
+
+GType            tomoe_context_get_type (void) G_GNUC_CONST;
 
 /**
  * @brief Create a database.
  * @return Pointer to newly allocated TomoeContext struct.
  */
-TomoeContext   *tomoe_context_new                    (void);
-
-/**
- * @brief Increase reference count.
- * @param ctx - Pointer to the TomoeContext struct to increase reference count.
- * @return The TomoeContext.
- */
-TomoeContext   *tomoe_context_add_ref                (TomoeContext       *ctx);
-
-/**
- * @brief Decrease reference count and free if zero.
- * @param ctx - Pointer to the TomoeContext struct to free.
- */
-void            tomoe_context_free                   (TomoeContext       *ctx);
+TomoeContext    *tomoe_context_new      (void);
 
 /**
  * @brief Load dictionary into database.

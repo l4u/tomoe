@@ -140,7 +140,7 @@ main (int argc, char **argv)
         g_ptr_array_free (matched, TRUE);
     }
 
-    tomoe_context_free (ctx);
+    g_object_unref (ctx);
     tomoe_quit ();
 
     return 0;
