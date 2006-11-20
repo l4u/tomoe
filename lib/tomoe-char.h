@@ -21,7 +21,7 @@
  *  $Id$
  */
 
-/** @file tomoe-letter.h
+/** @file tomoe-char.h
  *  @brief 
  */
 
