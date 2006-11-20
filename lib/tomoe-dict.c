@@ -654,15 +654,12 @@ parse_tomoe_dict (TomoeDict* dict, xmlNodePtr root)
         for (prop = root->properties; prop; prop = prop->next) {
             if (0 == xmlStrcmp(prop->name, BAD_CAST "meta")) {
                 const char* metaxsl = (const char*) prop->children->content;
-                priv->meta_xsl_filename = strdup (metaxsl);
-                char* path = (char*)calloc (strlen (metaxsl) + strlen (TOMOEDATADIR) + 2, sizeof (char));
-                strcpy (path, TOMOEDATADIR);
-                strcat (path, "/");
-                strcat (path, metaxsl);
+                priv->meta_xsl_filename = g_strdup (metaxsl);
+                gchar *path = g_build_filename (TOMOEDATADIR, metaxsl, NULL);
                 priv->metaXsl = xsltParseStylesheetFile (BAD_CAST path);
-                free (path);
+                g_free (path);
             } else if (0 == xmlStrcmp(prop->name, BAD_CAST "name")) {
-                priv->name = strdup ((const char*) prop->children->content);
+                priv->name = g_strdup ((const char*) prop->children->content);
             }
         }
 
