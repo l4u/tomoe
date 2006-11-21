@@ -32,6 +32,8 @@
 
 G_BEGIN_DECLS
 
+#include "tomoe-context.h"
+
 #define TOMOE_TYPE_CONFIG            (tomoe_config_get_type ())
 #define TOMOE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_CONFIG, TomoeConfig))
 #define TOMOE_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_CONFIG, TomoeConfigClass))
@@ -52,21 +54,14 @@ struct _TomoeConfigClass
     GObjectClass parent_class;
 };
 
-typedef struct _TomoeDictCfg
-{
-    gchar       *filename;
-    gint         dontLoad;
-    gint         writeAccess;
-    gint         user;
-} TomoeDictCfg;
-
 GType            tomoe_config_get_type (void) G_GNUC_CONST;
 
 TomoeConfig     *tomoe_config_new                 (const char   *config_file);
 void             tomoe_config_load                (TomoeConfig  *config);
 void             tomoe_config_save                (TomoeConfig  *config);
 const gchar     *tomoe_config_get_filename        (TomoeConfig  *config);
-const GPtrArray *tomoe_config_get_dict_list       (TomoeConfig  *config);
+void             tomoe_config_setup_context       (TomoeConfig  *config,
+                                                   TomoeContext *context);
 gint             tomoe_config_get_default_user_db (TomoeConfig  *config);
 
 G_END_DECLS

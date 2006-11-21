@@ -44,6 +44,14 @@ struct _TomoeConfigPrivate
     gint         default_user_db;
 };
 
+typedef struct _TomoeDictCfg
+{
+    gchar       *filename;
+    gint         dontLoad;
+    gint         writeAccess;
+    gint         user;
+} TomoeDictCfg;
+
 enum
 {
 	PROP_0,
@@ -383,15 +391,37 @@ tomoe_config_save (TomoeConfig *config)
     }
 }
 
-const GPtrArray *
-tomoe_config_get_dict_list (TomoeConfig *config)
+void
+tomoe_config_setup_context (TomoeConfig *config, TomoeContext *context)
 {
-    TomoeConfigPrivate *priv;
+    gint i;
+    GPtrArray *dicts;
 
-    g_return_val_if_fail (config, NULL);
+    g_return_if_fail (config);
 
-    priv = TOMOE_CONFIG_GET_PRIVATE (config);
-    return priv->dict_list;
+    dicts = TOMOE_CONFIG_GET_PRIVATE(config)->dict_list;
+    for (i = 0; i < dicts->len; i++) {
+        TomoeDictCfg* p = g_ptr_array_index (dicts, i);
+        gchar *filename;
+        TomoeDict *dict;
+
+        if (p->dontLoad) continue;
+
+        if (p->user) {
+            filename = p->filename;
+        } else {
+            filename = g_build_filename (TOMOEDATADIR, p->filename, NULL);
+        }
+
+        dict = tomoe_dict_new (filename, p->writeAccess);
+        if (dict) {
+            tomoe_context_add_dict (context, dict);
+            g_object_unref (dict);
+        }
+
+        if (!p->user)
+            g_free (filename);
+    }
 }
 
 gint

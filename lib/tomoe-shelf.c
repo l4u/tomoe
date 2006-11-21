@@ -93,22 +93,6 @@ tomoe_shelf_add_dict (TomoeShelf *shelf, TomoeDict *dict)
                          g_object_ref (dict));
 }
 
-void
-tomoe_shelf_load_dict (TomoeShelf *shelf, const char *filename,
-                       gboolean editable)
-{
-    TomoeDict* dict;
-
-    g_return_if_fail(shelf);
-    g_return_if_fail(filename);
-
-    dict = tomoe_dict_new (filename, editable);
-    if (dict) {
-        tomoe_shelf_add_dict (shelf, dict);
-        g_object_unref (dict);
-    }
-}
-
 TomoeDict *
 tomoe_shelf_get_dict (TomoeShelf *shelf, const gchar *name)
 {

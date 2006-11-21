@@ -34,7 +34,6 @@ G_BEGIN_DECLS
 
 #include <tomoe-candidate.h>
 #include <tomoe-dict.h>
-#include <tomoe-config.h>
 
 #define TOMOE_TYPE_CONTEXT            (tomoe_context_get_type ())
 #define TOMOE_CONTEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_CONTEXT, TomoeContext))

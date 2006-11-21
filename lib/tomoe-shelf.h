@@ -70,9 +70,6 @@ TomoeShelf      *tomoe_shelf_new      (void);
  */
 void             tomoe_shelf_add_dict       (TomoeShelf  *shelf,
                                              TomoeDict   *dict);
-void             tomoe_shelf_load_dict      (TomoeShelf  *shelf,
-                                             const gchar *filename,
-                                             gboolean     editable);
 TomoeDict       *tomoe_shelf_get_dict       (TomoeShelf  *shelf,
                                              const gchar *name);
 GList           *tomoe_shelf_get_dict_names (TomoeShelf  *shelf);

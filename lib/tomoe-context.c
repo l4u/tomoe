@@ -23,6 +23,7 @@
 #include "tomoe-dict.h"
 #include "tomoe-recognizer.h"
 #include "tomoe-context.h"
+#include "tomoe-config.h"
 #include "tomoe-shelf.h"
 #include "tomoe-candidate.h"
 #include "glib-utils.h"
@@ -130,40 +131,20 @@ tomoe_context_get_dict (TomoeContext *context, const gchar *name)
     return tomoe_shelf_get_dict(priv->shelf, name);
 }
 
-static void
-tomoe_context_load_dict_list (TomoeContext *context,
-                              const GPtrArray *dict_configs)
-{
-    gint i;
-    TomoeContextPrivate *priv;
-
-    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
-    for (i = 0; i < dict_configs->len; i++) {
-        TomoeDictCfg* p = g_ptr_array_index (dict_configs, i);
-        if (p->dontLoad) continue;
-
-        if (p->user) {
-            tomoe_shelf_load_dict (priv->shelf, p->filename, p->writeAccess);
-        } else {
-            gchar *filename = g_build_filename (TOMOEDATADIR, p->filename,
-                                                NULL);
-            tomoe_shelf_load_dict (priv->shelf, filename, p->writeAccess);
-            g_free (filename);
-        }
-    }
-}
-
 void
 tomoe_context_load_config (TomoeContext *ctx, const char *config_file)
 {
+    TomoeContextPrivate *priv;
     TomoeConfig* cfg;
 
     g_return_if_fail (ctx);
 
+    priv = TOMOE_CONTEXT_GET_PRIVATE(ctx);
+    priv->config = NULL;
     cfg = tomoe_config_new (config_file);
     tomoe_config_load (cfg);
-    tomoe_context_load_dict_list (ctx, tomoe_config_get_dict_list (cfg));
-    TOMOE_CONTEXT_GET_PRIVATE(ctx)->config = cfg;
+    tomoe_config_setup_context (cfg, ctx);
+    priv->config = cfg;
 }
 
 void
