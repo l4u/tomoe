@@ -394,6 +394,7 @@ tomoe_dict_set_modified (TomoeDict *dict, gboolean modified)
 {
     g_return_if_fail(dict);
     TOMOE_DICT_GET_PRIVATE(dict)->modified = modified;
+    g_object_notify (G_OBJECT (dict), "modified");
 }
 
 guint
