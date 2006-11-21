@@ -72,6 +72,9 @@ TomoeContext    *tomoe_context_new      (void);
  */
 void             tomoe_context_add_dict       (TomoeContext       *ctx,
                                                TomoeDict          *dict);
+GList           *tomoe_context_get_dict_names (TomoeContext       *ctx);
+TomoeDict       *tomoe_context_get_dict       (TomoeContext       *ctx,
+                                               const gchar        *name);
 void             tomoe_context_load_config    (TomoeContext       *ctx,
                                                const gchar        *config_file);
 void             tomoe_context_save           (TomoeContext       *ctx);

@@ -30,7 +30,7 @@
 typedef struct _TomoeShelfPrivate	TomoeShelfPrivate;
 struct _TomoeShelfPrivate
 {
-    GPtrArray  *dicts;
+    GHashTable *dicts;
 };
 
 G_DEFINE_TYPE (TomoeShelf, tomoe_shelf, G_TYPE_OBJECT)
@@ -54,7 +54,8 @@ tomoe_shelf_init (TomoeShelf *shelf)
 {
     TomoeShelfPrivate *priv = TOMOE_SHELF_GET_PRIVATE (shelf);
 
-    priv->dicts      = g_ptr_array_new ();
+    priv->dicts = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                        g_free, g_object_unref);
 }
 
 TomoeShelf*
@@ -73,10 +74,10 @@ tomoe_shelf_dispose (GObject *object)
     TomoeShelfPrivate *priv = TOMOE_SHELF_GET_PRIVATE (object);
 
     if (priv->dicts) {
-        TOMOE_PTR_ARRAY_FREE_ALL (priv->dicts, g_object_unref);
+        g_hash_table_destroy(priv->dicts);
     }
 
-    priv->dicts      = NULL;
+    priv->dicts = NULL;
 
     G_OBJECT_CLASS (tomoe_shelf_parent_class)->dispose (object);
 }
@@ -87,7 +88,9 @@ tomoe_shelf_add_dict (TomoeShelf *shelf, TomoeDict *dict)
     TomoeShelfPrivate *priv;
     g_return_if_fail (shelf || dict);
     priv = TOMOE_SHELF_GET_PRIVATE (shelf);
-    g_ptr_array_add (priv->dicts, g_object_ref (dict));
+    g_hash_table_insert (priv->dicts,
+                         g_strdup (tomoe_dict_get_name (dict)),
+                         g_object_ref (dict));
 }
 
 void
@@ -106,30 +109,56 @@ tomoe_shelf_load_dict (TomoeShelf *shelf, const char *filename,
     }
 }
 
-const GPtrArray*
-tomoe_shelf_get_dict_list (TomoeShelf* shelf)
+TomoeDict *
+tomoe_shelf_get_dict (TomoeShelf *shelf, const gchar *name)
 {
     TomoeShelfPrivate *priv;
+
+    g_return_val_if_fail(shelf, NULL);
+    g_return_val_if_fail(name, NULL);
+
+    priv = TOMOE_SHELF_GET_PRIVATE (shelf);
+    return g_hash_table_lookup(priv->dicts, name);
+}
+
+static void
+tomoe_shelf_collect_dict_name (gpointer key, gpointer value, gpointer user_data)
+{
+    gchar *name = key;
+    GList **names = user_data;
+    
+    *names = g_list_prepend(*names, g_strdup(name));
+}
+
+GList *
+tomoe_shelf_get_dict_names (TomoeShelf* shelf)
+{
+    TomoeShelfPrivate *priv;
+    GList *names = NULL;
     g_return_val_if_fail (shelf, NULL);
 
     priv = TOMOE_SHELF_GET_PRIVATE (shelf);
-    return priv->dicts;
+    g_hash_table_foreach(priv->dicts, tomoe_shelf_collect_dict_name, &names);
+    return names;
+}
+
+static void
+tomoe_shelf_save_dict (gpointer key, gpointer value, gpointer user_data)
+{
+    TomoeDict *dict = value;
+    if (tomoe_dict_is_modified(dict))
+        tomoe_dict_save(dict);
 }
 
 void
 tomoe_shelf_save (TomoeShelf *shelf)
 {
     TomoeShelfPrivate *priv;
-    guint i;
 
     g_return_if_fail (shelf);
     priv = TOMOE_SHELF_GET_PRIVATE (shelf);
 
-    for (i = 0; i < priv->dicts->len; i++) {
-        TomoeDict *dict = (TomoeDict*) g_ptr_array_index (priv->dicts, i);
-        if (tomoe_dict_is_modified (dict))
-            tomoe_dict_save (dict);
-    }
+    g_hash_table_foreach(priv->dicts, tomoe_shelf_save_dict, NULL);
 }
 
 /*

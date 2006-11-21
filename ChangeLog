@@ -1,3 +1,12 @@
+2006-11-21  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-context.[ch] (tomoe_context_get_dict_names,
+	tomoe_context_get_dict): added.
+
+	* lib/tomoe-shelf.[ch] (tomoe_shelf_get_dict,
+	tomoe_shelf_get_dict_names): added.
+	* lib/tomoe-shelf.[ch] (tomoe_shelf_get_dict_list): removed.
+
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* recognizer/tomoe-recognizer-simple-logic.c: calloc -> g_new.

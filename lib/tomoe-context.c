@@ -110,6 +110,26 @@ tomoe_context_add_dict (TomoeContext *context, TomoeDict *dict)
         tomoe_config_save(priv->config);
 }
 
+GList *
+tomoe_context_get_dict_names (TomoeContext *context)
+{
+    TomoeContextPrivate *priv;
+    g_return_val_if_fail (context, NULL);
+
+    priv = TOMOE_CONTEXT_GET_PRIVATE(context);
+    return tomoe_shelf_get_dict_names(priv->shelf);
+}
+
+TomoeDict *
+tomoe_context_get_dict (TomoeContext *context, const gchar *name)
+{
+    TomoeContextPrivate *priv;
+    g_return_val_if_fail (context, NULL);
+
+    priv = TOMOE_CONTEXT_GET_PRIVATE(context);
+    return tomoe_shelf_get_dict(priv->shelf, name);
+}
+
 static void
 tomoe_context_load_dict_list (TomoeContext *context,
                               const GPtrArray *dict_configs)
@@ -186,21 +206,19 @@ GPtrArray *
 tomoe_context_search_by_strokes (TomoeContext *context, TomoeGlyph *input)
 {
     TomoeContextPrivate *priv;
-    guint i, num;
-    TomoeDict *dict;
-    const GPtrArray *dicts;
+    GList *names, *name;
     GPtrArray *matched = g_ptr_array_new ();
 
     if (!context) return matched;
 
-    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
-    dicts = tomoe_shelf_get_dict_list(priv->shelf);
-    num = dicts->len;
-    if (num == 0) return matched;
+    names = tomoe_context_get_dict_names(context);
+    if (!names) return matched;
 
-    for (i = 0; i < num; i++) {
+    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+    for (name = names; name; name = name->next) {
         GPtrArray *tmp;
-        dict = (TomoeDict*)g_ptr_array_index (dicts, i);
+        TomoeDict *dict;
+        dict = tomoe_context_get_dict(context, name->data);
         tmp = tomoe_recognizer_search (priv->recognizer, dict, input);
 
         if (tmp) {
@@ -216,22 +234,18 @@ tomoe_context_search_by_strokes (TomoeContext *context, TomoeGlyph *input)
 GPtrArray *
 tomoe_context_search_by_reading (TomoeContext *context, const char *input)
 {
-    guint i, num;
-    TomoeContextPrivate *priv;
-    const GPtrArray *dicts;
+    GList *names, *name;
     GPtrArray *reading = g_ptr_array_new ();
 
     if (!context) return reading;
 
-    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
-    dicts = tomoe_shelf_get_dict_list(priv->shelf);
-    num = dicts->len;
-    if (num == 0) return reading;
+    names = tomoe_context_get_dict_names(context);
+    if (!names) return reading;
 
-    for (i = 0; i < num; i++) {
+    for (name = names; name; name = name->next) {
         GPtrArray *tmp;
-    	TomoeDict *dict;
-        dict = (TomoeDict*) g_ptr_array_index (dicts, i);
+        TomoeDict *dict;
+        dict = tomoe_context_get_dict(context, name->data);
         tmp = tomoe_dict_search_by_reading (dict, input);
         if (tmp) {
             g_ptr_array_foreach (tmp, _ptr_array_merge_func, reading);

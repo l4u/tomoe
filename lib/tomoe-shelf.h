@@ -73,7 +73,9 @@ void             tomoe_shelf_add_dict       (TomoeShelf  *shelf,
 void             tomoe_shelf_load_dict      (TomoeShelf  *shelf,
                                              const gchar *filename,
                                              gboolean     editable);
-const GPtrArray *tomoe_shelf_get_dict_list  (TomoeShelf  *shelf);
+TomoeDict       *tomoe_shelf_get_dict       (TomoeShelf  *shelf,
+                                             const gchar *name);
+GList           *tomoe_shelf_get_dict_names (TomoeShelf  *shelf);
 void             tomoe_shelf_save           (TomoeShelf  *shelf);
 
 
