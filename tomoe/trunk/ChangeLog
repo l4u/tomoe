@@ -1,3 +1,14 @@
+2006-11-21  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-context.[ch] (tomoe_context_search_by_reading),
+	lib/tomoe-dict.[ch] (tomoe_dict_search_by_reading): used GList *
+	instead of GPtrArray.
+
+	* test/context_spec.rb: added tests for
+	tomoe_context_search_by_reading.
+	* ext/ruby/tomoe-rb-context.c: added
+	Tomoe::Context#search_by_reading.
+
 2006-11-21  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* test/testtomoe.c: Fix compile time warnings.

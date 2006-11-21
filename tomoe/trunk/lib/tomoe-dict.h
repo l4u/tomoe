@@ -167,11 +167,11 @@ const GPtrArray *tomoe_dict_get_letters          (TomoeDict     *dict);
 /**
  * @brief Match reading of TomoeChar with input.
  * @param dict   - Pointer to the TomoeDict object.
- * @param input  - Pointer to string matchkey
- * @return The GPtrArray of TomoeCandidate.
+ * @param reading - Pointer to string matchkey
+ * @return The GList of TomoeCandidate.
  */
-GPtrArray      *tomoe_dict_search_by_reading    (const TomoeDict *dict,
-                                                 const char      *input);
+GList           *tomoe_dict_search_by_reading    (const TomoeDict *dict,
+                                                  const char      *reading);
 
 #ifdef TOMOE_DICT__USE_XSL_METHODS
 xsltStylesheetPtr  tomoe_dict_get_meta_xsl      (TomoeDict       *dict);

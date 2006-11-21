@@ -94,9 +94,9 @@ GList          *tomoe_context_search_by_strokes (TomoeContext       *ctx,
  * @brief Match reading of TomoeChar with input.
  * @param ctx     - Pointer to the TomoeContext object.
  * @param reading  - Pointer to string matchkey
- * @return The array of TomoeCandidate.
+ * @return The list of TomoeCandidate.
  */
-GPtrArray      *tomoe_context_search_by_reading  (TomoeContext       *ctx,
+GList          *tomoe_context_search_by_reading  (TomoeContext       *ctx,
                                                   const char         *reading);
 G_END_DECLS
 

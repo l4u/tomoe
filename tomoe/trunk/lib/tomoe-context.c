@@ -174,14 +174,6 @@ tomoe_context_save (TomoeContext *context)
         tomoe_config_save(priv->config);
 }
 
-#warning FIXME!
-static void
-_ptr_array_merge_func (gpointer data, gpointer user_data)
-{
-    GPtrArray *p = (GPtrArray *) user_data;
-    g_ptr_array_add (p, data);
-}
-
 static gint
 _candidate_compare_func (gconstpointer a, gconstpointer b)
 {
@@ -216,30 +208,26 @@ tomoe_context_search_by_strokes (TomoeContext *context, TomoeGlyph *input)
     return matched;
 }
 
-GPtrArray *
+GList *
 tomoe_context_search_by_reading (TomoeContext *context, const char *input)
 {
     GList *names, *name;
-    GPtrArray *reading = g_ptr_array_new ();
+    GList *results = NULL;
 
-    if (!context) return reading;
+    if (!context) return results;
 
     names = tomoe_context_get_dict_names(context);
-    if (!names) return reading;
+    if (!names) return results;
 
     for (name = names; name; name = name->next) {
-        GPtrArray *tmp;
         TomoeDict *dict;
         dict = tomoe_context_get_dict(context, name->data);
-        tmp = tomoe_dict_search_by_reading (dict, input);
-        if (tmp) {
-            g_ptr_array_foreach (tmp, _ptr_array_merge_func, reading);
-            g_ptr_array_free (tmp, TRUE);
-        }
+        results = g_list_concat (tomoe_dict_search_by_reading (dict, input),
+                                 results);
     }
-    /*tomoe_array_sort (reading);*/
+    results = g_list_sort (results, _candidate_compare_func);
 
-    return reading;
+    return results;
 }
 
 /*

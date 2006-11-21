@@ -40,6 +40,7 @@
 #define TOMOE_DICT__USE_XSL_METHODS
 #include "tomoe-dict.h"
 #include "tomoe-char.h"
+#include "tomoe-candidate.h"
 #include "glib-utils.h"
 
 #define LIMIT_LENGTH ((300 * 0.25) * (300 * 0.25))
@@ -64,6 +65,12 @@ struct _TomoeDictPrivate
     gboolean             editable;
     gboolean             modified;
 };
+
+typedef struct _TomoeDictSearchContext {
+    const char *reading;
+    GList *results;
+} TomoeDictSearchContext;
+
 
 enum
 {
@@ -485,45 +492,52 @@ tomoe_dict_get_letters (TomoeDict *dict)
     return TOMOE_DICT_GET_PRIVATE(dict)->letters;
 }
 
-GPtrArray*
-tomoe_dict_search_by_reading (const TomoeDict* dict, const char* input)
+static void
+tomoe_dict_collect_chars_by_reading (gpointer data, gpointer user_data)
 {
-    TomoeDictPrivate *priv;
-    GPtrArray *reading;
-    guint letter_num;
-    guint i;
+    TomoeChar *chr = data;
+    TomoeDictSearchContext *context = user_data;
+    guint reading_num, i;
+    gboolean find = FALSE;
+    GPtrArray *readings;
 
-    reading = g_ptr_array_new ();
-    priv = TOMOE_DICT_GET_PRIVATE(dict);
-    letter_num = priv->letters->len;
+    readings = tomoe_char_get_readings (chr);
 
-    for (i = 0; i < letter_num; i++) {
-        TomoeChar *lttr = (TomoeChar*) g_ptr_array_index (priv->letters, i);
-        guint reading_num, j;
-        gboolean find = FALSE;
-        GPtrArray *readings = tomoe_char_get_readings (lttr);
-
-        /* check for available reading data */
-        if (!readings->len) {
-            TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
-            continue;
-        }
-
-        reading_num = readings->len;
-
-        for (j = 0; j < reading_num; j++) {
-            const char* r = (const char*) g_ptr_array_index (readings, j);
-            if (0 == strcmp (r, input)) {
-                find = TRUE;
-                break;
-            }
-        }
-        if (find)
-            g_ptr_array_add (reading, g_object_ref (G_OBJECT (lttr)));
+    /* check for available reading data */
+    if (!readings->len) {
         TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
+        return;
     }
 
-    return reading;
+    reading_num = readings->len;
+    for (i = 0; i < reading_num; i++) {
+        const char* r = (const char*) g_ptr_array_index (readings, i);
+        if (0 == strcmp (r, context->reading)) {
+            find = TRUE;
+            break;
+        }
+    }
+    if (find)
+        context->results = g_list_prepend (context->results,
+                                           tomoe_candidate_new (chr));
+
+    TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
+}
+
+GList *
+tomoe_dict_search_by_reading (const TomoeDict* dict, const char *reading)
+{
+    TomoeDictPrivate *priv;
+    TomoeDictSearchContext context;
+
+    context.reading = reading;
+    context.results = NULL;
+
+    priv = TOMOE_DICT_GET_PRIVATE(dict);
+    g_ptr_array_foreach (priv->letters, tomoe_dict_collect_chars_by_reading,
+                         &context);
+
+    return context.results;
 }
 
 xsltStylesheetPtr
