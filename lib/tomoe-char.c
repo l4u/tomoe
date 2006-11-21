@@ -116,7 +116,7 @@ tomoe_char_dispose (GObject *object)
     if (priv->charCode)
         g_free (priv->charCode);
     if (priv->glyph)
-        tomoe_glyph_free (priv->glyph);
+        g_object_unref (G_OBJECT (priv->glyph));
     if (priv->xmlMeta)
         xmlFreeNode (priv->xmlMeta);
     if (priv->meta)
@@ -265,7 +265,7 @@ tomoe_char_set_glyph (TomoeChar* t_char, TomoeGlyph* glyph)
 
     priv = TOMOE_CHAR_GET_PRIVATE (t_char);
 
-    tomoe_glyph_free (priv->glyph);
+    g_object_unref (G_OBJECT (priv->glyph));
     priv->glyph = glyph; /* FIXME addRef */
     tomoe_char_set_modified(t_char, 1);
 }

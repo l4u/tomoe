@@ -242,7 +242,7 @@ tomoe_config_load (TomoeConfig *config)
     xmlDocPtr doc;
     xmlNodePtr root;
     char* defaultUserDB = NULL;
-    int i;
+    unsigned int i;
     TomoeConfigPrivate *priv;
 
     g_return_if_fail (config);
@@ -363,7 +363,7 @@ tomoe_config_save (TomoeConfig *config)
         xmlDocPtr doc;
         const char* param[3];
         xmlNodePtr root;
-        int i;
+        unsigned int i;
 
         doc = xmlNewDoc(BAD_CAST "1.0");
         root = xmlNewNode(NULL, BAD_CAST "tomoeConfig");
@@ -394,7 +394,7 @@ tomoe_config_save (TomoeConfig *config)
 void
 tomoe_config_setup_context (TomoeConfig *config, TomoeContext *context)
 {
-    gint i;
+    guint i;
     GPtrArray *dicts;
 
     g_return_if_fail (config);
