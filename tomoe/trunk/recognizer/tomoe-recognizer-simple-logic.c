@@ -20,7 +20,6 @@
  *  $Id$
  */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "tomoe-char.h"
@@ -192,7 +191,7 @@ stroke_calculate_metrics (TomoeStroke *strk, tomoe_metric **met)
 
     if (!strk) return 0;
 
-    m = calloc (strk->point_num - 1, sizeof (tomoe_metric));
+    m = g_new (tomoe_metric, strk->point_num - 1);
  
     for (i = 0; i < strk->point_num - 1; i++) {
         p = strk->points[i];
@@ -220,7 +219,7 @@ cand_priv_new (TomoeChar* character, int index)
 {
     cand_priv *cand_p;
 
-    cand_p                  = calloc (sizeof (cand_priv), 1);
+    cand_p                  = g_new (cand_priv, 1);
     cand_p->cand            = tomoe_candidate_new (character);
     cand_p->index           = index;
     cand_p->adapted_strokes = g_array_new (FALSE, FALSE, sizeof (gint));
@@ -239,7 +238,7 @@ cand_priv_free (cand_priv *cand_p)
     g_object_unref (G_OBJECT (cand_p->cand));
     cand_p->cand = NULL;
 
-    free (cand_p);
+    g_free (cand_p);
 }
 
 
