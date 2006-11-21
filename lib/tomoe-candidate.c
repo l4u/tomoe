@@ -24,14 +24,14 @@
 #include "tomoe-candidate.h"
 
 enum {
-	PROP_0,
-	PROP_CHARACTER,
+    PROP_0,
+    PROP_CHARACTER,
     PROP_SCORE
 };
 
 #define TOMOE_CANDIDATE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_CANDIDATE, TomoeCandidatePrivate))
 
-typedef struct _TomoeCandidatePrivate	TomoeCandidatePrivate;
+typedef struct _TomoeCandidatePrivate   TomoeCandidatePrivate;
 struct _TomoeCandidatePrivate
 {
     TomoeChar    *character;
@@ -58,8 +58,8 @@ tomoe_candidate_class_init (TomoeCandidateClass *klass)
     gobject_class = G_OBJECT_CLASS (klass);
 
     gobject_class->dispose = tomoe_candidate_dispose;
-	gobject_class->set_property = tomoe_candidate_set_property;
-	gobject_class->get_property = tomoe_candidate_get_property;
+    gobject_class->set_property = tomoe_candidate_set_property;
+    gobject_class->get_property = tomoe_candidate_get_property;
 
     g_object_class_install_property (
         gobject_class,
@@ -70,8 +70,8 @@ tomoe_candidate_class_init (TomoeCandidateClass *klass)
             "A tomoe character object",
             TOMOE_TYPE_CHAR,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
-	g_object_class_install_property(
-		gobject_class,
+    g_object_class_install_property(
+        gobject_class,
         PROP_SCORE,
         g_param_spec_uint(
             "score",
@@ -113,23 +113,23 @@ tomoe_candidate_set_property (GObject *object,
                               const GValue *value,
                               GParamSpec *pspec)
 {
-	TomoeCandidate *cand = TOMOE_CANDIDATE (object);
+    TomoeCandidate *cand = TOMOE_CANDIDATE (object);
     TomoeCandidatePrivate *priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
 
-	switch (prop_id) {
-	case PROP_CHARACTER:
+    switch (prop_id) {
+    case PROP_CHARACTER:
     {
         GObject *obj = g_value_get_object (value);
-		priv->character = TOMOE_CHAR (g_object_ref (obj));
-		break;
+        priv->character = TOMOE_CHAR (g_object_ref (obj));
+        break;
     }
     case PROP_SCORE:
         priv->score = g_value_get_int (value);
         break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
+    }
 }
 
 
@@ -139,20 +139,20 @@ tomoe_candidate_get_property (GObject *object,
                               GValue *value,
                               GParamSpec *pspec)
 {
-	TomoeCandidate *cand = TOMOE_CANDIDATE (object);
+    TomoeCandidate *cand = TOMOE_CANDIDATE (object);
     TomoeCandidatePrivate *priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
 
-	switch (prop_id) {
-	case PROP_CHARACTER:
-		g_value_set_object (value, G_OBJECT (priv->character));
-		break;
+    switch (prop_id) {
+    case PROP_CHARACTER:
+        g_value_set_object (value, G_OBJECT (priv->character));
+        break;
     case PROP_SCORE:
         g_value_set_int (value, priv->score);
         break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
+    }
 }
 
 TomoeCandidate*
