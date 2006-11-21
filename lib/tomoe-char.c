@@ -50,9 +50,22 @@ struct _TomoeCharPrivate
     gboolean              modified;
 };
 
+enum
+{
+  PROP_0
+};
+
 G_DEFINE_TYPE (TomoeChar, tomoe_char, G_TYPE_OBJECT)
 
-static void tomoe_char_dispose      (GObject *object);
+static void tomoe_char_dispose        (GObject         *object);
+static void tomoe_char_set_property   (GObject         *object,
+                                       guint            prop_id,
+                                       const GValue    *value,
+                                       GParamSpec      *pspec);
+static void tomoe_char_get_property   (GObject         *object,
+                                       guint            prop_id,
+                                       GValue          *value,
+                                       GParamSpec      *pspec);
 
 static void
 tomoe_char_class_init (TomoeCharClass *klass)
@@ -62,6 +75,8 @@ tomoe_char_class_init (TomoeCharClass *klass)
     gobject_class = G_OBJECT_CLASS (klass);
 
     gobject_class->dispose  = tomoe_char_dispose;
+    gobject_class->set_property = tomoe_char_set_property;
+    gobject_class->get_property = tomoe_char_get_property;
 
     g_type_class_add_private (gobject_class, sizeof (TomoeCharPrivate));
 }
@@ -117,6 +132,43 @@ tomoe_char_dispose (GObject *object)
     priv->parent   = NULL;
 
     G_OBJECT_CLASS (tomoe_char_parent_class)->dispose (object);
+}
+static void
+tomoe_char_set_property (GObject      *object,
+                         guint         prop_id,
+                         const GValue *value,
+                         GParamSpec   *pspec)
+{
+    TomoeChar *t_char;
+    TomoeCharPrivate *priv;
+
+    t_char = TOMOE_CHAR(object);
+    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+
+    switch (prop_id) {
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+static void
+tomoe_char_get_property (GObject    *object,
+                         guint       prop_id,
+                         GValue     *value,
+                         GParamSpec *pspec)
+{
+    TomoeChar *t_char;
+    TomoeCharPrivate *priv;
+
+    t_char = TOMOE_CHAR (object);
+    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+
+    switch (prop_id) {
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
 }
 
 const char*
@@ -245,11 +297,13 @@ tomoe_char_get_meta (TomoeChar* t_char)
     xmlAddChild (root, priv->xmlMeta);
 
     /* translate xml meta to view text */
-    meta = xsltApplyStylesheet (tomoe_dict_get_meta_xsl(priv->parent), doc, param);
+    meta = xsltApplyStylesheet (tomoe_dict_get_meta_xsl(priv->parent),
+                                doc, param);
 
     /* save into character object */
     xmlChar* metaString = NULL;
-    xsltSaveResultToString (&metaString, &len, meta, tomoe_dict_get_meta_xsl(priv->parent));
+    xsltSaveResultToString (&metaString, &len, meta,
+                            tomoe_dict_get_meta_xsl(priv->parent));
 
     /* change of meta is invariant */
     priv->meta = g_strdup ((const char*)metaString);
