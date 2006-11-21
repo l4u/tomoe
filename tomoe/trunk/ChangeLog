@@ -1,5 +1,13 @@
 2006-11-21  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-config.c: removed debug print.
+
+	* ext/ruby/tomoe-rb-candidate.c, ext/ruby/Makefile.am,
+	ext/ruby/tomoe-rb.[ch]: added.
+	* ext/ruby/tomoe-rb-context.c, ext/ruby/tomoe-rb-char.c:
+	implemented some methods.
+	* test/: added tests written by Ruby.
+
 	* lib/tomoe-context.[ch] (tomoe_context_search_by_strokes),
 	lib/tomoe-recognizer.[ch] (tomoe_recognizer_search),
 	lib/tomoe-recognizer-impl.h (tomoe_recognizer_search_impl),

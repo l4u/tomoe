@@ -45,4 +45,10 @@ EXTRA_DIST = \
 	haru \
 	natu \
 	aki \
-	fuyu
+	fuyu \
+	run-spec.rb \
+	run-test.sh \
+	tomoe-spec-utils.rb \
+	context_spec.rb
+
+TESTS = run-spec.rb

@@ -18,6 +18,7 @@ INCLUDES = \
 
 tomoe_la_SOURCES = \
 	tomoe-rb.c tomoe-rb.h \
+	tomoe-rb-candidate.c \
 	tomoe-rb-char.c \
 	tomoe-rb-config.c \
 	tomoe-rb-context.c \

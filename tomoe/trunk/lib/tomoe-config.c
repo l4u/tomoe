@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2006 Juernjakob Harder <juernjakob.harder@gmail.com>
  *
@@ -289,7 +289,7 @@ tomoe_config_load (TomoeConfig *config)
                 }
 
                 /* check if file exists */
-                fprintf (stdout, dcfg->filename);
+                /* fprintf (stdout, dcfg->filename); */
                 /*if (access (dcfg->filename, F_OK | R_OK)) FIXME*/
                 {/*fprintf(stdout, "..access ok\n");*/
                     dcfg->writeAccess = /*access (dcfg->filename, W_OK) ? */dcfg->user/* : 0*/;
