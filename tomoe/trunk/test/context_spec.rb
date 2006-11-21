@@ -28,11 +28,11 @@ context "Tomoe::Context" do
             ]
     cands = @context.search_by_strokes(input)
 
-    cands.collect {|cand| cand.char.code}.should == ["春", "屠"]
+    cands.collect {|cand| cand.character.code}.should == ["春", "屠"]
   end
 
   specify "Search by reading" do
     cands = @context.search_by_reading("せい")
-    cands.collect {|cand| cand.char.code}.should == ["脊", "背", "汐"]
+    cands.collect {|cand| cand.character.code}.should == ["脊", "背", "汐"]
   end
 end
