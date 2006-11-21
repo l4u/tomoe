@@ -1,3 +1,9 @@
+2006-11-21  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* lib/tomoe-dict.c, lib/tomoe-config.c,
+	  recognizer/tomoe-recognizer-simple-logic.c:
+	Fix compile time warnings.
+
 2006-11-21  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-config.c: removed debug print.

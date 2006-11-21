@@ -432,7 +432,7 @@ static GPtrArray *
 get_candidates (TomoeStroke *input_stroke, GPtrArray *cands)
 {
     GPtrArray     *rtn_cands;
-    int            cand_index = 0;
+    unsigned int   cand_index = 0;
     unsigned int   strk_index = 0;
     TomoeStroke    dict_stroke;
     int            i_nop = 0;    /* input stroke number of points */
@@ -591,7 +591,7 @@ match_stroke_num (TomoeDict* dict, int letter_index, int input_stroke_num, GArra
 static gboolean
 _g_array_has_this_int_value (GArray *a, gint i)
 {
-    gint l;
+    guint l;
 
     if (!a || a->len == 0) return FALSE;
 
@@ -605,7 +605,7 @@ _g_array_has_this_int_value (GArray *a, gint i)
 static GArray *
 _g_array_copy_int_value (GArray *a)
 {
-    gint i;
+    guint i;
     GArray *b = g_array_new (FALSE, FALSE, sizeof (gint));
 
     for (i = 0; i < a->len; i++) {
