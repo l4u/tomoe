@@ -1,3 +1,14 @@
+2006-11-21  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-config.[ch]: hid TomoeDictCfg.
+	* lib/tomoe-config.[ch] (tomoe_config_setup_context): added.
+	* lib/tomoe-config.[ch] (tomoe_config_get_dict_list): removed.
+
+	* lib/tomoe-context.c: used tomoe_config_setup_context() instead
+	of tomoe_config_get_dict_list().
+
+	* lib/tomoe-shelf.[ch] (tomoe_shelf_load_dict): removed.
+
 2006-11-21  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe-candidate.c: Use property.
