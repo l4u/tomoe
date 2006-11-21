@@ -597,7 +597,7 @@ parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
         return;
 
 
-    glyph = calloc(1, sizeof (TomoeGlyph));
+    glyph = tomoe_glyph_new ();
     tomoe_glyph_alloc (glyph, stroke_num);
     tomoe_char_set_glyph (lttr, glyph);
 
