@@ -23,6 +23,12 @@
 
 #include "tomoe-candidate.h"
 
+enum {
+	PROP_0,
+	PROP_CHARACTER,
+    PROP_SCORE
+};
+
 #define TOMOE_CANDIDATE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_CANDIDATE, TomoeCandidatePrivate))
 
 typedef struct _TomoeCandidatePrivate	TomoeCandidatePrivate;
@@ -34,7 +40,15 @@ struct _TomoeCandidatePrivate
 
 G_DEFINE_TYPE (TomoeCandidate, tomoe_candidate, G_TYPE_OBJECT)
 
-static void tomoe_candidate_dispose (GObject *object);
+static void tomoe_candidate_dispose      (GObject      *object);
+static void tomoe_candidate_set_property (GObject      *object,
+                                          guint         prop_id,
+                                          const GValue *value,
+                                          GParamSpec   *pspec);
+static void tomoe_candidate_get_property (GObject      *object,
+                                          guint         prop_id,
+                                          GValue       *value,
+                                          GParamSpec   *pspec);
 
 static void
 tomoe_candidate_class_init (TomoeCandidateClass *klass)
@@ -44,6 +58,30 @@ tomoe_candidate_class_init (TomoeCandidateClass *klass)
     gobject_class = G_OBJECT_CLASS (klass);
 
     gobject_class->dispose = tomoe_candidate_dispose;
+	gobject_class->set_property = tomoe_candidate_set_property;
+	gobject_class->get_property = tomoe_candidate_get_property;
+
+    g_object_class_install_property (
+        gobject_class,
+        PROP_CHARACTER,
+        g_param_spec_object (
+            "character",
+            "Character",
+            "A tomoe character object",
+            TOMOE_TYPE_CHAR,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+	g_object_class_install_property(
+		gobject_class,
+        PROP_SCORE,
+        g_param_spec_uint(
+            "score",
+            "Score",
+            "Score of this candidate. Lower value has higher priority.",
+            0,
+            G_MAXINT,
+            0,
+            G_PARAM_READWRITE));
+
 
     g_type_class_add_private (gobject_class, sizeof (TomoeCandidatePrivate));
 }
@@ -69,21 +107,62 @@ tomoe_candidate_dispose (GObject *object)
     G_OBJECT_CLASS (tomoe_candidate_parent_class)->dispose (object);
 }
 
+static void
+tomoe_candidate_set_property (GObject *object,
+                              guint prop_id,
+                              const GValue *value,
+                              GParamSpec *pspec)
+{
+	TomoeCandidate *cand = TOMOE_CANDIDATE (object);
+    TomoeCandidatePrivate *priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
+
+	switch (prop_id) {
+	case PROP_CHARACTER:
+    {
+        GObject *obj = g_value_get_object (value);
+		priv->character = TOMOE_CHAR (g_object_ref (obj));
+		break;
+    }
+    case PROP_SCORE:
+        priv->score = g_value_get_int (value);
+        break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+
+static void
+tomoe_candidate_get_property (GObject *object,
+                              guint prop_id,
+                              GValue *value,
+                              GParamSpec *pspec)
+{
+	TomoeCandidate *cand = TOMOE_CANDIDATE (object);
+    TomoeCandidatePrivate *priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
+
+	switch (prop_id) {
+	case PROP_CHARACTER:
+		g_value_set_object (value, G_OBJECT (priv->character));
+		break;
+    case PROP_SCORE:
+        g_value_set_int (value, priv->score);
+        break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
 TomoeCandidate*
 tomoe_candidate_new (TomoeChar *t_char)
 {
     TomoeCandidate *cand;
-    TomoeCandidatePrivate *priv;
 
     cand = g_object_new(TOMOE_TYPE_CANDIDATE,
-                        /* "tomoe-char", t_char, */
+                        "character", t_char,
                         NULL);
-
-    /* FIXME: use property */
-    if (t_char) {
-        priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
-        priv->character = g_object_ref (G_OBJECT (t_char));
-    }
 
     return cand;
 }
@@ -112,6 +191,8 @@ tomoe_candidate_set_score (TomoeCandidate *cand, gint score)
     g_return_if_fail (priv);
 
     priv->score = score;
+
+    g_object_notify (G_OBJECT (cand), "score");
 }
 
 gint
