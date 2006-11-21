@@ -69,11 +69,11 @@ _candidate_compare_func (gconstpointer a, gconstpointer b)
     return tomoe_candidate_compare (a, b);
 }
 
-GPtrArray *
+GList *
 _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGlyph *input)
 {
     /* TomoeRecognizerSimple *recognizer = context; */
-    GPtrArray *matched = g_ptr_array_new ();
+    GList *matched = NULL;
     guint i, j;
     GArray *matches = NULL;
     GPtrArray *cands = NULL;
@@ -162,13 +162,13 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
                 TomoeCandidate *c = cand_p->cand;
                 TomoeCandidate *cand = tomoe_candidate_new (tomoe_candidate_get_char (c));
                 tomoe_candidate_set_score (cand, tomoe_candidate_get_score (c));
-                g_ptr_array_add (matched, cand);
+                matched = g_list_prepend (matched, cand);
             }
         }
     }
     g_array_free (matches, TRUE);
 
-    g_ptr_array_sort (matched, _candidate_compare_func);
+    matched = g_list_sort (matched, _candidate_compare_func);
 
     g_ptr_array_foreach (first_cands, (GFunc) cand_priv_free, NULL);
     g_ptr_array_free (first_cands, TRUE);

@@ -65,7 +65,7 @@ TomoeRecognizer *tomoe_recognizer_new      (void);
  * @param input  - Pointer to tomoe_glyph matchkey.
  * @return The array of tomoe_candidate.
  */
-GPtrArray       *tomoe_recognizer_search   (const TomoeRecognizer *recognizer,
+GList           *tomoe_recognizer_search   (const TomoeRecognizer *recognizer,
                                             TomoeDict *dict,
                                             TomoeGlyph *inputs);
 
