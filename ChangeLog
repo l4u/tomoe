@@ -1,5 +1,11 @@
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
+	* recognizer/tomoe-recognizer-simple-logic.c: _PointerArray -> GPtrArray.
+	Code cleaning. Removed redundant codes. I think the fix make slightly
+	performance gain, but I can't feel it.
+
+2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
 	* recognizer/tomoe-recognizer-simple-logic.c: _IntArray -> GArray..
 
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>

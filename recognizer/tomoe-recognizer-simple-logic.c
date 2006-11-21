@@ -30,15 +30,6 @@
 
 #define LIMIT_LENGTH ((300 * 0.25) * (300 * 0.25))
 
-typedef struct _PointerArray PointerArray;
-
-struct _PointerArray
-{
-    void **p;
-    int    len;
-    int    ref_count;
-};
-
 typedef struct _tomoe_metric tomoe_metric;
 
 struct _tomoe_metric
@@ -56,34 +47,22 @@ typedef struct _cand_priv cand_priv;
 struct _cand_priv
 {
     TomoeCandidate  *cand;
-    int              index;
+    gint             index;
     GArray          *adapted_strokes;
 };
 
-static PointerArray   *_pointer_array_new              (void);
-static PointerArray   *_pointer_array_append_data      (PointerArray *a, void *p);
-static PointerArray   *_pointer_array_ref              (PointerArray *a);
-#if 0
-static int             _pointer_array_find_data        (PointerArray *a, void *p);
-#endif
-static void            _pointer_array_unref            (PointerArray *a);
-
-static cand_priv      *cand_priv_new                   (TomoeChar*       character,
-                                                        int              index);
-static void            cand_priv_free                  (cand_priv       *cand_p,
-                                                        gboolean        free_candidate);
-
-static PointerArray   *get_candidates                  (TomoeDict *t_dict,
-                                                        TomoeStroke*     input_stroke,
-                                                        PointerArray    *cands);
-
-static int             match_stroke_num                (TomoeDict *t_dict,
-                                                        int              letter_index,
-                                                        int              input_stroke_num,
-                                                        GArray          *adapted);
-
-static gboolean  _g_array_has_this_int_value  (GArray *a, gint i);
-static GArray   *_g_array_copy_int_value (GArray *a);
+static cand_priv *cand_priv_new               (TomoeChar   *character,
+                                               int          index);
+static void       cand_priv_free              (cand_priv   *cand_p);
+static GPtrArray *get_candidates              (TomoeStroke *input_stroke,
+                                               GPtrArray   *cands);
+static gint       match_stroke_num            (TomoeDict   *dict,
+                                               int          letter_index,
+                                               int          input_stroke_num,
+                                               GArray      *adapted);
+static gboolean  _g_array_has_this_int_value  (GArray      *a,
+                                               gint         i);
+static GArray   *_g_array_copy_int_value      (GArray      *a);
 
 static gint
 _candidate_compare_func (gconstpointer a, gconstpointer b)
@@ -98,16 +77,16 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
     GPtrArray *matched = g_ptr_array_new ();
     guint i, j;
     GArray *matches = NULL;
-    PointerArray *cands = NULL;
-    PointerArray *first_cands = NULL;
-    unsigned int letters_num = 0;
+    GPtrArray *cands = NULL;
+    GPtrArray *first_cands = NULL;
+    guint letters_num = 0;
     const GPtrArray *letters = NULL;
 
     if (!input) return 0;
     if (!input->stroke_num) return 0;
     if (!dict) return 0;
 
-    first_cands = _pointer_array_new ();
+    first_cands = g_ptr_array_new ();
     letters = tomoe_dict_get_letters(dict);
     if (!letters) return NULL;
     letters_num = letters->len;
@@ -125,28 +104,27 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
             continue;
 
         /* append a candidate to candidate list */
-        cand = cand_priv_new(p, i);
-        _pointer_array_append_data(first_cands, cand);
+        cand = cand_priv_new (p, i);
+        g_ptr_array_add (first_cands, cand);
     }
 
+    /* Ugly hack! */
     cands = first_cands;
-    first_cands = _pointer_array_ref(first_cands);
-
-    for (i = 0; i < (unsigned int)input->stroke_num; i++) {
-        PointerArray *verbose_cands;
-
-        verbose_cands = get_candidates(dict, &input->strokes[i], cands);
-        _pointer_array_unref(cands);
-        cands = verbose_cands;
+    cands = get_candidates (&input->strokes[0], first_cands);
+    for (i = 1; i < (guint)input->stroke_num; i++) {
+        GPtrArray *tmp;
+        tmp = get_candidates(&input->strokes[i], cands);
+        g_ptr_array_free (cands, TRUE);
+        cands = tmp;
     }
 
     matches = g_array_new (FALSE, FALSE, sizeof (gint));
-    for (i = 0; i < (unsigned int)cands->len; i++) {
+    for (i = 0; i < (guint)cands->len; i++) {
         cand_priv *cand;
         GArray *adapted;
         int pj;
 
-        cand = cands->p[i];
+        cand = g_ptr_array_index (cands, i);
         adapted = cand->adapted_strokes;
         pj = match_stroke_num (dict, cand->index, input->stroke_num, adapted);
 
@@ -162,7 +140,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
             const TomoeChar *a = g_ptr_array_index (letters, cand->index);
             gboolean f = TRUE;
 
-            for (j = 0; j < (unsigned int)matches->len; j++) {
+            for (j = 0; j < (guint)matches->len; j++) {
                 const TomoeChar *b = g_ptr_array_index (letters, g_array_index (matches, gint, j));
                 if (!tomoe_char_compare(a, b)) {
                     f = FALSE;
@@ -177,11 +155,12 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
     }
 
     if (cands->len > 0) {
-        for (i = 0; i < (unsigned int)cands->len; i++) {
-            int index = ((cand_priv *)cands->p[i])->index;
+        for (i = 0; i < (guint)cands->len; i++) {
+            cand_priv *cand_p = g_ptr_array_index (cands, i);
+            gint index = cand_p->index;
 
             if (_g_array_has_this_int_value (matches, index)) {
-                TomoeCandidate *c = ((cand_priv*)cands->p[i])->cand;
+                TomoeCandidate *c = cand_p->cand;
                 TomoeCandidate *cand = tomoe_candidate_new (tomoe_candidate_get_char (c));
                 tomoe_candidate_set_score (cand, tomoe_candidate_get_score (c));
                 g_ptr_array_add (matched, cand);
@@ -192,13 +171,8 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
 
     g_ptr_array_sort (matched, _candidate_compare_func);
 
-    _pointer_array_unref (cands);
-
-    for (i = 0; i < (unsigned int) first_cands->len; i++) {
-        cand_priv_free (first_cands->p[i], TRUE);
-    }
-
-    _pointer_array_unref (first_cands);
+    g_ptr_array_foreach (first_cands, (GFunc) cand_priv_free, NULL);
+    g_ptr_array_free (first_cands, TRUE);
 
     return matched;
 }
@@ -208,10 +182,10 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
  *  stroke functions.
  * *******************
  */
-static int
+static gint
 stroke_calculate_metrics (TomoeStroke *strk, tomoe_metric **met)
 {
-    unsigned int i = 0;
+    guint i = 0;
     TomoePoint p;
     TomoePoint q;
     tomoe_metric *m;
@@ -255,7 +229,7 @@ cand_priv_new (TomoeChar* character, int index)
 }
 
 static void
-cand_priv_free (cand_priv *cand_p, gboolean free_candidate)
+cand_priv_free (cand_priv *cand_p)
 {
     if (!cand_p) return;
 
@@ -277,7 +251,7 @@ cand_priv_free (cand_priv *cand_p, gboolean free_candidate)
 
 #define SQUARE_LENGTH(x, y) ((x) * (x) + (y) * (y))
 
-static int
+static gint
 sq_dist (TomoePoint *p, TomoePoint *q)
 {
     return SQUARE_LENGTH (p->x - q->x, p->y - q->y);
@@ -289,7 +263,7 @@ sq_dist (TomoePoint *p, TomoePoint *q)
  * ************************************
  */
 
-static int
+static gint
 match_input_to_dict (TomoeStroke *input_stroke, TomoeStroke *dict_stroke)
 {
     int i_nop = 0;              /* input stroke number of points */
@@ -455,13 +429,11 @@ match_dict_to_input (TomoeStroke *dict_stroke, TomoeStroke *input_stroke)
     return d;
 }
 
-static PointerArray *
-get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
+static GPtrArray *
+get_candidates (TomoeStroke *input_stroke, GPtrArray *cands)
 {
-    PointerArray  *rtn_cands;
-    cand_priv     *cand;
+    GPtrArray     *rtn_cands;
     int            cand_index = 0;
-    TomoeChar*     lttr;
     unsigned int   strk_index = 0;
     TomoeStroke    dict_stroke;
     int            i_nop = 0;    /* input stroke number of points */
@@ -471,7 +443,7 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
     TomoePoint    *d_pts = NULL; /* dict stroke points */
     tomoe_metric  *d_met = NULL; /* dict stroke metrics */
 
-    rtn_cands = _pointer_array_new ();
+    rtn_cands = g_ptr_array_new ();
 
     i_nop = input_stroke->point_num;
     i_pts = input_stroke->points;
@@ -479,12 +451,15 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
 
     for (cand_index = 0; cand_index < cands->len; cand_index++) {
         gboolean match_flag = FALSE;
+        cand_priv *cand_p;
         GArray *tmp = NULL;
-        const GPtrArray *letters = tomoe_dict_get_letters(dict);
+        TomoeChar *lttr;
+        TomoeCandidate *cand;
 
-        cand = cands->p[cand_index];
-        tmp = _g_array_copy_int_value (cand->adapted_strokes);
-        lttr = g_ptr_array_index (letters, cand->index);
+        cand_p = g_ptr_array_index (cands, cand_index);
+        tmp = _g_array_copy_int_value (cand_p->adapted_strokes);
+        cand = TOMOE_CANDIDATE (cand_p->cand);
+        lttr = tomoe_candidate_get_char (cand);
 
         for (strk_index = 0;
              strk_index < tomoe_char_get_glyph (lttr)->stroke_num;
@@ -513,8 +488,8 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
             d2 = sq_dist (&i_pts[i_nop - 1], &d_pts[d_nop - 1]);
             score3 = (d1 + d2);
             tomoe_candidate_set_score (
-                cand->cand,
-                tomoe_candidate_get_score (cand->cand) + score3);
+                cand,
+                tomoe_candidate_get_score (cand) + score3);
             if (d1 > LIMIT_LENGTH ||
                 d2 > LIMIT_LENGTH ||
                 abs (d_nop - i_nop) > 3) {
@@ -540,13 +515,13 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
             if (score1 < 0) {
                 free (d_met);
                 tomoe_candidate_set_score (
-                    cand->cand,
-                    tomoe_candidate_get_score (cand->cand) * 2);
+                    cand,
+                    tomoe_candidate_get_score (cand) * 2);
                 continue;
             }
             tomoe_candidate_set_score (
-                cand->cand,
-                tomoe_candidate_get_score (cand->cand) + score1);
+                cand,
+                tomoe_candidate_get_score (cand) + score1);
 
             /*
              * Distance and angle of each characteristic points:
@@ -556,15 +531,15 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
             if (score2 < 0) {
                 free (d_met);
                 tomoe_candidate_set_score (
-                    cand->cand,
-                    tomoe_candidate_get_score (cand->cand) * 2);
+                    cand,
+                    tomoe_candidate_get_score (cand) * 2);
                 continue;
             }
             tomoe_candidate_set_score (
-                cand->cand,
-                tomoe_candidate_get_score (cand->cand) + score2);
+                cand_p->cand,
+                tomoe_candidate_get_score (cand) + score2);
 
-            g_array_append_val (cand->adapted_strokes, strk_index);
+            g_array_append_val (cand_p->adapted_strokes, strk_index);
             match_flag = TRUE;
 
             strk_index = tomoe_char_get_glyph (lttr)->stroke_num;
@@ -573,7 +548,7 @@ get_candidates (TomoeDict *dict, TomoeStroke *input_stroke, PointerArray *cands)
         }
 
         if (match_flag) {
-            _pointer_array_append_data (rtn_cands, cand);
+            g_ptr_array_add (rtn_cands, cand_p);
         }
         g_array_free (tmp, TRUE);
     }
@@ -614,74 +589,6 @@ match_stroke_num (TomoeDict* dict, int letter_index, int input_stroke_num, GArra
 }
 
 
-static PointerArray *
-_pointer_array_new (void)
-{
-    PointerArray *a;
-
-    a = calloc (sizeof (PointerArray), 1);
-    a->len = 0;
-    a->p = NULL;
-    a->ref_count = 1;
-
-    return a;
-}
-
-static PointerArray *
-_pointer_array_append_data (PointerArray *a, void *p)
-{
-    if (!a)
-        return NULL;
-  
-    a->len++;
-    a->p = realloc (a->p, sizeof (void*) * (a->len));
-    a->p[a->len - 1] = p;
-
-    return a;
-}
-
-static PointerArray *
-_pointer_array_ref (PointerArray *a)
-{
-    if (!a)
-        return NULL;
-    a->ref_count++;
-
-    return a;
-}
-
-static void
-_pointer_array_unref (PointerArray *a)
-{
-    if (!a)
-        return;
- 
-    a->ref_count--;
-    if (a->ref_count == 0) {
-        if (a->p)
-            free (a->p);
-        a->p = NULL;
-
-        free (a);
-    }
-}
-
-#if 0
-static int
-_pointer_array_find_data (PointerArray *a, void *p)
-{
-    int l;
-    if (!a)
-      return -1;
-  
-    for (l = 0; l < a->len; l++) {
-        if (a->p[l] == p)
-            return l;
-    }
-
-    return -1;
-}
-#endif
 static gboolean
 _g_array_has_this_int_value (GArray *a, gint i)
 {
