@@ -28,7 +28,7 @@ read_test_data ()
     FILE *fp = stdin;
     TomoeGlyph *test_glyph = NULL;
 
-    test_glyph = calloc (1, sizeof (TomoeGlyph));
+    test_glyph = tomoe_glyph_new ();
 
     while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL) {
         if (strstr (p, "EOF") != NULL) {
