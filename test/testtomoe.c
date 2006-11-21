@@ -104,7 +104,7 @@ void testStrokeMatch (TomoeContext* ctx)
                  g_list_length (matched));
         for (candidate = matched; candidate; candidate = candidate->next) {
             TomoeCandidate* p = candidate->data;
-            outCharInfo (tomoe_candidate_get_char (p),
+            outCharInfo (tomoe_candidate_get_character (p),
                          tomoe_candidate_get_score (p));
         }
     }

@@ -14,7 +14,7 @@ tc_glyph_from_rval(VALUE rb_glyph)
     glyph_len = RARRAY(rb_glyph)->len;
 
     glyph = tomoe_glyph_new();
-    tomoe_glyph_init(glyph, glyph_len);
+    tomoe_glyph_alloc(glyph, glyph_len);
 
     for (i = 0; i < glyph_len; i++) {
         int j, stroke_len;
@@ -65,7 +65,7 @@ tc_search_by_strokes(VALUE self, VALUE input)
 
     glyph = RVAL2TGLYPH(input);
     result = tomoe_context_search_by_strokes(_SELF(self), glyph);
-    tomoe_glyph_free(glyph);
+    g_object_unref(glyph);
     return GLIST2ARYF(result);
 }
 
