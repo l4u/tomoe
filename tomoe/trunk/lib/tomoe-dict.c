@@ -90,7 +90,7 @@ static void tomoe_dict_set_property   (GObject         *object,
 static void tomoe_dict_get_property   (GObject         *object,
                                        guint            prop_id,
                                        GValue          *value,
-                                       GParamSpec      *pspec);
+                                      GParamSpec      *pspec);
 static void parse_readings            (xmlNodePtr       node,
                                        TomoeChar*       chr);
 static void parse_character           (xmlNodePtr       node,
@@ -334,13 +334,15 @@ tomoe_dict_save (TomoeDict* dict)
 
         if (glyph) {
             xmlNodePtr strokelistNode = xmlNewChild (charNode, NULL, BAD_CAST "strokelist", NULL);
-            for (k = 0; k < glyph->stroke_num; k++) {
+            for (k = 0; k < tomoe_glyph_get_number_of_strokes (glyph); k++) {
                 unsigned int j;
                 char buf[256]; /* FIXME overrun possible */
                 strcpy (buf, "");
-                for (j = 0; j < glyph->strokes[k].point_num; j++) {
+                for (j = 0; j < tomoe_glyph_get_number_of_points (glyph, k); j++) {
+                    gint x, y;
                     char buf2[32];
-                    sprintf (buf2, "(%d %d) ", glyph->strokes[k].points[j].x, glyph->strokes[k].points[j].y);
+                    tomoe_glyph_get_point (glyph, k, j, &x, &y);
+                    sprintf (buf2, "(%d %d) ", x, y);
                     strcat (buf, buf2);
                 }
                 xmlNewChild (strokelistNode, NULL, BAD_CAST "s", BAD_CAST buf);
@@ -592,7 +594,6 @@ parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
     TomoeGlyph *glyph;
     int stroke_num = 0;
     xmlNodePtr child;
-    int j = 0;
 
     /* count strokes */
     for (child = node->children; child; child = child->next)
@@ -602,13 +603,10 @@ parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
     if (stroke_num == 0)
         return;
 
-
     glyph = tomoe_glyph_new ();
-    tomoe_glyph_alloc (glyph, stroke_num);
     tomoe_char_set_glyph (lttr, glyph);
 
     for (child = node->children; child; child = child->next) {
-        TomoeStroke *strk = &tomoe_char_get_glyph (lttr)->strokes[j];
         int point_num = 0;
         int k;
         const char *p;
@@ -624,15 +622,17 @@ parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
 
         /* parse stroke */
         p = (const char*) child->children->content;
-        tomoe_stroke_init (strk, point_num);
         for (k = 0; k < point_num; k++) {
-            TomoePoint* pnt = &strk->points[k];
+            gint x = 0, y = 0;
 
-            sscanf (p, " (%d %d)", &pnt->x, &pnt->y);
+            sscanf (p, " (%d %d)", &x, &y);
+            if (k == 0)
+                tomoe_glyph_move_to (glyph, x, y);
+            else
+                tomoe_glyph_line_to (glyph, x, y);
+
             p = strchr (p, ')') + 1;
         }
-
-        j++;
     }
 }
 

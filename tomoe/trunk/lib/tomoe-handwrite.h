@@ -39,30 +39,12 @@ G_BEGIN_DECLS
 #define TOMOE_IS_GLYPH_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_GLYPH))
 #define TOMOE_GLYPH_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_GLYPH, TomoeGlyphClass))
 
-typedef struct _TomoePoint      TomoePoint;
-typedef struct _TomoeStroke     TomoeStroke;
 typedef struct _TomoeGlyph      TomoeGlyph;
 typedef struct _TomoeGlyphClass TomoeGlyphClass;
 
-struct _TomoePoint
-{
-    int           x;
-    int           y;
-};
-
-struct _TomoeStroke
-{
-    unsigned int  point_num;
-    TomoePoint   *points;
-};
-
 struct _TomoeGlyph
 {
-    GObject       object;
-
-    /* will be removed */
-    unsigned int  stroke_num;
-    TomoeStroke  *strokes;
+    GObject object;
 };
 
 struct _TomoeGlyphClass
@@ -72,17 +54,26 @@ struct _TomoeGlyphClass
 
 GType           tomoe_glyph_get_type            (void) G_GNUC_CONST;
 TomoeGlyph     *tomoe_glyph_new                 (void);
-/* will be removed */
-void            tomoe_glyph_alloc               (TomoeGlyph    *glyph,
-                                                 gint           stroke_num);
+void            tomoe_glyph_move_to             (TomoeGlyph    *glyph,
+                                                 gint           x,
+                                                 gint           y);
+void            tomoe_glyph_line_to             (TomoeGlyph    *glyph,
+                                                 gint           x,
+                                                 gint           y);
 void            tomoe_glyph_clear               (TomoeGlyph    *glyph);
-
-
-TomoeStroke    *tomoe_stroke_new                (void);
-void            tomoe_stroke_init               (TomoeStroke   *strk,
-                                                 int            point_num);
-void            tomoe_stroke_clear              (TomoeStroke   *strk);
-void            tomoe_stroke_free               (TomoeStroke   *strk);
+guint           tomoe_glyph_get_number_of_strokes
+                                                (TomoeGlyph    *glyph);
+guint           tomoe_glyph_get_number_of_points(TomoeGlyph    *glyph,
+                                                 guint          stroke);
+gboolean        tomoe_glyph_get_point           (TomoeGlyph    *glyph,
+                                                 guint          stroke,
+                                                 guint          point,
+                                                 gint          *x,
+                                                 gint          *y);
+gboolean        tomoe_glyph_get_last_point      (TomoeGlyph    *glyph,
+                                                 gint          *x,
+                                                 gint          *y);
+void            tomoe_glyph_remove_last_stroke  (TomoeGlyph    *glyph);
 
 G_END_DECLS
 
