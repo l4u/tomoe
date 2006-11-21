@@ -1,5 +1,9 @@
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
+	* recognizer/tomoe-recognizer-simple-logic.c: _IntArray -> GArray..
+
+2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
 	* recognizer/tomoe-recognizer-simple-logic.c: Fix a horrible mistake.
 
 2006-11-20  Hiroyuki Ikezoe  <poincare@ikezoe.net>
