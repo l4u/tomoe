@@ -66,7 +66,7 @@ read_test_data ()
 
 void outCharInfo (TomoeChar* chr, int score)
 {
-   int j;
+   unsigned int j;
    GPtrArray *readings = tomoe_char_get_readings (chr);
    const char *meta = tomoe_char_get_meta (chr);
 
@@ -82,14 +82,6 @@ void outCharInfo (TomoeChar* chr, int score)
    if (meta)
        fprintf (stdout, meta);
    fprintf (stdout, "\n");
-}
-
-static void
-_candidate_free_func (gpointer data, gpointer user_data)
-{
-    TomoeCandidate *cand = (TomoeCandidate *) data;
-
-    g_object_unref (G_OBJECT (cand));
 }
 
 void testStrokeMatch (TomoeContext* ctx)
