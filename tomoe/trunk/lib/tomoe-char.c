@@ -270,6 +270,54 @@ tomoe_char_set_glyph (TomoeChar* t_char, TomoeGlyph* glyph)
     tomoe_char_set_modified(t_char, 1);
 }
 
+gboolean
+tomoe_char_is_modified (TomoeChar *t_char)
+{
+    TomoeCharPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_CHAR (t_char), FALSE);
+
+    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+
+    return priv->modified;
+}
+
+void
+tomoe_char_set_modified (TomoeChar *t_char, gboolean modified)
+{
+    TomoeCharPrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_CHAR (t_char));
+
+    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+
+    priv->modified = modified;
+    if (priv->parent && modified == 1)
+        tomoe_dict_set_modified(priv->parent, TRUE);
+}
+
+gint
+tomoe_char_compare (const TomoeChar *a, const TomoeChar *b)
+{
+    TomoeCharPrivate *priv_a, *priv_b;
+
+    if (!a || !b) return 0;
+
+    priv_a = TOMOE_CHAR_GET_PRIVATE (a);
+    priv_b = TOMOE_CHAR_GET_PRIVATE (b);
+    if (!priv_a || !priv_b) return 0;
+
+    if (!priv_a->charCode || !priv_b->charCode) return 0;
+    return strcmp (priv_a->charCode, priv_b->charCode);
+}
+
+
+
+
+
+/*
+ *  These functions should be restructed.
+ */
 const char*
 tomoe_char_get_meta (TomoeChar* t_char)
 {
@@ -330,32 +378,6 @@ tomoe_char_set_dict (TomoeChar *t_char, TomoeDict *parent)
     priv->parent = parent;
 }
 
-gboolean
-tomoe_char_is_modified (TomoeChar *t_char)
-{
-    TomoeCharPrivate *priv;
-
-    g_return_val_if_fail (TOMOE_IS_CHAR (t_char), FALSE);
-
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
-
-    return priv->modified;
-}
-
-void
-tomoe_char_set_modified (TomoeChar *t_char, gboolean modified)
-{
-    TomoeCharPrivate *priv;
-
-    g_return_if_fail (TOMOE_IS_CHAR (t_char));
-
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
-
-    priv->modified = modified;
-    if (priv->parent && modified == 1)
-        tomoe_dict_set_modified(priv->parent, TRUE);
-}
-
 xmlNodePtr
 tomoe_char_get_xml_meta (TomoeChar* t_char)
 {
@@ -391,21 +413,6 @@ tomoe_char_setMetaXsl (TomoeChar* t_char, xsltStylesheetPtr metaXsl)
     t_char->metaXsl = metaXsl; /* TODO link to tomoe_dict instead of metaXsl */
 }
 #endif
-
-gint
-tomoe_char_compare (const TomoeChar *a, const TomoeChar *b)
-{
-    TomoeCharPrivate *priv_a, *priv_b;
-
-    if (!a || !b) return 0;
-
-    priv_a = TOMOE_CHAR_GET_PRIVATE (a);
-    priv_b = TOMOE_CHAR_GET_PRIVATE (b);
-    if (!priv_a || !priv_b) return 0;
-
-    if (!priv_a->charCode || !priv_b->charCode) return 0;
-    return strcmp (priv_a->charCode, priv_b->charCode);
-}
 
 /*
 vi:ts=4:nowrap:ai:expandtab

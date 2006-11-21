@@ -75,20 +75,9 @@ void            tomoe_char_set_readings         (TomoeChar     *t_char,
 TomoeGlyph     *tomoe_char_get_glyph            (TomoeChar     *t_char);
 void            tomoe_char_set_glyph            (TomoeChar     *t_char,
                                                  TomoeGlyph    *glyph);
-const char     *tomoe_char_get_meta             (TomoeChar     *t_char);
-void            tomoe_char_set_dict             (TomoeChar     *chr,
-                                                 TomoeDict     *parent);
 gboolean        tomoe_char_is_modified          (TomoeChar     *chr);
 void            tomoe_char_set_modified         (TomoeChar     *chr,
                                                  gboolean       modified);
-
-#ifdef TOMOE_CHAR__USE_XML_METHODS
-xmlNodePtr      tomoe_char_get_xml_meta         (TomoeChar     *t_char);
-void            tomoe_char_set_xml_meta         (TomoeChar     *t_char,
-                                                 xmlNodePtr     meta);
-void            tomoe_char_set_meta_xsl         (TomoeChar     *t_char,
-                                                 xsltStylesheetPtr  metaXsl);
-#endif
 
 /**
  * @brief Compare two tomoe_letter.
@@ -98,6 +87,26 @@ void            tomoe_char_set_meta_xsl         (TomoeChar     *t_char,
  */
 gint            tomoe_char_compare              (const TomoeChar *a,
                                                  const TomoeChar *b);
+
+
+
+
+
+#if 1
+/*
+ *  These functions should be restructed
+ */
+const char     *tomoe_char_get_meta             (TomoeChar     *t_char);
+void            tomoe_char_set_dict             (TomoeChar     *chr,
+                                                 TomoeDict     *parent);
+#ifdef TOMOE_CHAR__USE_XML_METHODS
+xmlNodePtr      tomoe_char_get_xml_meta         (TomoeChar     *t_char);
+void            tomoe_char_set_xml_meta         (TomoeChar     *t_char,
+                                                 xmlNodePtr     meta);
+void            tomoe_char_set_meta_xsl         (TomoeChar     *t_char,
+                                                 xsltStylesheetPtr  metaXsl);
+#endif
+#endif
 
 G_END_DECLS
 
