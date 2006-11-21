@@ -180,7 +180,7 @@ tomoe_dict_new (const char* filename, gboolean editable)
     TomoeDict* dict;
     TomoeDictPrivate *priv;
 
-    int i;
+    unsigned int i;
 
     if (!filename && !*filename) return NULL;
 
@@ -598,7 +598,7 @@ parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
 
 
     glyph = calloc(1, sizeof (TomoeGlyph));
-    tomoe_glyph_init (glyph, stroke_num);
+    tomoe_glyph_alloc (glyph, stroke_num);
     tomoe_char_set_glyph (lttr, glyph);
 
     for (child = node->children; child; child = child->next) {

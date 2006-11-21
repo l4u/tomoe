@@ -24,6 +24,83 @@
 #include <stdlib.h>
 #include "tomoe-handwrite.h"
 
+#define TOMOE_GLYPH_GET_PRIVATE(obj) \
+  (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_GLYPH, TomoeGlyphPrivate))
+
+typedef struct _TomoeGlyphPrivate TomoeGlyphPrivate;
+struct _TomoeGlyphPrivate
+{
+};
+
+G_DEFINE_TYPE (TomoeGlyph, tomoe_glyph, G_TYPE_OBJECT)
+
+static void tomoe_glyph_dispose (GObject *object);
+
+static void
+tomoe_glyph_class_init (TomoeGlyphClass *klass)
+{
+    GObjectClass *gobject_class;
+
+    gobject_class = G_OBJECT_CLASS (klass);
+
+    gobject_class->dispose = tomoe_glyph_dispose;
+
+    g_type_class_add_private (gobject_class, sizeof (TomoeGlyphPrivate));
+}
+
+static void
+tomoe_glyph_init (TomoeGlyph *glyph)
+{
+    /* TomoeGlyphPrivate *priv = TOMOE_GLYPH_GET_PRIVATE(dict); */
+    glyph->stroke_num = 0;
+    glyph->strokes    = NULL;
+}
+
+static void
+tomoe_glyph_dispose (GObject *object)
+{
+    TomoeGlyph *glyph = TOMOE_GLYPH (object);
+
+    tomoe_glyph_clear (glyph);
+
+    G_OBJECT_CLASS (tomoe_glyph_parent_class)->dispose (object);
+}
+
+TomoeGlyph *
+tomoe_glyph_new (void)
+{
+    TomoeGlyph *glyph = g_object_new(TOMOE_TYPE_GLYPH, NULL);
+    return glyph;
+}
+
+void
+tomoe_glyph_alloc (TomoeGlyph *glyph, gint stroke_num)
+{
+    g_return_if_fail (TOMOE_IS_GLYPH (glyph));
+
+    tomoe_glyph_clear (glyph);
+    glyph->stroke_num = stroke_num;
+    glyph->strokes    = calloc (stroke_num, sizeof (TomoeStroke));
+}
+
+void
+tomoe_glyph_clear (TomoeGlyph *glyph)
+{
+    unsigned int i;
+
+    g_return_if_fail (TOMOE_IS_GLYPH (glyph));
+
+    if (glyph->strokes) {
+        for (i = 0; i < glyph->stroke_num; i++)
+            tomoe_stroke_clear (&glyph->strokes[i]);
+        free (glyph->strokes);
+        glyph->strokes = NULL;
+    }
+
+    glyph->stroke_num = 0;
+}
+
+
 TomoeStroke *
 tomoe_stroke_new (void)
 {
@@ -62,52 +139,6 @@ tomoe_stroke_free (TomoeStroke *strk)
 
     tomoe_stroke_clear (strk);
     free (strk);
-}
-
-TomoeGlyph *
-tomoe_glyph_new (void)
-{
-    TomoeGlyph *glyph = calloc (1, sizeof (TomoeGlyph));
-
-    if (glyph)
-        tomoe_glyph_init (glyph, 0);
-
-    return glyph;
-}
-
-void
-tomoe_glyph_init (TomoeGlyph *glyph, int stroke_num)
-{
-    if (!glyph) return;
-
-    glyph->stroke_num = stroke_num;
-    glyph->strokes    = calloc (stroke_num, sizeof (TomoeStroke));
-}
-
-void
-tomoe_glyph_clear (TomoeGlyph *glyph)
-{
-    unsigned int i;
-
-    if (!glyph) return;
-
-    if (glyph->strokes) {
-        for (i = 0; i < glyph->stroke_num; i++)
-            tomoe_stroke_clear (&glyph->strokes[i]);
-        free (glyph->strokes);
-        glyph->strokes = NULL;
-    }
-
-    glyph->stroke_num = 0;
-}
-
-void
-tomoe_glyph_free (TomoeGlyph *glyph)
-{
-    if (!glyph) return;
-
-    tomoe_glyph_clear (glyph);
-    free (glyph);
 }
 
 /*

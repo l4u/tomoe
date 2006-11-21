@@ -111,7 +111,7 @@ void testStrokeMatch (TomoeContext* ctx)
 #warning FIXME! plug memory leak!
 END:
     if (!test_glyph)
-        tomoe_glyph_free (test_glyph);
+        g_object_unref (G_OBJECT (test_glyph));
     if (matched) {
         g_list_foreach (matched, (GFunc) g_object_unref, NULL);
         g_list_free (matched);

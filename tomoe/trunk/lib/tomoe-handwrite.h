@@ -28,13 +28,21 @@
 #ifndef __TOMOE_HANDWRITE_H__
 #define __TOMOE_HANDWRITE_H__
 
-#include <glib.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
-typedef struct _TomoePoint     TomoePoint;
-typedef struct _TomoeStroke    TomoeStroke;
-typedef struct _TomoeGlyph     TomoeGlyph;
+#define TOMOE_TYPE_GLYPH            (tomoe_glyph_get_type ())
+#define TOMOE_GLYPH(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_GLYPH, TomoeGlyph))
+#define TOMOE_GLYPH_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_GLYPH, TomoeGlyphClass))
+#define TOMOE_IS_GLYPH(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TOMOE_TYPE_GLYPH))
+#define TOMOE_IS_GLYPH_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_GLYPH))
+#define TOMOE_GLYPH_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_GLYPH, TomoeGlyphClass))
+
+typedef struct _TomoePoint      TomoePoint;
+typedef struct _TomoeStroke     TomoeStroke;
+typedef struct _TomoeGlyph      TomoeGlyph;
+typedef struct _TomoeGlyphClass TomoeGlyphClass;
 
 struct _TomoePoint
 {
@@ -50,21 +58,31 @@ struct _TomoeStroke
 
 struct _TomoeGlyph
 {
+    GObject       object;
+
+    /* will be removed */
     unsigned int  stroke_num;
     TomoeStroke  *strokes;
 };
+
+struct _TomoeGlyphClass
+{
+    GObjectClass parent_class;
+};
+
+GType           tomoe_glyph_get_type            (void) G_GNUC_CONST;
+TomoeGlyph     *tomoe_glyph_new                 (void);
+/* will be removed */
+void            tomoe_glyph_alloc               (TomoeGlyph    *glyph,
+                                                 gint           stroke_num);
+void            tomoe_glyph_clear               (TomoeGlyph    *glyph);
+
 
 TomoeStroke    *tomoe_stroke_new                (void);
 void            tomoe_stroke_init               (TomoeStroke   *strk,
                                                  int            point_num);
 void            tomoe_stroke_clear              (TomoeStroke   *strk);
 void            tomoe_stroke_free               (TomoeStroke   *strk);
-
-TomoeGlyph     *tomoe_glyph_new                 (void);
-void            tomoe_glyph_init                (TomoeGlyph    *glyph,
-                                                 int            stroke_num);
-void            tomoe_glyph_clear               (TomoeGlyph    *glyph);
-void            tomoe_glyph_free                (TomoeGlyph    *glyph);
 
 G_END_DECLS
 
