@@ -1,6 +1,7 @@
 2006-11-21  Takuro Ashie  <ashie@homa.ne.jp>
 
-	* lib/tomoe_candidate.c: Use property.
+	* lib/tomoe-candidate.c: Use property.
+	* lib/tomoe-dict.h: Fix typo.
 
 2006-11-21  Kouhei Sutou  <kou@cozmixng.org>
 
