@@ -23,8 +23,6 @@ read_test_data ()
     int point_num  = 0;
     int j = 0;
     int k = 0;
-    TomoeStroke *strk = NULL;
-    TomoePoint  *pnt  = NULL;
     FILE *fp = stdin;
     TomoeGlyph *test_glyph = NULL;
 
@@ -38,27 +36,23 @@ read_test_data ()
         if (p[0] != ':') continue;
 
         sscanf (p + 1, "%d", &stroke_num);
-        strk = calloc (stroke_num, sizeof (TomoeStroke));
 
         for (j = 0; j < stroke_num; j++) {
             p = fgets (line_buf, LINE_BUF_SIZE, fp);
             sscanf (p, "%d", &point_num);
             p = strchr (p, ' ');
 
-            strk[j].point_num = point_num;
-            pnt = calloc (point_num, sizeof (TomoePoint));
-            strk[j].points = pnt;
             for (k = 0; k < point_num; k++) {
                 int x, y;
                 sscanf (p, " (%d %d)", &x, &y);
                 p = strchr (p, ')') + 1;
-                pnt[k].x = x;
-                pnt[k].y = y;
+                if (k == 0)
+                    tomoe_glyph_move_to (test_glyph, x, y);
+                else
+                    tomoe_glyph_line_to (test_glyph, x, y);
             }
         }
 
-        test_glyph->strokes    = strk;
-        test_glyph->stroke_num = stroke_num;
         return test_glyph;
     }
     return NULL;
