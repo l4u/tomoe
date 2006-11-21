@@ -192,11 +192,11 @@ tomoe_recognizer_dispose (GObject *object)
     G_OBJECT_CLASS (tomoe_recognizer_parent_class)->dispose (object);
 }
 
-GPtrArray *
+GList *
 tomoe_recognizer_search (const TomoeRecognizer *recognizer,
                          TomoeDict *dict, TomoeGlyph *input)
 {
-    GPtrArray *result = NULL;
+    GList *result = NULL;
     TomoeRecognizerSearchFunc search_func;
     TomoeRecognizerSearchFunc *search_func_p;
     TomoeRecognizerPrivate *priv;

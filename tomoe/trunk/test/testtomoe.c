@@ -95,8 +95,7 @@ _candidate_free_func (gpointer data, gpointer user_data)
 void testStrokeMatch (TomoeContext* ctx)
 {
     TomoeGlyph *test_glyph = NULL;
-    guint i, candidate_num = 0;
-    GPtrArray* matched = NULL;
+    GList *matched = NULL;
 
     test_glyph = read_test_data ();
 
@@ -104,30 +103,26 @@ void testStrokeMatch (TomoeContext* ctx)
         goto END;
 
     matched = tomoe_context_search_by_strokes (ctx, test_glyph);
-    candidate_num = matched->len;
 
-    if (candidate_num != 0) {
-        if (!matched) {
-            fprintf (stderr, "Candidate list is NULL!\n");
-            goto END;
-        }
-
-        fprintf (stdout, "The number of matched characters: %d\n",
-                 candidate_num);
-        for (i = 0; i < candidate_num; i++) {
-            TomoeCandidate* p = (TomoeCandidate*) g_ptr_array_index (matched, i);
-            outCharInfo (tomoe_candidate_get_char (p), tomoe_candidate_get_score (p));
-        }
-    } else {
+    if (!matched) {
         fprintf (stdout, "No Candidate found!\n");
+    } else {
+        GList *candidate;
+        fprintf (stdout, "The number of matched characters: %d\n",
+                 g_list_length (matched));
+        for (candidate = matched; candidate; candidate = candidate->next) {
+            TomoeCandidate* p = candidate->data;
+            outCharInfo (tomoe_candidate_get_char (p),
+                         tomoe_candidate_get_score (p));
+        }
     }
 #warning FIXME! plug memory leak!
 END:
     if (!test_glyph)
         tomoe_glyph_free (test_glyph);
     if (matched) {
-        g_ptr_array_foreach (matched, (GFunc) g_object_unref, NULL);
-        g_ptr_array_free (matched, TRUE);
+        g_list_foreach (matched, (GFunc) g_object_unref, NULL);
+        g_list_free (matched);
     }
 }
 

@@ -37,14 +37,14 @@ G_BEGIN_DECLS
 
 typedef void       *(*TomoeRecognizerNewFunc)    (void);
 typedef void        (*TomoeRecognizerFreeFunc)   (void *recognizer);
-typedef GPtrArray  *(*TomoeRecognizerSearchFunc) (void *recognizer,
+typedef GList      *(*TomoeRecognizerSearchFunc) (void *recognizer,
                                                   TomoeDict *dict,
                                                   TomoeGlyph *input);
 
 
 void       *tomoe_recognizer_impl_new    (void);
 void        tomoe_recognizer_impl_free   (void *context);
-GPtrArray  *tomoe_recognizer_impl_search (void *context,
+GList      *tomoe_recognizer_impl_search (void *context,
                                           TomoeDict *dict,
                                           TomoeGlyph *input);
 
