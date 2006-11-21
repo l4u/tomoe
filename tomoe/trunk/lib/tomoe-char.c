@@ -331,20 +331,6 @@ tomoe_char_set_dict (TomoeChar *t_char, TomoeDict *parent)
 }
 
 gboolean
-tomoe_char_is_editable (TomoeChar *t_char)
-{
-    TomoeCharPrivate *priv;
-
-    g_return_val_if_fail (TOMOE_IS_CHAR (t_char), FALSE);
-
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
-
-    if (!priv->parent) return TRUE;
-
-    return tomoe_dict_is_editable(priv->parent);
-}
-
-gboolean
 tomoe_char_is_modified (TomoeChar *t_char)
 {
     TomoeCharPrivate *priv;
