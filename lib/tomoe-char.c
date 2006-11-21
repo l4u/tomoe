@@ -23,15 +23,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <libxml/xmlreader.h>
-#include <libxslt/xslt.h>
-#include <libxslt/xsltInternals.h>
-#include <libxslt/transform.h>
-#include <libxslt/xsltutils.h>
 #include <glib.h>
 
-#define TOMOE_CHAR__USE_XML_METHODS
-#define TOMOE_DICT__USE_XSL_METHODS
 #include "tomoe-char.h"
 #include "tomoe-dict.h"
 #include "glib-utils.h"
@@ -44,9 +37,7 @@ struct _TomoeCharPrivate
     char                 *charCode;
     TomoeGlyph           *glyph;
     GPtrArray            *readings;
-    xmlNodePtr            xmlMeta;
-    char                 *meta;
-    TomoeDict            *parent;
+    GHashTable           *meta;
     gboolean              modified;
 };
 
@@ -87,25 +78,16 @@ tomoe_char_init (TomoeChar *t_char)
     TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (t_char);
     priv->charCode  = NULL;
     priv->glyph     = NULL;
-    priv->meta      = NULL;
+    priv->meta      = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                            g_free, g_free);
     priv->readings  = NULL;
-    priv->parent    = NULL;
-    priv->modified  = 0;
+    priv->modified  = FALSE;
 }
 
 TomoeChar*
-tomoe_char_new (TomoeDict *dict)
+tomoe_char_new (void)
 {
-    TomoeChar *t_char;
-    TomoeCharPrivate *priv;
-
-    t_char = g_object_new(TOMOE_TYPE_CHAR, NULL);
-
-    /* FIXME */
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
-    priv->parent = dict;
-
-    return t_char;
+    return g_object_new(TOMOE_TYPE_CHAR, NULL);
 }
 
 static void
@@ -117,19 +99,15 @@ tomoe_char_dispose (GObject *object)
         g_free (priv->charCode);
     if (priv->glyph)
         g_object_unref (G_OBJECT (priv->glyph));
-    if (priv->xmlMeta)
-        xmlFreeNode (priv->xmlMeta);
     if (priv->meta)
-        g_free (priv->meta);
+        g_hash_table_destroy (priv->meta);
     if (priv->readings)
         TOMOE_PTR_ARRAY_FREE_ALL (priv->readings, g_free);
 
     priv->charCode = NULL;
     priv->glyph    = NULL;
-    priv->xmlMeta  = NULL;
     priv->meta     = NULL;
     priv->readings = NULL;
-    priv->parent   = NULL;
 
     G_OBJECT_CLASS (tomoe_char_parent_class)->dispose (object);
 }
@@ -284,17 +262,14 @@ tomoe_char_is_modified (TomoeChar *t_char)
 }
 
 void
-tomoe_char_set_modified (TomoeChar *t_char, gboolean modified)
+tomoe_char_set_modified (TomoeChar *chr, gboolean modified)
 {
     TomoeCharPrivate *priv;
 
-    g_return_if_fail (TOMOE_IS_CHAR (t_char));
+    g_return_if_fail (TOMOE_IS_CHAR (chr));
 
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
-
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
     priv->modified = modified;
-    if (priv->parent && modified == 1)
-        tomoe_dict_set_modified(priv->parent, TRUE);
 }
 
 gint
@@ -312,108 +287,39 @@ tomoe_char_compare (const TomoeChar *a, const TomoeChar *b)
     return strcmp (priv_a->charCode, priv_b->charCode);
 }
 
-
-
-
-
-/*
- *  These functions should be restructed.
- */
-const char*
-tomoe_char_get_meta (TomoeChar* t_char)
+void
+tomoe_char_register_meta_data (TomoeChar *chr, const gchar *key,
+                               const gchar *value)
 {
     TomoeCharPrivate *priv;
-    xmlDocPtr doc;
-    xmlDocPtr meta;
-    const char* param[3];
-    xmlNodePtr root;
-    int len = 0;
+    g_return_if_fail (chr);
+    g_return_if_fail (key);
+    g_return_if_fail (value);
 
-    g_return_val_if_fail (TOMOE_IS_CHAR (t_char), NULL);
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+    g_hash_table_insert (priv->meta, g_strdup (key), g_strdup (value));
+}
 
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+const gchar*
+tomoe_char_get_meta_data (TomoeChar* chr, const gchar *key)
+{
+    TomoeCharPrivate *priv;
+    g_return_val_if_fail (chr, NULL);
+    g_return_val_if_fail (key, NULL);
 
-    if (priv->meta) return priv->meta;
-    if (!priv->xmlMeta) return "";
-    if (!tomoe_dict_get_meta_xsl(priv->parent)) return "";
-
-    /* create xml doc and include meta xml block */
-    doc = xmlNewDoc(BAD_CAST "1.0");
-    root = xmlNewNode(NULL, BAD_CAST "ch");
-    param[0] = 0;
-
-    xmlDocSetRootElement (doc, root);
-    xmlAddChild (root, priv->xmlMeta);
-
-    /* translate xml meta to view text */
-    meta = xsltApplyStylesheet (tomoe_dict_get_meta_xsl(priv->parent),
-                                doc, param);
-
-    /* save into character object */
-    xmlChar* metaString = NULL;
-    xsltSaveResultToString (&metaString, &len, meta,
-                            tomoe_dict_get_meta_xsl(priv->parent));
-
-    /* change of meta is invariant */
-    priv->meta = g_strdup ((const char*)metaString);
-
-    xmlFreeDoc (meta);
-    xmlUnlinkNode (priv->xmlMeta);
-    xmlFreeDoc (doc);
-
-    xsltCleanupGlobals ();
-    xmlCleanupParser ();
-
-    return priv->meta;
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+    return g_hash_table_lookup (priv->meta, key);
 }
 
 void
-tomoe_char_set_dict (TomoeChar *t_char, TomoeDict *parent)
+tomoe_char_meta_data_foreach (TomoeChar* chr, GHFunc func, gpointer user_data)
 {
     TomoeCharPrivate *priv;
+    g_return_if_fail (chr);
 
-    g_return_if_fail (TOMOE_IS_CHAR (t_char));
-
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
-
-    priv->parent = parent;
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+    g_hash_table_foreach (priv->meta, func, user_data);
 }
-
-xmlNodePtr
-tomoe_char_get_xml_meta (TomoeChar* t_char)
-{
-    TomoeCharPrivate *priv;
-
-    g_return_val_if_fail (TOMOE_IS_CHAR (t_char), NULL);
-
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
-
-    return priv->xmlMeta; /* TODO addRef?? */
-}
-
-void
-tomoe_char_set_xml_meta (TomoeChar* t_char, xmlNodePtr meta)
-{
-    TomoeCharPrivate *priv;
-
-    g_return_if_fail (TOMOE_IS_CHAR (t_char));
-
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
-
-    if (priv->xmlMeta) xmlFreeNode (priv->xmlMeta);
-    g_free (priv->meta);
-    priv->xmlMeta = meta; /* TODO addRef?? */
-    tomoe_char_set_modified(t_char, 1);
-}
-
-#if 0
-void
-tomoe_char_setMetaXsl (TomoeChar* t_char, xsltStylesheetPtr metaXsl)
-{
-    if (!t_char) return;
-    t_char->metaXsl = metaXsl; /* TODO link to tomoe_dict instead of metaXsl */
-}
-#endif
 
 /*
 vi:ts=4:nowrap:ai:expandtab

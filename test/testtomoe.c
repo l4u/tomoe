@@ -64,11 +64,20 @@ read_test_data ()
     return NULL;
 }
 
+static void
+output_character_meta_data (gpointer key, gpointer value, gpointer user_data)
+{
+    const gchar *meta_key = key;
+    const gchar *meta_value = value;
+    FILE *output = user_data;
+
+    fprintf (output, "%s: %s\n", meta_key, meta_value);
+}
+
 void outCharInfo (TomoeChar* chr, int score)
 {
    unsigned int j;
    GPtrArray *readings = tomoe_char_get_readings (chr);
-   const char *meta = tomoe_char_get_meta (chr);
 
    fprintf (stdout, "character:%s [%d] ", tomoe_char_get_code (chr), score);
    fflush (stdout);
@@ -79,8 +88,7 @@ void outCharInfo (TomoeChar* chr, int score)
        }
        fprintf (stdout, "\n");
    }
-   if (meta)
-       fprintf (stdout, meta);
+   tomoe_char_meta_data_foreach (chr, output_character_meta_data, stdout);
    fprintf (stdout, "\n");
 }
 
@@ -134,8 +142,9 @@ void testReadingMatch (TomoeContext* ctx, const char* reading)
         fprintf (stdout, "The number of matched characters: %d\n",
                  candidate_num);
         for (result = results; result; result = result->next) {
-            TomoeChar* p = result->data;
-            outCharInfo (p, 0);
+            TomoeCandidate *p = result->data;
+            outCharInfo (tomoe_candidate_get_character (p),
+                         tomoe_candidate_get_score (p));
         }
     } else {
         fprintf (stdout, "No Candidate found!\n");
@@ -154,7 +163,7 @@ void testUserDict (TomoeContext* ctx)
 
     fprintf (stdout, "dictSize %d; create character \"（＾o＾）／\" with reading \"やった\" and add to dictionary\n", 
              tomoe_dict_get_size (myDict));
-    chr = tomoe_char_new (NULL);
+    chr = tomoe_char_new ();
     tomoe_char_set_code (chr, "（＾o＾）／");
     g_ptr_array_add (readings, g_strdup ("やった"));
     tomoe_char_set_readings (chr, readings);

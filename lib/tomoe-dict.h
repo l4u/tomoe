@@ -45,6 +45,7 @@ G_BEGIN_DECLS
 #define TOMOE_IS_DICT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_DICT))
 #define TOMOE_DICT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_DICT, TomoeDictClass))
 
+typedef struct _TomoeDict TomoeDict;
 typedef struct _TomoeDictClass TomoeDictClass;
 
 struct _TomoeDict
@@ -172,10 +173,6 @@ const GPtrArray *tomoe_dict_get_letters          (TomoeDict     *dict);
  */
 GList           *tomoe_dict_search_by_reading    (const TomoeDict *dict,
                                                   const char      *reading);
-
-#ifdef TOMOE_DICT__USE_XSL_METHODS
-xsltStylesheetPtr  tomoe_dict_get_meta_xsl      (TomoeDict       *dict);
-#endif
 
 G_END_DECLS
 
