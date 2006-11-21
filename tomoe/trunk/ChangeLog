@@ -1,5 +1,8 @@
 2006-11-21  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-char.[ch]: removed dependency on XML and TomoeDict.
+	* lib/tomoe-dict.[ch], test/testtomoe.c: followed API changes.
+
 	* recognizer/tomoe-recognizer-simple-logic.c: followed API changes.
 
 	* lib/tomoe-candidate.[ch] (tomoe_candidate_get_char): renamed to

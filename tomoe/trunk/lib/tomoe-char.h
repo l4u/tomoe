@@ -35,9 +35,6 @@ G_BEGIN_DECLS
 #include <glib/garray.h>
 #include <tomoe-handwrite.h>
 
-/* FIXME: remove TomoeDict dependency */
-typedef struct _TomoeDict TomoeDict;
-
 #define TOMOE_TYPE_CHAR            (tomoe_char_get_type ())
 #define TOMOE_CHAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_CHAR, TomoeChar))
 #define TOMOE_CHAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_CHAR, TomoeCharClass))
@@ -64,7 +61,7 @@ GType           tomoe_char_get_type (void) G_GNUC_CONST;
  * @brief Create a tomoe letter.
  * @return Pointer to newly allocated tomoe_letter struct.
  */
-TomoeChar      *tomoe_char_new                  (TomoeDict     *dict);
+TomoeChar      *tomoe_char_new                  (void);
 
 const char     *tomoe_char_get_code             (const TomoeChar *t_char);
 void            tomoe_char_set_code             (TomoeChar     *t_char,
@@ -88,25 +85,14 @@ void            tomoe_char_set_modified         (TomoeChar     *chr,
 gint            tomoe_char_compare              (const TomoeChar *a,
                                                  const TomoeChar *b);
 
-
-
-
-
-#if 1
-/*
- *  These functions should be restructed
- */
-const char     *tomoe_char_get_meta             (TomoeChar     *t_char);
-void            tomoe_char_set_dict             (TomoeChar     *chr,
-                                                 TomoeDict     *parent);
-#ifdef TOMOE_CHAR__USE_XML_METHODS
-xmlNodePtr      tomoe_char_get_xml_meta         (TomoeChar     *t_char);
-void            tomoe_char_set_xml_meta         (TomoeChar     *t_char,
-                                                 xmlNodePtr     meta);
-void            tomoe_char_set_meta_xsl         (TomoeChar     *t_char,
-                                                 xsltStylesheetPtr  metaXsl);
-#endif
-#endif
+const char     *tomoe_char_get_meta_data        (TomoeChar     *chr,
+                                                 const gchar   *key);
+void            tomoe_char_register_meta_data   (TomoeChar     *chr,
+                                                 const gchar   *key,
+                                                 const gchar   *value);
+void            tomoe_char_meta_data_foreach    (TomoeChar* chr,
+                                                 GHFunc func,
+                                                 gpointer user_data);
 
 G_END_DECLS
 

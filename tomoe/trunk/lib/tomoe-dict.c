@@ -36,8 +36,6 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#define TOMOE_CHAR__USE_XML_METHODS
-#define TOMOE_DICT__USE_XSL_METHODS
 #include "tomoe-dict.h"
 #include "tomoe-char.h"
 #include "tomoe-candidate.h"
@@ -78,8 +76,6 @@ enum
   PROP_NAME,
   PROP_FILENAME,
   PROP_LETTERS,
-  PROP_META_XSL,
-  PROP_META_XSL_FILENAME,
   PROP_EDITABLE,
   PROP_MODIFIED,
 };
@@ -169,8 +165,6 @@ tomoe_dict_init (TomoeDict *dict)
     priv->filename = NULL;
     priv->name = NULL;
     priv->letters = NULL;
-    priv->metaXsl = NULL;
-    priv->meta_xsl_filename = NULL;
 }
 
 
@@ -231,9 +225,6 @@ tomoe_dict_dispose (GObject *object)
     g_free(priv->filename);
     if (priv->letters)
         TOMOE_PTR_ARRAY_FREE_ALL(priv->letters, g_object_unref);
-    if (priv->metaXsl)
-        xsltFreeStylesheet(priv->metaXsl);
-    g_free(priv->meta_xsl_filename);
 
     G_OBJECT_CLASS (tomoe_dict_parent_class)->dispose (object);
 }
@@ -298,6 +289,16 @@ tomoe_dict_get_property (GObject    *object,
     }
 }
 
+static void
+tomoe_dict_append_meta_data (gpointer key, gpointer value, gpointer user_data)
+{
+    const gchar *meta_key = key;
+    const gchar *meta_value = value;
+    xmlNodePtr parent = user_data;
+
+    xmlNewChild (parent, NULL, BAD_CAST meta_key, BAD_CAST meta_value);
+}
+
 void
 tomoe_dict_save (TomoeDict* dict)
 {
@@ -320,8 +321,6 @@ tomoe_dict_save (TomoeDict* dict)
 
     if (priv->name)
         xmlNewProp (root, BAD_CAST "name", BAD_CAST priv->name);
-    if (priv->meta_xsl_filename)
-        xmlNewProp (root, BAD_CAST "meta", BAD_CAST priv->meta_xsl_filename);
 
     num = priv->letters->len;
     for (i = 0; i < num; i++) {
@@ -329,7 +328,6 @@ tomoe_dict_save (TomoeDict* dict)
         TomoeChar* chr = (TomoeChar*)g_ptr_array_index (priv->letters, i);
         GPtrArray *readings = tomoe_char_get_readings (chr);
         TomoeGlyph* glyph = tomoe_char_get_glyph (chr);
-        xmlNodePtr meta = tomoe_char_get_xml_meta (chr);
         const char* code = tomoe_char_get_code (chr);
         xmlNewChild (charNode, NULL, BAD_CAST "literal", BAD_CAST code);
         unsigned int k;
@@ -354,9 +352,8 @@ tomoe_dict_save (TomoeDict* dict)
             for (k = 0; k < readings_num; k++)
                 xmlNewChild (readingsNode, NULL, BAD_CAST "r", g_ptr_array_index (readings, k));
         }
-        if (meta) {
-            xmlAddChild (charNode, xmlCopyNode (meta, 1));
-        }
+        tomoe_char_meta_data_foreach (chr, tomoe_dict_append_meta_data,
+                                      charNode);
 
         TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
         tomoe_char_set_modified (chr, 0);
@@ -418,8 +415,6 @@ tomoe_dict_add_char (TomoeDict* dict, TomoeChar* add)
 
     g_return_if_fail(dict);
     g_return_if_fail(add);
-
-    tomoe_char_set_dict (add, dict);
 
     priv = TOMOE_DICT_GET_PRIVATE(dict);
     g_ptr_array_add (priv->letters, g_object_ref (G_OBJECT (add)));
@@ -540,13 +535,6 @@ tomoe_dict_search_by_reading (const TomoeDict* dict, const char *reading)
     return context.results;
 }
 
-xsltStylesheetPtr
-tomoe_dict_get_meta_xsl (TomoeDict* dict)
-{
-    g_return_val_if_fail(dict, NULL);
-    return TOMOE_DICT_GET_PRIVATE(dict)->metaXsl;
-}
-
 static void
 parse_readings (xmlNodePtr node, TomoeChar* chr)
 {
@@ -557,6 +545,24 @@ parse_readings (xmlNodePtr node, TomoeChar* chr)
             g_ptr_array_add (readings, strdup ((const char*)child->children->content));
             tomoe_char_set_readings (chr, readings);
             TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
+        }
+    }
+}
+
+static void
+parse_meta (xmlNodePtr node, TomoeChar *chr)
+{
+    xmlNodePtr child;
+    for (child = node->children; child; child = child->next) {
+        if (child->type == XML_ELEMENT_NODE) {
+            const gchar *key, *value;
+            key = (const gchar *)child->name;
+
+            if (child->children) {
+                value = (const gchar *)child->children->content;
+                if (value)
+                    tomoe_char_register_meta_data (chr, key, value);
+            }
         }
     }
 }
@@ -576,7 +582,7 @@ parse_character (xmlNodePtr node, TomoeChar* lttr)
         else if (0 == xmlStrcmp (child->name, BAD_CAST "literal"))
             tomoe_char_set_code (lttr, (const char*) child->children->content);
         else if (0 == xmlStrcmp (child->name, BAD_CAST "meta"))
-            tomoe_char_set_xml_meta (lttr, xmlCopyNode (child, 1));
+            parse_meta (child, lttr);
     }
 }
 
@@ -683,7 +689,7 @@ parse_tomoe_dict (TomoeDict* dict, xmlNodePtr root)
                 continue;
 
             if (0 == xmlStrcmp(node->name, BAD_CAST "character")) {
-                TomoeChar *chr = tomoe_char_new (dict);
+                TomoeChar *chr = tomoe_char_new ();
 
                 parse_character (node, chr);
                 if (tomoe_char_get_code (chr))
