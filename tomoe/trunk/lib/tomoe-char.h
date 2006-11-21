@@ -58,8 +58,8 @@ struct _TomoeCharClass
 GType           tomoe_char_get_type (void) G_GNUC_CONST;
 
 /**
- * @brief Create a tomoe letter.
- * @return Pointer to newly allocated tomoe_letter struct.
+ * @brief Create a TomoeChar.
+ * @return Pointer to newly allocated TomoeChar struct.
  */
 TomoeChar      *tomoe_char_new                  (void);
 
