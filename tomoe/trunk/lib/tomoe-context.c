@@ -131,6 +131,20 @@ tomoe_context_get_dict (TomoeContext *context, const gchar *name)
     return tomoe_shelf_get_dict(priv->shelf, name);
 }
 
+gboolean
+tomoe_context_remove_dict (TomoeContext *context, const gchar *name)
+{
+    TomoeContextPrivate *priv;
+    gboolean success = FALSE;
+    g_return_val_if_fail (context, FALSE);
+
+    priv = TOMOE_CONTEXT_GET_PRIVATE(context);
+    success = tomoe_shelf_remove_dict(priv->shelf, name);
+    if (success && priv->config)
+        tomoe_config_save(priv->config);
+    return success;
+}
+
 void
 tomoe_context_load_config (TomoeContext *ctx, const char *config_file)
 {
