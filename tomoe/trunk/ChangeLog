@@ -1,5 +1,7 @@
 2006-11-21  Kouhei Sutou  <kou@cozmixng.org>
 
+	* recognizer/tomoe-recognizer-simple-logic.c: followed API changes.
+
 	* lib/tomoe-candidate.[ch] (tomoe_candidate_get_char): renamed to
 	tomoe_candidate_get_character to fit property name. 
 	* ext/ruby/tomoe-rb-candidate.c: used GObject property.
