@@ -30,14 +30,3 @@ INCLUDES = \
 	$(GLIB_CFLAGS) \
 	-I$(top_srcdir)/lib \
 	-I$(top_builddir)/lib
-
-bin_PROGRAMS = \
-	tomoe
-
-tomoe_SOURCES = \
-	main.c
-
-tomoe_LDADD = \
-	$(GLIB_LIBS) \
-	$(top_builddir)/lib/libtomoe.la \
-	-lm
