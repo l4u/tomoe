@@ -168,7 +168,7 @@ const GPtrArray *tomoe_dict_get_letters          (TomoeDict     *dict);
  * @brief Match reading of TomoeChar with input.
  * @param dict   - Pointer to the TomoeDict object.
  * @param input  - Pointer to string matchkey
- * @return The GPtrArray of tomoe_candidate.
+ * @return The GPtrArray of TomoeCandidate.
  */
 GPtrArray      *tomoe_dict_search_by_reading    (const TomoeDict *dict,
                                                  const char      *input);
