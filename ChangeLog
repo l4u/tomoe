@@ -1,5 +1,9 @@
 2006-11-21  Takuro Ashie  <ashie@homa.ne.jp>
 
+	* lib/tomoe-char.c: ref/unref glyph correctly.
+
+2006-11-21  Takuro Ashie  <ashie@homa.ne.jp>
+
 	* lib/tomoe-dict.c, test/testtomoe.c: Use tomoe_glyph_new() instead of
 	calloc().
 

@@ -265,8 +265,9 @@ tomoe_char_set_glyph (TomoeChar* t_char, TomoeGlyph* glyph)
 
     priv = TOMOE_CHAR_GET_PRIVATE (t_char);
 
-    g_object_unref (G_OBJECT (priv->glyph));
-    priv->glyph = glyph; /* FIXME addRef */
+    if (priv->glyph)
+        g_object_unref (G_OBJECT (priv->glyph));
+    priv->glyph = g_object_ref (glyph);
     tomoe_char_set_modified(t_char, 1);
 }
 
