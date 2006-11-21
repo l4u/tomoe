@@ -12,6 +12,7 @@ Init_tomoe(void)
 
     mTomoe = rb_define_module("Tomoe");
 
+    Init_tomoe_candidate(mTomoe);
     Init_tomoe_char(mTomoe);
     Init_tomoe_config(mTomoe);
     Init_tomoe_context(mTomoe);
