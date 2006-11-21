@@ -108,6 +108,18 @@ tomoe_shelf_get_dict (TomoeShelf *shelf, const gchar *name)
     return g_hash_table_lookup(priv->dicts, name);
 }
 
+gboolean
+tomoe_shelf_remove_dict (TomoeShelf *shelf, const gchar *name)
+{
+    TomoeShelfPrivate *priv;
+
+    g_return_val_if_fail(shelf, FALSE);
+    g_return_val_if_fail(name, FALSE);
+
+    priv = TOMOE_SHELF_GET_PRIVATE (shelf);
+    return g_hash_table_remove(priv->dicts, name);
+}
+
 static void
 tomoe_shelf_collect_dict_name (gpointer key, gpointer value, gpointer user_data)
 {

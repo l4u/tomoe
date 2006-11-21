@@ -74,6 +74,8 @@ void             tomoe_context_add_dict       (TomoeContext       *ctx,
 GList           *tomoe_context_get_dict_names (TomoeContext       *ctx);
 TomoeDict       *tomoe_context_get_dict       (TomoeContext       *ctx,
                                                const gchar        *name);
+gboolean         tomoe_context_remove_dict    (TomoeContext       *ctx,
+                                               const gchar        *name);
 void             tomoe_context_load_config    (TomoeContext       *ctx,
                                                const gchar        *config_file);
 void             tomoe_context_save           (TomoeContext       *ctx);

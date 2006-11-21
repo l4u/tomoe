@@ -1,5 +1,8 @@
 2006-11-21  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-context.[ch] (tomoe_context_remove_dict): added.
+	* lib/tomoe-shelf.[ch] (tomoe_shelf_remove_dict): added.
+
 	* lib/tomoe-shelf.c (tomoe_shelf_add_dict): added invalid value
 	checks.
 
