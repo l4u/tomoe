@@ -82,19 +82,19 @@ void             tomoe_context_save           (TomoeContext       *ctx);
 
 
 /**
- * @brief Match strokes of tomoe_letter with input.
+ * @brief Match strokes of TomoeChar with input.
  * @param ctx      - Pointer to the TomoeContext object.
- * @param input    - Pointer to tomoe_glyph matchkey.
- * @return The array of tomoe_candidate.
+ * @param input    - Pointer to TomoeGlyph matchkey.
+ * @return The array of TomoeCandidate.
  */
 GList          *tomoe_context_search_by_strokes (TomoeContext       *ctx,
                                                  TomoeGlyph         *input);
 
 /**
- * @brief Match reading of tomoe_letter with input.
+ * @brief Match reading of TomoeChar with input.
  * @param ctx     - Pointer to the TomoeContext object.
  * @param reading  - Pointer to string matchkey
- * @return The array of tomoe_candidate.
+ * @return The array of TomoeCandidate.
  */
 GPtrArray      *tomoe_context_search_by_reading  (TomoeContext       *ctx,
                                                   const char         *reading);
