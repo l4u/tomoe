@@ -78,7 +78,6 @@ void            tomoe_char_set_glyph            (TomoeChar     *t_char,
 const char     *tomoe_char_get_meta             (TomoeChar     *t_char);
 void            tomoe_char_set_dict             (TomoeChar     *chr,
                                                  TomoeDict     *parent);
-gboolean        tomoe_char_is_editable          (TomoeChar     *chr);
 gboolean        tomoe_char_is_modified          (TomoeChar     *chr);
 void            tomoe_char_set_modified         (TomoeChar     *chr,
                                                  gboolean       modified);
