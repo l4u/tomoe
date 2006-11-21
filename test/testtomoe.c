@@ -120,29 +120,29 @@ END:
 
 void testReadingMatch (TomoeContext* ctx, const char* reading)
 {
-    GPtrArray *matched = tomoe_context_search_by_reading (ctx, reading);
-    guint candidate_num = matched->len;
+    GList *results = tomoe_context_search_by_reading (ctx, reading);
+    guint candidate_num = g_list_length(results);
 
     if (candidate_num != 0) {
-        guint i;
+        GList *result;
 
-        if (!matched) {
+        if (!results) {
             fprintf (stderr, "Candidate list is NULL!\n");
             return;
         }
 
         fprintf (stdout, "The number of matched characters: %d\n",
                  candidate_num);
-        for (i = 0; i < candidate_num; i++) {
-            TomoeChar* p = (TomoeChar*)g_ptr_array_index (matched, i);
+        for (result = results; result; result = result->next) {
+            TomoeChar* p = result->data;
             outCharInfo (p, 0);
         }
     } else {
         fprintf (stdout, "No Candidate found!\n");
     }
 
-    g_ptr_array_foreach (matched, (GFunc) g_object_unref, NULL);
-    g_ptr_array_free (matched, TRUE);
+    g_list_foreach (results, (GFunc) g_object_unref, NULL);
+    g_list_free (results);
 }
 
 void testUserDict (TomoeContext* ctx)

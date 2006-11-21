@@ -14,7 +14,7 @@ context "Tomoe::Context" do
     teardown
   end
 
-  specify "Search" do
+  specify "Search by strokes" do
     input = [
              [[51, 29], [177, 41]],
              [[99, 65], [219, 77]],
@@ -29,5 +29,10 @@ context "Tomoe::Context" do
     cands = @context.search_by_strokes(input)
 
     cands.collect {|cand| cand.char.code}.should == ["春", "屠"]
+  end
+
+  specify "Search by reading" do
+    cands = @context.search_by_reading("せい")
+    cands.collect {|cand| cand.char.code}.should == ["脊", "背", "汐"]
   end
 end
