@@ -160,7 +160,8 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
 
             if (_g_array_has_this_int_value (matches, index)) {
                 TomoeCandidate *c = cand_p->cand;
-                TomoeCandidate *cand = tomoe_candidate_new (tomoe_candidate_get_char (c));
+                TomoeCandidate *cand;
+                cand = tomoe_candidate_new (tomoe_candidate_get_character (c));
                 tomoe_candidate_set_score (cand, tomoe_candidate_get_score (c));
                 matched = g_list_prepend (matched, cand);
             }
@@ -458,7 +459,7 @@ get_candidates (TomoeStroke *input_stroke, GPtrArray *cands)
         cand_p = g_ptr_array_index (cands, cand_index);
         tmp = _g_array_copy_int_value (cand_p->adapted_strokes);
         cand = TOMOE_CANDIDATE (cand_p->cand);
-        lttr = tomoe_candidate_get_char (cand);
+        lttr = tomoe_candidate_get_character (cand);
 
         for (strk_index = 0;
              strk_index < tomoe_char_get_glyph (lttr)->stroke_num;
