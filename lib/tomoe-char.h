@@ -33,7 +33,7 @@
 G_BEGIN_DECLS
 
 #include <glib/garray.h>
-#include <tomoe-handwrite.h>
+#include <tomoe-writing.h>
 
 #define TOMOE_TYPE_CHAR            (tomoe_char_get_type ())
 #define TOMOE_CHAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_CHAR, TomoeChar))

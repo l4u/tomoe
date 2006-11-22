@@ -33,7 +33,7 @@
 G_BEGIN_DECLS
 
 #include <tomoe-dict.h>
-#include <tomoe-handwrite.h>
+#include <tomoe-writing.h>
 
 #define TOMOE_TYPE_RECOGNIZER            (tomoe_recognizer_get_type ())
 #define TOMOE_RECOGNIZER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_RECOGNIZER, TomoeRecognizer))
