@@ -96,7 +96,7 @@ tw_each(VALUE self)
 }
 
 void
-Init_tomoe_handwrite(VALUE mTomoe)
+Init_tomoe_writing(VALUE mTomoe)
 {
     VALUE cTomoeWriting;
 

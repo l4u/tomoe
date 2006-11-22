@@ -182,7 +182,8 @@ _candidate_compare_func (gconstpointer a, gconstpointer b)
     return tomoe_candidate_compare (ca, cb);
 }
 
-GList *
+
+static GList *
 tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
 {
     TomoeContextPrivate *priv;
@@ -208,8 +209,8 @@ tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
     return matched;
 }
 
-GList *
-tomoe_context_search_by_reading (TomoeContext *context, const char *input)
+static GList *
+tomoe_context_search_by_reading (TomoeContext *context, TomoeReading *reading)
 {
     GList *names, *name;
     GList *results = NULL;
@@ -222,12 +223,29 @@ tomoe_context_search_by_reading (TomoeContext *context, const char *input)
     for (name = names; name; name = name->next) {
         TomoeDict *dict;
         dict = tomoe_context_get_dict(context, name->data);
-        results = g_list_concat (tomoe_dict_search_by_reading (dict, input),
+        results = g_list_concat (tomoe_dict_search_by_reading (dict, reading),
                                  results);
     }
     results = g_list_sort (results, _candidate_compare_func);
 
     return results;
+}
+
+GList *
+tomoe_context_search (TomoeContext *context, TomoeQuery *query)
+{
+    const GList *readings;
+    TomoeWriting *writing;
+
+    writing = tomoe_query_get_writing (query);
+    if (writing)
+        return tomoe_context_search_by_strokes (context, writing);
+
+    readings = tomoe_query_get_readings (query);
+    if (readings)
+        return tomoe_context_search_by_reading (context, readings->data);
+
+    return NULL;
 }
 
 /*

@@ -1,5 +1,11 @@
 2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-query.[ch] lib/tomoe-reading.[ch]: added.
+	* lib/tomoe-dict.[ch], lib/tomoe-context.[ch],
+	lib/tomoe-char.[ch]: cleanup API.
+	* ext/ruby/, test/context_spec.rb: followed new API.
+	* configure.in, lib/Makefile.am: supported glib-mkenums.
+
 	* ext/ruby/Makefile.am: used tab instead of space for indentation.
 
 	* test/: moved test data for searching by stroke to test/data/.

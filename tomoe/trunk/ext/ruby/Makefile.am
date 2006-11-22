@@ -16,14 +16,16 @@ INCLUDES = \
 	$(GLIB_CFLAGS) \
 	-I$(top_srcdir)/lib
 
-tomoe_la_SOURCES = \
-	tomoe-rb.c tomoe-rb.h \
-	tomoe-rb-candidate.c \
-	tomoe-rb-char.c \
-	tomoe-rb-config.c \
-	tomoe-rb-context.c \
-	tomoe-rb-dict.c \
-	tomoe-rb-recognizer.c \
+tomoe_la_SOURCES =		\
+	tomoe-rb.c tomoe-rb.h	\
+	tomoe-rb-candidate.c	\
+	tomoe-rb-char.c		\
+	tomoe-rb-config.c	\
+	tomoe-rb-context.c	\
+	tomoe-rb-dict.c		\
+	tomoe-rb-query.c	\
+	tomoe-rb-reading.c	\
+	tomoe-rb-recognizer.c	\
 	tomoe-rb-writing.c
 
 tomoe_la_LDFLAGS = \

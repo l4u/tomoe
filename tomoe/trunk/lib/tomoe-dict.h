@@ -112,50 +112,29 @@ guint           tomoe_dict_get_size             (TomoeDict     *dict);
 /* Editable methods */
 
 /**
- * @brief Add a character
+ * @brief Register a character
  * @param dict - Pointer to the TomoeDict object.
- * @param add  - Pointer to the TomoeChar object.
+ * @param chr  - Pointer to the TomoeChar object.
  */
-void            tomoe_dict_add_char             (TomoeDict     *dict,
-                                                 TomoeChar     *remove);
-
-void            tomoe_dict_insert               (TomoeDict     *dict,
-                                                 int            position,
-                                                 TomoeChar     *insert);
+gboolean        tomoe_dict_register_char        (TomoeDict     *dict,
+                                                 TomoeChar     *chr);
 
 /**
- * @brief Remove a character by a character object
+ * @brief Unregister a character by code point
  * @param dict   - Pointer to the TomoeDict object.
- * @param remove - Pointer to the TomoeChar object.
+ * @param code_point - Code point of the character.
  */
-void            tomoe_dict_remove_by_char       (TomoeDict     *dict,
-                                                 TomoeChar     *remove);
+gboolean        tomoe_dict_unregister_char      (TomoeDict     *dict,
+                                                 const gchar   *code_point);
 
 /**
- * @brief Remove a character by index
- * @param dict   - Pointer to the TomoeDict object.
- * @param remove - Index of the character.
- */
-void            tomoe_dict_remove_by_index      (TomoeDict     *dict,
-                                                 int            remove);
-
-/**
- * @brief Find a character
- * @param dict - Pointer to the TomoeDict object.
- * @param find - Pointer to the TomoeChar object.
- * @return Index of the character.
- */
-glong           tomoe_dict_find_index           (TomoeDict     *dict,
-                                                 TomoeChar     *find);
-
-/**
- * @brief Get a character by index
+ * @brief Get a character by code point
  * @param dict  - Pointer to the TomoeDict object.
- * @param index - Index of the character.
+ * @param code_point - Code point of the character.
  * @return TomoeChar object.
  */
-TomoeChar      *tomoe_dict_char_by_index        (TomoeDict     *dict,
-                                                 int            index);
+TomoeChar      *tomoe_dict_get_char             (TomoeDict     *dict,
+                                                 const gchar   *code_point);
 
 /**
  * @brief Return an GPtrArray of TomoeChar which is kept in a TomoeDict.
@@ -171,8 +150,8 @@ const GPtrArray *tomoe_dict_get_letters          (TomoeDict     *dict);
  * @param reading - Pointer to string matchkey
  * @return The GList of TomoeCandidate.
  */
-GList           *tomoe_dict_search_by_reading    (const TomoeDict *dict,
-                                                  const char      *reading);
+GList           *tomoe_dict_search_by_reading    (TomoeDict     *dict,
+                                                  TomoeReading  *reading);
 
 G_END_DECLS
 

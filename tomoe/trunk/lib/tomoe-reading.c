@@ -1,0 +1,196 @@
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/*
+ *  Copyright (C) 2006 Kouhei Sutou <kou@cozmixng.org>
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this program; if not, write to the
+ *  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+ *  Boston, MA  02111-1307  USA
+ *
+ *  $Id$
+ */
+
+#include <stdlib.h>
+#include <string.h>
+#include <glib.h>
+#include <glib/gi18n.h>
+
+#include "tomoe-enum-types.h"
+#include "tomoe-reading.h"
+#include "glib-utils.h"
+
+#define TOMOE_READING_GET_PRIVATE(obj) \
+    (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_READING, TomoeReadingPrivate))
+
+typedef struct _TomoeReadingPrivate	TomoeReadingPrivate;
+struct _TomoeReadingPrivate
+{
+    TomoeReadingType  type;
+    gchar            *reading;
+};
+
+enum
+{
+    PROP_0,
+    PROP_TYPE,
+    PROP_READING
+};
+
+G_DEFINE_TYPE (TomoeReading, tomoe_reading, G_TYPE_OBJECT)
+
+static void tomoe_reading_dispose        (GObject         *object);
+static void tomoe_reading_set_property   (GObject         *object,
+                                       guint            prop_id,
+                                       const GValue    *value,
+                                       GParamSpec      *pspec);
+static void tomoe_reading_get_property   (GObject         *object,
+                                       guint            prop_id,
+                                       GValue          *value,
+                                       GParamSpec      *pspec);
+
+static void
+tomoe_reading_class_init (TomoeReadingClass *klass)
+{
+    GObjectClass *gobject_class;
+    GParamSpec *spec;
+
+    gobject_class = G_OBJECT_CLASS (klass);
+
+    gobject_class->dispose  = tomoe_reading_dispose;
+    gobject_class->set_property = tomoe_reading_set_property;
+    gobject_class->get_property = tomoe_reading_get_property;
+
+    spec = g_param_spec_enum ("type",
+                              N_("Type"),
+                              N_("A type of the reading."),
+                              TOMOE_TYPE_READING_TYPE,
+                              TOMOE_READING_INVALID,
+                              G_PARAM_READABLE | G_PARAM_WRITABLE |
+                              G_PARAM_CONSTRUCT_ONLY);
+    g_object_class_install_property (gobject_class, PROP_TYPE, spec);
+
+    spec = g_param_spec_string ("reading",
+                                N_("Reading"),
+                                N_("Reading of the reading."),
+                                NULL,
+                                G_PARAM_READABLE | G_PARAM_WRITABLE |
+                                G_PARAM_CONSTRUCT_ONLY);
+    g_object_class_install_property (gobject_class, PROP_READING, spec);
+
+    g_type_class_add_private (gobject_class, sizeof (TomoeReadingPrivate));
+}
+
+static void
+tomoe_reading_init (TomoeReading *reading)
+{
+    TomoeReadingPrivate *priv = TOMOE_READING_GET_PRIVATE (reading);
+    priv->type = TOMOE_READING_INVALID;
+    priv->reading = NULL;
+}
+
+TomoeReading *
+tomoe_reading_new (TomoeReadingType type, const gchar *reading)
+{
+    return g_object_new(TOMOE_TYPE_READING,
+                        "type", type,
+                        "reading", reading,
+                        NULL);
+}
+
+static void
+tomoe_reading_dispose (GObject *object)
+{
+    TomoeReadingPrivate *priv = TOMOE_READING_GET_PRIVATE (object);
+
+    if (priv->reading)
+        g_free(priv->reading);
+    priv->reading = NULL;
+
+    G_OBJECT_CLASS (tomoe_reading_parent_class)->dispose (object);
+}
+static void
+tomoe_reading_set_property (GObject      *object,
+                            guint         prop_id,
+                            const GValue *value,
+                            GParamSpec   *pspec)
+{
+    TomoeReading *reading;
+    TomoeReadingPrivate *priv;
+
+    reading = TOMOE_READING(object);
+    priv = TOMOE_READING_GET_PRIVATE (reading);
+
+    switch (prop_id) {
+      case PROP_TYPE:
+        priv->type = g_value_get_enum(value);
+        break;
+      case PROP_READING:
+        g_free(priv->reading);
+        priv->reading = g_value_dup_string(value);
+        break;
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+static void
+tomoe_reading_get_property (GObject    *object,
+                            guint       prop_id,
+                            GValue     *value,
+                            GParamSpec *pspec)
+{
+    TomoeReading *reading;
+    TomoeReadingPrivate *priv;
+
+    reading = TOMOE_READING (object);
+    priv = TOMOE_READING_GET_PRIVATE (reading);
+
+    switch (prop_id) {
+      case PROP_TYPE:
+        g_value_set_enum(value, priv->type);
+        break;
+      case PROP_READING:
+        g_value_set_string(value, priv->reading);
+        break;
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+TomoeReadingType
+tomoe_reading_get_reading_type (TomoeReading* reading)
+{
+    TomoeReadingPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_READING (reading), TOMOE_READING_INVALID);
+
+    priv = TOMOE_READING_GET_PRIVATE (reading);
+    return priv->type;
+}
+
+const gchar *
+tomoe_reading_get_reading (TomoeReading* reading)
+{
+    TomoeReadingPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_READING (reading), NULL);
+
+    priv = TOMOE_READING_GET_PRIVATE (reading);
+    return priv->reading;
+}
+
+/*
+vi:ts=4:nowrap:ai:expandtab
+*/
