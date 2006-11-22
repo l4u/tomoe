@@ -1,5 +1,8 @@
 2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-char.[ch], lib/tomoe-dict.c: removed modified related
+	codes.
+
 	* data/Makefile.am, data/meta.xsl, lib/tomoe-dict.c: removed
 	needless meta.xsl.
 

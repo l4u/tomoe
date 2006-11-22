@@ -172,8 +172,6 @@ tomoe_dict_new (const char* filename, gboolean editable)
     TomoeDict* dict;
     TomoeDictPrivate *priv;
 
-    unsigned int i;
-
     if (!filename && !*filename) return NULL;
 
     dict = g_object_new(TOMOE_TYPE_DICT,
@@ -201,10 +199,6 @@ tomoe_dict_new (const char* filename, gboolean editable)
         g_ptr_array_sort (priv->letters, letter_compare_func);
     }
 
-    for (i = 0; i < priv->letters->len; i++) {
-        TomoeChar *chr = (TomoeChar*)g_ptr_array_index (priv->letters, i);
-        tomoe_char_set_modified (chr, 0);
-    }
     priv->modified = FALSE;
 
     return dict;
@@ -356,7 +350,6 @@ tomoe_dict_save (TomoeDict* dict)
                                       charNode);
 
         TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
-        tomoe_char_set_modified (chr, 0);
     }
 
     xmlSaveFormatFileEnc(priv->filename, doc, "UTF-8", 1);
