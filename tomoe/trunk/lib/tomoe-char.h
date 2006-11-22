@@ -69,9 +69,9 @@ void            tomoe_char_set_code             (TomoeChar     *t_char,
 GPtrArray      *tomoe_char_get_readings         (TomoeChar     *t_char);
 void            tomoe_char_set_readings         (TomoeChar     *t_char,
                                                  GPtrArray     *readings);
-TomoeGlyph     *tomoe_char_get_glyph            (TomoeChar     *t_char);
-void            tomoe_char_set_glyph            (TomoeChar     *t_char,
-                                                 TomoeGlyph    *glyph);
+TomoeWriting   *tomoe_char_get_writing          (TomoeChar     *t_char);
+void            tomoe_char_set_writing          (TomoeChar     *t_char,
+                                                 TomoeWriting  *writing);
 
 /**
  * @brief Compare two tomoe_letter.

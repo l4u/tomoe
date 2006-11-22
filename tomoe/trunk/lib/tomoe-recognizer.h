@@ -66,8 +66,8 @@ TomoeRecognizer *tomoe_recognizer_new      (void);
  * @return The array of TomoeCandidate.
  */
 GList           *tomoe_recognizer_search   (const TomoeRecognizer *recognizer,
-                                            TomoeDict *dict,
-                                            TomoeGlyph *inputs);
+                                            TomoeDict    *dict,
+                                            TomoeWriting *inputs);
 
 G_END_DECLS
 

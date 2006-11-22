@@ -35,7 +35,7 @@ typedef struct _TomoeCharPrivate	TomoeCharPrivate;
 struct _TomoeCharPrivate
 {
     char                 *charCode;
-    TomoeGlyph           *glyph;
+    TomoeWriting         *writing;
     GPtrArray            *readings;
     GHashTable           *meta;
 };
@@ -76,7 +76,7 @@ tomoe_char_init (TomoeChar *t_char)
 {
     TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (t_char);
     priv->charCode  = NULL;
-    priv->glyph     = NULL;
+    priv->writing   = NULL;
     priv->meta      = g_hash_table_new_full(g_str_hash, g_str_equal,
                                             g_free, g_free);
     priv->readings  = NULL;
@@ -95,15 +95,15 @@ tomoe_char_dispose (GObject *object)
 
     if (priv->charCode)
         g_free (priv->charCode);
-    if (priv->glyph)
-        g_object_unref (G_OBJECT (priv->glyph));
+    if (priv->writing)
+        g_object_unref (G_OBJECT (priv->writing));
     if (priv->meta)
         g_hash_table_destroy (priv->meta);
     if (priv->readings)
         TOMOE_PTR_ARRAY_FREE_ALL (priv->readings, g_free);
 
     priv->charCode = NULL;
-    priv->glyph    = NULL;
+    priv->writing  = NULL;
     priv->meta     = NULL;
     priv->readings = NULL;
 
@@ -217,8 +217,8 @@ tomoe_char_set_readings (TomoeChar* t_char, GPtrArray* readings)
     }
 }
 
-TomoeGlyph*
-tomoe_char_get_glyph (TomoeChar* t_char)
+TomoeWriting*
+tomoe_char_get_writing (TomoeChar* t_char)
 {
     TomoeCharPrivate *priv;
 
@@ -226,11 +226,11 @@ tomoe_char_get_glyph (TomoeChar* t_char)
 
     priv = TOMOE_CHAR_GET_PRIVATE (t_char);
 
-    return priv->glyph; 
+    return priv->writing; 
 }
 
 void
-tomoe_char_set_glyph (TomoeChar* t_char, TomoeGlyph* glyph)
+tomoe_char_set_writing (TomoeChar* t_char, TomoeWriting* writing)
 {
     TomoeCharPrivate *priv;
 
@@ -238,9 +238,9 @@ tomoe_char_set_glyph (TomoeChar* t_char, TomoeGlyph* glyph)
 
     priv = TOMOE_CHAR_GET_PRIVATE (t_char);
 
-    if (priv->glyph)
-        g_object_unref (G_OBJECT (priv->glyph));
-    priv->glyph = g_object_ref (glyph);
+    if (priv->writing)
+        g_object_unref (G_OBJECT (priv->writing));
+    priv->writing = g_object_ref (writing);
 }
 
 gint

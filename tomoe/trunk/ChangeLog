@@ -1,3 +1,13 @@
+2006-11-22  Takuro Ashie  <ashie@home.ne.jp>
+
+	* ext/ruby/tomoe-rb-handwrite.c, lib/tomoe-char.[ch],
+	  lib/tomoe-context.[ch], lib/tomoe-dict.c,
+	  lib/tomoe-recognizer-impl.h, lib/tomoe-recognizer.[ch],
+	  lib/tomoe-writing.[ch],
+	  recognizer/tomoe-recognizer-simple-logic.[ch],
+	  recognizer/tomoe-recognizer-simple.c, test/testtomoe.c:
+	Glyph -> Writing.
+
 2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-shelf.h, lib/tomoe-candidate.h, lib/tomoe-context.h,

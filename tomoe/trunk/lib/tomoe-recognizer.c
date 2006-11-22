@@ -194,7 +194,7 @@ tomoe_recognizer_dispose (GObject *object)
 
 GList *
 tomoe_recognizer_search (const TomoeRecognizer *recognizer,
-                         TomoeDict *dict, TomoeGlyph *input)
+                         TomoeDict *dict, TomoeWriting *input)
 {
     GList *result = NULL;
     TomoeRecognizerSearchFunc search_func;
