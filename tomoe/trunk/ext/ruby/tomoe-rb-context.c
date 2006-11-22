@@ -24,10 +24,10 @@ tc_load_config(int argc, VALUE *argv, VALUE self)
 }
 
 static VALUE
-tc_search_by_strokes(VALUE self, VALUE glyph)
+tc_search_by_strokes(VALUE self, VALUE writing)
 {
     return GLIST2ARYF(tomoe_context_search_by_strokes(_SELF(self),
-                                                      RVAL2TGLYPH(glyph)));
+                                                      RVAL2TWTG(writing)));
 }
 
 static VALUE

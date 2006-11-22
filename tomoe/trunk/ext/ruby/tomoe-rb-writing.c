@@ -2,44 +2,44 @@
 
 #include "tomoe-rb.h"
 
-#define _SELF(obj) RVAL2TWRITING(obj)
+#define _SELF(obj) RVAL2TWTG(obj)
 
 static VALUE
-tg_move_to(VALUE self, VALUE x, VALUE y)
+tw_move_to(VALUE self, VALUE x, VALUE y)
 {
     tomoe_writing_move_to(_SELF(self), NUM2INT(x), NUM2INT(y));
     return Qnil;
 }
 
 static VALUE
-tg_line_to(VALUE self, VALUE x, VALUE y)
+tw_line_to(VALUE self, VALUE x, VALUE y)
 {
     tomoe_writing_line_to(_SELF(self), NUM2INT(x), NUM2INT(y));
     return Qnil;
 }
 
 static VALUE
-tg_clear(VALUE self)
+tw_clear(VALUE self)
 {
     tomoe_writing_clear(_SELF(self));
     return Qnil;
 }
 
 static VALUE
-tg_get_number_of_strokes(VALUE self)
+tw_get_number_of_strokes(VALUE self)
 {
     return UINT2NUM(tomoe_writing_get_number_of_strokes(_SELF(self)));
 }
 
 static VALUE
-tg_get_number_of_points(VALUE self, VALUE stroke)
+tw_get_number_of_points(VALUE self, VALUE stroke)
 {
     return UINT2NUM(tomoe_writing_get_number_of_points(_SELF(self),
                                                        NUM2UINT(stroke)));
 }
 
 static VALUE
-tg_get_point(VALUE self, VALUE stroke, VALUE point)
+tw_get_point(VALUE self, VALUE stroke, VALUE point)
 {
     gint x, y;
 
@@ -52,7 +52,7 @@ tg_get_point(VALUE self, VALUE stroke, VALUE point)
 }
 
 static VALUE
-tg_get_last_point(VALUE self)
+tw_get_last_point(VALUE self)
 {
     gint x, y;
 
@@ -64,14 +64,14 @@ tg_get_last_point(VALUE self)
 }
 
 static VALUE
-tg_remove_last_stroke(VALUE self)
+tw_remove_last_stroke(VALUE self)
 {
     tomoe_writing_remove_last_stroke(_SELF(self));
     return Qnil;
 }
 
 static VALUE
-tg_each(VALUE self)
+tw_each(VALUE self)
 {
     int i, j;
     guint number_of_strokes, number_of_points;
@@ -104,17 +104,17 @@ Init_tomoe_handwrite(VALUE mTomoe)
 
     rb_include_module(cTomoeWriting, rb_mEnumerable);
 
-    rb_define_method(cTomoeWriting, "move_to", tg_move_to, 2);
-    rb_define_method(cTomoeWriting, "line_to", tg_line_to, 2);
-    rb_define_method(cTomoeWriting, "clear", tg_clear, 0);
+    rb_define_method(cTomoeWriting, "move_to", tw_move_to, 2);
+    rb_define_method(cTomoeWriting, "line_to", tw_line_to, 2);
+    rb_define_method(cTomoeWriting, "clear", tw_clear, 0);
     rb_define_method(cTomoeWriting, "number_of_strokes",
-                     tg_get_number_of_strokes, 0);
+                     tw_get_number_of_strokes, 0);
     rb_define_method(cTomoeWriting, "get_number_of_points",
-                     tg_get_number_of_points, 1);
-    rb_define_method(cTomoeWriting, "[]", tg_get_point, 2);
-    rb_define_method(cTomoeWriting, "last_point", tg_get_last_point, 0);
+                     tw_get_number_of_points, 1);
+    rb_define_method(cTomoeWriting, "[]", tw_get_point, 2);
+    rb_define_method(cTomoeWriting, "last_point", tw_get_last_point, 0);
     rb_define_method(cTomoeWriting, "remove_last_stroke",
-                     tg_remove_last_stroke, 0);
+                     tw_remove_last_stroke, 0);
 
-    rb_define_method(cTomoeWriting, "each", tg_each, 0);
+    rb_define_method(cTomoeWriting, "each", tw_each, 0);
 }

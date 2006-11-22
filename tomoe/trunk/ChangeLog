@@ -1,3 +1,7 @@
+2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
+
+	* ext/ruby/, test/: followed new API.
+
 2006-11-22  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-writing.c: Implement tomoe_writing_get_strokes. I don't

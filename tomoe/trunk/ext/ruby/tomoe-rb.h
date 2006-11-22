@@ -32,7 +32,7 @@ G_BEGIN_DECLS
 
 #define RVAL2TCTX(obj) (TOMOE_CONTEXT(RVAL2GOBJ(obj)))
 #define RVAL2TDIC(obj) (TOMOE_DICT(RVAL2GOBJ(obj)))
-#define RVAL2TGLYPH(obj) (TOMOE_GLYPH(RVAL2GOBJ(obj)))
+#define RVAL2TWTG(obj) (TOMOE_WRITING(RVAL2GOBJ(obj)))
 
 void Init_tomoe(void);
 void Init_tomoe_candidate(VALUE mTomoe);
