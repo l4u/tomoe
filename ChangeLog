@@ -1,5 +1,7 @@
 2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/Makefile.am: added G_LOG_DOMAIN.
+
 	* ext/ruby/tomoe-rb-handwrite.c: implemented Tomoe::Glyph#each.
 	* test/handwrite_spec.rb: added tests for Tomoe::Glyph#each.
 
