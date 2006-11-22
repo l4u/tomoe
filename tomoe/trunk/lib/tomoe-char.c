@@ -150,7 +150,7 @@ tomoe_char_get_property (GObject    *object,
 }
 
 const char*
-tomoe_char_get_code (const TomoeChar* chr)
+tomoe_char_get_code (TomoeChar* chr)
 {
     TomoeCharPrivate *priv;
 

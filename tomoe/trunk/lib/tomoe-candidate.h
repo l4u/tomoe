@@ -55,7 +55,7 @@ struct _TomoeCandidateClass
 
 GType           tomoe_candidate_get_type        (void) G_GNUC_CONST;
 
-TomoeCandidate *tomoe_candidate_new             (TomoeChar      *t_char);
+TomoeCandidate *tomoe_candidate_new             (TomoeChar      *chr);
 
 TomoeChar      *tomoe_candidate_get_character   (TomoeCandidate *cand);
 
