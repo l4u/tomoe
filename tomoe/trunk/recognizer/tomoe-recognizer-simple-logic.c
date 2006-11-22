@@ -83,7 +83,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
     const GPtrArray *letters = NULL;
 
     if (!input) return 0;
-    if (!tomoe_glyph_get_number_of_strokes (input)) return 0;
+    if (tomoe_glyph_get_number_of_strokes (input) == 0) return 0;
     if (!dict) return 0;
 
     first_cands = g_ptr_array_new ();
@@ -554,22 +554,24 @@ get_candidates (TomoeGlyph *input, guint stroke_id, GPtrArray *cands)
                 cand,
                 tomoe_candidate_get_score (cand) + score1);
 
-            /*
-             * Distance and angle of each characteristic points:
-             * (Compare dictionary data with handwriting data)
-             */
-            score2 = match_dict_to_input (glyph, strk_index,
-                                          input, stroke_id);
-            if (score2 < 0) {
-                free (d_met);
+            if (strk_index < tomoe_glyph_get_number_of_strokes (input)) {
+                /*
+                 * Distance and angle of each characteristic points:
+                 * (Compare dictionary data with handwriting data)
+                 */
+                score2 = match_dict_to_input (glyph, strk_index,
+                                              input, stroke_id);
+                if (score2 < 0) {
+                    free (d_met);
+                    tomoe_candidate_set_score (
+                        cand,
+                        tomoe_candidate_get_score (cand) * 2);
+                    continue;
+                }
                 tomoe_candidate_set_score (
-                    cand,
-                    tomoe_candidate_get_score (cand) * 2);
-                continue;
+                    cand_p->cand,
+                    tomoe_candidate_get_score (cand) + score2);
             }
-            tomoe_candidate_set_score (
-                cand_p->cand,
-                tomoe_candidate_get_score (cand) + score2);
 
             g_array_append_val (cand_p->adapted_strokes, strk_index);
             match_flag = TRUE;

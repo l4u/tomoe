@@ -1,3 +1,8 @@
+2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
+
+	* recognizer/tomoe-recognizer-simple-logic.c (get_candidates):
+	suppressed warnings.
+
 2006-11-22  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe-handwrite.[ch]: Move members of TomoeGlypht to private.
