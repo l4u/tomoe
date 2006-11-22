@@ -20,22 +20,9 @@
 
 CLEANFILES = *~ *.bak
 
-AM_CPPFLAGS = \
-	-DSYSCONFDIR=\""$(sysconfdir)"\" \
-	-DDATADIR=\""$(datadir)"\" \
-	-DTOMOESYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\" \
-	-DTOMOEDATADIR=\""$(top_srcdir)"/data\"
-
-INCLUDES = \
-	$(GLIB_CFLAGS) \
-	-I$(top_srcdir)/lib \
-	-I$(top_builddir)/lib
+SUBDIRS = data
 
 EXTRA_DIST = \
-	haru \
-	natu \
-	aki \
-	fuyu \
 	run-spec.rb \
 	run-test.sh \
 	tomoe-spec-utils.rb \

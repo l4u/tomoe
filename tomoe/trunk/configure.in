@@ -389,6 +389,7 @@ data/Makefile
 ext/Makefile
 ext/ruby/Makefile
 test/Makefile
+test/data/Makefile
 doc/Makefile
 doc/doxygen.conf
 utils/Makefile
