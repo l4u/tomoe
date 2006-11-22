@@ -29,7 +29,6 @@
 
 typedef struct _TomoeGlyphPrivate TomoeGlyphPrivate;
 typedef struct _TomoeStroke       TomoeStroke;
-typedef struct _TomoePoint        TomoePoint;
 
 struct _TomoeGlyphPrivate
 {
@@ -41,12 +40,6 @@ struct _TomoeStroke
 {
     GList *point_first;
     GList *point_last;
-};
-
-struct _TomoePoint
-{
-    int x;
-    int y;
 };
 
 G_DEFINE_TYPE (TomoeGlyph, tomoe_glyph, G_TYPE_OBJECT)
