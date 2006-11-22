@@ -1,3 +1,8 @@
+2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
+
+	* ext/ruby/tomoe-rb-handwrite.c: implemented Tomoe::Glyph#each.
+	* test/handwrite_spec.rb: added tests for Tomoe::Glyph#each.
+
 2006-11-22  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* recognizer/tomoe-recognizer-simple-logic.c:
