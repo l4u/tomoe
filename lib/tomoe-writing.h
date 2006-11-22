@@ -25,31 +25,31 @@
  *  @brief 
  */
 
-#ifndef __TOMOE_HANDWRITE_H__
-#define __TOMOE_HANDWRITE_H__
+#ifndef __TOMOE_WRITING_H__
+#define __TOMOE_WRITING_H__
 
 #include <glib-object.h>
 
 G_BEGIN_DECLS
 
-#define TOMOE_TYPE_GLYPH            (tomoe_glyph_get_type ())
-#define TOMOE_GLYPH(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_GLYPH, TomoeGlyph))
-#define TOMOE_GLYPH_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_GLYPH, TomoeGlyphClass))
-#define TOMOE_IS_GLYPH(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TOMOE_TYPE_GLYPH))
-#define TOMOE_IS_GLYPH_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_GLYPH))
-#define TOMOE_GLYPH_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_GLYPH, TomoeGlyphClass))
+#define TOMOE_TYPE_WRITING            (tomoe_writing_get_type ())
+#define TOMOE_WRITING(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_WRITING, TomoeWriting))
+#define TOMOE_WRITING_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_WRITING, TomoeWritingClass))
+#define TOMOE_IS_WRITING(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TOMOE_TYPE_WRITING))
+#define TOMOE_IS_WRITING_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_WRITING))
+#define TOMOE_WRITING_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_WRITING, TomoeWritingClass))
 
-typedef struct _TomoeGlyph      TomoeGlyph;
-typedef struct _TomoeGlyphClass TomoeGlyphClass;
+typedef struct _TomoeWriting      TomoeWriting;
+typedef struct _TomoeWritingClass TomoeWritingClass;
 
 typedef struct _TomoePoint        TomoePoint;
 
-struct _TomoeGlyph
+struct _TomoeWriting
 {
     GObject object;
 };
 
-struct _TomoeGlyphClass
+struct _TomoeWritingClass
 {
     GObjectClass parent_class;
 };
@@ -60,34 +60,35 @@ struct _TomoePoint
     gint y;
 };
 
-GType           tomoe_glyph_get_type            (void) G_GNUC_CONST;
-TomoeGlyph     *tomoe_glyph_new                 (void);
-void            tomoe_glyph_move_to             (TomoeGlyph    *glyph,
+GType           tomoe_writing_get_type          (void) G_GNUC_CONST;
+TomoeWriting   *tomoe_writing_new               (void);
+void            tomoe_writing_move_to           (TomoeWriting  *writing,
                                                  gint           x,
                                                  gint           y);
-void            tomoe_glyph_line_to             (TomoeGlyph    *glyph,
+void            tomoe_writing_line_to           (TomoeWriting  *writing,
                                                  gint           x,
                                                  gint           y);
-void            tomoe_glyph_clear               (TomoeGlyph    *glyph);
-guint           tomoe_glyph_get_number_of_strokes
-                                                (TomoeGlyph    *glyph);
-guint           tomoe_glyph_get_number_of_points(TomoeGlyph    *glyph,
+void            tomoe_writing_clear             (TomoeWriting  *writing);
+guint           tomoe_writing_get_number_of_strokes
+                                                (TomoeWriting  *writing);
+guint           tomoe_writing_get_number_of_points
+                                                (TomoeWriting  *writing,
                                                  guint          stroke);
-gboolean        tomoe_glyph_get_point           (TomoeGlyph    *glyph,
+gboolean        tomoe_writing_get_point         (TomoeWriting  *writing,
                                                  guint          stroke,
                                                  guint          point,
                                                  gint          *x,
                                                  gint          *y);
-gboolean        tomoe_glyph_get_last_point      (TomoeGlyph    *glyph,
+gboolean        tomoe_writing_get_last_point    (TomoeWriting  *writing,
                                                  gint          *x,
                                                  gint          *y);
-void            tomoe_glyph_remove_last_stroke  (TomoeGlyph    *glyph);
+void            tomoe_writing_remove_last_stroke(TomoeWriting  *writing);
 
-const GList    *tomoe_glyph_get_strokes         (TomoeGlyph    *glyph);
+const GList    *tomoe_writing_get_strokes       (TomoeWriting  *writing);
 
 G_END_DECLS
 
-#endif /* __TOMOE_HANDWRITE_H__ */
+#endif /* __TOMOE_WRITING_H__ */
 
 /*
 vi:ts=4:nowrap:ai:expandtab

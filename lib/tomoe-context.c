@@ -183,7 +183,7 @@ _candidate_compare_func (gconstpointer a, gconstpointer b)
 }
 
 GList *
-tomoe_context_search_by_strokes (TomoeContext *context, TomoeGlyph *input)
+tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
 {
     TomoeContextPrivate *priv;
     GList *names, *name;

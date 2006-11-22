@@ -53,7 +53,7 @@ tomoe_recognizer_impl_free (void *context)
 }
 
 GList *
-tomoe_recognizer_impl_search (void *context, TomoeDict *dict, TomoeGlyph *input)
+tomoe_recognizer_impl_search (void *context, TomoeDict *dict, TomoeWriting *input)
 {
     return _tomoe_recognizer_simple_get_candidates (context, dict, input);
 }

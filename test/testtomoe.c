@@ -6,7 +6,7 @@
 #include <glib.h>
 #include "tomoe.h"
 
-static TomoeGlyph * read_test_data ();
+static TomoeWriting * read_test_data ();
 void outCharInfo (TomoeChar* chr, int score);
 void testStrokeMatch (TomoeContext* ctx);
 void testReadingMatch (TomoeContext* ctx, const char* reading);
@@ -15,7 +15,7 @@ void testUserDict (TomoeContext* ctx);
 #define LINE_BUF_SIZE 4096
 static char line_buf[LINE_BUF_SIZE];
 
-static TomoeGlyph *
+static TomoeWriting *
 read_test_data ()
 {
     char *p = NULL;
@@ -24,9 +24,9 @@ read_test_data ()
     int j = 0;
     int k = 0;
     FILE *fp = stdin;
-    TomoeGlyph *test_glyph = NULL;
+    TomoeWriting *test_writing = NULL;
 
-    test_glyph = tomoe_glyph_new ();
+    test_writing = tomoe_writing_new ();
 
     while ((p = fgets (line_buf, LINE_BUF_SIZE, fp)) != NULL) {
         if (strstr (p, "EOF") != NULL) {
@@ -47,13 +47,13 @@ read_test_data ()
                 sscanf (p, " (%d %d)", &x, &y);
                 p = strchr (p, ')') + 1;
                 if (k == 0)
-                    tomoe_glyph_move_to (test_glyph, x, y);
+                    tomoe_writing_move_to (test_writing, x, y);
                 else
-                    tomoe_glyph_line_to (test_glyph, x, y);
+                    tomoe_writing_line_to (test_writing, x, y);
             }
         }
 
-        return test_glyph;
+        return test_writing;
     }
     return NULL;
 }
@@ -88,15 +88,15 @@ void outCharInfo (TomoeChar* chr, int score)
 
 void testStrokeMatch (TomoeContext* ctx)
 {
-    TomoeGlyph *test_glyph = NULL;
+    TomoeWriting *test_writing = NULL;
     GList *matched = NULL;
 
-    test_glyph = read_test_data ();
+    test_writing = read_test_data ();
 
-    if (!test_glyph) 
+    if (!test_writing) 
         goto END;
 
-    matched = tomoe_context_search_by_strokes (ctx, test_glyph);
+    matched = tomoe_context_search_by_strokes (ctx, test_writing);
 
     if (!matched) {
         fprintf (stdout, "No Candidate found!\n");
@@ -112,8 +112,8 @@ void testStrokeMatch (TomoeContext* ctx)
     }
 #warning FIXME! plug memory leak!
 END:
-    if (!test_glyph)
-        g_object_unref (G_OBJECT (test_glyph));
+    if (!test_writing)
+        g_object_unref (G_OBJECT (test_writing));
     if (matched) {
         g_list_foreach (matched, (GFunc) g_object_unref, NULL);
         g_list_free (matched);

@@ -53,7 +53,7 @@ struct _cand_priv
 static cand_priv *cand_priv_new               (TomoeChar   *character,
                                                int          index);
 static void       cand_priv_free              (cand_priv   *cand_p);
-static GPtrArray *get_candidates              (TomoeGlyph  *glyph,
+static GPtrArray *get_candidates              (TomoeWriting  *writing,
                                                guint        stroke_id,
                                                GPtrArray   *cands);
 static gint       match_stroke_num            (TomoeDict   *dict,
@@ -71,7 +71,7 @@ _candidate_compare_func (gconstpointer a, gconstpointer b)
 }
 
 GList *
-_tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGlyph *input)
+_tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWriting *input)
 {
     /* TomoeRecognizerSimple *recognizer = context; */
     GList *matched = NULL;
@@ -83,7 +83,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
     const GPtrArray *letters = NULL;
 
     if (!input) return 0;
-    if (tomoe_glyph_get_number_of_strokes (input) == 0) return 0;
+    if (tomoe_writing_get_number_of_strokes (input) == 0) return 0;
     if (!dict) return 0;
 
     first_cands = g_ptr_array_new ();
@@ -93,15 +93,15 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
 
     for (i = 0; i < letters_num; i++) {
         TomoeChar *p = (TomoeChar *) g_ptr_array_index (letters, i);
-        TomoeGlyph *glyph;
+        TomoeWriting *writing;
         cand_priv *cand = NULL;
 
-        /* check for available glyph data */
-        glyph = tomoe_char_get_glyph (p);
-        if (!glyph) continue;
+        /* check for available writing data */
+        writing = tomoe_char_get_writing (p);
+        if (!writing) continue;
 
         /* check the number of stroke */
-        if (tomoe_glyph_get_number_of_strokes (input) > tomoe_glyph_get_number_of_strokes (glyph))
+        if (tomoe_writing_get_number_of_strokes (input) > tomoe_writing_get_number_of_strokes (writing))
             continue;
 
         /* append a candidate to candidate list */
@@ -112,7 +112,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
     /* Ugly hack! */
     cands = first_cands;
     cands = get_candidates (input, 0, first_cands);
-    for (i = 1; i < tomoe_glyph_get_number_of_strokes (input); i++) {
+    for (i = 1; i < tomoe_writing_get_number_of_strokes (input); i++) {
         GPtrArray *tmp;
         tmp = get_candidates(input, i, cands);
         g_ptr_array_free (cands, TRUE);
@@ -128,7 +128,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
         cand = g_ptr_array_index (cands, i);
         adapted = cand->adapted_strokes;
         pj = match_stroke_num (dict, cand->index,
-                               tomoe_glyph_get_number_of_strokes (input),
+                               tomoe_writing_get_number_of_strokes (input),
                                adapted);
 
         if (pj < 0)
@@ -187,7 +187,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeGl
  * *******************
  */
 static gint
-stroke_calculate_metrics (TomoeGlyph *glyph, guint stroke_id, tomoe_metric **met)
+stroke_calculate_metrics (TomoeWriting *writing, guint stroke_id, tomoe_metric **met)
 {
     guint i = 0;
     gint x1, y1, x2, y2;
@@ -195,15 +195,15 @@ stroke_calculate_metrics (TomoeGlyph *glyph, guint stroke_id, tomoe_metric **met
     guint n_points;
 
     /*if (!strk) return 0;*/
-    if (stroke_id >= tomoe_glyph_get_number_of_strokes (glyph)) return 0;
-    n_points = tomoe_glyph_get_number_of_points (glyph, stroke_id);
+    if (stroke_id >= tomoe_writing_get_number_of_strokes (writing)) return 0;
+    n_points = tomoe_writing_get_number_of_points (writing, stroke_id);
     if (!n_points) return 0;
 
     m = g_new (tomoe_metric, n_points - 1);
  
     for (i = 0; i < n_points - 1; i++) {
-        tomoe_glyph_get_point (glyph, stroke_id, i,     &x1, &y1);
-        tomoe_glyph_get_point (glyph, stroke_id, i + 1, &x2, &y2);
+        tomoe_writing_get_point (writing, stroke_id, i,     &x1, &y1);
+        tomoe_writing_get_point (writing, stroke_id, i + 1, &x2, &y2);
         m[i].a     = x2 - x1;
         m[i].b     = y2 - y1;
         m[i].c     = x2 * y1 - y2 * x1;
@@ -271,8 +271,8 @@ sq_dist (gint x1, gint y1, gint x2, gint y2)
  */
 
 static gint
-match_input_to_dict (TomoeGlyph *input, guint input_stroke_id,
-                     TomoeGlyph *dict,  guint dict_stroke_id)
+match_input_to_dict (TomoeWriting *input, guint input_stroke_id,
+                     TomoeWriting *dict,  guint dict_stroke_id)
 {
     int i_nop = 0;              /* input stroke number of points */
     tomoe_metric *i_met = NULL; /* input stroke metrics */
@@ -288,10 +288,10 @@ match_input_to_dict (TomoeGlyph *input, guint input_stroke_id,
     int d = 0;
     int ret = 0;
 
-    i_nop = tomoe_glyph_get_number_of_points (input, input_stroke_id);
+    i_nop = tomoe_writing_get_number_of_points (input, input_stroke_id);
     stroke_calculate_metrics (input, input_stroke_id, &i_met);
   
-    d_nop = tomoe_glyph_get_number_of_points (dict, dict_stroke_id);
+    d_nop = tomoe_writing_get_number_of_points (dict, dict_stroke_id);
     stroke_calculate_metrics (dict, dict_stroke_id, &d_met);
 
     /* 
@@ -301,8 +301,8 @@ match_input_to_dict (TomoeGlyph *input, guint input_stroke_id,
     {
         gint x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
-        tomoe_glyph_get_point (input, input_stroke_id, i_nop - 1, &x1, &y1);
-        tomoe_glyph_get_point (input, input_stroke_id, i_nop - 2, &x2, &y2);
+        tomoe_writing_get_point (input, input_stroke_id, i_nop - 1, &x1, &y1);
+        tomoe_writing_get_point (input, input_stroke_id, i_nop - 2, &x2, &y2);
 
         if (sq_dist(x1, y1, x2, y2) < LIMIT_LENGTH) {
             i_k_end = i_nop - 2;
@@ -315,12 +315,12 @@ match_input_to_dict (TomoeGlyph *input, guint input_stroke_id,
     for (i_k = 1; i_k < i_k_end; i_k++) {
         gint i_x = 0, i_y = 0;
 
-        tomoe_glyph_get_point (input, input_stroke_id, i_k, &i_x, &i_y);
+        tomoe_writing_get_point (input, input_stroke_id, i_k, &i_x, &i_y);
         i_me = i_met[i_k];
         for (d_k = m; d_k < d_nop; d_k++) {
             gint d_x = 0, d_y = 0;
 
-            tomoe_glyph_get_point (dict, dict_stroke_id, d_k, &d_x, &d_y);
+            tomoe_writing_get_point (dict, dict_stroke_id, d_k, &d_x, &d_y);
             d = sq_dist(i_x, i_y, d_x, d_y);
             if (d_k < d_nop - 1) {
                 d_me = d_met[d_k];
@@ -361,8 +361,8 @@ match_input_to_dict (TomoeGlyph *input, guint input_stroke_id,
 }
 
 static int
-match_dict_to_input (TomoeGlyph *input, guint input_stroke_id,
-                     TomoeGlyph *dict,  guint dict_stroke_id)
+match_dict_to_input (TomoeWriting *input, guint input_stroke_id,
+                     TomoeWriting *dict,  guint dict_stroke_id)
 {
     int           d_nop = 0;    /* dict stroke number of points */
     tomoe_metric *d_met = NULL; /* dict stroke metrics */
@@ -378,9 +378,9 @@ match_dict_to_input (TomoeGlyph *input, guint input_stroke_id,
     int d = 0;
     int ret = 0;
 
-    d_nop = tomoe_glyph_get_number_of_points (dict, dict_stroke_id);
+    d_nop = tomoe_writing_get_number_of_points (dict, dict_stroke_id);
     stroke_calculate_metrics (dict, dict_stroke_id, &d_met);
-    i_nop = tomoe_glyph_get_number_of_points (input, input_stroke_id);
+    i_nop = tomoe_writing_get_number_of_points (input, input_stroke_id);
     stroke_calculate_metrics (input, input_stroke_id, &i_met);
 
     /* 
@@ -390,8 +390,8 @@ match_dict_to_input (TomoeGlyph *input, guint input_stroke_id,
     {
         gint x1, y1, x2, y2;
 
-        tomoe_glyph_get_point (dict, dict_stroke_id, d_nop - 1, &x1, &y1);
-        tomoe_glyph_get_point (dict, dict_stroke_id, d_nop - 2, &x2, &y2);
+        tomoe_writing_get_point (dict, dict_stroke_id, d_nop - 1, &x1, &y1);
+        tomoe_writing_get_point (dict, dict_stroke_id, d_nop - 2, &x2, &y2);
 
         if (sq_dist (x1, y1, x2, y2) < LIMIT_LENGTH) {
             d_k_end = d_nop - 2;
@@ -404,12 +404,12 @@ match_dict_to_input (TomoeGlyph *input, guint input_stroke_id,
     for (d_k = 1; d_k < d_k_end - 1; d_k++) /* note difference: -1 */ {
         gint d_x, d_y;
 
-        tomoe_glyph_get_point (dict, dict_stroke_id, d_k, &d_x, &d_y);
+        tomoe_writing_get_point (dict, dict_stroke_id, d_k, &d_x, &d_y);
         d_me = d_met[d_k];
         for (i_k = m; i_k < i_nop; i_k++) {
             gint i_x, i_y;
 
-            tomoe_glyph_get_point (input, input_stroke_id, i_k, &i_x, &i_y);
+            tomoe_writing_get_point (input, input_stroke_id, i_k, &i_x, &i_y);
             d = sq_dist (d_x, d_y, i_x, i_y);
             if (i_k < i_nop - 1) {
                 i_me = i_met[i_k];
@@ -450,7 +450,7 @@ match_dict_to_input (TomoeGlyph *input, guint input_stroke_id,
 }
 
 static GPtrArray *
-get_candidates (TomoeGlyph *input, guint stroke_id, GPtrArray *cands)
+get_candidates (TomoeWriting *input, guint stroke_id, GPtrArray *cands)
 {
     GPtrArray     *rtn_cands;
     unsigned int   cand_index = 0;
@@ -462,7 +462,7 @@ get_candidates (TomoeGlyph *input, guint stroke_id, GPtrArray *cands)
 
     rtn_cands = g_ptr_array_new ();
 
-    i_nop = tomoe_glyph_get_number_of_points (input, stroke_id);
+    i_nop = tomoe_writing_get_number_of_points (input, stroke_id);
     stroke_calculate_metrics (input, stroke_id, &i_met);
 
     for (cand_index = 0; cand_index < cands->len; cand_index++) {
@@ -470,17 +470,17 @@ get_candidates (TomoeGlyph *input, guint stroke_id, GPtrArray *cands)
         cand_priv *cand_p;
         GArray *tmp = NULL;
         TomoeChar *lttr;
-        TomoeGlyph *glyph;
+        TomoeWriting *writing;
         TomoeCandidate *cand;
 
         cand_p = g_ptr_array_index (cands, cand_index);
         tmp = _g_array_copy_int_value (cand_p->adapted_strokes);
         cand = TOMOE_CANDIDATE (cand_p->cand);
         lttr = tomoe_candidate_get_character (cand);
-        glyph = tomoe_char_get_glyph (lttr);
+        writing = tomoe_char_get_writing (lttr);
 
         for (strk_index = 0;
-             strk_index < tomoe_glyph_get_number_of_strokes (glyph);
+             strk_index < tomoe_writing_get_number_of_strokes (writing);
              strk_index++)
         {
             gint x1, x2, y1, y2;
@@ -494,20 +494,20 @@ get_candidates (TomoeGlyph *input, guint stroke_id, GPtrArray *cands)
                 continue;
             }
 
-            d_nop = tomoe_glyph_get_number_of_points (glyph, strk_index);
-            stroke_calculate_metrics (glyph, strk_index, &d_met);
+            d_nop = tomoe_writing_get_number_of_points (writing, strk_index);
+            stroke_calculate_metrics (writing, strk_index, &d_met);
 
             /*
              * Distance between the point and begining point.
              * Distance between the point and ending point.
              * Number of characteristic points.
              */
-            tomoe_glyph_get_point (input, stroke_id, 0, &x1, &y1);
-            tomoe_glyph_get_point (glyph, strk_index, 0, &x2, &y2);
+            tomoe_writing_get_point (input, stroke_id, 0, &x1, &y1);
+            tomoe_writing_get_point (writing, strk_index, 0, &x2, &y2);
             d1 = sq_dist (x1, y1, x2, y2);
 
-            tomoe_glyph_get_point (input, stroke_id,  i_nop - 1, &x1, &y1);
-            tomoe_glyph_get_point (glyph, strk_index, d_nop - 1, &x2, &y2);
+            tomoe_writing_get_point (input, stroke_id,  i_nop - 1, &x1, &y1);
+            tomoe_writing_get_point (writing, strk_index, d_nop - 1, &x2, &y2);
             d2 = sq_dist (x1, y1, x2, y2);
 
             score3 = (d1 + d2);
@@ -521,12 +521,12 @@ get_candidates (TomoeGlyph *input, guint stroke_id, GPtrArray *cands)
                 continue;
             }
 
-            tomoe_glyph_get_point (input, stroke_id,  0, &x1, &y1);
-            tomoe_glyph_get_point (input, stroke_id,  1, &x2, &y2);
+            tomoe_writing_get_point (input, stroke_id,  0, &x1, &y1);
+            tomoe_writing_get_point (input, stroke_id,  1, &x2, &y2);
             d3 = sq_dist (x1, y1, x2, y2);
 
-            tomoe_glyph_get_point (glyph, strk_index, 0, &x1, &y1);
-            tomoe_glyph_get_point (glyph, strk_index, 1, &x2, &y2);
+            tomoe_writing_get_point (writing, strk_index, 0, &x1, &y1);
+            tomoe_writing_get_point (writing, strk_index, 1, &x2, &y2);
             d4 = sq_dist (x1, y1, x2, y2);
 
             /* threshold is (angle of bigining line) % 45[degree] (PI/4)*/
@@ -542,7 +542,7 @@ get_candidates (TomoeGlyph *input, guint stroke_id, GPtrArray *cands)
              * (Compare handwriting data with dictionary data)
              */
             score1 = match_input_to_dict (input, stroke_id,
-                                          glyph, strk_index);
+                                          writing, strk_index);
             if (score1 < 0) {
                 free (d_met);
                 tomoe_candidate_set_score (
@@ -558,7 +558,7 @@ get_candidates (TomoeGlyph *input, guint stroke_id, GPtrArray *cands)
              * Distance and angle of each characteristic points:
              * (Compare dictionary data with handwriting data)
              */
-            score2 = match_dict_to_input (glyph, strk_index,
+            score2 = match_dict_to_input (writing, strk_index,
                                           input, stroke_id);
             if (score2 < 0) {
                 free (d_met);
@@ -574,7 +574,7 @@ get_candidates (TomoeGlyph *input, guint stroke_id, GPtrArray *cands)
             g_array_append_val (cand_p->adapted_strokes, strk_index);
             match_flag = TRUE;
 
-            strk_index = tomoe_glyph_get_number_of_strokes (glyph);
+            strk_index = tomoe_writing_get_number_of_strokes (writing);
 
             free (d_met);
         }
@@ -597,7 +597,7 @@ match_stroke_num (TomoeDict* dict, int letter_index, int input_stroke_num, GArra
     int pj = 100;
     gint adapted_num;
     TomoeChar* chr = (TomoeChar*) g_ptr_array_index (letters, letter_index);
-    int d_stroke_num = tomoe_glyph_get_number_of_strokes (tomoe_char_get_glyph (chr));
+    int d_stroke_num = tomoe_writing_get_number_of_strokes (tomoe_char_get_writing (chr));
 
     if (!adapted)
         return -1;
