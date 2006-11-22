@@ -21,6 +21,7 @@
 CLEANFILES = *~ *.bak
 
 AM_CPPFLAGS =							\
+	-DG_LOG_DOMAIN=\"TOMOE\"				\
 	-DSYSCONFDIR=\""$(sysconfdir)"\"			\
 	-DDATADIR=\""$(datadir)"\"				\
 	-DTOMOESYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\"	\
