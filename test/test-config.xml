@@ -1,6 +1,0 @@
-<?xml version="1.0" standalone="no"?>
-<tomoeConfig>
-	<dictionary file="../data/kanjidic2.xml"/>
-	<dictionary file="../data/readingtest.xml"/>
-	<dictionary file="../data/all.xml"/>
-</tomoeConfig>

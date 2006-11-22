@@ -1,5 +1,7 @@
 2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/test-config.xml: removed needless file.
+
 	* ext/ruby/, test/: followed new API.
 
 2006-11-22  Hiroyuki Ikezoe  <poincare@ikezoe.net>
