@@ -36,7 +36,7 @@ struct _TomoeCharPrivate
 {
     char                 *charCode;
     TomoeWriting         *writing;
-    GPtrArray            *readings;
+    GList                *readings;
     GHashTable           *meta;
 };
 
@@ -72,9 +72,9 @@ tomoe_char_class_init (TomoeCharClass *klass)
 }
 
 static void
-tomoe_char_init (TomoeChar *t_char)
+tomoe_char_init (TomoeChar *chr)
 {
-    TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+    TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (chr);
     priv->charCode  = NULL;
     priv->writing   = NULL;
     priv->meta      = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -99,8 +99,10 @@ tomoe_char_dispose (GObject *object)
         g_object_unref (G_OBJECT (priv->writing));
     if (priv->meta)
         g_hash_table_destroy (priv->meta);
-    if (priv->readings)
-        TOMOE_PTR_ARRAY_FREE_ALL (priv->readings, g_free);
+    if (priv->readings) {
+        g_list_foreach (priv->readings, (GFunc)g_free, NULL);
+        g_list_free (priv->readings);
+    }
 
     priv->charCode = NULL;
     priv->writing  = NULL;
@@ -115,11 +117,11 @@ tomoe_char_set_property (GObject      *object,
                          const GValue *value,
                          GParamSpec   *pspec)
 {
-    TomoeChar *t_char;
+    TomoeChar *chr;
     TomoeCharPrivate *priv;
 
-    t_char = TOMOE_CHAR(object);
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+    chr = TOMOE_CHAR(object);
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
 
     switch (prop_id) {
     default:
@@ -134,11 +136,11 @@ tomoe_char_get_property (GObject    *object,
                          GValue     *value,
                          GParamSpec *pspec)
 {
-    TomoeChar *t_char;
+    TomoeChar *chr;
     TomoeCharPrivate *priv;
 
-    t_char = TOMOE_CHAR (object);
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+    chr = TOMOE_CHAR (object);
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
 
     switch (prop_id) {
     default:
@@ -148,95 +150,71 @@ tomoe_char_get_property (GObject    *object,
 }
 
 const char*
-tomoe_char_get_code (const TomoeChar* t_char)
+tomoe_char_get_code (const TomoeChar* chr)
 {
     TomoeCharPrivate *priv;
 
-    g_return_val_if_fail (TOMOE_IS_CHAR (t_char), NULL);
+    g_return_val_if_fail (TOMOE_IS_CHAR (chr), NULL);
 
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
     return priv->charCode;
 }
 
 void
-tomoe_char_set_code (TomoeChar* t_char, const char* code)
+tomoe_char_set_code (TomoeChar* chr, const char* code)
 {
     TomoeCharPrivate *priv;
 
-    g_return_if_fail (TOMOE_IS_CHAR (t_char));
+    g_return_if_fail (TOMOE_IS_CHAR (chr));
 
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
     g_free (priv->charCode);
     priv->charCode = code ? g_strdup (code) : NULL;
 }
 
-static void
-_copy_reading_func (gpointer data, gpointer user_data)
-{
-    GPtrArray *new = (GPtrArray *) user_data;
-    const gchar *reading = (const gchar*) data;
-
-    g_ptr_array_add (new, g_strdup (reading));
-}
-
-#warning FIXME! this interface is too bad. We need TomoeCharReading object?
-GPtrArray*
-tomoe_char_get_readings (TomoeChar* t_char)
+const GList *
+tomoe_char_get_readings (TomoeChar* chr)
 {
     TomoeCharPrivate *priv;
-    GPtrArray *readings;
 
-    g_return_val_if_fail (TOMOE_IS_CHAR (t_char), NULL);
+    g_return_val_if_fail (TOMOE_IS_CHAR (chr), NULL);
 
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
-
-    readings = g_ptr_array_new ();
-    if (priv->readings) {
-        g_ptr_array_foreach (priv->readings, _copy_reading_func, readings);
-    }
-    return readings;
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+    return priv->readings;
 }
 
 void
-tomoe_char_set_readings (TomoeChar* t_char, GPtrArray* readings)
+tomoe_char_add_reading (TomoeChar* chr, const gchar *reading)
 {
     TomoeCharPrivate *priv;
 
-    g_return_if_fail (TOMOE_IS_CHAR (t_char));
+    g_return_if_fail (TOMOE_IS_CHAR (chr));
 
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
 
-    if (priv->readings) {
-        TOMOE_PTR_ARRAY_FREE_ALL (priv->readings, g_free);
-        priv->readings = NULL;
-    }
-
-    priv->readings = g_ptr_array_new ();
-    if (readings) {
-        g_ptr_array_foreach (readings, _copy_reading_func, priv->readings);
-    }
+    priv->readings = g_list_prepend(priv->readings, g_strdup(reading));
 }
 
 TomoeWriting*
-tomoe_char_get_writing (TomoeChar* t_char)
+tomoe_char_get_writing (TomoeChar* chr)
 {
     TomoeCharPrivate *priv;
 
-    g_return_val_if_fail (TOMOE_IS_CHAR (t_char), NULL);
+    g_return_val_if_fail (TOMOE_IS_CHAR (chr), NULL);
 
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
 
     return priv->writing; 
 }
 
 void
-tomoe_char_set_writing (TomoeChar* t_char, TomoeWriting* writing)
+tomoe_char_set_writing (TomoeChar* chr, TomoeWriting* writing)
 {
     TomoeCharPrivate *priv;
 
-    g_return_if_fail (TOMOE_IS_CHAR (t_char));
+    g_return_if_fail (TOMOE_IS_CHAR (chr));
 
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
 
     if (priv->writing)
         g_object_unref (G_OBJECT (priv->writing));
