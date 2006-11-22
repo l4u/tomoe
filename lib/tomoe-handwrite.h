@@ -42,6 +42,8 @@ G_BEGIN_DECLS
 typedef struct _TomoeGlyph      TomoeGlyph;
 typedef struct _TomoeGlyphClass TomoeGlyphClass;
 
+typedef struct _TomoePoint        TomoePoint;
+
 struct _TomoeGlyph
 {
     GObject object;
@@ -50,6 +52,12 @@ struct _TomoeGlyph
 struct _TomoeGlyphClass
 {
     GObjectClass parent_class;
+};
+
+struct _TomoePoint
+{
+    gint x;
+    gint y;
 };
 
 GType           tomoe_glyph_get_type            (void) G_GNUC_CONST;
@@ -74,6 +82,8 @@ gboolean        tomoe_glyph_get_last_point      (TomoeGlyph    *glyph,
                                                  gint          *x,
                                                  gint          *y);
 void            tomoe_glyph_remove_last_stroke  (TomoeGlyph    *glyph);
+
+const GList    *tomoe_glyph_get_strokes         (TomoeGlyph    *glyph);
 
 G_END_DECLS
 
