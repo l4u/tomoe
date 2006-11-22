@@ -1,5 +1,7 @@
 2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
 
+	* ext/ruby/Makefile.am: used tab instead of space for indentation.
+
 	* test/: moved test data for searching by stroke to test/data/.
 	* test/context_spec.rb: used test/data/*.data.
 
