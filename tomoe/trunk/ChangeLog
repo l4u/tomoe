@@ -1,3 +1,10 @@
+2006-11-22  Takuro Ashie  <ashie@home.ne.jp>
+
+	* lib/tomoe-handwrite.[ch]: Rename to tomoe-writing.[ch].
+	* lib/tomoe-writing.[ch]: Added.
+	* Makefile.am, lib/tomoe-char.h, lib/tomoe-recognizer-impl.h,
+	  lib/tomoe.h: Follow above changes.
+
 2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-char.[ch], lib/tomoe-dict.c: removed modified related
