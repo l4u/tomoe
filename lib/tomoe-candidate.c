@@ -156,12 +156,12 @@ tomoe_candidate_get_property (GObject *object,
 }
 
 TomoeCandidate*
-tomoe_candidate_new (TomoeChar *t_char)
+tomoe_candidate_new (TomoeChar *chr)
 {
     TomoeCandidate *cand;
 
     cand = g_object_new(TOMOE_TYPE_CANDIDATE,
-                        "character", t_char,
+                        "character", chr,
                         NULL);
 
     return cand;

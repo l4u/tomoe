@@ -1,5 +1,7 @@
 2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-candidate.[ch], lib/tomoe-char.[ch]: cleanup.
+
 	* lib/tomoe-query.[ch] lib/tomoe-reading.[ch]: added.
 	* lib/tomoe-dict.[ch], lib/tomoe-context.[ch],
 	lib/tomoe-char.[ch]: cleanup API.
