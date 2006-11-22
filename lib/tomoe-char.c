@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2005 Takuro Ashie <ashie@homa.ne.jp>
  *  Copyright (C) 2006 Juernjakob Harder <juernjakob.harder@gmail.com>
@@ -38,7 +38,6 @@ struct _TomoeCharPrivate
     TomoeGlyph           *glyph;
     GPtrArray            *readings;
     GHashTable           *meta;
-    gboolean              modified;
 };
 
 enum
@@ -81,7 +80,6 @@ tomoe_char_init (TomoeChar *t_char)
     priv->meta      = g_hash_table_new_full(g_str_hash, g_str_equal,
                                             g_free, g_free);
     priv->readings  = NULL;
-    priv->modified  = FALSE;
 }
 
 TomoeChar*
@@ -170,7 +168,6 @@ tomoe_char_set_code (TomoeChar* t_char, const char* code)
     priv = TOMOE_CHAR_GET_PRIVATE (t_char);
     g_free (priv->charCode);
     priv->charCode = code ? g_strdup (code) : NULL;
-    tomoe_char_set_modified (t_char, 1);
 }
 
 static void
@@ -218,8 +215,6 @@ tomoe_char_set_readings (TomoeChar* t_char, GPtrArray* readings)
     if (readings) {
         g_ptr_array_foreach (readings, _copy_reading_func, priv->readings);
     }
-
-    tomoe_char_set_modified(t_char, 1);
 }
 
 TomoeGlyph*
@@ -246,30 +241,6 @@ tomoe_char_set_glyph (TomoeChar* t_char, TomoeGlyph* glyph)
     if (priv->glyph)
         g_object_unref (G_OBJECT (priv->glyph));
     priv->glyph = g_object_ref (glyph);
-    tomoe_char_set_modified(t_char, 1);
-}
-
-gboolean
-tomoe_char_is_modified (TomoeChar *t_char)
-{
-    TomoeCharPrivate *priv;
-
-    g_return_val_if_fail (TOMOE_IS_CHAR (t_char), FALSE);
-
-    priv = TOMOE_CHAR_GET_PRIVATE (t_char);
-
-    return priv->modified;
-}
-
-void
-tomoe_char_set_modified (TomoeChar *chr, gboolean modified)
-{
-    TomoeCharPrivate *priv;
-
-    g_return_if_fail (TOMOE_IS_CHAR (chr));
-
-    priv = TOMOE_CHAR_GET_PRIVATE (chr);
-    priv->modified = modified;
 }
 
 gint

@@ -72,9 +72,6 @@ void            tomoe_char_set_readings         (TomoeChar     *t_char,
 TomoeGlyph     *tomoe_char_get_glyph            (TomoeChar     *t_char);
 void            tomoe_char_set_glyph            (TomoeChar     *t_char,
                                                  TomoeGlyph    *glyph);
-gboolean        tomoe_char_is_modified          (TomoeChar     *chr);
-void            tomoe_char_set_modified         (TomoeChar     *chr,
-                                                 gboolean       modified);
 
 /**
  * @brief Compare two tomoe_letter.
