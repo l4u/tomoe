@@ -1,5 +1,11 @@
 2006-11-22  Takuro Ashie  <ashie@home.ne.jp>
 
+	* ext/ruby/tomoe-rb-handwrite.c: Rename.
+	* ext/ruby/tomoe-rb-writing.c: Add.
+	* ext/ruby/Makefile.am: Follow above.
+
+2006-11-22  Takuro Ashie  <ashie@home.ne.jp>
+
 	* ext/ruby/tomoe-rb-handwrite.c, lib/tomoe-char.[ch],
 	  lib/tomoe-context.[ch], lib/tomoe-dict.c,
 	  lib/tomoe-recognizer-impl.h, lib/tomoe-recognizer.[ch],

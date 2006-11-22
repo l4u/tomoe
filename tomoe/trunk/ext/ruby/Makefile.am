@@ -23,8 +23,8 @@ tomoe_la_SOURCES = \
 	tomoe-rb-config.c \
 	tomoe-rb-context.c \
 	tomoe-rb-dict.c \
-	tomoe-rb-handwrite.c \
-	tomoe-rb-recognizer.c
+	tomoe-rb-recognizer.c \
+	tomoe-rb-writing.c
 
 tomoe_la_LDFLAGS = \
 	-module \
