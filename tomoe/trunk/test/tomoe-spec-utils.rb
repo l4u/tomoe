@@ -4,6 +4,16 @@ require 'tomoe'
 
 $KCODE = "u"
 
+class TomoeSpecBase
+  def setup
+    setup_context
+  end
+
+  def teardown
+    teardown_context
+  end
+end
+
 module TomoeSpecUtils
   def self.included(base)
     base.class_eval do
@@ -13,15 +23,15 @@ module TomoeSpecUtils
   end
 
   module Base
-    def setup
+    def setup_context
     end
 
-    def teardown
+    def teardown_context
     end
   end
 
   module Config
-    def setup
+    def setup_context
       super
       @base_dir = File.expand_path(File.dirname(__FILE__))
       @top_dir = File.expand_path(File.join(@base_dir, ".."))
@@ -30,7 +40,7 @@ module TomoeSpecUtils
       setup_config_file
     end
 
-    def teardown
+    def teardown_context
       super
     end
 

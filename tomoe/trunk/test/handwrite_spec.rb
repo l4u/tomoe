@@ -1,6 +1,7 @@
 require 'tomoe-spec-utils'
 
 context "Tomoe::Glyph" do
+  inherit TomoeSpecBase
   include TomoeSpecUtils
 
   specify "should each all strokes" do

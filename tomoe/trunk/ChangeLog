@@ -1,5 +1,8 @@
 2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
 
+	* data/Makefile.am, data/meta.xsl, lib/tomoe-dict.c: removed
+	needless meta.xsl.
+
 	* lib/tomoe-handwrite.[ch]: added new API idea *only*.
 
 	* lib/Makefile.am: added G_LOG_DOMAIN.

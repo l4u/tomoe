@@ -57,8 +57,6 @@ struct _TomoeDictPrivate
     char*                filename;
     char*                name;
     GPtrArray           *letters;
-    xsltStylesheetPtr    metaXsl;
-    char                *meta_xsl_filename;
 
     gboolean             editable;
     gboolean             modified;
@@ -672,13 +670,7 @@ parse_tomoe_dict (TomoeDict* dict, xmlNodePtr root)
 
         /* read dictionary properties */
         for (prop = root->properties; prop; prop = prop->next) {
-            if (0 == xmlStrcmp(prop->name, BAD_CAST "meta")) {
-                const char* metaxsl = (const char*) prop->children->content;
-                priv->meta_xsl_filename = g_strdup (metaxsl);
-                gchar *path = g_build_filename (TOMOEDATADIR, metaxsl, NULL);
-                priv->metaXsl = xsltParseStylesheetFile (BAD_CAST path);
-                g_free (path);
-            } else if (0 == xmlStrcmp(prop->name, BAD_CAST "name")) {
+            if (0 == xmlStrcmp(prop->name, BAD_CAST "name")) {
                 priv->name = g_strdup ((const char*) prop->children->content);
             }
         }
