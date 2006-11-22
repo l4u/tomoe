@@ -2,41 +2,7 @@
 
 #include "tomoe-rb.h"
 
-#define _SELF(obj) (TOMOE_CONTEXT(RVAL2GOBJ(obj)))
-#define RVAL2TGLYPH(obj) (tc_glyph_from_rval(obj))
-
-static TomoeGlyph *
-tc_glyph_from_rval(VALUE rb_glyph)
-{
-    int i, glyph_len;
-    TomoeGlyph *glyph;
-
-    glyph_len = RARRAY(rb_glyph)->len;
-
-    glyph = tomoe_glyph_new();
-    tomoe_glyph_alloc(glyph, glyph_len);
-
-    for (i = 0; i < glyph_len; i++) {
-        int j, stroke_len;
-        VALUE rb_stroke;
-        TomoeStroke *stroke;
-
-        rb_stroke = RARRAY(rb_glyph)->ptr[i];
-        stroke_len = RARRAY(rb_stroke)->len;
-        stroke = &(glyph->strokes[i]);
-        tomoe_stroke_init(stroke, stroke_len);
-
-        for (j = 0; j < stroke_len; j++) {
-            VALUE rb_point;
-            rb_point = RARRAY(rb_stroke)->ptr[j];
-            stroke->points[j].x = NUM2INT(RARRAY(rb_point)->ptr[0]);
-            stroke->points[j].y = NUM2INT(RARRAY(rb_point)->ptr[1]);
-        }
-
-    }
-
-    return glyph;
-}
+#define _SELF(obj) RVAL2TCTX(obj)
 
 static VALUE
 tc_add_dict(VALUE self, VALUE dict)
@@ -58,15 +24,10 @@ tc_load_config(int argc, VALUE *argv, VALUE self)
 }
 
 static VALUE
-tc_search_by_strokes(VALUE self, VALUE input)
+tc_search_by_strokes(VALUE self, VALUE glyph)
 {
-    GList *result;
-    TomoeGlyph *glyph;
-
-    glyph = RVAL2TGLYPH(input);
-    result = tomoe_context_search_by_strokes(_SELF(self), glyph);
-    g_object_unref(glyph);
-    return GLIST2ARYF(result);
+    return GLIST2ARYF(tomoe_context_search_by_strokes(_SELF(self),
+                                                      RVAL2TGLYPH(glyph)));
 }
 
 static VALUE

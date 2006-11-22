@@ -35,6 +35,7 @@
 G_BEGIN_DECLS
 
 #include "tomoe-config.h"
+#include "tomoe-handwrite.h"
 #include "tomoe-recognizer.h"
 
 /**
