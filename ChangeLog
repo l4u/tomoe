@@ -1,5 +1,13 @@
 2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe.h: added tomoe-handwrite.h.
+
+	* ext/ruby/tomoe-rb-handwrite.c, ext/ruby/tomoe-rb.[ch]: added
+	handwrite bindings.
+	* ext/ruby/tomoe-rb-context.c: used TomoeGlyph.
+
+	* test/context_spec.rb: followed new API.
+
 	* recognizer/tomoe-recognizer-simple-logic.c (get_candidates):
 	suppressed warnings.
 
