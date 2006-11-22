@@ -361,8 +361,8 @@ match_input_to_dict (TomoeGlyph *input, guint input_stroke_id,
 }
 
 static int
-match_dict_to_input (TomoeGlyph *input, guint dict_stroke_id,
-                     TomoeGlyph *dict,  guint input_stroke_id)
+match_dict_to_input (TomoeGlyph *input, guint input_stroke_id,
+                     TomoeGlyph *dict,  guint dict_stroke_id)
 {
     int           d_nop = 0;    /* dict stroke number of points */
     tomoe_metric *d_met = NULL; /* dict stroke metrics */
@@ -554,24 +554,22 @@ get_candidates (TomoeGlyph *input, guint stroke_id, GPtrArray *cands)
                 cand,
                 tomoe_candidate_get_score (cand) + score1);
 
-            if (strk_index < tomoe_glyph_get_number_of_strokes (input)) {
-                /*
-                 * Distance and angle of each characteristic points:
-                 * (Compare dictionary data with handwriting data)
-                 */
-                score2 = match_dict_to_input (glyph, strk_index,
-                                              input, stroke_id);
-                if (score2 < 0) {
-                    free (d_met);
-                    tomoe_candidate_set_score (
-                        cand,
-                        tomoe_candidate_get_score (cand) * 2);
-                    continue;
-                }
+            /*
+             * Distance and angle of each characteristic points:
+             * (Compare dictionary data with handwriting data)
+             */
+            score2 = match_dict_to_input (glyph, strk_index,
+                                          input, stroke_id);
+            if (score2 < 0) {
+                free (d_met);
                 tomoe_candidate_set_score (
-                    cand_p->cand,
-                    tomoe_candidate_get_score (cand) + score2);
+                    cand,
+                    tomoe_candidate_get_score (cand) * 2);
+                continue;
             }
+            tomoe_candidate_set_score (
+                cand_p->cand,
+                tomoe_candidate_get_score (cand) + score2);
 
             g_array_append_val (cand_p->adapted_strokes, strk_index);
             match_flag = TRUE;
