@@ -1,17 +1,13 @@
 require 'tomoe-spec-utils'
 
 context "Tomoe::Context" do
+  inherit TomoeSpecBase
   include TomoeSpecUtils
 
   setup do
-    setup
     @context = Tomoe::Context.new
     test_dir = File.expand_path(File.join(File.dirname(__FILE__)))
     @context.load_config(@config_file.path)
-  end
-
-  teardown do
-    teardown
   end
 
   specify "Search by strokes" do

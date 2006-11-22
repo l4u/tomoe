@@ -22,8 +22,7 @@ CLEANFILES = *~ *.bak
 
 dicdir = $(datadir)/$(PACKAGE)
 dic_DATA = all.xml tomoe-dict.dtd kanjidic2.xml \
-	kanjidic2-original.xml kanjidic2-original.xsl \
-	meta.xsl
+	kanjidic2-original.xml kanjidic2-original.xsl
 
 confdir = $(sysconfdir)/$(PACKAGE)
 conf_DATA = config.xml
