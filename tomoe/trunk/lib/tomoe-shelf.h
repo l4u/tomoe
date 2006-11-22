@@ -32,7 +32,7 @@
 
 G_BEGIN_DECLS
 
-#include <tomoe-dict.h>
+#include "tomoe-dict.h"
 
 #define TOMOE_TYPE_SHELF            (tomoe_shelf_get_type ())
 #define TOMOE_SHELF(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_SHELF, TomoeShelf))

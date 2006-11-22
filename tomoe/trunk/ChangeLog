@@ -1,3 +1,10 @@
+2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-shelf.h, lib/tomoe-candidate.h, lib/tomoe-context.h,
+	lib/tomoe-dict.h, lib/tomoe-recognizer-impl.h,
+	lib/tomoe-recognizer.h: used #include "tomoe-XXX.h" instead of
+	#include <tomoe-XXX.h>.
+
 2006-11-22  Takuro Ashie  <ashie@home.ne.jp>
 
 	* lib/tomoe-handwrite.[ch]: Rename to tomoe-writing.[ch].

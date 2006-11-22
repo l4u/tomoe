@@ -29,7 +29,7 @@
 #define __TOMOE_CANDIDATE_H__
 
 #include <glib-object.h>
-#include <tomoe-char.h>
+#include "tomoe-char.h"
 
 G_BEGIN_DECLS
 
