@@ -1,11 +1,11 @@
 require 'tomoe-spec-utils'
 
-context "Tomoe::Glyph" do
+context "Tomoe::Writing" do
   inherit TomoeSpecBase
   include TomoeSpecUtils
 
   specify "should each all strokes" do
-    glyph = Tomoe::Glyph.new
+    writing = Tomoe::Writing.new
     strokes = [
                [[51, 29], [177, 41]],
                [[99, 65], [219, 77]],
@@ -18,12 +18,12 @@ context "Tomoe::Glyph" do
                [[111, 257], [189, 245]],
               ]
     strokes.each do |first_point, *rest_points|
-      glyph.move_to(*first_point)
+      writing.move_to(*first_point)
       rest_points.each do |x, y|
-        glyph.line_to(x, y)
+        writing.line_to(x, y)
       end
     end
 
-    glyph.collect.should == strokes
+    writing.collect.should == strokes
   end
 end

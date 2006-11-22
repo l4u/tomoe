@@ -11,7 +11,7 @@ context "Tomoe::Context" do
   end
 
   specify "Search by strokes" do
-    glyph = Tomoe::Glyph.new
+    writing = Tomoe::Writing.new
     strokes = [
              [[51, 29], [177, 41]],
              [[99, 65], [219, 77]],
@@ -24,12 +24,12 @@ context "Tomoe::Context" do
              [[111, 257], [189, 245]],
             ]
     strokes.each do |first_point, *rest_points|
-      glyph.move_to(*first_point)
+      writing.move_to(*first_point)
       rest_points.each do |x, y|
-        glyph.line_to(x, y)
+        writing.line_to(x, y)
       end
     end
-    cands = @context.search_by_strokes(glyph)
+    cands = @context.search_by_strokes(writing)
 
     cands.collect {|cand| cand.character.code}.should == ["春", "屠"]
   end
