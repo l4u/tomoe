@@ -1,3 +1,8 @@
+2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/: moved test data for searching by stroke to test/data/.
+	* test/context_spec.rb: used test/data/*.data.
+
 2006-11-22  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* ext/ruby/Makefile.am: Add -version-info $(LT_VERSION_INFO).

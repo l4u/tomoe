@@ -36,6 +36,7 @@ module TomoeSpecUtils
       @base_dir = File.expand_path(File.dirname(__FILE__))
       @top_dir = File.expand_path(File.join(@base_dir, ".."))
       @data_dir = File.join(@top_dir, "data")
+      @test_data_dir = File.join(@base_dir, "data")
       @config_file = Tempfile.new("tomoe")
       setup_config_file
     end
