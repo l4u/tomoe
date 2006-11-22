@@ -22,7 +22,7 @@
  */
 
 #include <stdlib.h>
-#include "tomoe-handwrite.h"
+#include "tomoe-writing.h"
 
 #define TOMOE_GLYPH_GET_PRIVATE(obj) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_GLYPH, TomoeGlyphPrivate))

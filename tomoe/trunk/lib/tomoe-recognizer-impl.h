@@ -33,7 +33,7 @@
 G_BEGIN_DECLS
 
 #include <tomoe-dict.h>
-#include <tomoe-handwrite.h>
+#include <tomoe-writing.h>
 
 typedef void       *(*TomoeRecognizerNewFunc)    (void);
 typedef void        (*TomoeRecognizerFreeFunc)   (void *recognizer);
