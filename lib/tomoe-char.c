@@ -100,7 +100,7 @@ tomoe_char_dispose (GObject *object)
     if (priv->meta)
         g_hash_table_destroy (priv->meta);
     if (priv->readings) {
-        g_list_foreach (priv->readings, (GFunc)g_free, NULL);
+        g_list_foreach (priv->readings, (GFunc)g_object_unref, NULL);
         g_list_free (priv->readings);
     }
 
@@ -184,7 +184,7 @@ tomoe_char_get_readings (TomoeChar* chr)
 }
 
 void
-tomoe_char_add_reading (TomoeChar* chr, const gchar *reading)
+tomoe_char_add_reading (TomoeChar* chr, TomoeReading *reading)
 {
     TomoeCharPrivate *priv;
 
@@ -192,7 +192,7 @@ tomoe_char_add_reading (TomoeChar* chr, const gchar *reading)
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
 
-    priv->readings = g_list_prepend(priv->readings, g_strdup(reading));
+    priv->readings = g_list_prepend(priv->readings, g_object_ref(reading));
 }
 
 TomoeWriting*

@@ -37,14 +37,18 @@ context "Tomoe::Context" do
           end
         end
       end
-      cands = @context.search_by_strokes(writing)
+      query = Tomoe::Query.new
+      query.writing = writing
+      cands = @context.search(query)
 
       [base, cands.collect {|cand| cand.character.code}].should == expected
     end
   end
 
   specify "Search by reading" do
-    cands = @context.search_by_reading("せい")
+    query = Tomoe::Query.new
+    query.add_reading(Tomoe::Reading.new(Tomoe::READING_KUN, "せい"))
+    cands = @context.search(query)
     cands.collect {|cand| cand.character.code}.should == ["脊", "背", "汐"]
   end
 end

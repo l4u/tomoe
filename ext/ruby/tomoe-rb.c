@@ -17,6 +17,8 @@ Init_tomoe(void)
     Init_tomoe_config(mTomoe);
     Init_tomoe_context(mTomoe);
     Init_tomoe_dict(mTomoe);
-    Init_tomoe_handwrite(mTomoe);
+    Init_tomoe_query(mTomoe);
+    Init_tomoe_reading(mTomoe);
     Init_tomoe_recognizer(mTomoe);
+    Init_tomoe_writing(mTomoe);
 }

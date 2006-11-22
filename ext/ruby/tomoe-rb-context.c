@@ -24,18 +24,17 @@ tc_load_config(int argc, VALUE *argv, VALUE self)
 }
 
 static VALUE
-tc_search_by_strokes(VALUE self, VALUE writing)
+tc_search(VALUE self, VALUE query)
 {
-    return GLIST2ARYF(tomoe_context_search_by_strokes(_SELF(self),
-                                                      RVAL2TWTG(writing)));
+    return GLIST2ARYF(tomoe_context_search(_SELF(self), RVAL2TQRY(query)));
 }
 
-static VALUE
-tc_search_by_reading(VALUE self, VALUE reading)
-{
-    return GLIST2ARYF(tomoe_context_search_by_reading(_SELF(self),
-                                                      RVAL2CSTR(reading)));
-}
+/* static VALUE */
+/* tc_advanced_search(VALUE self, VALUE rb_queries) */
+/* { */
+/*     return GLIST2ARYF(tomoe_context_advanced_search(_SELF(self), */
+/*                                                     RVAL2GLIST(queries))); */
+/* } */
 
 
 void
@@ -47,8 +46,6 @@ Init_tomoe_context(VALUE mTomoe)
 
     rb_define_method(cTomoeContext, "add_dict", tc_add_dict, 1);
     rb_define_method(cTomoeContext, "load_config", tc_load_config, -1);
-    rb_define_method(cTomoeContext, "search_by_strokes", tc_search_by_strokes,
-                     1);
-    rb_define_method(cTomoeContext, "search_by_reading", tc_search_by_reading,
-                     1);
+    rb_define_method(cTomoeContext, "search", tc_search, 1);
+/*     rb_define_method(cTomoeContext, "advanced_search", tc_advanced_search, 1); */
 }

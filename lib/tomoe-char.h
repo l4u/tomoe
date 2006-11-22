@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2005 Takuro Ashie <ashie@homa.ne.jp>
  *  Copyright (C) 2006 Juernjakob Harder <juernjakob.harder@gmail.com>
@@ -32,8 +32,8 @@
 
 G_BEGIN_DECLS
 
-#include <glib/garray.h>
-#include <tomoe-writing.h>
+#include "tomoe-reading.h"
+#include "tomoe-writing.h"
 
 #define TOMOE_TYPE_CHAR            (tomoe_char_get_type ())
 #define TOMOE_CHAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_CHAR, TomoeChar))
@@ -63,15 +63,21 @@ GType           tomoe_char_get_type (void) G_GNUC_CONST;
  */
 TomoeChar      *tomoe_char_new                  (void);
 
-const gchar    *tomoe_char_get_code             (const TomoeChar *chr);
+const char     *tomoe_char_get_code             (const TomoeChar *chr);
 void            tomoe_char_set_code             (TomoeChar     *chr,
-                                                 const gchar   *code);
+                                                 const char    *code);
 const GList    *tomoe_char_get_readings         (TomoeChar     *chr);
 void            tomoe_char_add_reading          (TomoeChar     *chr,
-                                                 const gchar   *reading);
-TomoeWriting   *tomoe_char_get_writing          (TomoeChar     *t_char);
-void            tomoe_char_set_writing          (TomoeChar     *t_char,
+                                                 TomoeReading  *reading);
+GList          *tomoe_char_get_radicals         (TomoeChar     *chr);
+void            tomoe_char_add_radical          (TomoeChar     *chr,
+                                                 TomoeChar     *radical);
+TomoeWriting   *tomoe_char_get_writing          (TomoeChar     *chr);
+void            tomoe_char_set_writing          (TomoeChar     *chr,
                                                  TomoeWriting  *writing);
+TomoeChar      *tomoe_char_get_variant          (TomoeChar     *chr);
+void            tomoe_char_set_variant          (TomoeChar     *chr,
+                                                 TomoeChar     *variant);
 
 /**
  * @brief Compare two tomoe_letter.

@@ -63,7 +63,7 @@ struct _TomoeDictPrivate
 };
 
 typedef struct _TomoeDictSearchContext {
-    const char *reading;
+    TomoeReading *reading;
     GList *results;
 } TomoeDictSearchContext;
 
@@ -408,76 +408,70 @@ tomoe_dict_get_size (TomoeDict* dict)
     return TOMOE_DICT_GET_PRIVATE(dict)->letters->len;
 }
 
-void
-tomoe_dict_add_char (TomoeDict* dict, TomoeChar* add)
+gboolean
+tomoe_dict_register_char (TomoeDict* dict, TomoeChar* add)
 {
     TomoeDictPrivate *priv;
 
-    g_return_if_fail(dict);
-    g_return_if_fail(add);
+    g_return_val_if_fail(dict, FALSE);
+    g_return_val_if_fail(add, FALSE);
 
     priv = TOMOE_DICT_GET_PRIVATE(dict);
     g_ptr_array_add (priv->letters, g_object_ref (G_OBJECT (add)));
     g_ptr_array_sort (priv->letters, letter_compare_func);
     tomoe_dict_set_modified (dict, TRUE);
+
+    return TRUE;
 }
 
-void
-tomoe_dict_insert (TomoeDict *dict, int position, TomoeChar *insert)
+gboolean
+tomoe_dict_unregister_char (TomoeDict* dict, const gchar *code_point)
 {
-    if (!dict || !insert) return;
-    /*tomoe_array_insert (dict->letters, position, insert);*/ 
-    /* TODO do we need dict?? */ 
-    tomoe_dict_set_modified (dict, TRUE);
+    GPtrArray *chars;
+    TomoeChar *removed = NULL;
+    guint i, index = -1;
+
+    g_return_val_if_fail(dict, FALSE);
+    g_return_val_if_fail(code_point, FALSE);
+
+    chars = TOMOE_DICT_GET_PRIVATE(dict)->letters;
+    for (i = 0; i < chars->len; i++) {
+        TomoeChar *chr = g_ptr_array_index (chars, i);
+        if (0 == strcmp(tomoe_char_get_code(chr), code_point)) {
+            index = i;
+            removed = chr;
+            break;
+        }
+    }
+
+    if (index >= 0) {
+        g_ptr_array_remove_index (chars, index);
+        g_object_unref (removed);
+        tomoe_dict_set_modified (dict, TRUE);
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }
 
-void
-tomoe_dict_remove_by_char (TomoeDict* dict, TomoeChar* remove)
+TomoeChar *
+tomoe_dict_get_char (TomoeDict* dict, const gchar *code_point)
 {
-    g_return_if_fail(dict);
-
-    g_ptr_array_remove_index (TOMOE_DICT_GET_PRIVATE(dict)->letters,
-                              tomoe_dict_find_index (dict, remove));
-    g_object_unref (G_OBJECT (remove));
-    tomoe_dict_set_modified (dict, TRUE);
-}
-
-void
-tomoe_dict_remove_by_index (TomoeDict* dict, int remove)
-{
-    TomoeChar *c;
-    TomoeDictPrivate *priv;
-
-    g_return_if_fail(dict);
-
-    priv = TOMOE_DICT_GET_PRIVATE(dict);
-    c = (TomoeChar *) g_ptr_array_remove_index (priv->letters, remove);
-    g_object_unref (G_OBJECT (c));
-    tomoe_dict_set_modified (dict, TRUE);
-}
-
-glong
-tomoe_dict_find_index (TomoeDict* dict, TomoeChar* find)
-{
-    TomoeDictPrivate *priv;
+    GPtrArray *chars;
     guint i;
 
-    g_return_val_if_fail(dict, -1);
-
-    priv = TOMOE_DICT_GET_PRIVATE(dict);
-    for (i = 0; i < priv->letters->len; i++) {
-        TomoeChar *letter = g_ptr_array_index (priv->letters, i);
-        if (tomoe_char_compare (letter, find))
-            return (glong)i;
-    }
-    return -1;
-}
-
-TomoeChar*
-tomoe_dict_char_by_index (TomoeDict* dict, int index)
-{
     g_return_val_if_fail(dict, NULL);
-    return g_ptr_array_index (TOMOE_DICT_GET_PRIVATE(dict)->letters, index);
+    g_return_val_if_fail(code_point, NULL);
+
+    chars = TOMOE_DICT_GET_PRIVATE(dict)->letters;
+    for (i = 0; i < chars->len; i++) {
+        TomoeChar *chr = g_ptr_array_index (chars, i);
+        if (0 == strcmp(tomoe_char_get_code(chr), code_point)) {
+            return chr;
+        }
+    }
+
+    return NULL;
 }
 
 const GPtrArray*
@@ -487,6 +481,17 @@ tomoe_dict_get_letters (TomoeDict *dict)
     return TOMOE_DICT_GET_PRIVATE(dict)->letters;
 }
 
+static gint
+tomoe_dict_compare_reading (gconstpointer a, gconstpointer b)
+{
+    TomoeReading *reading, *searched_reading;
+
+    reading = TOMOE_READING(a);
+    searched_reading = TOMOE_READING(b);
+    return strcmp(tomoe_reading_get_reading(reading),
+                  tomoe_reading_get_reading(searched_reading));
+}
+
 static void
 tomoe_dict_collect_chars_by_reading (gpointer data, gpointer user_data)
 {
@@ -494,13 +499,13 @@ tomoe_dict_collect_chars_by_reading (gpointer data, gpointer user_data)
     TomoeDictSearchContext *context = user_data;
 
     if (g_list_find_custom ((GList *)tomoe_char_get_readings (chr),
-                            context->reading, (GCompareFunc)strcmp))
+                            context->reading, tomoe_dict_compare_reading))
         context->results = g_list_prepend (context->results,
                                            tomoe_candidate_new (chr));
 }
 
 GList *
-tomoe_dict_search_by_reading (const TomoeDict* dict, const char *reading)
+tomoe_dict_search_by_reading (TomoeDict* dict, TomoeReading *reading)
 {
     TomoeDictPrivate *priv;
     TomoeDictSearchContext context;
@@ -521,8 +526,12 @@ parse_readings (xmlNodePtr node, TomoeChar* chr)
     xmlNodePtr child;
     for (child = node->children; child; child = child->next) {
         if (child->type == XML_ELEMENT_NODE) {
-            tomoe_char_add_reading (chr,
-                                    (const gchar *)child->children->content);
+            TomoeReading *reading;
+            reading =
+                tomoe_reading_new (TOMOE_READING_ON,
+                                   (const gchar *)child->children->content);
+            tomoe_char_add_reading (chr, reading);
+            g_object_unref (reading);
         }
     }
 }

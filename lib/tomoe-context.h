@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2006 Juernjakob Harder <juernjakob.harder@gmail.com>
  *
@@ -34,6 +34,7 @@ G_BEGIN_DECLS
 
 #include "tomoe-candidate.h"
 #include "tomoe-dict.h"
+#include "tomoe-query.h"
 
 #define TOMOE_TYPE_CONTEXT            (tomoe_context_get_type ())
 #define TOMOE_CONTEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_CONTEXT, TomoeContext))
@@ -69,35 +70,23 @@ TomoeContext    *tomoe_context_new      (void);
  * @param filename - Name of dictionary file to load.
  * @return The TomoeContext.
  */
-void             tomoe_context_add_dict       (TomoeContext       *ctx,
+void            tomoe_context_add_dict        (TomoeContext       *ctx,
                                                TomoeDict          *dict);
-GList           *tomoe_context_get_dict_names (TomoeContext       *ctx);
-TomoeDict       *tomoe_context_get_dict       (TomoeContext       *ctx,
+GList          *tomoe_context_get_dict_names  (TomoeContext       *ctx);
+TomoeDict      *tomoe_context_get_dict        (TomoeContext       *ctx,
                                                const gchar        *name);
-gboolean         tomoe_context_remove_dict    (TomoeContext       *ctx,
+gboolean        tomoe_context_remove_dict     (TomoeContext       *ctx,
                                                const gchar        *name);
-void             tomoe_context_load_config    (TomoeContext       *ctx,
+void            tomoe_context_load_config     (TomoeContext       *ctx,
                                                const gchar        *config_file);
-void             tomoe_context_save           (TomoeContext       *ctx);
+void            tomoe_context_save            (TomoeContext       *ctx);
 
 
-/**
- * @brief Match strokes of TomoeChar with input.
- * @param ctx      - Pointer to the TomoeContext object.
- * @param input    - Pointer to TomoeWriting matchkey.
- * @return The array of TomoeCandidate.
- */
-GList          *tomoe_context_search_by_strokes (TomoeContext       *ctx,
-                                                 TomoeWriting       *input);
+GList          *tomoe_context_search          (TomoeContext       *ctx,
+                                               TomoeQuery         *query);
+GList          *tomoe_context_advanced_search (TomoeContext       *ctx,
+                                               GList              *queries);
 
-/**
- * @brief Match reading of TomoeChar with input.
- * @param ctx     - Pointer to the TomoeContext object.
- * @param reading  - Pointer to string matchkey
- * @return The list of TomoeCandidate.
- */
-GList          *tomoe_context_search_by_reading  (TomoeContext       *ctx,
-                                                  const char         *reading);
 G_END_DECLS
 
 #endif /* __TOMOE_CONTEXT_H__ */

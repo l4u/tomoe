@@ -33,6 +33,10 @@ G_BEGIN_DECLS
 #define RVAL2TCTX(obj) (TOMOE_CONTEXT(RVAL2GOBJ(obj)))
 #define RVAL2TDIC(obj) (TOMOE_DICT(RVAL2GOBJ(obj)))
 #define RVAL2TWTG(obj) (TOMOE_WRITING(RVAL2GOBJ(obj)))
+#define RVAL2TQRY(obj) (TOMOE_QUERY(RVAL2GOBJ(obj)))
+#define RVAL2TRDG(obj) (TOMOE_READING(RVAL2GOBJ(obj)))
+
+#define RVAL2TRT(obj) (RVAL2GENUM(obj, TOMOE_TYPE_READING_TYPE))
 
 void Init_tomoe(void);
 void Init_tomoe_candidate(VALUE mTomoe);
@@ -40,8 +44,10 @@ void Init_tomoe_char(VALUE mTomoe);
 void Init_tomoe_config(VALUE mTomoe);
 void Init_tomoe_context(VALUE mTomoe);
 void Init_tomoe_dict(VALUE mTomoe);
-void Init_tomoe_handwrite(VALUE mTomoe);
+void Init_tomoe_query(VALUE mTomoe);
+void Init_tomoe_reading(VALUE mTomoe);
 void Init_tomoe_recognizer(VALUE mTomoe);
+void Init_tomoe_writing(VALUE mTomoe);
 
 #endif /* __TOMOE_RB_H__ */
 
