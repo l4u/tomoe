@@ -31,16 +31,6 @@ INCLUDES = \
 	-I$(top_srcdir)/lib \
 	-I$(top_builddir)/lib
 
-noinst_PROGRAMS = \
-	testtomoe
-
-testtomoe_SOURCES = \
-	testtomoe.c
-testtomoe_LDADD = \
-	$(GLIB_LIBS) \
-	$(top_builddir)/lib/libtomoe.la \
-	-lm
-
 EXTRA_DIST = \
 	haru \
 	natu \

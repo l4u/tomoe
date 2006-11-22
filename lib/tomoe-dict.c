@@ -318,7 +318,6 @@ tomoe_dict_save (TomoeDict* dict)
     for (i = 0; i < num; i++) {
         xmlNodePtr charNode = xmlNewChild (root, NULL, BAD_CAST "character", NULL);
         TomoeChar* chr = (TomoeChar*)g_ptr_array_index (priv->letters, i);
-        GPtrArray *readings = tomoe_char_get_readings (chr);
         TomoeWriting* writing = tomoe_char_get_writing (chr);
         const char* code = tomoe_char_get_code (chr);
         xmlNewChild (charNode, NULL, BAD_CAST "literal", BAD_CAST code);
@@ -340,16 +339,24 @@ tomoe_dict_save (TomoeDict* dict)
                 xmlNewChild (strokelistNode, NULL, BAD_CAST "s", BAD_CAST buf);
             }
         }
-        if (readings->len) {
-            guint readings_num = readings->len;
-            xmlNodePtr readingsNode = xmlNewChild (charNode, NULL, BAD_CAST "readings", NULL);
-            for (k = 0; k < readings_num; k++)
-                xmlNewChild (readingsNode, NULL, BAD_CAST "r", g_ptr_array_index (readings, k));
+
+        {
+            const GList *readings, *reading;
+
+            readings = tomoe_char_get_readings (chr);
+            if (readings) {
+                xmlNodePtr readingsNode;
+                readingsNode = xmlNewChild (charNode, NULL,
+                                            BAD_CAST "readings", NULL);
+                for (reading = readings; reading; reading = reading->next) {
+                    xmlNewChild (readingsNode, NULL, BAD_CAST "r",
+                                 reading->data);
+                }
+            }
         }
+
         tomoe_char_meta_data_foreach (chr, tomoe_dict_append_meta_data,
                                       charNode);
-
-        TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
     }
 
     xmlSaveFormatFileEnc(priv->filename, doc, "UTF-8", 1);
@@ -485,31 +492,11 @@ tomoe_dict_collect_chars_by_reading (gpointer data, gpointer user_data)
 {
     TomoeChar *chr = data;
     TomoeDictSearchContext *context = user_data;
-    guint reading_num, i;
-    gboolean find = FALSE;
-    GPtrArray *readings;
 
-    readings = tomoe_char_get_readings (chr);
-
-    /* check for available reading data */
-    if (!readings->len) {
-        TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
-        return;
-    }
-
-    reading_num = readings->len;
-    for (i = 0; i < reading_num; i++) {
-        const char* r = (const char*) g_ptr_array_index (readings, i);
-        if (0 == strcmp (r, context->reading)) {
-            find = TRUE;
-            break;
-        }
-    }
-    if (find)
+    if (g_list_find_custom ((GList *)tomoe_char_get_readings (chr),
+                            context->reading, (GCompareFunc)strcmp))
         context->results = g_list_prepend (context->results,
                                            tomoe_candidate_new (chr));
-
-    TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
 }
 
 GList *
@@ -534,10 +521,8 @@ parse_readings (xmlNodePtr node, TomoeChar* chr)
     xmlNodePtr child;
     for (child = node->children; child; child = child->next) {
         if (child->type == XML_ELEMENT_NODE) {
-            GPtrArray *readings = tomoe_char_get_readings (chr);
-            g_ptr_array_add (readings, strdup ((const char*)child->children->content));
-            tomoe_char_set_readings (chr, readings);
-            TOMOE_PTR_ARRAY_FREE_ALL (readings, g_free);
+            tomoe_char_add_reading (chr,
+                                    (const gchar *)child->children->content);
         }
     }
 }

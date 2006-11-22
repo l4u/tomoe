@@ -63,12 +63,12 @@ GType           tomoe_char_get_type (void) G_GNUC_CONST;
  */
 TomoeChar      *tomoe_char_new                  (void);
 
-const char     *tomoe_char_get_code             (const TomoeChar *t_char);
-void            tomoe_char_set_code             (TomoeChar     *t_char,
-                                                 const char    *code);
-GPtrArray      *tomoe_char_get_readings         (TomoeChar     *t_char);
-void            tomoe_char_set_readings         (TomoeChar     *t_char,
-                                                 GPtrArray     *readings);
+const gchar    *tomoe_char_get_code             (const TomoeChar *chr);
+void            tomoe_char_set_code             (TomoeChar     *chr,
+                                                 const gchar   *code);
+const GList    *tomoe_char_get_readings         (TomoeChar     *chr);
+void            tomoe_char_add_reading          (TomoeChar     *chr,
+                                                 const gchar   *reading);
 TomoeWriting   *tomoe_char_get_writing          (TomoeChar     *t_char);
 void            tomoe_char_set_writing          (TomoeChar     *t_char,
                                                  TomoeWriting  *writing);

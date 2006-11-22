@@ -1,3 +1,11 @@
+2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-char.[ch]:
+	- tomoe_char_get_readings() returns GList * instead of GPtrArray *.
+	- add tomoe_char_add_reading() instead of tomoe_char_set_reading().
+	* lib/tomoe-dict.c: followed new API.
+	* test/: removed testtomoe.c.
+
 2006-11-22  Takuro Ashie  <ashie@home.ne.jp>
 
 	* ext/ruby/tomoe-rb-handwrite.c: Rename.
