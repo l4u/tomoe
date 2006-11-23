@@ -24,6 +24,7 @@ context "Tomoe::Writing" do
       end
     end
 
-    writing.collect.should == strokes
+    writing.strokes.should == strokes
+    writing.collect{|stroke| stroke}.should == strokes
   end
 end

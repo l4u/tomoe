@@ -321,19 +321,30 @@ tomoe_dict_save (TomoeDict* dict)
         TomoeWriting* writing = tomoe_char_get_writing (chr);
         const char* code = tomoe_char_get_code (chr);
         xmlNewChild (charNode, NULL, BAD_CAST "literal", BAD_CAST code);
-        unsigned int k;
 
         if (writing) {
-            xmlNodePtr strokelistNode = xmlNewChild (charNode, NULL, BAD_CAST "strokelist", NULL);
-            for (k = 0; k < tomoe_writing_get_number_of_strokes (writing); k++) {
-                unsigned int j;
+            const GList *strokes, *stroke_node;
+            xmlNodePtr strokelistNode;
+            strokelistNode = xmlNewChild (charNode, NULL,
+                                          BAD_CAST "strokelist", NULL);
+
+            strokes = tomoe_writing_get_strokes (writing);
+            for (stroke_node = strokes;
+                 stroke_node;
+                 stroke_node = g_list_next (stroke_node)) {
+                GList *points, *point_node;
                 char buf[256]; /* FIXME overrun possible */
                 strcpy (buf, "");
-                for (j = 0; j < tomoe_writing_get_number_of_points (writing, k); j++) {
-                    gint x, y;
+
+                points = stroke_node->data;
+                for (point_node = points;
+                     point_node;
+                     point_node = g_list_next (point_node)) {
+                    TomoePoint *point;
                     char buf2[32];
-                    tomoe_writing_get_point (writing, k, j, &x, &y);
-                    sprintf (buf2, "(%d %d) ", x, y);
+
+                    point = point_node->data;
+                    sprintf (buf2, "(%d %d) ", point->x, point->y);
                     strcat (buf, buf2);
                 }
                 xmlNewChild (strokelistNode, NULL, BAD_CAST "s", BAD_CAST buf);
