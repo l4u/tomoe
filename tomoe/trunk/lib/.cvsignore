@@ -9,3 +9,7 @@ Makefile.in
 *~
 *.rej
 *.orig
+stamp-tomoe-enum-types-h
+stamp-tomoe-enum-types-c
+tomoe-enum-types.h
+tomoe-enum-types.c
