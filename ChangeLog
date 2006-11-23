@@ -1,3 +1,10 @@
+2006-11-23  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-writing.[ch] : reconstructed but still old API
+	exists. Removing them is next step.
+	* lib/tomoe-dict.c, ext/ruby/tomoe-writing.c,
+	test/writing_spec.rb: followed new API.
+
 2006-11-23  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-writing.c: Now tomoe_writing_get_strokes returns correct

@@ -39,6 +39,8 @@ G_BEGIN_DECLS
 #define TOMOE_IS_WRITING_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_WRITING))
 #define TOMOE_WRITING_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_WRITING, TomoeWritingClass))
 
+#define TOMOE_TYPE_POINT              (tomoe_point_get_type ())
+
 typedef struct _TomoeWriting      TomoeWriting;
 typedef struct _TomoeWritingClass TomoeWritingClass;
 
@@ -84,7 +86,13 @@ gboolean        tomoe_writing_get_last_point    (TomoeWriting  *writing,
                                                  gint          *y);
 void            tomoe_writing_remove_last_stroke(TomoeWriting  *writing);
 
-GList          *tomoe_writing_get_strokes       (TomoeWriting  *writing);
+const GList    *tomoe_writing_get_strokes       (TomoeWriting  *writing);
+
+
+GType           tomoe_point_get_type            (void) G_GNUC_CONST;
+TomoePoint     *tomoe_point_new                 (gint x, gint y);
+TomoePoint     *tomoe_point_copy                (const TomoePoint *point);
+void            tomoe_point_free                (TomoePoint *point);
 
 G_END_DECLS
 

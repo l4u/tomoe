@@ -34,19 +34,14 @@ struct _TomoeWritingPrivate
 {
     GList *stroke_first;
     GList *stroke_last;
-};
-
-struct _TomoeStroke
-{
-    GList *point_first;
-    GList *point_last;
+    guint  number_of_strokes;
 };
 
 G_DEFINE_TYPE (TomoeWriting, tomoe_writing, G_TYPE_OBJECT)
 
 static void tomoe_writing_dispose (GObject *object);
-static TomoePoint  *_point_new  (gint x, gint y);
-static TomoeStroke *_stroke_new (gint x, gint y);
+static GList       *_stroke_new   (gint x, gint y);
+static void         _stroke_free  (GList *stroke);
 
 static void
 tomoe_writing_class_init (TomoeWritingClass *klass)
@@ -98,49 +93,40 @@ tomoe_writing_move_to (TomoeWriting *writing, gint x, gint y)
     if (!priv->stroke_first)
         priv->stroke_first = priv->stroke_last;
     priv->stroke_last = g_list_last (priv->stroke_last);
+    priv->number_of_strokes++;
 }
 
 void
 tomoe_writing_line_to (TomoeWriting *writing, gint x, gint y)
 {
     TomoeWritingPrivate *priv;
-    TomoeStroke *s;
+    GList *stroke;
 
     g_return_if_fail (TOMOE_IS_WRITING (writing));
 
     priv = TOMOE_WRITING_GET_PRIVATE(writing);
     g_return_if_fail (priv->stroke_last);
 
-    s = priv->stroke_last->data;
-    g_return_if_fail (s);
+    stroke = priv->stroke_last->data;
+    g_return_if_fail (stroke);
 
-    s->point_last = g_list_append (s->point_last, _point_new (x, y));
-    s->point_last = g_list_last (s->point_last);
+    priv->stroke_last->data = g_list_append (stroke, tomoe_point_new (x, y));
 }
 
 void
 tomoe_writing_clear (TomoeWriting *writing)
 {
     TomoeWritingPrivate *priv;
-    GList *node;
 
     priv = TOMOE_WRITING_GET_PRIVATE(writing);
     g_return_if_fail (priv);
 
-    for (node = priv->stroke_first; node; node = g_list_next (node)) {
-        TomoeStroke *s;
-
-        if (!node->data) continue;
-
-        s = node->data;
-        g_list_foreach (s->point_first, (GFunc) g_free, NULL);
-        g_list_free (s->point_first);
-        g_free (s);
-    }
+    g_list_foreach (priv->stroke_first, (GFunc)_stroke_free, NULL);
     g_list_free (priv->stroke_first);
 
     priv->stroke_first = NULL;
     priv->stroke_last  = NULL;
+    priv->number_of_strokes = 0;
 }
 
 guint
@@ -153,33 +139,31 @@ tomoe_writing_get_number_of_strokes (TomoeWriting *writing)
     priv = TOMOE_WRITING_GET_PRIVATE(writing);
     g_return_val_if_fail (priv, 0);
 
-    return g_list_length (priv->stroke_first);
+    return priv->number_of_strokes;
 }
 
 guint
-tomoe_writing_get_number_of_points (TomoeWriting *writing, guint stroke)
+tomoe_writing_get_number_of_points (TomoeWriting *writing, guint stroke_index)
 {
     TomoeWritingPrivate *priv;
-    TomoeStroke *s;
+    GList *stroke;
 
     g_return_val_if_fail (TOMOE_IS_WRITING (writing), 0);
 
     priv = TOMOE_WRITING_GET_PRIVATE(writing);
     g_return_val_if_fail (priv && priv->stroke_first, 0);
 
-    s = g_list_nth_data (priv->stroke_first, stroke);
-    g_return_val_if_fail (s, 0);
-
-    return g_list_length (s->point_first);
+    stroke = g_list_nth_data (priv->stroke_first, stroke_index);
+    return g_list_length (stroke);
 }
 
 gboolean
-tomoe_writing_get_point (TomoeWriting *writing, guint stroke, guint point,
-                       gint *x, gint *y)
+tomoe_writing_get_point (TomoeWriting *writing, guint stroke_index,
+                         guint point_index, gint *x, gint *y)
 {
     TomoeWritingPrivate *priv;
-    TomoeStroke *s;
-    TomoePoint *p;
+    GList *stroke;
+    TomoePoint *point;
 
     if (x) *x = 0;
     if (y) *y = 0;
@@ -189,15 +173,14 @@ tomoe_writing_get_point (TomoeWriting *writing, guint stroke, guint point,
     priv = TOMOE_WRITING_GET_PRIVATE(writing);
     g_return_val_if_fail (priv && priv->stroke_first, FALSE);
 
-    s = g_list_nth_data (priv->stroke_first, stroke);
-    g_return_val_if_fail (s, FALSE);
-    g_return_val_if_fail (s->point_first, FALSE);
+    stroke = g_list_nth_data (priv->stroke_first, stroke_index);
+    g_return_val_if_fail (stroke, FALSE);
 
-    p = g_list_nth_data (s->point_first, point);
-    g_return_val_if_fail (p, FALSE);
+    point = g_list_nth_data (stroke, point_index);
+    g_return_val_if_fail (point, FALSE);
 
-    if (x) *x = p->x;
-    if (y) *y = p->y;
+    if (x) *x = point->x;
+    if (y) *y = point->y;
 
     return TRUE;
 }
@@ -206,8 +189,8 @@ gboolean
 tomoe_writing_get_last_point (TomoeWriting *writing, gint *x, gint *y)
 {
     TomoeWritingPrivate *priv;
-    TomoeStroke *s;
-    TomoePoint *p;
+    GList *stroke;
+    TomoePoint *point;
 
     if (x) *x = 0;
     if (y) *y = 0;
@@ -217,13 +200,13 @@ tomoe_writing_get_last_point (TomoeWriting *writing, gint *x, gint *y)
     priv = TOMOE_WRITING_GET_PRIVATE(writing);
     g_return_val_if_fail (priv && priv->stroke_last, FALSE);
 
-    s = priv->stroke_last->data;
-    g_return_val_if_fail (s && s->point_last && s->point_last->data, FALSE);
+    stroke = priv->stroke_last->data;
+    g_return_val_if_fail (g_list_last(stroke)->data, FALSE);
 
-    p = s->point_last->data;
+    point = g_list_last(stroke)->data;
 
-    if (x) *x = p->x;
-    if (y) *y = p->y;
+    if (x) *x = point->x;
+    if (y) *y = point->y;
 
     return TRUE;
 }
@@ -232,7 +215,7 @@ void
 tomoe_writing_remove_last_stroke (TomoeWriting *writing)
 {
     TomoeWritingPrivate *priv;
-    TomoeStroke *s;
+    GList *stroke;
 
     g_return_if_fail (TOMOE_IS_WRITING (writing));
 
@@ -240,40 +223,28 @@ tomoe_writing_remove_last_stroke (TomoeWriting *writing)
     g_return_if_fail (priv);
     if (!priv->stroke_last) return;
 
-    s = priv->stroke_last->data;
-    g_return_if_fail (s);
+    stroke = priv->stroke_last->data;
+    g_return_if_fail (stroke);
 
-    g_list_foreach (s->point_first, (GFunc) g_free, NULL);
-    g_list_free (s->point_first);
-
-    priv->stroke_last = g_list_remove (priv->stroke_last, s);
+    priv->stroke_last = g_list_remove (priv->stroke_last, stroke);
     priv->stroke_last = g_list_last (priv->stroke_last);
     if (!priv->stroke_last)
         priv->stroke_first = NULL;
-    g_free (s);
+    priv->number_of_strokes--;
+
+    _stroke_free (stroke);
 }
 
-GList *
+const GList *
 tomoe_writing_get_strokes (TomoeWriting  *writing)
 {
-    TomoeWritingPrivate *priv;
-    GList *strokes = NULL;
-    GList *list;
-
     g_return_val_if_fail (TOMOE_IS_WRITING (writing), NULL);
 
-    priv = TOMOE_WRITING_GET_PRIVATE(writing);
-
-    for (list = priv->stroke_last; list; list = g_list_previous (list)) {
-        TomoeStroke *stroke = (TomoeStroke *) list->data;
-        strokes = g_list_prepend (strokes, stroke->point_first);
-    }
-
-    return strokes;
+    return TOMOE_WRITING_GET_PRIVATE(writing)->stroke_first;
 }
 
-static TomoePoint *
-_point_new (gint x, gint y)
+TomoePoint *
+tomoe_point_new (gint x, gint y)
 {
     TomoePoint *p = g_new (TomoePoint, 1);
 
@@ -285,17 +256,50 @@ _point_new (gint x, gint y)
     return p;
 }
 
-static TomoeStroke *
+TomoePoint *
+tomoe_point_copy (const TomoePoint *point)
+{
+    TomoePoint *new_point;
+
+    g_return_val_if_fail (point, NULL);
+
+    new_point = g_new (TomoePoint, 1);
+    *new_point = *point;
+    return new_point;
+}
+
+void
+tomoe_point_free (TomoePoint *point)
+{
+    g_return_if_fail (point);
+
+    g_free (point);
+}
+
+GType
+tomoe_point_get_type (void)
+{
+    static GType our_type = 0;
+
+    if (our_type == 0)
+        our_type =
+            g_boxed_type_register_static (g_intern_static_string ("TomoePoint"),
+                                          (GBoxedCopyFunc)tomoe_point_copy,
+                                          (GBoxedFreeFunc)tomoe_point_free);
+  return our_type;
+}
+
+static GList *
 _stroke_new (gint x, gint y)
 {
-    TomoeStroke *s = g_new (TomoeStroke, 1);
+    return g_list_append (NULL, tomoe_point_new (x, y));
+}
 
-    g_return_val_if_fail (s, NULL);
-
-    s->point_first = g_list_append (NULL, _point_new (x, y));
-    s->point_last  = s->point_first;
-
-    return s;
+static void
+_stroke_free (GList *stroke)
+{
+    g_list_foreach (stroke, (GFunc) g_free, NULL);
+    g_list_free (stroke);
 }
 
 /*
