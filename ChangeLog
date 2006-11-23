@@ -1,5 +1,10 @@
 2006-11-23  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/context_spec.rb: make check without make install is available.
+	* lib/tomoe-context.[ch] (tomoe_context_load_recognizer): added.
+	* lib/tomoe-recognizer.[ch]: can specify loaded module.
+	* ext/ruby/tomoe-rb-context.c: added Tomoe::Context#load_recognizer.
+
 	* lib/tomoe-writing.[ch] : reconstructed but still old API
 	exists. Removing them is next step.
 	* lib/tomoe-dict.c, ext/ruby/tomoe-writing.c,

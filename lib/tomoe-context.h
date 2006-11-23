@@ -79,6 +79,9 @@ gboolean        tomoe_context_remove_dict     (TomoeContext       *ctx,
                                                const gchar        *name);
 void            tomoe_context_load_config     (TomoeContext       *ctx,
                                                const gchar        *config_file);
+void            tomoe_context_load_recognizer (TomoeContext       *ctx,
+                                               const gchar        *base_dir,
+                                               const gchar        *name);
 void            tomoe_context_save            (TomoeContext       *ctx);
 
 

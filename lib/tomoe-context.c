@@ -61,7 +61,7 @@ tomoe_context_init (TomoeContext *context)
 
     priv->shelf      = tomoe_shelf_new ();
     priv->config     = NULL;
-    priv->recognizer = tomoe_recognizer_new ();
+    priv->recognizer = NULL;
 }
 
 TomoeContext*
@@ -162,6 +162,22 @@ tomoe_context_load_config (TomoeContext *ctx, const char *config_file)
 }
 
 void
+tomoe_context_load_recognizer (TomoeContext       *ctx,
+                               const gchar        *base_dir,
+                               const gchar        *name)
+{
+    TomoeContextPrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_CONTEXT(ctx));
+
+    priv = TOMOE_CONTEXT_GET_PRIVATE(ctx);
+    if (priv->recognizer)
+        g_object_unref (priv->recognizer);
+
+    priv->recognizer = tomoe_recognizer_new (base_dir, name);
+}
+
+void
 tomoe_context_save (TomoeContext *context)
 {
     TomoeContextPrivate *priv;
@@ -196,6 +212,9 @@ tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
     if (!names) return matched;
 
     priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+    if (!priv->recognizer)
+        priv->recognizer = tomoe_recognizer_new (NULL, NULL);
+
     for (name = names; name; name = name->next) {
         TomoeDict *dict;
 
