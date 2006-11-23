@@ -56,7 +56,8 @@ struct _TomoeRecognizerClass
 };
 
 GType            tomoe_recognizer_get_type (void) G_GNUC_CONST;
-TomoeRecognizer *tomoe_recognizer_new      (void);
+TomoeRecognizer *tomoe_recognizer_new      (const gchar *base_dir,
+                                            const gchar *name);
 
 /**
  * @brief Match strokes of tomoe_char with input.

@@ -115,13 +115,14 @@ tomoe_recognizer_close_module (GModule *module, void *context)
 }
 
 static gboolean
-tomoe_recognizer_load(TomoeRecognizer *recognizer, const char *name)
+tomoe_recognizer_load(TomoeRecognizer *recognizer, const gchar *base_dir,
+                      const gchar *name)
 {
     gboolean success = FALSE;
-    gchar *mod_path;
     GModule *module;
+    gchar *mod_path;
 
-    mod_path = g_module_build_path(RECOGNIZERDIR, name);
+    mod_path = g_module_build_path(base_dir, name);
     module = g_module_open(mod_path, G_MODULE_BIND_LAZY);
 
     if (module) {
@@ -150,29 +151,38 @@ tomoe_recognizer_load(TomoeRecognizer *recognizer, const char *name)
 }
 
 static void
-tomoe_recognizer_find_recognizer(TomoeRecognizer *recognizer)
+tomoe_recognizer_find_recognizer(TomoeRecognizer *recognizer,
+                                 const gchar *base_dir, const gchar *name)
 {
     GDir *dir;
 
-    dir = g_dir_open(RECOGNIZERDIR, 0, NULL);
-    if (dir) {
-        const gchar *entry;
+    if (!base_dir)
+        base_dir = RECOGNIZERDIR;
 
-        while ((entry = g_dir_read_name(dir))) {
-            if (tomoe_recognizer_load(recognizer, entry)) break;
+    if (name) {
+        tomoe_recognizer_load(recognizer, base_dir, name);
+    } else {
+        dir = g_dir_open(base_dir, 0, NULL);
+        if (dir) {
+            gboolean loaded = FALSE;
+            const gchar *entry;
+
+            while (loaded || (entry = g_dir_read_name(dir))) {
+                loaded = tomoe_recognizer_load(recognizer, base_dir, entry);
+            }
+
+            g_dir_close(dir);
         }
-
-        g_dir_close(dir);
     }
 }
 
 TomoeRecognizer *
-tomoe_recognizer_new (void)
+tomoe_recognizer_new (const gchar *base_dir, const gchar *name)
 {
     TomoeRecognizer *recognizer;
 
     recognizer = g_object_new(TOMOE_TYPE_RECOGNIZER, NULL);
-    tomoe_recognizer_find_recognizer(recognizer);
+    tomoe_recognizer_find_recognizer(recognizer, base_dir, name);
 
     return recognizer;
 }

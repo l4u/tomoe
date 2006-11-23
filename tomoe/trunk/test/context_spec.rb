@@ -8,6 +8,7 @@ context "Tomoe::Context" do
     @context = Tomoe::Context.new
     test_dir = File.expand_path(File.join(File.dirname(__FILE__)))
     @context.load_config(@config_file.path)
+    @context.load_recognizer(@recognizer_dir, "simple")
   end
 
   def numbers_to_point(str)
