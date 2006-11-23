@@ -1,3 +1,11 @@
+2006-11-23  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* lib/tomoe-writing.c: Now tomoe_writing_get_strokes returns correct
+	stroke list. But the return value is allocated-list, so caller have to
+	call g_list_free. This style is not suited for other functions in
+	TOMOE. Well, hello, Kouhei, could you please fix the internal data structures in
+	TomoeWriting object?
+
 2006-11-22  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-candidate.[ch], lib/tomoe-char.[ch]: cleanup.

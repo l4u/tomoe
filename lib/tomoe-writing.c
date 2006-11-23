@@ -253,16 +253,23 @@ tomoe_writing_remove_last_stroke (TomoeWriting *writing)
     g_free (s);
 }
 
-const GList *
+GList *
 tomoe_writing_get_strokes (TomoeWriting  *writing)
 {
     TomoeWritingPrivate *priv;
+    GList *strokes = NULL;
+    GList *list;
 
     g_return_val_if_fail (TOMOE_IS_WRITING (writing), NULL);
 
     priv = TOMOE_WRITING_GET_PRIVATE(writing);
 
-    return priv->stroke_first;
+    for (list = priv->stroke_last; list; list = g_list_previous (list)) {
+        TomoeStroke *stroke = (TomoeStroke *) list->data;
+        strokes = g_list_prepend (strokes, stroke->point_first);
+    }
+
+    return strokes;
 }
 
 static TomoePoint *
