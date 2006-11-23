@@ -124,7 +124,7 @@ static void
 tomoe_shelf_collect_dict_name (gpointer key, gpointer value, gpointer user_data)
 {
     gchar *name = key;
-    GList **names = user_data;
+    GList **names = (GList **) user_data;
     
     *names = g_list_prepend(*names, g_strdup(name));
 }
