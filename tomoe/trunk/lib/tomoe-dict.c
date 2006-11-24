@@ -29,10 +29,6 @@
 #include <string.h>
 #include <libxml/xmlreader.h>
 #include <math.h>
-#include <libxslt/xslt.h>
-#include <libxslt/xsltInternals.h>
-#include <libxslt/transform.h>
-#include <libxslt/xsltutils.h>
 #include <glib.h>
 #include <glib/gi18n.h>
 
@@ -95,11 +91,8 @@ static void parse_character           (xmlNodePtr       node,
                                        TomoeChar*       lttr);
 static void parse_strokelist          (xmlNodePtr       node,
                                        TomoeChar*       lttr);
-static int  check_dict_xsl            (const char*      filename);
 static void parse_tomoe_dict          (TomoeDict*       t_dict,
                                        xmlNodePtr       root);
-static void parse_alien_dict          (TomoeDict*       t_dict,
-                                       const char*      filename);
 static gint letter_compare_func       (gconstpointer    a,
                                        gconstpointer    b);
 
@@ -171,6 +164,7 @@ tomoe_dict_new (const char* filename, gboolean editable)
 {
     TomoeDict* dict;
     TomoeDictPrivate *priv;
+    xmlDocPtr doc;
 
     if (!filename && !*filename) return NULL;
 
@@ -180,19 +174,11 @@ tomoe_dict_new (const char* filename, gboolean editable)
                         NULL);
     priv = TOMOE_DICT_GET_PRIVATE (dict);
 
-    if (0 == check_dict_xsl (filename)) {
-        /* native tomoe dictionary */
-        xmlDocPtr doc = xmlParseFile (filename);
+    doc = xmlParseFile (filename);
+    if (doc)
+        parse_tomoe_dict (dict, xmlDocGetRootElement (doc));
+    xmlFreeDoc (doc);
 
-        if (doc)
-            parse_tomoe_dict (dict, xmlDocGetRootElement (doc));
-
-        xmlFreeDoc (doc);
-    }
-    else /* non native dictionary */
-        parse_alien_dict (dict, filename);
-
-    xsltCleanupGlobals ();
     xmlCleanupParser ();
 
     if (priv->letters) {
@@ -632,27 +618,6 @@ parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
     }
 }
 
-static int
-check_dict_xsl (const char* filename)
-{
-    char* xslname = NULL;
-    int len;
-    FILE* f;
-
-    if (!(xslname = strdup(filename))) return 0;
-    if ((len = strlen(xslname)) < 3) return 0;
-
-    xslname[len - 2] = 's'; /* xml > xsl */
-
-    f = fopen(xslname, "r");
-    free(xslname);
-    if (!f)
-        return 0; /* no xsl available */
-    fclose(f);
-
-    return 1;
-}
-
 static void
 parse_tomoe_dict (TomoeDict* dict, xmlNodePtr root)
 {
@@ -688,36 +653,6 @@ parse_tomoe_dict (TomoeDict* dict, xmlNodePtr root)
             }
         }
     }
-}
-
-static void
-parse_alien_dict (TomoeDict* dict, const char* filename)
-{
-    char* xslname = strdup (filename);
-    int len;
-    xsltStylesheetPtr cur = NULL;
-    xmlDocPtr doc, res;
-    const char* param[1];
-    param[0] = NULL;
-
-    if (!xslname) return;
-    if ((len = strlen (xslname)) < 3) return;
-    xslname[len - 2] = 's'; /* xml > xsl */
-
-    xmlSubstituteEntitiesDefault (1);
-    xmlLoadExtDtdDefaultValue = 1;
-    cur = xsltParseStylesheetFile (BAD_CAST xslname);
-    doc = xmlParseFile (filename);
-    /* translate to native */
-    res = xsltApplyStylesheet (cur, doc, param);
-
-    /* load native dictionary */
-    parse_tomoe_dict (dict, xmlDocGetRootElement (res));
-
-    xsltFreeStylesheet (cur);
-    xmlFreeDoc (res);
-    xmlFreeDoc (doc);
-
 }
 
 static gint

@@ -1,5 +1,9 @@
 2006-11-24  Kouhei Sutou  <kou@cozmixng.org>
 
+	* configure.in: used pkg-config for checking libxml.
+	* configure.in, lib/Makefile.am, lib/tomoe-dict.c: removed
+	dependency on libxslt but there still is dependency on xsltproc.
+
 	* lib/tomoe-recognizer.c (tomoe_recognizer_search): check whether
 	module is loaded or not.
 	(tomoe_recognizer_find_recognizer): fixed inverted condition.
