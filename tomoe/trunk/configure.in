@@ -345,15 +345,9 @@ if test "$ruby_available" = "yes"; then
   RUBY_LIBS="$rbconfig_LIBRUBYARG"
   RUBY_LDFLAGS="-L$rbconfig_libdir"
 
-  RUBY_SITE_LIBDIR="$rbconfig_sitelibdir"
-  RUBY_SITE_ARCHDIR="$rbconfig_sitearchdir"
-
   AC_SUBST(RUBY_CFLAGS)
   AC_SUBST(RUBY_LIBS)
   AC_SUBST(RUBY_LDFLAGS)
-
-  AC_SUBST(RUBY_SITE_LIBDIR)
-  AC_SUBST(RUBY_SITE_ARCHDIR)
 
   _SAVE_CFLAGS=$CFLAGS
   ruby_undef_package_macros="
@@ -376,6 +370,33 @@ if test "$ruby_available" = "yes"; then
 		     [$ruby_undef_package_macros])
   fi
   CFLAGS=$_SAVE_CFLAGS
+
+  AC_MSG_CHECKING([where to install Ruby extensions])
+  AC_CACHE_VAL([tomoe_cv_ruby_archdir],
+		 [tomoe_cv_ruby_archdir="$rbconfig_sitearchdir"])
+  AC_ARG_WITH([ruby-extdir],
+                AC_HELP_STRING([--with-ruby-extdir=EXTDIR],
+                               [install Ruby bindings in EXTDIR
+                                (default is same as ruby's one)]),
+                [tomoe_ruby_extdir="$withval"],
+                [tomoe_ruby_extdir="$tomoe_cv_ruby_archdir"])
+  RUBY_EXTDIR="$tomoe_ruby_extdir"
+  AC_MSG_RESULT([$RUBY_EXTDIR])
+
+  AC_MSG_CHECKING([where to install Ruby scripts])
+  AC_CACHE_VAL([tomoe_cv_ruby_sitedir],
+                 [tomoe_cv_ruby_sitedir="$rbconfig_sitelibdir"])
+  AC_ARG_WITH([ruby-libdir],
+                AC_HELP_STRING([--with-ruby-libdir=LIBDIR],
+                               [install Ruby scripts for bindings in LIBDIR
+                                (default is same as ruby's one)]),
+                [tomoe_ruby_libdir="$withval"],
+                [tomoe_ruby_libdir="$tomoe_cv_ruby_sitedir"])
+  RUBY_LIBDIR="$tomoe_ruby_libdir"
+  AC_MSG_RESULT([$RUBY_LIBDIR])
+
+  AC_SUBST(RUBY_EXTDIR)
+  AC_SUBST(RUBY_LIBDIR)
 fi
 
 AM_CONDITIONAL([WITH_RUBY], [test "$ruby_available" = "yes"])
