@@ -36,10 +36,10 @@ tc_search(VALUE self, VALUE query)
 }
 
 /* static VALUE */
-/* tc_advanced_search(VALUE self, VALUE rb_queries) */
+/* tc_multi_search(VALUE self, VALUE rb_queries) */
 /* { */
-/*     return GLIST2ARYF(tomoe_context_advanced_search(_SELF(self), */
-/*                                                     RVAL2GLIST(queries))); */
+/*     return GLIST2ARYF(tomoe_context_multi_search(_SELF(self), */
+/*                                                  RVAL2GLIST(queries))); */
 /* } */
 
 
@@ -53,5 +53,5 @@ Init_tomoe_context(VALUE mTomoe)
     rb_define_method(cTomoeContext, "load_config", tc_load_config, -1);
     rb_define_method(cTomoeContext, "load_recognizer", tc_load_recognizer, -1);
     rb_define_method(cTomoeContext, "search", tc_search, 1);
-/*     rb_define_method(cTomoeContext, "advanced_search", tc_advanced_search, 1); */
+/*     rb_define_method(cTomoeContext, "multi_search", tc_multi_search, 1); */
 }

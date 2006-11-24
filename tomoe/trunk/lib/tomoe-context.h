@@ -80,7 +80,7 @@ void            tomoe_context_save            (TomoeContext       *ctx);
 
 GList          *tomoe_context_search          (TomoeContext       *ctx,
                                                TomoeQuery         *query);
-GList          *tomoe_context_advanced_search (TomoeContext       *ctx,
+GList          *tomoe_context_multi_search    (TomoeContext       *ctx,
                                                GList              *queries);
 
 G_END_DECLS

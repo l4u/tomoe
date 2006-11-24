@@ -1,5 +1,9 @@
 2006-11-24  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-context.h, ext/ruby/tomoe-rb-context.c: renamed
+	tomoe_context_advanced_search() to
+	tomoe_context_multi_search(). (not implemented yet)
+
 	* lib/tomoe-context.[ch]: removed TomoeDict related API.
 	* lib/tomoe-config.[ch]: removed tomoe_config_setup_context() and
 	added tomoe_config_make_shelf() instead.
