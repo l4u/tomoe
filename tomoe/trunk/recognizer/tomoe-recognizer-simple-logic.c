@@ -88,9 +88,10 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
     input_stroke_num = tomoe_writing_get_number_of_strokes (input);
     g_return_val_if_fail (input_stroke_num > 0, NULL);
 
-    first_cands = g_ptr_array_new ();
     letters = tomoe_dict_get_letters(dict);
-    if (!letters) return NULL;
+    g_return_val_if_fail (letters, NULL);
+
+    first_cands = g_ptr_array_new ();
     letters_num = letters->len;
 
     for (i = 0; i < letters_num; i++) {
