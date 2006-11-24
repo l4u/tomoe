@@ -2,6 +2,7 @@
 
 	* lib/tomoe-recognizer.c (tomoe_recognizer_search): check whether
 	module is loaded or not.
+	(tomoe_recognizer_find_recognizer): fixed inverted condition.
 
 	* configure.in, ext/ruby/Makefile.am: made Ruby's installed
 	library and extension directories are customizable.
