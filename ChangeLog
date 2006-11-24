@@ -1,5 +1,11 @@
 2006-11-24  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
+	* recognizer/tomoe-recognizer.c: Fix a vintage bug.
+	Now accuracy of recognition increased.
+	* test/data/matsu.data: update.
+
+2006-11-24  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
 	* lib/tomoe-writing.c: remove_last_stroke works fine.
 
 2006-11-24  Hiroyuki Ikezoe  <poincare@ikezoe.net>

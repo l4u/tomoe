@@ -543,8 +543,8 @@ get_candidates (GList *points, GPtrArray *cands)
             d4 = dist_tomoe_points (pi, pw);
 
             /* threshold is (angle of bigining line) % 45[degree] (PI/4)*/
-            if (d1 > LIMIT_LENGTH &&
-                d2 > LIMIT_LENGTH &&
+            if (d3 > LIMIT_LENGTH &&
+                d4 > LIMIT_LENGTH &&
                 abs (d_met[0].angle - i_met[0].angle) > M_PI_4) {
                 free (d_met);
                 continue;
