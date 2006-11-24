@@ -32,7 +32,7 @@
 
 G_BEGIN_DECLS
 
-#include "tomoe-context.h"
+#include "tomoe-shelf.h"
 
 #define TOMOE_TYPE_CONFIG            (tomoe_config_get_type ())
 #define TOMOE_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_CONFIG, TomoeConfig))
@@ -60,8 +60,7 @@ TomoeConfig     *tomoe_config_new                 (const char   *config_file);
 void             tomoe_config_load                (TomoeConfig  *config);
 void             tomoe_config_save                (TomoeConfig  *config);
 const gchar     *tomoe_config_get_filename        (TomoeConfig  *config);
-void             tomoe_config_setup_context       (TomoeConfig  *config,
-                                                   TomoeContext *context);
+TomoeShelf      *tomoe_config_make_shelf          (TomoeConfig  *config);
 gint             tomoe_config_get_default_user_db (TomoeConfig  *config);
 
 G_END_DECLS
