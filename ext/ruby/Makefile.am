@@ -1,9 +1,9 @@
 # -*- Mode: Makefile; tab-width: 8; indent-tabs-mode: t; -*-
 
-rubylibdir = $(RUBY_SITE_LIBDIR)
+rubylibdir = $(RUBY_LIBDIR)
 rubylib_DATA = tomoe.rb
 
-rubyarchdir = $(RUBY_SITE_ARCHDIR)
+rubyarchdir = $(RUBY_EXTDIR)
 rubyarch_LTLIBRARIES = tomoe.la
 
 AM_CPPFLAGS = \
