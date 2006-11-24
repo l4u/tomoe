@@ -1,3 +1,7 @@
+2006-11-24  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* recognizer/tomoe-recognizer-simple-logic.c: Plugged a memory leak.
+
 2006-11-23  Kouhei Sutou  <kou@cozmixng.org>
 
 	* test/context_spec.rb: make check without make install is available.
