@@ -212,9 +212,11 @@ tomoe_recognizer_search (const TomoeRecognizer *recognizer,
     TomoeRecognizerPrivate *priv;
     gpointer *p;
 
+    priv = TOMOE_RECOGNIZER_GET_PRIVATE (recognizer);
+    g_return_val_if_fail (priv->module, NULL);
+
     search_func_p = &search_func;
     p = (gpointer *)search_func_p;
-    priv = TOMOE_RECOGNIZER_GET_PRIVATE (recognizer);
     if (tomoe_recognizer_load_func(priv->module,
                                    RECOGNIZER_SEARCH_FUNC, p)) {
         result = search_func(priv->context, dict, input);

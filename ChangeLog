@@ -1,5 +1,8 @@
 2006-11-24  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-recognizer.c (tomoe_recognizer_search): check whether
+	module is loaded or not.
+
 	* configure.in, ext/ruby/Makefile.am: made Ruby's installed
 	library and extension directories are customizable.
 
