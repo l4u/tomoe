@@ -26,31 +26,21 @@
 
 #include <string.h>
 #include <sys/stat.h>
-#include <libxml/xmlreader.h>
 #include <glib.h>
 #include <glib/gi18n.h>
 
 #include "tomoe-config.h"
 #include "glib-utils.h"
 
-#define TOMOE_CONFIG_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_CONFIG, TomoeConfigPrivate))
+#define TOMOE_CONFIG_GET_PRIVATE(obj) \
+  (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_CONFIG, TomoeConfigPrivate))
 
 typedef struct _TomoeConfigPrivate	TomoeConfigPrivate;
 struct _TomoeConfigPrivate
 {
     gchar       *filename;
-    gint         use_system_dictionaries;
-    GPtrArray   *dict_list;
-    gint         default_user_db;
+    GKeyFile    *key_file;
 };
-
-typedef struct _TomoeDictCfg
-{
-    gchar       *filename;
-    gint         dontLoad;
-    gint         writeAccess;
-    gint         user;
-} TomoeDictCfg;
 
 enum
 {
@@ -61,13 +51,13 @@ enum
 
 G_DEFINE_TYPE (TomoeConfig, tomoe_config, G_TYPE_OBJECT)
 
-static const xmlChar* defaultConfig  = BAD_CAST "<?xml version=\"1.0\" standalone=\"no\"?>" \
-                                "	<tomoeConfig>" \
-                                "	<useSystemDictionaries value=\"yes\"/>" \
-                                "</tomoeConfig>";
+static const gchar* default_config =            \
+  "[dictionary]\n"                              \
+  "use_system_dictionaries = true\n"            \
+  "\n";
 
-static const gchar *system_config_file = TOMOESYSCONFDIR "/config.xml";
-static const gchar *default_config_file = "/config.xml";
+static const gchar *system_config_file = TOMOESYSCONFDIR "/config";
+static const gchar *default_config_file = "/config";
 
 static void     tomoe_config_dispose      (GObject       *object);
 static GObject *tomoe_config_constructor  (GType                  type,
@@ -82,10 +72,13 @@ static void     tomoe_config_get_property (GObject       *object,
                                            GValue        *value,
                                            GParamSpec    *pspec);
 
-static TomoeDictCfg*   _tomoe_dict_cfg_new      (void);
-static void            _tomoe_dict_cfg_free     (gpointer data, gpointer user_data);
-static gint            _tomoe_dict_cfg_cmp      (gconstpointer a, gconstpointer b);
-static void            _tomoe_create_config_dir (void);
+static void     _tomoe_create_config_dir (void);
+static gboolean _tomoe_dict_key_file_get_boolean_value (GKeyFile *key_file,
+                                                        const gchar *group,
+                                                        const gchar *key,
+                                                        gboolean default_value);
+static void     _tomoe_dict_load_system_dictionaries   (TomoeConfig *config,
+                                                        TomoeShelf *shelf);
 
 static void
 tomoe_config_class_init (TomoeConfigClass *klass)
@@ -123,34 +116,25 @@ tomoe_config_constructor (GType type, guint n_props,
 
     /* check config file */
     if (!priv->filename || !g_file_test (priv->filename, G_FILE_TEST_EXISTS)) {
-        /* use ~/.tomoe/config.xml */
+        /* use ~/.tomoe/config */
         const gchar *home = g_get_home_dir ();
 
         if (!home) {
             /* use system configuration file */
             priv->filename = g_strdup (system_config_file);
         } else {
+            gchar *src;
+            gsize length;
+
             _tomoe_create_config_dir ();
 
-            priv->filename = g_build_filename (home, "."PACKAGE, default_config_file, NULL);
-            /* if not found, use systemConfigFile */
+            priv->filename = g_build_filename (home, "."PACKAGE,
+                                               default_config_file, NULL);
+            /* if not found, use system config file */
             if (!g_file_test (priv->filename, G_FILE_TEST_EXISTS) &&
-                g_file_test (system_config_file, G_FILE_TEST_EXISTS))
-            {
-                FILE *src_file, *dest_file;
-                char buf[4096];
-                size_t bytes;
-
-                src_file = fopen (system_config_file, "r");
-                dest_file = fopen (priv->filename, "w");
-                while (!feof(src_file))
-                {
-                    bytes = fread (buf, 1, sizeof (buf), src_file);
-                    fwrite (buf, 1, bytes, dest_file);
-                }
-
-                fclose (src_file);
-                fclose (dest_file);
+                g_file_test (system_config_file, G_FILE_TEST_EXISTS) &&
+                g_file_get_contents (system_config_file, &src, &length, NULL)) {
+                g_file_set_contents (priv->filename, src, length, NULL);
             }
         }
     }
@@ -164,7 +148,7 @@ tomoe_config_init (TomoeConfig *config)
     TomoeConfigPrivate *priv = TOMOE_CONFIG_GET_PRIVATE (config);
 
     priv->filename   = NULL;
-    priv->dict_list  = g_ptr_array_new ();
+    priv->key_file   = NULL;
 }
 
 TomoeConfig *
@@ -172,7 +156,7 @@ tomoe_config_new (const char *config_file)
 {
     TomoeConfig *config;
 
-    config = g_object_new(TOMOE_TYPE_CONFIG, 
+    config = g_object_new(TOMOE_TYPE_CONFIG,
                           "filename", config_file,
                           NULL);
 
@@ -187,12 +171,12 @@ tomoe_config_dispose (GObject *object)
     if (priv->filename) {
         g_free (priv->filename);
     }
-
-    if (priv->dict_list) {
-        TOMOE_PTR_ARRAY_FREE_ALL (priv->dict_list, _tomoe_dict_cfg_free);
+    if (priv->key_file) {
+        g_key_file_free (priv->key_file);
     }
+
     priv->filename  = NULL;
-    priv->dict_list = NULL;
+    priv->key_file = NULL;
 
 	if (G_OBJECT_CLASS (tomoe_config_parent_class)->dispose)
 		G_OBJECT_CLASS (tomoe_config_parent_class)->dispose (object);
@@ -207,13 +191,13 @@ tomoe_config_set_property (GObject      *object,
     TomoeConfigPrivate *priv = TOMOE_CONFIG_GET_PRIVATE (object);
 
     switch (prop_id) {
-        case PROP_FILENAME:
-            priv->filename = g_value_dup_string (value);
-            break;
+      case PROP_FILENAME:
+        priv->filename = g_value_dup_string (value);
+        break;
 
-        default:
-            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-            break;
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
     }
 }
 
@@ -226,129 +210,55 @@ tomoe_config_get_property (GObject    *object,
     TomoeConfigPrivate *priv = TOMOE_CONFIG_GET_PRIVATE (object);
 
     switch (prop_id) {
-        case PROP_FILENAME:
-            g_value_set_string (value, priv->filename);
-            break;
+      case PROP_FILENAME:
+        g_value_set_string (value, priv->filename);
+        break;
 
-        default:
-            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-            break;
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
     }
 }
 
 void
 tomoe_config_load (TomoeConfig *config)
 {
-    xmlDocPtr doc;
-    xmlNodePtr root;
-    char* defaultUserDB = NULL;
-    unsigned int i;
+    GKeyFile *key_file;
+    GError *error = NULL;
     TomoeConfigPrivate *priv;
 
     g_return_if_fail (config);
 
     priv = TOMOE_CONFIG_GET_PRIVATE (config);
-    doc = priv->filename ? xmlReadFile (priv->filename, NULL, 1)
-                         : xmlReadDoc (defaultConfig, NULL, NULL, 1);
 
-    root = xmlDocGetRootElement(doc);
-
-    priv->default_user_db = -1;
-    priv->use_system_dictionaries = 0;
-
-    if (root && 0 == xmlStrcmp(root->name, BAD_CAST "tomoeConfig")) {
-        xmlNodePtr node;
-
-        for (node = root->children; node; node = node->next) {
-            if (node->type != XML_ELEMENT_NODE)
-                continue;
-
-            if (0 == xmlStrcmp(node->name, BAD_CAST "useSystemDictionaries")) {
-                priv->use_system_dictionaries = 1;
-            } else if (0 == xmlStrcmp(node->name, BAD_CAST "defaultUserDB")) {
-                xmlAttrPtr prop;
-
-                for (prop = node->properties; prop; prop = prop->next) {
-                    if (0 == xmlStrcmp(prop->name, BAD_CAST "file"))
-                        defaultUserDB = g_strdup ((const gchar*)prop->children->content);
-                }
-            } else if (0 == xmlStrcmp(node->name, BAD_CAST "dictionary")) {
-                xmlAttrPtr prop;
-                TomoeDictCfg* dcfg = _tomoe_dict_cfg_new ();
-
-                dcfg->writeAccess = 0;
-                dcfg->dontLoad = 0;
-                dcfg->user = 1;
-                for (prop = node->properties; prop; prop = prop->next) {
-                    if (0 == xmlStrcmp(prop->name, BAD_CAST "file"))
-                        dcfg->filename = g_strdup ((const gchar*)prop->children->content);
-                    else if (0 == xmlStrcmp(prop->name, BAD_CAST "dontLoad"))
-                        dcfg->dontLoad = xmlStrcmp(prop->children->content, BAD_CAST "yes") ? 0 : 1;
-                    else if (0 == xmlStrcmp(prop->name, BAD_CAST "system"))
-                        dcfg->user = xmlStrcmp(prop->children->content, BAD_CAST "yes") ? 1 : 0;
-                }
-
-                /* check if file exists */
-                /* fprintf (stdout, dcfg->filename); */
-                /*if (access (dcfg->filename, F_OK | R_OK)) FIXME*/
-                {/*fprintf(stdout, "..access ok\n");*/
-                    dcfg->writeAccess = /*access (dcfg->filename, W_OK) ? */dcfg->user/* : 0*/;
-                    g_ptr_array_add (priv->dict_list, dcfg);
-                }
-                /*
-                else
-                    {_tomoe_dict_cfg_free (dcfg);fprintf(stdout,"..not found\n");}
-                */
-            }
-
-        }
+    if (priv->key_file) {
+        g_key_file_free (priv->key_file);
+        priv->key_file = NULL;
     }
-    xmlFreeDoc (doc);
 
-    g_ptr_array_sort (priv->dict_list, _tomoe_dict_cfg_cmp);
-
-    if (defaultUserDB) {
-        for (i = 0; i < priv->dict_list->len; i++) {
-            TomoeDictCfg* dcfg = (TomoeDictCfg*)g_ptr_array_index (priv->dict_list, i);
-
-            if (strcmp (defaultUserDB, dcfg->filename) == 0) {
-                priv->default_user_db = i;
-                break;
-            }
+    key_file = g_key_file_new ();
+    if (priv->filename) {
+        if (!g_key_file_load_from_file (key_file, priv->filename,
+                                        G_KEY_FILE_KEEP_COMMENTS |
+                                        G_KEY_FILE_KEEP_TRANSLATIONS,
+                                        &error)) {
+            g_warning (error->message);
+            g_error_free (error);
+            return;
+        }
+    } else {
+        if (!g_key_file_load_from_data (key_file, default_config,
+                                        strlen (default_config),
+                                        G_KEY_FILE_KEEP_COMMENTS |
+                                        G_KEY_FILE_KEEP_TRANSLATIONS,
+                                        &error)) {
+            g_warning (error->message);
+            g_error_free (error);
+            return;
         }
     }
 
-    /* search in TOMOEDATADIR for additional dictionaries */
-    if (priv->use_system_dictionaries) {
-        const gchar *filename;
-        GDir *gdir;
-
-        gdir = g_dir_open (TOMOEDATADIR, 0, NULL);
-        while ((filename = g_dir_read_name (gdir))) {
-            gboolean dup = FALSE;
-
-            if (!g_str_has_suffix (filename, ".xml"))
-                continue;
-            for (i = 0; i < priv->dict_list->len; i++) {
-                TomoeDictCfg *dcfg = g_ptr_array_index (priv->dict_list, i);
-                if (!strcmp (dcfg->filename, filename)) {
-                    dup = TRUE;
-                }
-            }
-
-            if (!dup ) {
-                TomoeDictCfg* dcfg = _tomoe_dict_cfg_new ();
-                dcfg->writeAccess = 0;
-                dcfg->dontLoad = 0;
-                dcfg->user = 0;
-                dcfg->filename = g_strdup (filename);
-                g_ptr_array_add (priv->dict_list, dcfg);
-            }
-        }
-        g_dir_close (gdir);
-
-        g_ptr_array_sort (priv->dict_list, _tomoe_dict_cfg_cmp);
-    }
+    priv->key_file = key_file;
 }
 
 void
@@ -359,115 +269,91 @@ tomoe_config_save (TomoeConfig *config)
     g_return_if_fail (config);
 
     priv = TOMOE_CONFIG_GET_PRIVATE (config);
-    if (priv->filename) {
-        xmlDocPtr doc;
-        const char* param[3];
-        xmlNodePtr root;
-        unsigned int i;
+    if (priv->filename && priv->key_file) {
+        gchar *data;
+        gsize length;
+        GError *error = NULL;
 
-        doc = xmlNewDoc(BAD_CAST "1.0");
-        root = xmlNewNode(NULL, BAD_CAST "tomoeConfig");
-        param[0] = 0;
-
-        xmlDocSetRootElement (doc, root);
-
-        if (priv->use_system_dictionaries)
-            xmlNewChild (root, NULL, BAD_CAST "useSystemDictionaries", NULL);
-
-
-        for (i = 0; i < priv->dict_list->len; i++) {
-            xmlNodePtr node = xmlNewChild (root, NULL, BAD_CAST "dictionary", NULL);
-            TomoeDictCfg *dict = (TomoeDictCfg*)g_ptr_array_index (priv->dict_list, i);
-
-            xmlNewProp (node, BAD_CAST "file", BAD_CAST dict->filename);
-            if (!dict->user)
-                xmlNewProp (node, BAD_CAST "system", BAD_CAST "yes");
-            if (dict->dontLoad)
-                xmlNewProp (node, BAD_CAST "dontLoad", BAD_CAST "yes");
+        data = g_key_file_to_data (priv->key_file, &length, &error);
+        if (error) {
+            g_warning (error->message);
+            g_error_free (error);
+            return;
         }
 
-        xmlSaveFormatFileEnc(priv->filename, doc, "UTF-8", 1);
-        xmlFreeDoc (doc);
+        if (!g_file_set_contents (priv->filename, data, length, &error)) {
+            g_warning (error->message);
+            g_error_free (error);
+            return;
+        }
     }
 }
 
 TomoeShelf *
 tomoe_config_make_shelf (TomoeConfig *config)
 {
-    guint i;
-    GPtrArray *dicts;
+    TomoeConfigPrivate *priv;
     TomoeShelf *shelf;
+    GKeyFile *key_file;
+    guint i;
+    gchar **dicts;
+    gsize dicts_size;
 
     g_return_val_if_fail (config, NULL);
 
+    priv = TOMOE_CONFIG_GET_PRIVATE(config);
+    key_file = priv->key_file;
+    g_return_val_if_fail (key_file, NULL);
+
     shelf = tomoe_shelf_new ();
-    dicts = TOMOE_CONFIG_GET_PRIVATE(config)->dict_list;
-    for (i = 0; i < dicts->len; i++) {
-        TomoeDictCfg* p = g_ptr_array_index (dicts, i);
-        gchar *filename;
+    dicts = g_key_file_get_groups (key_file, &dicts_size);
+    for (i = 0; i < dicts_size; i++) {
+        GError *error = NULL;
+        gchar *filename, *dict_name;
         TomoeDict *dict;
 
-        if (p->dontLoad) continue;
+        dict_name = dicts[i];
+        if (!g_str_has_suffix (dict_name, "-dictionary"))
+            continue;
 
-        if (p->user) {
-            filename = p->filename;
-        } else {
-            filename = g_build_filename (TOMOEDATADIR, p->filename, NULL);
+        filename = g_key_file_get_string (key_file, dict_name, "file", &error);
+        if (error) {
+            g_warning (error->message);
+            g_error_free (error);
+            continue;
         }
 
-        dict = tomoe_dict_new (filename, p->writeAccess);
+        if (!_tomoe_dict_key_file_get_boolean_value (key_file, dict_name,
+                                                     "use", TRUE))
+            continue;
+
+        if (_tomoe_dict_key_file_get_boolean_value (key_file, dict_name,
+                                                    "user", TRUE)) {
+            dict = tomoe_dict_new (filename, TRUE);
+        } else {
+            gchar *dict_filename;
+            dict_filename = g_build_filename (TOMOEDATADIR, filename, NULL);
+            dict = tomoe_dict_new (dict_filename, FALSE);
+            g_free (dict_filename);
+        }
+
         if (dict) {
             tomoe_shelf_add_dict (shelf, dict);
             g_object_unref (dict);
         }
 
-        if (!p->user)
-            g_free (filename);
+        g_free (filename);
     }
 
+    if (_tomoe_dict_key_file_get_boolean_value (key_file,
+                                                "config",
+                                                "use_system_dictionaries",
+                                                TRUE)) {
+        _tomoe_dict_load_system_dictionaries (config, shelf);
+    }
+
+    g_strfreev(dicts);
     return shelf;
-}
-
-gint
-tomoe_config_get_default_user_db (TomoeConfig *config)
-{
-    TomoeConfigPrivate *priv;
-
-    g_return_val_if_fail (config, 0);
-
-    priv = TOMOE_CONFIG_GET_PRIVATE (config);
-    return priv->default_user_db;
-}
-
-/*
- * TomoeDictCfg code
- */
-static TomoeDictCfg*
-_tomoe_dict_cfg_new (void)
-{
-    TomoeDictCfg* p = (TomoeDictCfg*)calloc (1, sizeof (TomoeDictCfg));
-
-    p->filename = NULL;
-    return p;
-}
-
-static void
-_tomoe_dict_cfg_free (gpointer data, gpointer user_data)
-{
-    TomoeDictCfg *p = (TomoeDictCfg*) data;
-    if (!data) return;
-    g_free (p->filename);
-    g_free (p);
-}
-
-static gint
-_tomoe_dict_cfg_cmp (gconstpointer a, gconstpointer b)
-{
-    TomoeDictCfg *ca, *cb;
-    ca = (TomoeDictCfg*) a;
-    cb = (TomoeDictCfg*) b;
-    return ca->user == cb->user ? strcmp(ca->filename, cb->filename) 
-                                : cb->user - ca->user;
 }
 
 static void
@@ -489,6 +375,55 @@ _tomoe_create_config_dir (void)
 
     mkdir (path, 0711);
     g_free (path);
+}
+
+static gboolean
+_tomoe_dict_key_file_get_boolean_value (GKeyFile *key_file,
+                                        const gchar *group,
+                                        const gchar *key,
+                                        gboolean default_value)
+{
+    gboolean result;
+    GError *error = NULL;
+
+    result = g_key_file_get_boolean (key_file, group, key, &error);
+    if (error) {
+        switch (error->code) {
+          case G_KEY_FILE_ERROR_NOT_FOUND:
+            break;
+          case G_KEY_FILE_ERROR_INVALID_VALUE:
+            g_warning (error->message);
+            break;
+        }
+        result = default_value;
+        g_error_free (error);
+    }
+
+    return result;
+}
+
+static void
+_tomoe_dict_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
+{
+    const gchar *filename;
+    GDir *gdir;
+
+    gdir = g_dir_open (TOMOEDATADIR, 0, NULL);
+    while ((filename = g_dir_read_name (gdir))) {
+        TomoeDict *dict;
+
+        if (!g_str_has_suffix (filename, ".xml"))
+            continue;
+        if (tomoe_shelf_has_dict (shelf, filename))
+            continue;
+
+        dict = tomoe_dict_new (filename, FALSE);
+        if (dict) {
+            tomoe_shelf_add_dict (shelf, dict);
+            g_object_unref (dict);
+        }
+    }
+    g_dir_close (gdir);
 }
 
 /*

@@ -1,3 +1,12 @@
+2006-11-25  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-config.[ch]: used GKeyFile instead of XML for
+	configuration file format. GKeyFile was appeared from GLib 2.6. Is
+	it OK?
+	* test/tomoe-spec-utils.rb: followed new API.
+
+	* lib/tomoe-shelf.[ch] (tomoe_shelf_has_dict): added.
+
 2006-11-24  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* recognizer/tomoe-recognizer.c: Fix a vintage bug.
