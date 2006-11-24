@@ -164,11 +164,11 @@ tomoe_recognizer_find_recognizer(TomoeRecognizer *recognizer,
     } else {
         dir = g_dir_open(base_dir, 0, NULL);
         if (dir) {
-            gboolean loaded = FALSE;
             const gchar *entry;
 
-            while (!loaded || (entry = g_dir_read_name(dir))) {
-                loaded = tomoe_recognizer_load(recognizer, base_dir, entry);
+            while ((entry = g_dir_read_name(dir))) {
+                if (tomoe_recognizer_load(recognizer, base_dir, entry))
+                    break;
             }
 
             g_dir_close(dir);
