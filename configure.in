@@ -72,198 +72,20 @@ AC_PATH_PROG(DOXYGEN, doxygen, no)
 AM_CONDITIONAL(HAVE_DOXYGEN, test x$DOXYGEN != xno)
 AC_SUBST(DOXYGEN)
 
-dnl
-dnl The following new parameters were added to offer
-dnl the ability to specify the location of the libxml
-dnl library during linking and compilation.
-dnl
-dnl original work - Mathieu Lacage 30/03/2000
-dnl some tweaking - David H舐deman 30/10/2001
-dnl
+dnl **************************************************************
+dnl Checks for pkgconfig
+dnl **************************************************************
 
-LIBXML_CONFIG_PREFIX=""
-LIBXML_SRC=""
+PKG_PROG_PKG_CONFIG()
 
-AC_ARG_WITH(libxml-prefix,
-        [  --with-libxml-prefix=[PFX]       Specify location of libxml config],
-    LIBXML_CONFIG_PREFIX=$withval
-)
-        
-AC_ARG_WITH(libxml-include-prefix,
-        [  --with-libxml-include-prefix=[PFX]   Specify location of libxml headers],
-        LIBXML_CFLAGS="-I$withval"
-)
+dnl **************************************************************
+dnl Checks for libxml
+dnl **************************************************************
 
-AC_ARG_WITH(libxml-libs-prefix,
-        [  --with-libxml-libs-prefix=[PFX]  Specify location of libxml libs],
-        LIBXML_LIBS="-L$withval"
-)
-
-AC_ARG_WITH(libxml-src,
-    [  --with-libxml-src=[DIR]              For libxml thats not installed yet (sets all three above)],
-    LIBXML_SRC="$withval"
-)
-AC_SUBST(LIBXML_SRC)
-
-dnl
-dnl where is xml2-config
-dnl
-
-AC_SUBST(LIBXML_REQUIRED_VERSION)
-AC_MSG_CHECKING(for libxml libraries >= $LIBXML_REQUIRED_VERSION) 
-if test "x$LIBXML_CONFIG_PREFIX" != "x"
-then
-    XML_CONFIG=${LIBXML_CONFIG_PREFIX}/bin/xml2-config
-else
-    XML_CONFIG=xml2-config
-fi
-
-dnl
-dnl imported from libxml2, c.f. #77827 
-dnl
-if test "${GCC}" != "yes" ; then
-    case "${host}" in
-          *-*-hpux* )
-           CFLAGS="${CFLAGS} -Wp,-H30000"
-           ;;
-          *-dec-osf* )
-               CFLAGS="${CFLAGS} -ieee"
-               ;;
-    esac
-else
-    CFLAGS="${CFLAGS} -Wall"
-    case "${host}" in
-          alpha*-*-linux* )
-           CFLAGS="${CFLAGS} -mieee"
-           ;;
-      alpha*-*-osf* )
-           CFLAGS="${CFLAGS} -mieee"
-           ;;
-    esac
-fi
-
-dnl
-dnl Override other variables if LIBXML_SRC is set
-dnl
-
-if test "x$LIBXML_SRC" != "x"
-then
-    CWD=`pwd`
-    if cd $LIBXML_SRC
-    then
-        SRC_DIR=`pwd`
-        XML_CONFIG=${SRC_DIR}/xml2-config
-        LIBXML_CFLAGS="-I${SRC_DIR}/include"
-        LIBXML_LIBS="-L${SRC_DIR}"
-        cd $CWD
-    else
-        AC_MSG_ERROR([libxml source dir not found (${LIBXML_SRC}), typo?])
-    fi
-fi
-
-dnl
-dnl make sure xml2-config is executable,
-dnl test version and init our variables
-dnl
-
-AC_DEFUN([VERSION_TO_NUMBER],
-[`$1 | sed -e 's/libxml //' | awk 'BEGIN { FS = "."; } { printf "%d", ([$]1 * 1000 + [$]2) * 1000 + [$]3;}'`])
-if ${XML_CONFIG} --libs print > /dev/null 2>&1
-then
-    XMLVERS=`$XML_CONFIG --version`
-    if test VERSION_TO_NUMBER(echo $XMLVERS) -ge VERSION_TO_NUMBER(echo $LIBXML_REQUIRED_VERSION)
-    then
-        LIBXML_LIBS="$LIBXML_LIBS `$XML_CONFIG --libs`"
-        LIBXML_CFLAGS="$LIBXML_CFLAGS `$XML_CONFIG --cflags`"
-        AC_MSG_RESULT($XMLVERS found)
-    else
-        AC_MSG_ERROR(Version $XMLVERS found. You need at least libxml2 $LIBXML_REQUIRED_VERSION for this version of libxslt)
-    fi
-else
-    AC_MSG_ERROR([Could not find libxml2 anywhere, check ftp://xmlsoft.org/.])
-fi
-
-AC_SUBST(XML_CONFIG)
-AC_SUBST(LIBXML_LIBS)
-AC_SUBST(LIBXML_CFLAGS)
-
-dnl libxslt
-dnl original work - Mathieu Lacage 30/03/2000
-
-LIBXSLT_PREFIX=""
-AC_ARG_WITH(libxslt-prefix,
-        [  --with-libxslt-prefix=[PFX]    Specify location of libxslt],
-   LIBXSLT_PREFIX="$withval"
-)
-
-if test "x${LIBXSLT_PREFIX}" != "x"
-then
-  AC_MSG_RESULT(Using a libxslt prefix of ${LIBXSLT_PREFIX})
-fi
-
-dnl
-dnl find libxslt
-dnl
-XSLT_CONFIG="xslt-config"
-XSLT_WARNING=""
-AC_SUBST(LIBXSLT_REQUIRED_VERSION)
-AC_MSG_CHECKING(for libxslt libraries >= $LIBXSLT_REQUIRED_VERSION)
-if test "x$LIBXSLT_PREFIX" != "x"
-then
-  if ${LIBXSLT_PREFIX}/bin/xslt-config --libs print > /dev/null 2>&1
-  then
-    XSLT_CONFIG=${LIBXSLT_PREFIX}/bin/xslt-config
-  else
-          XSLT_WARNING="1"
-    XSLT_CONFIG=xslt-config
-  fi
-fi
-
-
-AC_DEFUN([VERSION_TO_NUMBER],
-[`$1 | sed -e 's/libxslt //' | $AWK 'BEGIN { FS = "."; } { printf "%d",
- ([$]1  * 1000 + [$]2) * 1000 + [$]3;}'`])
-
-dnl
-dnl test version and init our variables
-dnl
-if test "x$XSLT_CONFIG" != "x"
-then
-  vers=VERSION_TO_NUMBER($XSLT_CONFIG --version)
-  if test "$vers" -ge VERSION_TO_NUMBER(echo $LIBXSLT_REQUIRED_VERSION)
-  then
-    LIBXSLT_LIBS="-lexslt `$XSLT_CONFIG --libs`"
-    LIBXSLT_CFLAGS="`$XSLT_CONFIG --cflags`"
-    AC_MSG_RESULT(found)
-          if test "x$LIBXSLT_PREFIX" != "x"
-     then
-       AC_MSG_RESULT(
-Don't forget to make sure that ${LIBXSLT_PREFIX}/lib has been added
-  to your LD_LIBRARY_PATH environment variable)
-    else
-      LIBXSLT_PREFIX="$XSLT_CONFIG --prefix"
-          fi
-  else
-    AC_MSG_ERROR(You need at least libxslt $LIBXSLT_REQUIRED_VERSION for this
-  version of xsldbg)
-  fi
-else
-  AC_MSG_ERROR(Could not find libxslt anywhere, check
- ftp://xmlsoft.org/XSLT/.)
-fi
-
-if test "x${XSLT_WARNING}" != "x"
-then
-   AC_MSG_RESULT(
-!!Warning!! using xslt-config in default path
-)
-fi
-
-AC_SUBST(XSLT_CONFIG)
-AC_SUBST(LIBXSLT_PREFIX)
-AC_SUBST(LIBXSLT_LIBS)
-AC_SUBST(LIBXSLT_CFLAGS)
-
+error_message="Could not find libxml2 anywhere, check ftp://xmlsoft.org/."
+PKG_CHECK_MODULES(LIBXML, libxml-2.0,
+                  [],
+                  [AC_MSG_ERROR([$error_message])])
 
 AC_PATH_PROG(XSLTPROC, xsltproc, none)
 
