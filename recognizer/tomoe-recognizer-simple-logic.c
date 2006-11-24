@@ -75,16 +75,18 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
 {
     /* TomoeRecognizerSimple *recognizer = context; */
     GList *matched = NULL;
-    guint i, j;
     GArray *matches = NULL;
     GPtrArray *cands = NULL;
     GPtrArray *first_cands = NULL;
     guint letters_num = 0;
     const GPtrArray *letters = NULL;
+    guint input_stroke_num, i, j;
 
-    if (!input) return 0;
-    if (tomoe_writing_get_number_of_strokes (input) == 0) return 0;
-    if (!dict) return 0;
+    g_return_val_if_fail (input, NULL);
+    g_return_val_if_fail (dict, NULL);
+
+    input_stroke_num = tomoe_writing_get_number_of_strokes (input);
+    g_return_val_if_fail (input_stroke_num > 0, NULL);
 
     first_cands = g_ptr_array_new ();
     letters = tomoe_dict_get_letters(dict);
@@ -101,7 +103,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
         if (!writing) continue;
 
         /* check the number of stroke */
-        if (tomoe_writing_get_number_of_strokes (input) > tomoe_writing_get_number_of_strokes (writing))
+        if (input_stroke_num > tomoe_writing_get_number_of_strokes (writing))
             continue;
 
         /* append a candidate to candidate list */
@@ -112,7 +114,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
     /* Ugly hack! */
     cands = first_cands;
     cands = get_candidates (input, 0, first_cands);
-    for (i = 1; i < tomoe_writing_get_number_of_strokes (input); i++) {
+    for (i = 1; i < input_stroke_num; i++) {
         GPtrArray *tmp;
         tmp = get_candidates(input, i, cands);
         g_ptr_array_free (cands, TRUE);
@@ -128,8 +130,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
         cand = g_ptr_array_index (cands, i);
         adapted = cand->adapted_strokes;
         pj = match_stroke_num (dict, cand->index,
-                               tomoe_writing_get_number_of_strokes (input),
-                               adapted);
+                               input_stroke_num, adapted);
 
         if (pj < 0)
             continue;
