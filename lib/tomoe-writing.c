@@ -157,10 +157,9 @@ tomoe_writing_remove_last_stroke (TomoeWriting *writing)
     stroke = priv->stroke_last->data;
     g_return_if_fail (stroke);
 
-    priv->stroke_last = g_list_remove (priv->stroke_last, stroke);
-    priv->stroke_last = g_list_last (priv->stroke_last);
-    if (!priv->stroke_last)
-        priv->stroke_first = NULL;
+    priv->stroke_first = g_list_remove (priv->stroke_first, stroke);
+    priv->stroke_last = g_list_last (priv->stroke_first);
+
     priv->number_of_strokes--;
 
     _stroke_free (stroke);

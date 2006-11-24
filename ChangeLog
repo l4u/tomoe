@@ -1,5 +1,9 @@
 2006-11-24  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
+	* lib/tomoe-writing.c: remove_last_stroke works fine.
+
+2006-11-24  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
 	* recognizer/tomoe-recognizer-simple-logic.c: Eliminate
 	tomoe_writing_get_point/tomoe_writing_get_number_of_points.
 	I've done it!
