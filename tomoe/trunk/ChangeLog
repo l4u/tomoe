@@ -3,6 +3,8 @@
 	* recognizer/tomoe-recognizer-simple-logic.c: Eliminate
 	tomoe_writing_get_point/tomoe_writing_get_number_of_points.
 	I've done it!
+	* lib/tomoe-writing.[ch]: Removed tomoe_wriing_get_point
+	tomoe_writing_get_number_of_points/tomoe_writing_get_last_point.
 
 2006-11-24  Kouhei Sutou  <kou@cozmixng.org>
 

@@ -73,17 +73,6 @@ void            tomoe_writing_line_to           (TomoeWriting  *writing,
 void            tomoe_writing_clear             (TomoeWriting  *writing);
 guint           tomoe_writing_get_number_of_strokes
                                                 (TomoeWriting  *writing);
-guint           tomoe_writing_get_number_of_points
-                                                (TomoeWriting  *writing,
-                                                 guint          stroke);
-gboolean        tomoe_writing_get_point         (TomoeWriting  *writing,
-                                                 guint          stroke,
-                                                 guint          point,
-                                                 gint          *x,
-                                                 gint          *y);
-gboolean        tomoe_writing_get_last_point    (TomoeWriting  *writing,
-                                                 gint          *x,
-                                                 gint          *y);
 void            tomoe_writing_remove_last_stroke(TomoeWriting  *writing);
 
 const GList    *tomoe_writing_get_strokes       (TomoeWriting  *writing);
