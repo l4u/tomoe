@@ -5,13 +5,6 @@
 #define _SELF(obj) RVAL2TCTX(obj)
 
 static VALUE
-tc_add_dict(VALUE self, VALUE dict)
-{
-    tomoe_context_add_dict(_SELF(self), RVAL2TDIC(dict));
-    return Qnil;
-}
-
-static VALUE
 tc_load_config(int argc, VALUE *argv, VALUE self)
 {
     VALUE filename;
@@ -57,7 +50,6 @@ Init_tomoe_context(VALUE mTomoe)
 
     cTomoeContext = G_DEF_CLASS(TOMOE_TYPE_CONTEXT, "Context", mTomoe);
 
-    rb_define_method(cTomoeContext, "add_dict", tc_add_dict, 1);
     rb_define_method(cTomoeContext, "load_config", tc_load_config, -1);
     rb_define_method(cTomoeContext, "load_recognizer", tc_load_recognizer, -1);
     rb_define_method(cTomoeContext, "search", tc_search, 1);

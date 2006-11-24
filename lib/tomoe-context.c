@@ -59,7 +59,7 @@ tomoe_context_init (TomoeContext *context)
 {
     TomoeContextPrivate *priv = TOMOE_CONTEXT_GET_PRIVATE (context);
 
-    priv->shelf      = tomoe_shelf_new ();
+    priv->shelf      = NULL;
     priv->config     = NULL;
     priv->recognizer = NULL;
 }
@@ -99,53 +99,6 @@ tomoe_context_dispose (GObject *object)
 }
 
 void
-tomoe_context_add_dict (TomoeContext *context, TomoeDict *dict)
-{
-    TomoeContextPrivate *priv;
-    g_return_if_fail (context);
-    g_return_if_fail (dict);
-
-    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
-    tomoe_shelf_add_dict(priv->shelf, dict);
-    if (priv->config)
-        tomoe_config_save(priv->config);
-}
-
-GList *
-tomoe_context_get_dict_names (TomoeContext *context)
-{
-    TomoeContextPrivate *priv;
-    g_return_val_if_fail (context, NULL);
-
-    priv = TOMOE_CONTEXT_GET_PRIVATE(context);
-    return tomoe_shelf_get_dict_names(priv->shelf);
-}
-
-TomoeDict *
-tomoe_context_get_dict (TomoeContext *context, const gchar *name)
-{
-    TomoeContextPrivate *priv;
-    g_return_val_if_fail (context, NULL);
-
-    priv = TOMOE_CONTEXT_GET_PRIVATE(context);
-    return tomoe_shelf_get_dict(priv->shelf, name);
-}
-
-gboolean
-tomoe_context_remove_dict (TomoeContext *context, const gchar *name)
-{
-    TomoeContextPrivate *priv;
-    gboolean success = FALSE;
-    g_return_val_if_fail (context, FALSE);
-
-    priv = TOMOE_CONTEXT_GET_PRIVATE(context);
-    success = tomoe_shelf_remove_dict(priv->shelf, name);
-    if (success && priv->config)
-        tomoe_config_save(priv->config);
-    return success;
-}
-
-void
 tomoe_context_load_config (TomoeContext *ctx, const char *config_file)
 {
     TomoeContextPrivate *priv;
@@ -157,7 +110,7 @@ tomoe_context_load_config (TomoeContext *ctx, const char *config_file)
     priv->config = NULL;
     cfg = tomoe_config_new (config_file);
     tomoe_config_load (cfg);
-    tomoe_config_setup_context (cfg, ctx);
+    priv->shelf = tomoe_config_make_shelf (cfg);
     priv->config = cfg;
 }
 
@@ -185,7 +138,8 @@ tomoe_context_save (TomoeContext *context)
     g_return_if_fail (context);
     priv = TOMOE_CONTEXT_GET_PRIVATE (context);
 
-    tomoe_shelf_save(priv->shelf);
+    if (priv->shelf)
+        tomoe_shelf_save(priv->shelf);
     if (priv->config)
         tomoe_config_save(priv->config);
 }
@@ -203,22 +157,26 @@ static GList *
 tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
 {
     TomoeContextPrivate *priv;
+    TomoeShelf *shelf;
     GList *names, *name;
     GList *matched = NULL;
 
     if (!context) return matched;
 
-    names = tomoe_context_get_dict_names(context);
+    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+    shelf = priv->shelf;
+    if (!shelf) return matched;
+
+    names = tomoe_shelf_get_dict_names(shelf);
     if (!names) return matched;
 
-    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
     if (!priv->recognizer)
         priv->recognizer = tomoe_recognizer_new (NULL, NULL);
 
     for (name = names; name; name = name->next) {
         TomoeDict *dict;
 
-        dict = tomoe_context_get_dict(context, name->data);
+        dict = tomoe_shelf_get_dict(shelf, name->data);
         matched = g_list_concat (tomoe_recognizer_search (priv->recognizer,
                                                           dict, input),
                                  matched);
@@ -231,17 +189,23 @@ tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
 static GList *
 tomoe_context_search_by_reading (TomoeContext *context, TomoeReading *reading)
 {
+    TomoeContextPrivate *priv;
+    TomoeShelf *shelf;
     GList *names, *name;
     GList *results = NULL;
 
     if (!context) return results;
 
-    names = tomoe_context_get_dict_names(context);
+    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+    shelf = priv->shelf;
+    if (!shelf) return results;
+
+    names = tomoe_shelf_get_dict_names(shelf);
     if (!names) return results;
 
     for (name = names; name; name = name->next) {
         TomoeDict *dict;
-        dict = tomoe_context_get_dict(context, name->data);
+        dict = tomoe_shelf_get_dict(shelf, name->data);
         results = g_list_concat (tomoe_dict_search_by_reading (dict, reading),
                                  results);
     }

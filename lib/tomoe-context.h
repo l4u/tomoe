@@ -70,13 +70,6 @@ TomoeContext    *tomoe_context_new      (void);
  * @param filename - Name of dictionary file to load.
  * @return The TomoeContext.
  */
-void            tomoe_context_add_dict        (TomoeContext       *ctx,
-                                               TomoeDict          *dict);
-GList          *tomoe_context_get_dict_names  (TomoeContext       *ctx);
-TomoeDict      *tomoe_context_get_dict        (TomoeContext       *ctx,
-                                               const gchar        *name);
-gboolean        tomoe_context_remove_dict     (TomoeContext       *ctx,
-                                               const gchar        *name);
 void            tomoe_context_load_config     (TomoeContext       *ctx,
                                                const gchar        *config_file);
 void            tomoe_context_load_recognizer (TomoeContext       *ctx,

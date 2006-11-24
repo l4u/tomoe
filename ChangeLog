@@ -1,5 +1,10 @@
 2006-11-24  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-context.[ch]: removed TomoeDict related API.
+	* lib/tomoe-config.[ch]: removed tomoe_config_setup_context() and
+	added tomoe_config_make_shelf() instead.
+	* ext/ruby/tomoe-rb-context.c: followed new API.
+
 	* configure.in: used pkg-config for checking libxml.
 	* configure.in, lib/Makefile.am, lib/tomoe-dict.c: removed
 	dependency on libxslt but there still is dependency on xsltproc.

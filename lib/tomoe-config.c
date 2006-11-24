@@ -391,14 +391,16 @@ tomoe_config_save (TomoeConfig *config)
     }
 }
 
-void
-tomoe_config_setup_context (TomoeConfig *config, TomoeContext *context)
+TomoeShelf *
+tomoe_config_make_shelf (TomoeConfig *config)
 {
     guint i;
     GPtrArray *dicts;
+    TomoeShelf *shelf;
 
-    g_return_if_fail (config);
+    g_return_val_if_fail (config, NULL);
 
+    shelf = tomoe_shelf_new ();
     dicts = TOMOE_CONFIG_GET_PRIVATE(config)->dict_list;
     for (i = 0; i < dicts->len; i++) {
         TomoeDictCfg* p = g_ptr_array_index (dicts, i);
@@ -415,13 +417,15 @@ tomoe_config_setup_context (TomoeConfig *config, TomoeContext *context)
 
         dict = tomoe_dict_new (filename, p->writeAccess);
         if (dict) {
-            tomoe_context_add_dict (context, dict);
+            tomoe_shelf_add_dict (shelf, dict);
             g_object_unref (dict);
         }
 
         if (!p->user)
             g_free (filename);
     }
+
+    return shelf;
 }
 
 gint

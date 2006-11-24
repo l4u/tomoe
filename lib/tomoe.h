@@ -35,9 +35,10 @@
 G_BEGIN_DECLS
 
 #include "tomoe-config.h"
+#include "tomoe-context.h"
 #include "tomoe-enum-types.h"
-#include "tomoe-writing.h"
 #include "tomoe-recognizer.h"
+#include "tomoe-writing.h"
 
 /**
  * @brief Initialize tomoe library.
