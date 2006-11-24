@@ -47,15 +47,26 @@ module TomoeSpecUtils
     end
 
     def setup_config_file
+      files = %w(kanjidic2.xml readingtest.xml all.xml)
+      names = files.collect {|file| File.join(@data_dir, file)}.join(";")
       @config_file.open
-      @config_file.puts(<<-EOX)
-<?xml version="1.0" standalone="no"?>
-<tomoeConfig>
-  <dictionary file="#{File.join(@data_dir, "kanjidic2.xml")}"/>
-  <dictionary file="#{File.join(@data_dir, "readingtest.xml")}"/>
-  <dictionary file="#{File.join(@data_dir, "all.xml")}"/>
-</tomoeConfig>
-EOX
+      @config_file.puts(<<-EOC)
+[config]
+use_system_dictionaries = false
+
+[all-dictionary]
+type = xml
+file = #{File.join(@data_dir, "all.xml")}
+use = true
+
+[kanjidic2-dictionary]
+type = xml
+file = #{File.join(@data_dir, "kanjidic2.xml")}
+
+[readingtest-dictionary]
+file = #{File.join(@data_dir, "readingtest.xml")}
+user = true
+EOC
       @config_file.close
     end
   end

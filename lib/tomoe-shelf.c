@@ -160,6 +160,17 @@ tomoe_shelf_save (TomoeShelf *shelf)
     g_hash_table_foreach(priv->dicts, tomoe_shelf_save_dict, NULL);
 }
 
+gboolean
+tomoe_shelf_has_dict (TomoeShelf *shelf, const gchar *name)
+{
+    TomoeShelfPrivate *priv;
+
+    g_return_if_fail (shelf);
+    priv = TOMOE_SHELF_GET_PRIVATE (shelf);
+
+    return g_hash_table_lookup (priv->dicts, name) != NULL;
+}
+
 /*
 vi:ts=4:nowrap:ai:expandtab
 */
