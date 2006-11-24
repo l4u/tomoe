@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2006 Kouhei Sutou <kou@cozmixng.org>
  *
@@ -53,8 +53,7 @@ struct _cand_priv
 static cand_priv *cand_priv_new               (TomoeChar   *character,
                                                int          index);
 static void       cand_priv_free              (cand_priv   *cand_p);
-static GPtrArray *get_candidates              (TomoeWriting  *writing,
-                                               guint        stroke_id,
+static GPtrArray *get_candidates              (GList       *points,
                                                GPtrArray   *cands);
 static gint       match_stroke_num            (TomoeDict   *dict,
                                                int          letter_index,
@@ -80,6 +79,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
     GPtrArray *first_cands = NULL;
     guint letters_num = 0;
     const GPtrArray *letters = NULL;
+    const GList *input_strokes, *list;
     guint input_stroke_num, i, j;
 
     g_return_val_if_fail (input, NULL);
@@ -112,12 +112,13 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
         g_ptr_array_add (first_cands, cand);
     }
 
-    /* Ugly hack! */
-    cands = first_cands;
-    cands = get_candidates (input, 0, first_cands);
-    for (i = 1; i < input_stroke_num; i++) {
+    input_strokes = tomoe_writing_get_strokes (input);
+
+    cands = get_candidates (input_strokes->data, first_cands);
+    for (list = g_list_next (input_strokes); list; list = g_list_next (list)) {
+        GList *points = (GList *) list->data;
         GPtrArray *tmp;
-        tmp = get_candidates(input, i, cands);
+        tmp = get_candidates (points, cands);
         g_ptr_array_free (cands, TRUE);
         cands = tmp;
     }
@@ -189,23 +190,26 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
  * *******************
  */
 static gint
-stroke_calculate_metrics (TomoeWriting *writing, guint stroke_id, tomoe_metric **met)
+stroke_calculate_metrics (GList *points, tomoe_metric **met)
 {
     guint i = 0;
     gint x1, y1, x2, y2;
     tomoe_metric *m;
     guint n_points;
 
-    /*if (!strk) return 0;*/
-    if (stroke_id >= tomoe_writing_get_number_of_strokes (writing)) return 0;
-    n_points = tomoe_writing_get_number_of_points (writing, stroke_id);
+    g_return_val_if_fail (points, 0);
+    n_points = g_list_length (points);
     if (!n_points) return 0;
 
     m = g_new (tomoe_metric, n_points - 1);
  
     for (i = 0; i < n_points - 1; i++) {
-        tomoe_writing_get_point (writing, stroke_id, i,     &x1, &y1);
-        tomoe_writing_get_point (writing, stroke_id, i + 1, &x2, &y2);
+        TomoePoint *p1 = (TomoePoint *) g_list_nth_data (points, i);
+        TomoePoint *p2 = (TomoePoint *) g_list_nth_data (points, i + 1);
+        x1 = p1->x;
+        y1 = p1->y;
+        x2 = p2->x;
+        y2 = p2->y;
         m[i].a     = x2 - x1;
         m[i].b     = y2 - y1;
         m[i].c     = x2 * y1 - y2 * x1;
@@ -266,6 +270,12 @@ sq_dist (gint x1, gint y1, gint x2, gint y2)
     return SQUARE_LENGTH (x1 - x2, y1 - y2);
 }
 
+static gint
+dist_tomoe_points (TomoePoint *a, TomoePoint *b)
+{
+    return sq_dist (a->x, a->y, b->x, b->y);
+}
+
 /*
  * ************************************
  *  handwriting recognition functions.
@@ -273,8 +283,7 @@ sq_dist (gint x1, gint y1, gint x2, gint y2)
  */
 
 static gint
-match_input_to_dict (TomoeWriting *input, guint input_stroke_id,
-                     TomoeWriting *dict,  guint dict_stroke_id)
+match_input_to_dict (GList *input_points, GList *writing_points)
 {
     int i_nop = 0;              /* input stroke number of points */
     tomoe_metric *i_met = NULL; /* input stroke metrics */
@@ -290,23 +299,23 @@ match_input_to_dict (TomoeWriting *input, guint input_stroke_id,
     int d = 0;
     int ret = 0;
 
-    i_nop = tomoe_writing_get_number_of_points (input, input_stroke_id);
-    stroke_calculate_metrics (input, input_stroke_id, &i_met);
+    i_nop = g_list_length (input_points);
+    stroke_calculate_metrics (input_points, &i_met);
   
-    d_nop = tomoe_writing_get_number_of_points (dict, dict_stroke_id);
-    stroke_calculate_metrics (dict, dict_stroke_id, &d_met);
+    d_nop = g_list_length (writing_points);
+    stroke_calculate_metrics (writing_points, &d_met);
 
     /* 
      * if the length between last point and second last point is lesser than
      * LIMIT_LENGTH, the last itinerary assumes "hane".
      */
     {
-        gint x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+        TomoePoint *p1, *p2;
 
-        tomoe_writing_get_point (input, input_stroke_id, i_nop - 1, &x1, &y1);
-        tomoe_writing_get_point (input, input_stroke_id, i_nop - 2, &x2, &y2);
+        p1 = (TomoePoint *) g_list_nth_data (input_points, i_nop - 1);
+        p2 = (TomoePoint *) g_list_nth_data (input_points, i_nop - 2);
 
-        if (sq_dist(x1, y1, x2, y2) < LIMIT_LENGTH) {
+        if (dist_tomoe_points(p1, p2) < LIMIT_LENGTH) {
             i_k_end = i_nop - 2;
         } else {
             i_k_end = i_nop - 1;
@@ -315,15 +324,16 @@ match_input_to_dict (TomoeWriting *input, guint input_stroke_id,
   
     m = 0;
     for (i_k = 1; i_k < i_k_end; i_k++) {
-        gint i_x = 0, i_y = 0;
+        TomoePoint *pi;
 
-        tomoe_writing_get_point (input, input_stroke_id, i_k, &i_x, &i_y);
+        pi = (TomoePoint *) g_list_nth_data (input_points, i_k);
+
         i_me = i_met[i_k];
         for (d_k = m; d_k < d_nop; d_k++) {
-            gint d_x = 0, d_y = 0;
+            TomoePoint *pw;
 
-            tomoe_writing_get_point (dict, dict_stroke_id, d_k, &d_x, &d_y);
-            d = sq_dist(i_x, i_y, d_x, d_y);
+            pw = (TomoePoint *) g_list_nth_data (writing_points, d_k);
+            d = dist_tomoe_points (pi, pw);
             if (d_k < d_nop - 1) {
                 d_me = d_met[d_k];
                 if (d < LIMIT_LENGTH &&
@@ -333,8 +343,8 @@ match_input_to_dict (TomoeWriting *input, guint input_stroke_id,
                     break;
                 } else {
                     /* Distance between each characteristic points and line */
-                    r = d_me.a * i_x + d_me.b * i_y - d_me.e;
-                    d = abs (d_me.a * i_y - d_me.b * i_x - d_me.c);
+                    r = d_me.a * pi->x + d_me.b * pi->y - d_me.e;
+                    d = abs (d_me.a * pi->y - d_me.b * pi->x - d_me.c);
                     if (0 <= r && r <= d_me.d * d_me.d &&
                         d < LIMIT_LENGTH * d_me.d &&
                         abs (i_me.angle - d_me.angle) < M_PI_2) {
@@ -363,8 +373,7 @@ match_input_to_dict (TomoeWriting *input, guint input_stroke_id,
 }
 
 static int
-match_dict_to_input (TomoeWriting *input, guint input_stroke_id,
-                     TomoeWriting *dict,  guint dict_stroke_id)
+match_dict_to_input (GList *writing_points, GList *input_points)
 {
     int           d_nop = 0;    /* dict stroke number of points */
     tomoe_metric *d_met = NULL; /* dict stroke metrics */
@@ -380,22 +389,22 @@ match_dict_to_input (TomoeWriting *input, guint input_stroke_id,
     int d = 0;
     int ret = 0;
 
-    d_nop = tomoe_writing_get_number_of_points (dict, dict_stroke_id);
-    stroke_calculate_metrics (dict, dict_stroke_id, &d_met);
-    i_nop = tomoe_writing_get_number_of_points (input, input_stroke_id);
-    stroke_calculate_metrics (input, input_stroke_id, &i_met);
+    d_nop = g_list_length (writing_points);
+    stroke_calculate_metrics (writing_points, &d_met);
+    i_nop = g_list_length (input_points);
+    stroke_calculate_metrics (input_points, &i_met);
 
     /* 
      * if the length between last point and second last point is lesser than
      * LIMIT_LENGTH, the last itineraryassumes "hane".
      */
     {
-        gint x1, y1, x2, y2;
+        TomoePoint *p1, *p2;
 
-        tomoe_writing_get_point (dict, dict_stroke_id, d_nop - 1, &x1, &y1);
-        tomoe_writing_get_point (dict, dict_stroke_id, d_nop - 2, &x2, &y2);
+        p1 = (TomoePoint *) g_list_nth_data (writing_points, d_nop - 1);
+        p2 = (TomoePoint *) g_list_nth_data (writing_points, d_nop - 2);
 
-        if (sq_dist (x1, y1, x2, y2) < LIMIT_LENGTH) {
+        if (dist_tomoe_points (p1, p2) < LIMIT_LENGTH) {
             d_k_end = d_nop - 2;
         } else {
             d_k_end = d_nop - 1;
@@ -404,15 +413,15 @@ match_dict_to_input (TomoeWriting *input, guint input_stroke_id,
 
     m = 0;
     for (d_k = 1; d_k < d_k_end - 1; d_k++) /* note difference: -1 */ {
-        gint d_x, d_y;
+        TomoePoint *pw;
 
-        tomoe_writing_get_point (dict, dict_stroke_id, d_k, &d_x, &d_y);
+        pw = (TomoePoint *) g_list_nth_data (writing_points, d_k); 
         d_me = d_met[d_k];
         for (i_k = m; i_k < i_nop; i_k++) {
-            gint i_x, i_y;
+            TomoePoint *pi;
 
-            tomoe_writing_get_point (input, input_stroke_id, i_k, &i_x, &i_y);
-            d = sq_dist (d_x, d_y, i_x, i_y);
+            pi = (TomoePoint *) g_list_nth_data (input_points, i_k); 
+            d = dist_tomoe_points (pw, pi);
             if (i_k < i_nop - 1) {
                 i_me = i_met[i_k];
                 if (d < LIMIT_LENGTH &&
@@ -422,8 +431,8 @@ match_dict_to_input (TomoeWriting *input, guint input_stroke_id,
                     break;
                 } else {
                     /* Distance between each characteristic points and line */
-                    r = i_me.a * d_x + i_me.b * d_y - i_me.e;
-                    d = abs (i_me.a * d_y - i_me.b * d_x - i_me.c);
+                    r = i_me.a * pw->x + i_me.b * pw->y - i_me.e;
+                    d = abs (i_me.a * pw->y - i_me.b * pw->x - i_me.c);
                     if (0 <= r && r <= i_me.d * i_me.d &&
                         d < LIMIT_LENGTH * i_me.d &&
                         abs (d_me.angle - i_me.angle) < M_PI_2) {
@@ -452,11 +461,11 @@ match_dict_to_input (TomoeWriting *input, guint input_stroke_id,
 }
 
 static GPtrArray *
-get_candidates (TomoeWriting *input, guint stroke_id, GPtrArray *cands)
+get_candidates (GList *points, GPtrArray *cands)
 {
     GPtrArray     *rtn_cands;
-    unsigned int   cand_index = 0;
-    unsigned int   strk_index = 0;
+    guint          cand_index = 0;
+    guint          strk_index = 0;
     int            i_nop = 0;    /* input stroke number of points */
     tomoe_metric  *i_met = NULL; /* input stroke metrics */
     int            d_nop = 0;    /* dict stroke number of points */
@@ -464,8 +473,8 @@ get_candidates (TomoeWriting *input, guint stroke_id, GPtrArray *cands)
 
     rtn_cands = g_ptr_array_new ();
 
-    i_nop = tomoe_writing_get_number_of_points (input, stroke_id);
-    stroke_calculate_metrics (input, stroke_id, &i_met);
+    i_nop = g_list_length (points);
+    stroke_calculate_metrics (points, &i_met);
 
     for (cand_index = 0; cand_index < cands->len; cand_index++) {
         gboolean match_flag = FALSE;
@@ -474,18 +483,20 @@ get_candidates (TomoeWriting *input, guint stroke_id, GPtrArray *cands)
         TomoeChar *lttr;
         TomoeWriting *writing;
         TomoeCandidate *cand;
+        GList *writing_strokes;
+        guint stroke_num;
 
         cand_p = g_ptr_array_index (cands, cand_index);
         tmp = _g_array_copy_int_value (cand_p->adapted_strokes);
         cand = TOMOE_CANDIDATE (cand_p->cand);
         lttr = tomoe_candidate_get_character (cand);
         writing = tomoe_char_get_writing (lttr);
+        writing_strokes = (GList *) tomoe_writing_get_strokes (writing);
+        stroke_num = g_list_length (writing_strokes);
 
-        for (strk_index = 0;
-             strk_index < tomoe_writing_get_number_of_strokes (writing);
-             strk_index++)
-        {
-            gint x1, x2, y1, y2;
+        for (strk_index = 0; strk_index < stroke_num; strk_index++) {
+            GList *writing_points = (GList *) g_list_nth_data (writing_strokes, strk_index);
+            TomoePoint *pi, *pw;
             int d1 = 0, d2 = 0;
             int d3 = 0, d4 = 0;
             int score1 = 0, score2 = 0;
@@ -496,21 +507,21 @@ get_candidates (TomoeWriting *input, guint stroke_id, GPtrArray *cands)
                 continue;
             }
 
-            d_nop = tomoe_writing_get_number_of_points (writing, strk_index);
-            stroke_calculate_metrics (writing, strk_index, &d_met);
+            d_nop = g_list_length (writing_points);
+            stroke_calculate_metrics (writing_points, &d_met);
 
             /*
              * Distance between the point and begining point.
              * Distance between the point and ending point.
              * Number of characteristic points.
              */
-            tomoe_writing_get_point (input, stroke_id, 0, &x1, &y1);
-            tomoe_writing_get_point (writing, strk_index, 0, &x2, &y2);
-            d1 = sq_dist (x1, y1, x2, y2);
+            pi = (TomoePoint *) g_list_nth_data (points, 0);
+            pw = (TomoePoint *) g_list_nth_data (writing_points, 0);
+            d1 = dist_tomoe_points (pi, pw);
 
-            tomoe_writing_get_point (input, stroke_id,  i_nop - 1, &x1, &y1);
-            tomoe_writing_get_point (writing, strk_index, d_nop - 1, &x2, &y2);
-            d2 = sq_dist (x1, y1, x2, y2);
+            pi = (TomoePoint *) g_list_nth_data (points, i_nop - 1);
+            pw = (TomoePoint *) g_list_nth_data (writing_points, d_nop - 1);
+            d2 = dist_tomoe_points (pi, pw);
 
             score3 = (d1 + d2);
             tomoe_candidate_set_score (
@@ -523,13 +534,13 @@ get_candidates (TomoeWriting *input, guint stroke_id, GPtrArray *cands)
                 continue;
             }
 
-            tomoe_writing_get_point (input, stroke_id,  0, &x1, &y1);
-            tomoe_writing_get_point (input, stroke_id,  1, &x2, &y2);
-            d3 = sq_dist (x1, y1, x2, y2);
+            pi = (TomoePoint *) g_list_nth_data (points, 0);
+            pw = (TomoePoint *) g_list_nth_data (points, 1);
+            d3 = dist_tomoe_points (pi, pw);
 
-            tomoe_writing_get_point (writing, strk_index, 0, &x1, &y1);
-            tomoe_writing_get_point (writing, strk_index, 1, &x2, &y2);
-            d4 = sq_dist (x1, y1, x2, y2);
+            pi = (TomoePoint *) g_list_nth_data (writing_points, 0);
+            pw = (TomoePoint *) g_list_nth_data (writing_points, 1);
+            d4 = dist_tomoe_points (pi, pw);
 
             /* threshold is (angle of bigining line) % 45[degree] (PI/4)*/
             if (d1 > LIMIT_LENGTH &&
@@ -543,8 +554,7 @@ get_candidates (TomoeWriting *input, guint stroke_id, GPtrArray *cands)
              * Distance and angle of each characteristic points:
              * (Compare handwriting data with dictionary data)
              */
-            score1 = match_input_to_dict (input, stroke_id,
-                                          writing, strk_index);
+            score1 = match_input_to_dict (points, writing_points);
             if (score1 < 0) {
                 free (d_met);
                 tomoe_candidate_set_score (
@@ -560,8 +570,8 @@ get_candidates (TomoeWriting *input, guint stroke_id, GPtrArray *cands)
              * Distance and angle of each characteristic points:
              * (Compare dictionary data with handwriting data)
              */
-            score2 = match_dict_to_input (writing, strk_index,
-                                          input, stroke_id);
+            score2 = match_dict_to_input (writing_points, points);
+            /* score2 = match_dict_to_input (points, writing_points); */
             if (score2 < 0) {
                 free (d_met);
                 tomoe_candidate_set_score (
@@ -576,7 +586,7 @@ get_candidates (TomoeWriting *input, guint stroke_id, GPtrArray *cands)
             g_array_append_val (cand_p->adapted_strokes, strk_index);
             match_flag = TRUE;
 
-            strk_index = tomoe_writing_get_number_of_strokes (writing);
+            strk_index = stroke_num;
 
             free (d_met);
         }
