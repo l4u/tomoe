@@ -1,3 +1,7 @@
+2006-11-26  Kouhei Sutou  <kou@cozmixng.org>
+
+	* configure.in, Makefile.am, doc/: use GTK-Doc instead of Doxygen.
+
 2006-11-25  Kouhei Sutou  <kou@cozmixng.org>
 
 	* configure.in: removed dependency on libxml.
