@@ -36,7 +36,7 @@
 #define TOMOE_CONFIG_GET_PRIVATE(obj) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_CONFIG, TomoeConfigPrivate))
 
-typedef struct _TomoeConfigPrivate	TomoeConfigPrivate;
+typedef struct _TomoeConfigPrivate  TomoeConfigPrivate;
 struct _TomoeConfigPrivate
 {
     gchar       *filename;
@@ -45,8 +45,8 @@ struct _TomoeConfigPrivate
 
 enum
 {
-	PROP_0,
-	PROP_FILENAME
+    PROP_0,
+    PROP_FILENAME
 };
 
 
@@ -206,8 +206,8 @@ tomoe_config_dispose (GObject *object)
     priv->filename  = NULL;
     priv->key_file = NULL;
 
-	if (G_OBJECT_CLASS (tomoe_config_parent_class)->dispose)
-		G_OBJECT_CLASS (tomoe_config_parent_class)->dispose (object);
+    if (G_OBJECT_CLASS (tomoe_config_parent_class)->dispose)
+        G_OBJECT_CLASS (tomoe_config_parent_class)->dispose (object);
 }
 
 static void
@@ -438,7 +438,7 @@ _tomoe_dict_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
 
         if (!g_str_has_suffix (filename, ".xml"))
             continue;
-		path = g_build_filename(TOMOEDATADIR, filename, NULL);
+        path = g_build_filename(TOMOEDATADIR, filename, NULL);
         if (tomoe_shelf_has_dict (shelf, path)) {
             g_free (path);
             continue;
