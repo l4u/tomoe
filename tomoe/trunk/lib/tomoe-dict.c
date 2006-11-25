@@ -41,8 +41,6 @@
 #define DICT_LETTER_INITIAL_SIZE 3049
 #define DICT_LETTER_EXPAND_SIZE 10
 
-extern int xmlLoadExtDtdDefaultValue;
-
 #define TOMOE_DICT_GET_PRIVATE(obj) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_DICT, TomoeDictPrivate))
 
@@ -55,8 +53,6 @@ struct _TomoeDictPrivate
 
     gboolean             editable;
     gboolean             modified;
-
-	GMarkupParseContext *context;
 };
 
 typedef struct _TomoeDictSearchContext {
@@ -150,7 +146,7 @@ tomoe_dict_init (TomoeDict *dict)
     priv->filename = NULL;
     priv->name     = NULL;
     priv->letters  = g_ptr_array_new();
-    priv->context  = NULL;
+    priv->modified = FALSE;
 }
 
 
@@ -158,7 +154,6 @@ TomoeDict*
 tomoe_dict_new (const char* filename, gboolean editable)
 {
     TomoeDict* dict;
-    TomoeDictPrivate *priv;
 
     if (!filename && !*filename) return NULL;
 
@@ -166,11 +161,8 @@ tomoe_dict_new (const char* filename, gboolean editable)
                         "filename", filename,
                         "editable", editable,
                         NULL);
-    priv = TOMOE_DICT_GET_PRIVATE (dict);
 
     tomoe_dict_load (dict);
-
-    priv->modified = FALSE;
 
     return dict;
 }
@@ -736,6 +728,7 @@ static gboolean
 tomoe_dict_load (TomoeDict *dict)
 {
     TomoeDictPrivate *priv = TOMOE_DICT_GET_PRIVATE(dict);
+	GMarkupParseContext *context;
     FILE *f;
     gint bytes;
     gchar buf[4096];
@@ -755,16 +748,13 @@ tomoe_dict_load (TomoeDict *dict)
     data.key = NULL;
     data.value = NULL;
 
-    if (!priv->context) {
-        priv->context = g_markup_parse_context_new (&parser, 0, &data, NULL);
-    }
+    context = g_markup_parse_context_new (&parser, 0, &data, NULL);
 
     while ((bytes = fread (buf, sizeof (char), 4096, f)) > 0) {
         GError *error = NULL;
         gboolean success;
 
-        success = g_markup_parse_context_parse(priv->context, buf, bytes,
-                                               &error);
+        success = g_markup_parse_context_parse(context, buf, bytes, &error);
         if (!success) {
             g_warning("XML parse error!: %s", error->message);
             g_error_free(error);
@@ -773,8 +763,7 @@ tomoe_dict_load (TomoeDict *dict)
     }
 
     fclose (f);
-    g_markup_parse_context_free (priv->context);
-    priv->context = NULL;
+    g_markup_parse_context_free (context);
 
     if (priv->letters)
         g_ptr_array_sort (priv->letters, letter_compare_func);
