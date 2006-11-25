@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libxml/xmlreader.h>
 #include <math.h>
 #include <glib.h>
 #include <glib/gi18n.h>
@@ -50,12 +49,14 @@ extern int xmlLoadExtDtdDefaultValue;
 typedef struct _TomoeDictPrivate TomoeDictPrivate;
 struct _TomoeDictPrivate
 {
-    char*                filename;
-    char*                name;
+    char                *filename;
+    char                *name;
     GPtrArray           *letters;
 
     gboolean             editable;
     gboolean             modified;
+
+	GMarkupParseContext *context;
 };
 
 typedef struct _TomoeDictSearchContext {
@@ -76,25 +77,18 @@ enum
 
 G_DEFINE_TYPE (TomoeDict, tomoe_dict, G_TYPE_OBJECT)
 
-static void tomoe_dict_dispose        (GObject         *object);
-static void tomoe_dict_set_property   (GObject         *object,
-                                       guint            prop_id,
-                                       const GValue    *value,
-                                       GParamSpec      *pspec);
-static void tomoe_dict_get_property   (GObject         *object,
-                                       guint            prop_id,
-                                       GValue          *value,
-                                      GParamSpec      *pspec);
-static void parse_readings            (xmlNodePtr       node,
-                                       TomoeChar*       chr);
-static void parse_character           (xmlNodePtr       node,
-                                       TomoeChar*       lttr);
-static void parse_strokelist          (xmlNodePtr       node,
-                                       TomoeChar*       lttr);
-static void parse_tomoe_dict          (TomoeDict*       t_dict,
-                                       xmlNodePtr       root);
-static gint letter_compare_func       (gconstpointer    a,
-                                       gconstpointer    b);
+static void     tomoe_dict_dispose        (GObject         *object);
+static void     tomoe_dict_set_property   (GObject         *object,
+                                           guint            prop_id,
+                                           const GValue    *value,
+                                           GParamSpec      *pspec);
+static void     tomoe_dict_get_property   (GObject         *object,
+                                           guint            prop_id,
+                                           GValue          *value,
+                                           GParamSpec       *pspec);
+static gboolean tomoe_dict_load           (TomoeDict       *dict);
+static gint     letter_compare_func       (gconstpointer    a,
+                                           gconstpointer    b);
 
 
 static void
@@ -154,8 +148,9 @@ tomoe_dict_init (TomoeDict *dict)
     TomoeDictPrivate *priv = TOMOE_DICT_GET_PRIVATE(dict);
 
     priv->filename = NULL;
-    priv->name = NULL;
-    priv->letters = NULL;
+    priv->name     = NULL;
+    priv->letters  = g_ptr_array_new();
+    priv->context  = NULL;
 }
 
 
@@ -164,7 +159,6 @@ tomoe_dict_new (const char* filename, gboolean editable)
 {
     TomoeDict* dict;
     TomoeDictPrivate *priv;
-    xmlDocPtr doc;
 
     if (!filename && !*filename) return NULL;
 
@@ -174,16 +168,7 @@ tomoe_dict_new (const char* filename, gboolean editable)
                         NULL);
     priv = TOMOE_DICT_GET_PRIVATE (dict);
 
-    doc = xmlParseFile (filename);
-    if (doc)
-        parse_tomoe_dict (dict, xmlDocGetRootElement (doc));
-    xmlFreeDoc (doc);
-
-    xmlCleanupParser ();
-
-    if (priv->letters) {
-        g_ptr_array_sort (priv->letters, letter_compare_func);
-    }
+    tomoe_dict_load (dict);
 
     priv->modified = FALSE;
 
@@ -203,6 +188,10 @@ tomoe_dict_dispose (GObject *object)
     g_free(priv->filename);
     if (priv->letters)
         TOMOE_PTR_ARRAY_FREE_ALL(priv->letters, g_object_unref);
+
+    priv->name     = NULL;
+    priv->filename = NULL;
+    priv->letters  = NULL;
 
     G_OBJECT_CLASS (tomoe_dict_parent_class)->dispose (object);
 }
@@ -267,6 +256,7 @@ tomoe_dict_get_property (GObject    *object,
     }
 }
 
+#if 0
 static void
 tomoe_dict_append_meta_data (gpointer key, gpointer value, gpointer user_data)
 {
@@ -276,10 +266,12 @@ tomoe_dict_append_meta_data (gpointer key, gpointer value, gpointer user_data)
 
     xmlNewChild (parent, NULL, BAD_CAST meta_key, BAD_CAST meta_value);
 }
+#endif
 
 void
 tomoe_dict_save (TomoeDict* dict)
 {
+#if 0
     TomoeDictPrivate *priv;
     xmlDocPtr doc;
     const char* param[3];
@@ -360,6 +352,7 @@ tomoe_dict_save (TomoeDict* dict)
     xmlFreeDoc (doc);
     xmlCleanupCharEncodingHandlers();
     tomoe_dict_set_modified (dict, 0);
+#endif
 }
 
 const char*
@@ -517,142 +510,276 @@ tomoe_dict_search_by_reading (TomoeDict* dict, TomoeReading *reading)
     return context.results;
 }
 
-static void
-parse_readings (xmlNodePtr node, TomoeChar* chr)
+typedef struct _ParseData
 {
-    xmlNodePtr child;
-    for (child = node->children; child; child = child->next) {
-        if (child->type == XML_ELEMENT_NODE) {
-            TomoeReading *reading;
-            reading =
-                tomoe_reading_new (TOMOE_READING_ON,
-                                   (const gchar *)child->children->content);
-            tomoe_char_add_reading (chr, reading);
-            g_object_unref (reading);
-        }
-    }
-}
+    TomoeDict        *dict;
+    TomoeDictPrivate *priv;
+
+    gboolean in_dict;
+    gboolean in_literal;
+    gboolean in_stroke;
+    gboolean in_reading;
+    gboolean in_meta;
+
+    TomoeChar    *chr;
+    TomoeWriting *writing;
+
+    /* meta data */
+    gchar *key;
+    gchar *value;
+} ParseData;
 
 static void
-parse_meta (xmlNodePtr node, TomoeChar *chr)
+start_element_handler (GMarkupParseContext *context,
+                       const gchar         *element_name,
+                       const gchar        **attr_names,
+                       const gchar        **attr_values,
+                       gpointer             user_data,
+                       GError             **error)
 {
-    xmlNodePtr child;
-    for (child = node->children; child; child = child->next) {
-        if (child->type == XML_ELEMENT_NODE) {
-            const gchar *key, *value;
-            key = (const gchar *)child->name;
+    ParseData *data = user_data;
 
-            if (child->children) {
-                value = (const gchar *)child->children->content;
-                if (value)
-                    tomoe_char_register_meta_data (chr, key, value);
+    if (!strcmp ("tomoe_dictionary", element_name)) {
+        gint idx;
+        for (idx = 0; attr_names && attr_names[idx]; idx++) {
+            if (!strcmp ("name", attr_names[idx])) {
+                g_free (data->priv->name);
+                data->priv->name = g_strdup (attr_values[idx]);
             }
         }
-    }
-}
-
-static void
-parse_character (xmlNodePtr node, TomoeChar* lttr)
-{
-    xmlNodePtr child;
-    for (child = node->children; child; child = child->next) {
-        if (child->type != XML_ELEMENT_NODE)
-            continue;
-
-        if (0 == xmlStrcmp (child->name, BAD_CAST "readings"))
-            parse_readings (child, lttr);
-        else if (0 == xmlStrcmp (child->name, BAD_CAST "strokelist"))
-            parse_strokelist (child, lttr);
-        else if (0 == xmlStrcmp (child->name, BAD_CAST "literal"))
-            tomoe_char_set_code (lttr, (const char*) child->children->content);
-        else if (0 == xmlStrcmp (child->name, BAD_CAST "meta"))
-            parse_meta (child, lttr);
-    }
-}
-
-static void
-parse_strokelist (xmlNodePtr node, TomoeChar* lttr)
-{
-    TomoeWriting *writing;
-    int stroke_num = 0;
-    xmlNodePtr child;
-
-    /* count strokes */
-    for (child = node->children; child; child = child->next)
-        if (child->type == XML_ELEMENT_NODE)
-            stroke_num ++;
-
-    if (stroke_num == 0)
+        data->in_dict = TRUE;
         return;
+    }
 
-    writing = tomoe_writing_new ();
-    tomoe_char_set_writing (lttr, writing);
+    if (!strcmp ("character", element_name)) {
+        data->chr = tomoe_char_new ();
+        return;
+    }
 
-    for (child = node->children; child; child = child->next) {
-        int point_num = 0;
-        int k;
-        const char *p;
+    if (!strcmp ("literal", element_name)) {
+        data->in_literal = TRUE;
+        return;
+    }
 
-        if (child->type != XML_ELEMENT_NODE)
-            continue;
+    if (!strcmp ("strokelist", element_name)) {
+        data->writing = tomoe_writing_new ();
+        return;
+    }
 
-        p = (const char*) child->children->content;
+    if (!strcmp ("s", element_name)) {
+        data->in_stroke = TRUE;
+        return;
+    }
+
+    if (!strcmp ("readings", element_name)) {
+        return;
+    }
+
+    if (!strcmp ("r", element_name)) {
+        data->in_reading = TRUE;
+        return;
+    }
+
+    if (!strcmp ("meta", element_name)) {
+        data->in_meta = TRUE;
+        return;
+    }
+
+    if (data->in_meta) {
+        g_free (data->key);
+        g_free (data->value);
+        data->key   = g_strdup (element_name);
+        data->value = NULL;
+    }
+}
+
+static void
+end_element_handler (GMarkupParseContext *context,
+                     const gchar         *element_name,
+                     gpointer             user_data,
+                     GError             **error)
+{
+    ParseData *data = user_data;
+
+    if (!strcmp ("tomoe_dictionary", element_name)) {
+        data->in_dict = FALSE;
+        return;
+    }
+
+    if (!strcmp ("character", element_name)) {
+        if (tomoe_char_get_code (data->chr))
+            g_ptr_array_add (data->priv->letters, data->chr);
+        else
+            g_object_unref (G_OBJECT (data->chr));
+        data->chr = NULL;
+        return;
+    }
+
+    if (!strcmp("literal", element_name)) {
+        data->in_literal = FALSE;
+        return;
+    }
+
+    if (!strcmp ("strokelist", element_name)) {
+        if (data->chr && data->writing)
+            tomoe_char_set_writing (data->chr, data->writing);
+        data->writing = NULL;
+        return;
+    }
+
+    if (!strcmp ("s", element_name)) {
+        data->in_stroke = FALSE;
+        return;
+    }
+
+    if (!strcmp ("readings", element_name)) {
+        return;
+    }
+
+    if (!strcmp ("r", element_name)) {
+        data->in_reading = FALSE;
+        return;
+    }
+
+    if (!strcmp ("meta", element_name)) {
+        data->in_meta = FALSE;
+        return;
+    }
+
+    if (data->in_meta) {
+        if (data->chr && data->key && data->value)
+            tomoe_char_register_meta_data (data->chr, data->key, data->value);
+        g_free (data->key);
+        g_free (data->value);
+        data->key   = NULL;
+        data->value = NULL;
+    }
+}
+
+static void
+text_handler (GMarkupParseContext *context,
+              const gchar         *text,
+              gsize                text_len,  
+              gpointer             user_data,
+              GError             **error)
+{
+    ParseData *data = user_data;
+
+    if (data->in_literal && data->chr) {
+        tomoe_char_set_code (data->chr, text);
+        return;
+    }
+
+    /* FIXME! */
+    if (data->in_stroke && data->chr) {
+        const gchar *p = text;
+        guint point_num = 0, k;
+
         /* count stroke points */
         for (; *p; p++)
             if (*p == '(') 
                 point_num ++;
 
         /* parse stroke */
-        p = (const char*) child->children->content;
+        p = text;
         for (k = 0; k < point_num; k++) {
             gint x = 0, y = 0;
 
             sscanf (p, " (%d %d)", &x, &y);
             if (k == 0)
-                tomoe_writing_move_to (writing, x, y);
+                tomoe_writing_move_to (data->writing, x, y);
             else
-                tomoe_writing_line_to (writing, x, y);
+                tomoe_writing_line_to (data->writing, x, y);
 
             p = strchr (p, ')') + 1;
         }
     }
+
+    if (data->in_reading && data->chr) {
+        TomoeReading *reading;
+        reading = tomoe_reading_new (TOMOE_READING_ON, text);
+        tomoe_char_add_reading (data->chr, reading);
+        g_object_unref (reading);
+    }
+
+    if (data->in_meta && data->chr) {
+        g_free (data->value);
+        data->value = g_strdup (text);
+    }
 }
 
 static void
-parse_tomoe_dict (TomoeDict* dict, xmlNodePtr root)
+passthrough_handler (GMarkupParseContext *context,
+                     const gchar         *text,
+                     gsize                text_len,  
+                     gpointer             user_data,
+                     GError             **error)
 {
-    TomoeDictPrivate *priv;
+}
 
-    priv = TOMOE_DICT_GET_PRIVATE(dict);
-    priv->letters = g_ptr_array_new();
+static void
+error_handler (GMarkupParseContext *context,
+               GError              *error,
+               gpointer             user_data)
+{
+}
 
-    /* parse xml tree */
-    if (root && 0 == xmlStrcmp(root->name, BAD_CAST "tomoe_dictionary")) {
-        xmlNodePtr node;
-        xmlAttrPtr prop;
+static GMarkupParser parser = {
+	start_element_handler,
+	end_element_handler,
+	text_handler,
+	passthrough_handler,
+	error_handler,
+};
 
-        /* read dictionary properties */
-        for (prop = root->properties; prop; prop = prop->next) {
-            if (0 == xmlStrcmp(prop->name, BAD_CAST "name")) {
-                priv->name = g_strdup ((const char*) prop->children->content);
-            }
-        }
+static gboolean
+tomoe_dict_load (TomoeDict *dict)
+{
+    TomoeDictPrivate *priv = TOMOE_DICT_GET_PRIVATE(dict);
+    FILE *f;
+    gint bytes;
+    gchar buf[4096];
+    ParseData data;
 
-        /* read character nodes */
-        for (node = root->children; node; node = node->next) {
-            if (node->type != XML_ELEMENT_NODE)
-                continue;
+    f = fopen (priv->filename, "rb");
+    g_return_val_if_fail (f, FALSE);
 
-            if (0 == xmlStrcmp(node->name, BAD_CAST "character")) {
-                TomoeChar *chr = tomoe_char_new ();
+    data.dict    = dict;
+    data.priv    = priv;
+    data.in_dict = FALSE;
+    data.in_literal = FALSE;
+    data.in_stroke = FALSE;
+    data.in_reading = FALSE;
+    data.chr     = NULL;
+    data.writing = NULL;
+    data.key = NULL;
+    data.value = NULL;
 
-                parse_character (node, chr);
-                if (tomoe_char_get_code (chr))
-                    g_ptr_array_add (priv->letters, g_object_ref (G_OBJECT (chr)));
-                g_object_unref (G_OBJECT (chr));
-            }
+    if (!priv->context) {
+        priv->context = g_markup_parse_context_new (&parser, 0, &data, NULL);
+    }
+
+    while ((bytes = fread (buf, sizeof (char), 4096, f)) > 0) {
+        GError *error = NULL;
+        gboolean success;
+
+        success = g_markup_parse_context_parse(priv->context, buf, bytes,
+                                               &error);
+        if (!success) {
+            g_warning("XML parse error!: %s", error->message);
+            g_error_free(error);
+            break;
         }
     }
+
+    fclose (f);
+    g_markup_parse_context_free (priv->context);
+    priv->context = NULL;
+
+    if (priv->letters)
+        g_ptr_array_sort (priv->letters, letter_compare_func);
+
+    return TRUE;
 }
 
 static gint
