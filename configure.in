@@ -79,13 +79,8 @@ dnl **************************************************************
 PKG_PROG_PKG_CONFIG()
 
 dnl **************************************************************
-dnl Checks for libxml
+dnl Checks for xsltproc
 dnl **************************************************************
-
-error_message="Could not find libxml2 anywhere, check ftp://xmlsoft.org/."
-PKG_CHECK_MODULES(LIBXML, libxml-2.0,
-                  [],
-                  [AC_MSG_ERROR([$error_message])])
 
 AC_PATH_PROG(XSLTPROC, xsltproc, none)
 
