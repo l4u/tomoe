@@ -28,7 +28,7 @@ AM_CPPFLAGS =							\
 	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"		\
 	-DRECOGNIZERDIR=\""$(recognizerdir)"\"
 
-INCLUDES = $(LIBXML_CFLAGS) $(GLIB_CFLAGS)
+INCLUDES = $(GLIB_CFLAGS)
 
 tomoe_public_h_sources =	\
 	tomoe.h			\
@@ -84,7 +84,7 @@ libtomoe_la_LDFLAGS =						\
 libtomoe_la_LD_ADD = \
 	-lm
 
-libtomoe_la_LIBADD = $(LIBXML_LIBS) $(GLIB_LIBS)
+libtomoe_la_LIBADD = $(GLIB_LIBS)
 
 
 
