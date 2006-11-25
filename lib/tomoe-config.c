@@ -116,6 +116,11 @@ tomoe_config_constructor (GType type, guint n_props,
     priv = TOMOE_CONFIG_GET_PRIVATE (object);
 
     /* check config file */
+#if 1
+#warning FIXME: need discussion
+    /*
+     * Shouldn't change the filename & create the file implicitly at this layer.
+     */
     if (!priv->filename || !g_file_test (priv->filename, G_FILE_TEST_EXISTS)) {
         /* use ~/.tomoe/config */
         const gchar *home = g_get_home_dir ();
@@ -160,6 +165,7 @@ tomoe_config_constructor (GType type, guint n_props,
             }
         }
     }
+#endif
 
     return object;
 }
