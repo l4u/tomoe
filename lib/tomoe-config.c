@@ -24,6 +24,7 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <glib.h>
@@ -130,16 +131,37 @@ tomoe_config_constructor (GType type, guint n_props,
 
             priv->filename = g_build_filename (home, "."PACKAGE,
                                                default_config_file, NULL);
-            /* if not found, use system config file */
-            if (!g_file_test (priv->filename, G_FILE_TEST_EXISTS) &&
-                g_file_test (system_config_file, G_FILE_TEST_EXISTS) &&
-                g_file_get_contents (system_config_file, &src, &length, NULL)) {
-                g_file_set_contents (priv->filename, src, length, NULL);
+
+            /* if not found, ensure to initialize the file */
+            if (!g_file_test (priv->filename, G_FILE_TEST_EXISTS)) {
+                FILE *f;
+                gboolean success = FALSE;
+
+                if (g_file_test (system_config_file, G_FILE_TEST_EXISTS))
+                    success = g_file_get_contents (system_config_file,
+                                                   &src, &length, NULL);
+                if (!success) {
+                    src = (gchar*) default_config;
+                    length = strlen (src);
+                }
+
+#warning FIXME: need mkdir
+
+                f = fopen(priv->filename, "wb");
+                if (f) {
+                    fwrite (src, length, 1, f);
+                    fclose (f);
+                } else {
+                    g_warning ("Faild to open %s for write.", priv->filename);
+                }
+
+                if (src != default_config)
+                    g_free (src);
             }
         }
     }
 
-	return object;
+    return object;
 }
 
 static void
@@ -406,17 +428,21 @@ _tomoe_dict_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
     gdir = g_dir_open (TOMOEDATADIR, 0, NULL);
     while ((filename = g_dir_read_name (gdir))) {
         TomoeDict *dict;
+        gchar *path;
 
         if (!g_str_has_suffix (filename, ".xml"))
             continue;
-        if (tomoe_shelf_has_dict (shelf, filename))
+		path = g_build_filename(TOMOEDATADIR, filename, NULL);
+        if (tomoe_shelf_has_dict (shelf, path))
             continue;
 
-        dict = tomoe_dict_new (filename, FALSE);
+        dict = tomoe_dict_new (path, FALSE);
         if (dict) {
             tomoe_shelf_add_dict (shelf, dict);
             g_object_unref (dict);
         }
+
+        g_free (path);
     }
     g_dir_close (gdir);
 }
