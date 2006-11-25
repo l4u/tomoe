@@ -660,18 +660,18 @@ error_handler (GMarkupParseContext *context,
 }
 
 static GMarkupParser parser = {
-	start_element_handler,
-	end_element_handler,
-	text_handler,
-	passthrough_handler,
-	error_handler,
+    start_element_handler,
+    end_element_handler,
+    text_handler,
+    passthrough_handler,
+    error_handler,
 };
 
 static gboolean
 tomoe_dict_load_xml (TomoeDict *dict)
 {
     TomoeDictPrivate *priv = TOMOE_DICT_GET_PRIVATE(dict);
-	GMarkupParseContext *context;
+    GMarkupParseContext *context;
     FILE *f;
     gint bytes;
     gchar buf[4096];
