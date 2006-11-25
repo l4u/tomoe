@@ -26,7 +26,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libxml/xmlreader.h>
 #include <glib/garray.h>
 #include "tomoe.h"
 #include "tomoe-dict.h"
@@ -43,8 +42,6 @@ tomoe_init (void)
 
     if (!initialized) {
         GTypeDebugFlags debug_flag = G_TYPE_DEBUG_NONE;
-
-        LIBXML_TEST_VERSION;
         g_type_init_with_debug_flags (debug_flag);
     }
 }
