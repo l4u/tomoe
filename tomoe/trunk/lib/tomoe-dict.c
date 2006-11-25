@@ -529,6 +529,8 @@ start_element_handler (GMarkupParseContext *context,
                        gpointer             user_data,
                        GError             **error)
 {
+#warning FIXME: need error check
+
     ParseData *data = user_data;
 
     if (!strcmp ("tomoe_dictionary", element_name)) {
@@ -591,6 +593,8 @@ end_element_handler (GMarkupParseContext *context,
                      gpointer             user_data,
                      GError             **error)
 {
+#warning FIXME: need error check
+
     ParseData *data = user_data;
 
     if (!strcmp ("tomoe_dictionary", element_name)) {
@@ -655,6 +659,8 @@ text_handler (GMarkupParseContext *context,
               gpointer             user_data,
               GError             **error)
 {
+#warning FIXME: need error check
+
     ParseData *data = user_data;
 
     if (data->in_literal && data->chr) {
@@ -707,6 +713,7 @@ passthrough_handler (GMarkupParseContext *context,
                      gpointer             user_data,
                      GError             **error)
 {
+#warning FIXME: need implement?
 }
 
 static void
@@ -714,6 +721,7 @@ error_handler (GMarkupParseContext *context,
                GError              *error,
                gpointer             user_data)
 {
+#warning FIXME: need error check
 }
 
 static GMarkupParser parser = {
@@ -755,6 +763,7 @@ tomoe_dict_load (TomoeDict *dict)
         gboolean success;
 
         success = g_markup_parse_context_parse(context, buf, bytes, &error);
+#warning FIXME
         if (!success) {
             g_warning("XML parse error!: %s", error->message);
             g_error_free(error);
