@@ -13,7 +13,7 @@ DOC_MAIN_SGML_FILE=tomoe-docs.sgml
 SCAN_OPTIONS=
 
 # The directory containing the source code. Relative to $(srcdir)
-DOC_SOURCE_DIR=../..
+DOC_SOURCE_DIR=../../lib
 
 # Used for dependencies
 HFILE_GLOB=$(top_srcdir)/lib/*.h

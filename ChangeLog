@@ -1,6 +1,12 @@
 2006-11-26  Kouhei Sutou  <kou@cozmixng.org>
 
-	* configure.in, Makefile.am, doc/: use GTK-Doc instead of Doxygen.
+	* doc/reference/Makefile.am: use lib/ as source directory instead
+	of top directory.
+	* doc/reference/tomoe-docs.sgml: commented out deprecated and new
+	symbols index.
+
+	* configure.in, Makefile.am, automake.sh, doc/: use GTK-Doc
+	instead of Doxygen.
 
 2006-11-25  Kouhei Sutou  <kou@cozmixng.org>
 
