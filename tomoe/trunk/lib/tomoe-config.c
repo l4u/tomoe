@@ -242,8 +242,7 @@ tomoe_config_load (TomoeConfig *config)
                                         G_KEY_FILE_KEEP_COMMENTS |
                                         G_KEY_FILE_KEEP_TRANSLATIONS,
                                         &error)) {
-            g_warning (error->message);
-            g_error_free (error);
+            TOMOE_HANDLE_ERROR (error);
             return;
         }
     } else {
@@ -252,8 +251,7 @@ tomoe_config_load (TomoeConfig *config)
                                         G_KEY_FILE_KEEP_COMMENTS |
                                         G_KEY_FILE_KEEP_TRANSLATIONS,
                                         &error)) {
-            g_warning (error->message);
-            g_error_free (error);
+            TOMOE_HANDLE_ERROR (error);
             return;
         }
     }
@@ -276,14 +274,12 @@ tomoe_config_save (TomoeConfig *config)
 
         data = g_key_file_to_data (priv->key_file, &length, &error);
         if (error) {
-            g_warning (error->message);
-            g_error_free (error);
+            TOMOE_HANDLE_ERROR (error);
             return;
         }
 
         if (!g_file_set_contents (priv->filename, data, length, &error)) {
-            g_warning (error->message);
-            g_error_free (error);
+            TOMOE_HANDLE_ERROR (error);
             return;
         }
     }
@@ -318,8 +314,7 @@ tomoe_config_make_shelf (TomoeConfig *config)
 
         filename = g_key_file_get_string (key_file, dict_name, "file", &error);
         if (error) {
-            g_warning (error->message);
-            g_error_free (error);
+            TOMOE_HANDLE_ERROR (error);
             continue;
         }
 
@@ -390,13 +385,13 @@ _tomoe_dict_key_file_get_boolean_value (GKeyFile *key_file,
     if (error) {
         switch (error->code) {
           case G_KEY_FILE_ERROR_NOT_FOUND:
+            g_error_free (error);
             break;
           case G_KEY_FILE_ERROR_INVALID_VALUE:
-            g_warning (error->message);
+            TOMOE_HANDLE_ERROR (error);
             break;
         }
         result = default_value;
-        g_error_free (error);
     }
 
     return result;

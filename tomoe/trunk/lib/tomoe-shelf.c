@@ -165,7 +165,7 @@ tomoe_shelf_has_dict (TomoeShelf *shelf, const gchar *name)
 {
     TomoeShelfPrivate *priv;
 
-    g_return_if_fail (shelf);
+    g_return_val_if_fail (shelf, FALSE);
     priv = TOMOE_SHELF_GET_PRIVATE (shelf);
 
     return g_hash_table_lookup (priv->dicts, name) != NULL;
