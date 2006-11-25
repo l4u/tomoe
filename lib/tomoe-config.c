@@ -439,8 +439,10 @@ _tomoe_dict_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
         if (!g_str_has_suffix (filename, ".xml"))
             continue;
 		path = g_build_filename(TOMOEDATADIR, filename, NULL);
-        if (tomoe_shelf_has_dict (shelf, path))
+        if (tomoe_shelf_has_dict (shelf, path)) {
+            g_free (path);
             continue;
+        }
 
         dict = tomoe_dict_new (path, FALSE);
         if (dict) {
