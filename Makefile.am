@@ -27,3 +27,6 @@ pkgconfig_DATA= tomoe.pc
 
 CLEANFILES = *~ *.bak
 DISTCLEANFILES = tomoe.pc
+
+# build documentation when doing distcheck
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc

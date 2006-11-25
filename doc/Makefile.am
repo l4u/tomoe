@@ -18,28 +18,6 @@
 ## Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 ## Boston, MA  02111-1307  USA
 
-MAINTAINERCLEANFILE = Makefile.in html/*
-CLEANFILES = *~ *.bak
-EXTRA_DIST = doxygen.conf.in
+MAINTAINERCLEANFILE = Makefile.in
 
-.PHONY: html
-
-
-html:
-if HAVE_DOXYGEN
-	(cd $(top_builddir)/doc; rm -fr html/*; $(DOXYGEN) doxygen.conf)
-else
-	echo "***"
-	echo "*** Warning: Documentation not built"
-	echo "***"
-endif
-
-dist-hook: html
-if HAVE_DOXYGEN
-	cp -Rp $(top_builddir)/doc/html $(distdir)
-else
-	echo "***"
-	echo "*** Warning: Documentation not built"
-	echo "*** DISTRIBUTION IS INCOMPLETE"
-	echo "***"
-endif
+SUBDIRS = reference
