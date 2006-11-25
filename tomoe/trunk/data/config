@@ -1,2 +1,2 @@
 [config]
-use_system_dictionaries = yes
+use_system_dictionaries = true
