@@ -1,6 +1,11 @@
 2006-11-25  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe-config.c:
+	 - (tomoe_config_constructor): Add a comment to discuss later.
+
+2006-11-25  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* lib/tomoe-config.c:
 	 - (tomoe_config_constructor): Do not use g_file_set_contents().
 	   It's since GTK+-2.8. Plug a memory leak.
 	 - (_tomoe_dict_load_system_dictionaries): Use full path for dict.
