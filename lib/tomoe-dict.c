@@ -265,7 +265,7 @@ tomoe_dict_load (TomoeDict *dict)
 void
 tomoe_dict_save (TomoeDict *dict)
 {
-    tomeo_dict_save_xml (dict);
+    tomoe_dict_save_xml (dict);
 }
 
 const char*
@@ -725,12 +725,10 @@ tomoe_dict_append_meta_data (gpointer key, gpointer value, gpointer user_data)
 
     xmlNewChild (parent, NULL, BAD_CAST meta_key, BAD_CAST meta_value);
 }
-#endif
 
 static void
 tomoe_dict_save_xml (TomoeDict *dict)
 {
-#if 0
     TomoeDictPrivate *priv;
     xmlDocPtr doc;
     const char* param[3];
@@ -811,7 +809,24 @@ tomoe_dict_save_xml (TomoeDict *dict)
     xmlFreeDoc (doc);
     xmlCleanupCharEncodingHandlers();
     tomoe_dict_set_modified (dict, 0);
+}
 #endif
+
+static void
+tomoe_dict_save_xml (TomoeDict *dict)
+{
+    TomoeDictPrivate *priv;
+    FILE *f;
+
+    g_return_if_fail (TOMOE_IS_DICT (dict));
+    if (!tomoe_dict_is_editable (dict)) return;
+
+    priv = TOMOE_DICT_GET_PRIVATE(dict);
+
+    f = fopen (priv->filename, "wb");
+    g_return_if_fail (f);
+
+    fclose (f);
 }
 
 /*
