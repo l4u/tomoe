@@ -34,6 +34,15 @@ G_BEGIN_DECLS
     g_ptr_array_free (p_array, TRUE);                           \
 }
 
+#define TOMOE_HANDLE_ERROR(error) do {              \
+    g_warning ("%s: %d: %s",                        \
+               g_quark_to_string (error->domain),   \
+               error->code,                         \
+               error->message);                     \
+    g_error_free (error);                           \
+    error = NULL;                                   \
+} while (FALSE)
+
 G_END_DECLS
 
 #endif /* __GLIB_UTILS_H__ */
