@@ -722,26 +722,27 @@ static gboolean
 _write_readings (TomoeChar *chr, FILE *f)
 {
     GList *node = (GList*) tomoe_char_get_readings (chr);
-    gchar buf[1024];
+    const gchar *head = "    <readings>\n";
+    const gchar *foot = "    </readings>\n";
 
-    g_snprintf (buf, G_N_ELEMENTS (buf), "    <readings>\n");
-    if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+    if (fwrite (head, strlen (head), 1, f) < 1) return FALSE;
 
     for (; node; node = g_list_next (node)) {
         TomoeReading *reading = node->data;
+        gchar *str;
 
         if (!TOMOE_IS_READING (reading)) continue;
 
-        g_markup_printf_escaped (
-            buf, G_N_ELEMENTS (buf),
-            "      <r>%s</r>\n",
-            tomoe_reading_get_reading (reading));
-
-        if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+        str = g_markup_printf_escaped ("      <r>%s</r>\n",
+                                       tomoe_reading_get_reading (reading));
+        if (fwrite (str, strlen (str), 1, f) < 1) {
+            g_free (str);
+            return FALSE;
+        }
+        g_free (str);
     }
 
-    g_snprintf (buf, G_N_ELEMENTS (buf), "    </readings>\n");
-    if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+    if (fwrite (foot, strlen (foot), 1, f) < 1) return FALSE;
 
     return TRUE;
 }
@@ -789,11 +790,12 @@ static void
 _write_meta_datum (gpointer key, gpointer value, gpointer user_data)
 {
     FILE *f = user_data;
-    gchar buf[1024];
+    gchar *str;
 
-    g_markup_printf_escaped (buf, G_N_ELEMENTS (buf), "<%s>%s</%s>\n",
-                             (gchar*)key, (gchar*)value, (gchar*)key);
-    fwrite (buf, strlen (buf), 1, f);
+    str = g_markup_printf_escaped ("      <%s>%s</%s>\n",
+                                   (gchar*)key, (gchar*)value, (gchar*)key);
+    fwrite (str, strlen (str), 1, f);
+    g_free (str);
 }
 
 static gboolean
@@ -812,16 +814,21 @@ _write_meta_data (TomoeChar *chr, FILE *f)
 static gboolean
 _write_character (TomoeChar *chr, FILE *f)
 {
-    gchar buf[256];
+    gchar *head;
+    const gchar *foot = "  </character>\n";
 
     g_return_val_if_fail (TOMOE_IS_CHAR (chr), FALSE);
 
     /* open character element */
-    g_markup_printf_escaped (buf, G_N_ELEMENTS (buf),
-                             "  <character>\n",
-                             "    <literal>%s<literal>\n",
-                             tomoe_char_get_code (chr));
-    if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+    head = g_markup_printf_escaped ("  <character>\n"
+                                    "    <literal>%s</literal>\n",
+                                    tomoe_char_get_code (chr));
+    if (fwrite (head, strlen (head), 1, f) < 1) {
+        g_free (head);
+        return FALSE;
+    } else {
+        g_free (head);
+    }
 
     /* reading */
     if (tomoe_char_get_readings (chr))
@@ -838,19 +845,18 @@ _write_character (TomoeChar *chr, FILE *f)
         if (!_write_meta_data (chr, f)) return FALSE;
 
     /* close character element */
-    g_snprintf (buf, G_N_ELEMENTS (buf), "  </character>\n");
-    if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+    if (fwrite (foot, strlen (foot), 1, f) < 1) return FALSE;
 
     return TRUE;
 }
 
-#warning FIXME: not tested yet
 static void
 tomoe_dict_save_xml (TomoeDict *dict)
 {
     TomoeDictPrivate *priv;
     FILE *f;
-    gchar buf[1024];
+    gchar *head;
+    const gchar *foot = "</tomoe_dictionary>\n";
     guint i;
 
     g_return_if_fail (TOMOE_IS_DICT (dict));
@@ -862,13 +868,12 @@ tomoe_dict_save_xml (TomoeDict *dict)
     g_return_if_fail (f);
 
     /* write the header */
-    g_markup_printf_escaped (
-        buf, G_N_ELEMENTS(buf),
+    head = g_markup_printf_escaped (
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone\"no\"?>\n"
-        "<!DOCTYPE tomoe_dictionary SYSTEM \"tomoe-dict.dtd\">"
+        "<!DOCTYPE tomoe_dictionary SYSTEM \"tomoe-dict.dtd\">\n"
         "<tomoe_dictionary name=\"%s\">\n",
         priv->name);
-    if (fwrite (buf, strlen (buf), 1, f) < 1) goto ERROR;
+    if (fwrite (head, strlen (head), 1, f) < 1) goto ERROR;
 
     /* write each characters */
     for (i = 0; i < priv->letters->len; i++) {
@@ -877,14 +882,15 @@ tomoe_dict_save_xml (TomoeDict *dict)
     }
 
     /* close root element */
-    g_snprintf (buf, G_N_ELEMENTS(buf), "</tomoe_dictionary>\n");
-    if (fwrite (buf, strlen (buf), 1, f) < 1) goto ERROR;
+    if (fwrite (foot, strlen (foot), 1, f) < 1) goto ERROR;
 
     /* clean */
+    g_free (head);
     fclose (f);
     return;
 
 ERROR:
+    g_free (head);
     g_warning ("Faild to write %s.", priv->filename);
     fclose (f);
     return;
