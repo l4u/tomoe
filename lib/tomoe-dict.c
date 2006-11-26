@@ -785,19 +785,29 @@ _write_writing (TomoeChar *chr, FILE *f)
     return TRUE;
 }
 
-#warning FIXME: implement
-#if 0
 static void
 _write_meta_datum (gpointer key, gpointer value, gpointer user_data)
 {
+    FILE *f = user_data;
+    gchar buf[1024];
+
+    g_markup_printf_escaped (buf, G_N_ELEMENTS (buf), "<%s>%s</%s>\n",
+                             (gchar*)key, (gchar*)value, (gchar*)key);
+    fwrite (buf, strlen (buf), 1, f);
 }
 
 static gboolean
 _write_meta_data (TomoeChar *chr, FILE *f)
 {
+    const gchar *tag1 = "    <meta>\n";
+    const gchar *tag2 = "    </meta>\n";
+
+    if (fwrite (tag1, strlen (tag1), 1, f) < 1) return FALSE;
     tomoe_char_meta_data_foreach (chr, _write_meta_datum, f);
+    if (fwrite (tag2, strlen (tag2), 1, f) < 1) return FALSE;
+
+    return TRUE;
 }
-#endif
 
 static gboolean
 _write_character (TomoeChar *chr, FILE *f)
@@ -822,10 +832,10 @@ _write_character (TomoeChar *chr, FILE *f)
         if (!_write_writing (chr, f)) return FALSE;
 
     /* meta */
-    /*
-    if (tomoe_char_has_meta_data ())
+#if 0
+    if (tomoe_char_has_meta_data (chr))
+#endif
         if (!write_meta_data (chr, f)) return FALSE;
-    */
 
     /* close character element */
     g_snprintf (buf, G_N_ELEMENTS (buf), "  </character>\n");
