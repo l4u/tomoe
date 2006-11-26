@@ -835,7 +835,7 @@ _write_character (TomoeChar *chr, FILE *f)
 #if 0
     if (tomoe_char_has_meta_data (chr))
 #endif
-        if (!write_meta_data (chr, f)) return FALSE;
+        if (!_write_meta_data (chr, f)) return FALSE;
 
     /* close character element */
     g_snprintf (buf, G_N_ELEMENTS (buf), "  </character>\n");
@@ -851,7 +851,6 @@ tomoe_dict_save_xml (TomoeDict *dict)
     TomoeDictPrivate *priv;
     FILE *f;
     gchar buf[1024];
-    size_t count;
     guint i;
 
     g_return_if_fail (TOMOE_IS_DICT (dict));
