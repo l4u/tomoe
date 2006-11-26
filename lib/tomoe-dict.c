@@ -869,20 +869,17 @@ tomoe_dict_save_xml (TomoeDict *dict)
         "<!DOCTYPE tomoe_dictionary SYSTEM \"tomoe-dict.dtd\">"
         "<tomoe_dictionary name=\"%s\">\n",
         priv->name);
-    count = fwrite (buf, strlen (buf), 1, f);
-    if (count < 1) goto ERROR;
+    if (fwrite (buf, strlen (buf), 1, f) < 1) goto ERROR;
 
     /* write each characters */
     for (i = 0; i < priv->letters->len; i++) {
         TomoeChar* chr = (TomoeChar*)g_ptr_array_index (priv->letters, i);
-        gboolean success = _write_character (chr, f);
-        if (!success) goto ERROR;
+        if (!_write_character (chr, f)) goto ERROR;
     }
 
     /* close root element */
     g_snprintf (buf, G_N_ELEMENTS(buf), "</tomoe_dictionary>\n");
-    count = fwrite (buf, strlen (buf), 1, f);
-    if (count < 1) goto ERROR;
+    if (fwrite (buf, strlen (buf), 1, f) < 1) goto ERROR;
 
     /* clean */
     fclose (f);
