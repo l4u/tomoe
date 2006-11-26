@@ -1,5 +1,10 @@
 2006-11-26  Takuro Ashie  <ashie@homa.ne.jp>
 
+	* lib/tomoe-dict.c: Implement saving feature, but not tested yet,
+	and meta data is not supported yet.
+
+2006-11-26  Takuro Ashie  <ashie@homa.ne.jp>
+
 	* lib/tomoe-dict.c: Fix a typo. Started to implement
 	tomoe_dict_save_xml().
 
