@@ -1,7 +1,6 @@
 2006-11-26  Takuro Ashie  <ashie@homa.ne.jp>
 
-	* lib/tomoe-dict.c: Implement saving feature, but not tested yet,
-	and meta data is not supported yet.
+	* lib/tomoe-dict.c: Implement saving feature, but not tested yet.
 
 2006-11-26  Takuro Ashie  <ashie@homa.ne.jp>
 
