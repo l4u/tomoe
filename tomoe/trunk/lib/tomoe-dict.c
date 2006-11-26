@@ -630,6 +630,7 @@ text_handler (GMarkupParseContext *context,
 
     if (data->in_reading && data->chr) {
         TomoeReading *reading;
+#warning FIXME: detect reading type?
         reading = tomoe_reading_new (TOMOE_READING_ON, text);
         tomoe_char_add_reading (data->chr, reading);
         g_object_unref (reading);
@@ -715,108 +716,133 @@ tomoe_dict_load_xml (TomoeDict *dict)
     return TRUE;
 }
 
-#if 0
-static void
-tomoe_dict_append_meta_data (gpointer key, gpointer value, gpointer user_data)
+
+
+static gboolean
+_write_readings (TomoeChar *chr, FILE *f)
 {
-    const gchar *meta_key = key;
-    const gchar *meta_value = value;
-    xmlNodePtr parent = user_data;
+    GList *node = (GList*) tomoe_char_get_readings (chr);
+    gchar buf[1024];
 
-    xmlNewChild (parent, NULL, BAD_CAST meta_key, BAD_CAST meta_value);
-}
+    g_snprintf (buf, G_N_ELEMENTS (buf), "    <readings>\n");
+    if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
 
-static void
-tomoe_dict_save_xml (TomoeDict *dict)
-{
-    TomoeDictPrivate *priv;
-    xmlDocPtr doc;
-    const char* param[3];
-    xmlNodePtr root;
-    guint i, num;
+    for (; node; node = g_list_next (node)) {
+        TomoeReading *reading = node->data;
 
-    if (!dict) return;
-    if (!tomoe_dict_is_editable (dict)) return;
+        if (!TOMOE_IS_READING (reading)) continue;
 
-    priv = TOMOE_DICT_GET_PRIVATE(dict);
+        g_markup_printf_escaped (
+            buf, G_N_ELEMENTS (buf),
+            "      <r>%s</r>\n",
+            tomoe_reading_get_reading (reading));
 
-    doc = xmlNewDoc(BAD_CAST "1.0");
-    root = xmlNewNode(NULL, BAD_CAST "tomoe_dictionary");
-    param[0] = 0;
-
-    xmlDocSetRootElement (doc, root);
-
-    if (priv->name)
-        xmlNewProp (root, BAD_CAST "name", BAD_CAST priv->name);
-
-    num = priv->letters->len;
-    for (i = 0; i < num; i++) {
-        xmlNodePtr charNode = xmlNewChild (root, NULL, BAD_CAST "character", NULL);
-        TomoeChar* chr = (TomoeChar*)g_ptr_array_index (priv->letters, i);
-        TomoeWriting* writing = tomoe_char_get_writing (chr);
-        const char* code = tomoe_char_get_code (chr);
-        xmlNewChild (charNode, NULL, BAD_CAST "literal", BAD_CAST code);
-
-        if (writing) {
-            const GList *strokes, *stroke_node;
-            xmlNodePtr strokelistNode;
-            strokelistNode = xmlNewChild (charNode, NULL,
-                                          BAD_CAST "strokelist", NULL);
-
-            strokes = tomoe_writing_get_strokes (writing);
-            for (stroke_node = strokes;
-                 stroke_node;
-                 stroke_node = g_list_next (stroke_node)) {
-                GList *points, *point_node;
-                char buf[256]; /* FIXME overrun possible */
-                strcpy (buf, "");
-
-                points = stroke_node->data;
-                for (point_node = points;
-                     point_node;
-                     point_node = g_list_next (point_node)) {
-                    TomoePoint *point;
-                    char buf2[32];
-
-                    point = point_node->data;
-                    sprintf (buf2, "(%d %d) ", point->x, point->y);
-                    strcat (buf, buf2);
-                }
-                xmlNewChild (strokelistNode, NULL, BAD_CAST "s", BAD_CAST buf);
-            }
-        }
-
-        {
-            const GList *readings, *reading;
-
-            readings = tomoe_char_get_readings (chr);
-            if (readings) {
-                xmlNodePtr readingsNode;
-                readingsNode = xmlNewChild (charNode, NULL,
-                                            BAD_CAST "readings", NULL);
-                for (reading = readings; reading; reading = reading->next) {
-                    xmlNewChild (readingsNode, NULL, BAD_CAST "r",
-                                 reading->data);
-                }
-            }
-        }
-
-        tomoe_char_meta_data_foreach (chr, tomoe_dict_append_meta_data,
-                                      charNode);
+        if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
     }
 
-    xmlSaveFormatFileEnc(priv->filename, doc, "UTF-8", 1);
-    xmlFreeDoc (doc);
-    xmlCleanupCharEncodingHandlers();
-    tomoe_dict_set_modified (dict, 0);
+    g_snprintf (buf, G_N_ELEMENTS (buf), "    </readings>\n");
+    if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+
+    return TRUE;
+}
+
+static gboolean
+_write_writing (TomoeChar *chr, FILE *f)
+{
+    TomoeWriting *writing = tomoe_char_get_writing (chr);
+    GList *stroke_list = (GList*) tomoe_writing_get_strokes (writing);
+    gchar buf[256];
+
+    if (!stroke_list) return TRUE;
+
+    g_snprintf (buf, G_N_ELEMENTS (buf), "    <strokelist>\n");
+    if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+
+    for (; stroke_list; stroke_list = g_list_next (stroke_list)) {
+        GList *point_list = stroke_list->data;
+
+        if (!point_list) continue;
+
+        g_snprintf (buf, G_N_ELEMENTS (buf), "      <s>");
+        if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+
+        for (; point_list; point_list = g_list_next (point_list)) {
+            TomoePoint *p = point_list->data;
+
+            if (!p) continue;
+
+            g_snprintf (buf, G_N_ELEMENTS (buf), "(%d %d) ", p->x, p->y);
+            if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+        }
+
+        g_snprintf (buf, G_N_ELEMENTS (buf), "</s>\n");
+        if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+    }
+
+    g_snprintf (buf, G_N_ELEMENTS (buf), "    </strokelist>\n");
+    if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+
+    return TRUE;
+}
+
+#warning FIXME: implement
+#if 0
+static void
+_write_meta_datum (gpointer key, gpointer value, gpointer user_data)
+{
+}
+
+static gboolean
+_write_meta_data (TomoeChar *chr, FILE *f)
+{
+    tomoe_char_meta_data_foreach (chr, _write_meta_datum, f);
 }
 #endif
 
+static gboolean
+_write_character (TomoeChar *chr, FILE *f)
+{
+    gchar buf[256];
+
+    g_return_val_if_fail (TOMOE_IS_CHAR (chr), FALSE);
+
+    /* open character element */
+    g_markup_printf_escaped (buf, G_N_ELEMENTS (buf),
+                             "  <character>\n",
+                             "    <literal>%s<literal>\n",
+                             tomoe_char_get_code (chr));
+    if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+
+    /* reading */
+    if (tomoe_char_get_readings (chr))
+        if (!_write_readings (chr, f)) return FALSE;
+
+    /* writing */
+    if (tomoe_char_get_writing (chr))
+        if (!_write_writing (chr, f)) return FALSE;
+
+    /* meta */
+    /*
+    if (tomoe_char_has_meta_data ())
+        if (!write_meta_data (chr, f)) return FALSE;
+    */
+
+    /* close character element */
+    g_snprintf (buf, G_N_ELEMENTS (buf), "  </character>\n");
+    if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
+
+    return TRUE;
+}
+
+#warning FIXME: not tested yet
 static void
 tomoe_dict_save_xml (TomoeDict *dict)
 {
     TomoeDictPrivate *priv;
     FILE *f;
+    gchar buf[1024];
+    size_t count;
+    guint i;
 
     g_return_if_fail (TOMOE_IS_DICT (dict));
     if (!tomoe_dict_is_editable (dict)) return;
@@ -826,7 +852,36 @@ tomoe_dict_save_xml (TomoeDict *dict)
     f = fopen (priv->filename, "wb");
     g_return_if_fail (f);
 
+    /* write the header */
+    g_markup_printf_escaped (
+        buf, G_N_ELEMENTS(buf),
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone\"no\"?>\n"
+        "<!DOCTYPE tomoe_dictionary SYSTEM \"tomoe-dict.dtd\">"
+        "<tomoe_dictionary name=\"%s\">\n",
+        priv->name);
+    count = fwrite (buf, strlen (buf), 1, f);
+    if (count < 1) goto ERROR;
+
+    /* write each characters */
+    for (i = 0; i < priv->letters->len; i++) {
+        TomoeChar* chr = (TomoeChar*)g_ptr_array_index (priv->letters, i);
+        gboolean success = _write_character (chr, f);
+        if (!success) goto ERROR;
+    }
+
+    /* close root element */
+    g_snprintf (buf, G_N_ELEMENTS(buf), "</tomoe_dictionary>\n");
+    count = fwrite (buf, strlen (buf), 1, f);
+    if (count < 1) goto ERROR;
+
+    /* clean */
     fclose (f);
+    return;
+
+ERROR:
+    g_warning ("Faild to write %s.", priv->filename);
+    fclose (f);
+    return;
 }
 
 /*
