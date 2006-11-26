@@ -158,10 +158,10 @@ tomoe_dict_init (TomoeDict *dict)
 }
 
 
-TomoeDict*
+TomoeDict *
 tomoe_dict_new (const char* filename, gboolean editable)
 {
-    TomoeDict* dict;
+    TomoeDict *dict;
 
     if (!filename && !*filename) return NULL;
 
@@ -839,9 +839,7 @@ _write_character (TomoeChar *chr, FILE *f)
         if (!_write_writing (chr, f)) return FALSE;
 
     /* meta */
-#if 0
     if (tomoe_char_has_meta_data (chr))
-#endif
         if (!_write_meta_data (chr, f)) return FALSE;
 
     /* close character element */
@@ -869,7 +867,7 @@ tomoe_dict_save_xml (TomoeDict *dict)
 
     /* write the header */
     head = g_markup_printf_escaped (
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone\"no\"?>\n"
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
         "<!DOCTYPE tomoe_dictionary SYSTEM \"tomoe-dict.dtd\">\n"
         "<tomoe_dictionary name=\"%s\">\n",
         priv->name);

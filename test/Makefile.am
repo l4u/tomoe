@@ -26,6 +26,8 @@ EXTRA_DIST = \
 	run-spec.rb \
 	run-test.sh \
 	tomoe-spec-utils.rb \
-	context_spec.rb
+	context_spec.rb \
+	dict_spec.rb \
+	writing_spec.rb
 
 TESTS = run-spec.rb

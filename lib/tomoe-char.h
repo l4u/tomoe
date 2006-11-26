@@ -93,6 +93,7 @@ const char     *tomoe_char_get_meta_data        (TomoeChar     *chr,
 void            tomoe_char_register_meta_data   (TomoeChar     *chr,
                                                  const gchar   *key,
                                                  const gchar   *value);
+gboolean        tomoe_char_has_meta_data        (TomoeChar* chr);
 void            tomoe_char_meta_data_foreach    (TomoeChar* chr,
                                                  GHFunc func,
                                                  gpointer user_data);
