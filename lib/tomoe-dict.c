@@ -631,7 +631,7 @@ text_handler (GMarkupParseContext *context,
     if (data->in_reading && data->chr) {
         TomoeReading *reading;
 #warning FIXME: detect reading type?
-        reading = tomoe_reading_new (TOMOE_READING_ON, text);
+        reading = tomoe_reading_new (TOMOE_READING_INVALID, text);
         tomoe_char_add_reading (data->chr, reading);
         g_object_unref (reading);
     }
