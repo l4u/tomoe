@@ -260,6 +260,16 @@ tomoe_char_get_meta_data (TomoeChar* chr, const gchar *key)
     return g_hash_table_lookup (priv->meta, key);
 }
 
+gboolean
+tomoe_char_has_meta_data (TomoeChar *chr)
+{
+    TomoeCharPrivate *priv;
+    g_return_if_fail (chr);
+
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+    return g_hash_table_size (priv->meta) > 0;
+}
+
 void
 tomoe_char_meta_data_foreach (TomoeChar* chr, GHFunc func, gpointer user_data)
 {

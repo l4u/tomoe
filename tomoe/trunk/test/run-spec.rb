@@ -17,6 +17,8 @@ class Spec::Runner::Formatter::ProgressBarFormatter
   end
 end
 
+ARGV.unshift("--diff")
+
 Dir.glob(File.join(test_dir, "*_spec.rb")).each do |file|
   require File.basename(file, ".rb")
 end

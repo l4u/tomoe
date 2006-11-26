@@ -1,9 +1,6 @@
 require 'tomoe-spec-utils'
 
 context "Tomoe::Writing" do
-  inherit TomoeSpecBase
-  include TomoeSpecUtils
-
   specify "should each all strokes" do
     writing = Tomoe::Writing.new
     strokes = [

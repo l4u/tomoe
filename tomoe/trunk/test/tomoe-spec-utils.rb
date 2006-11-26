@@ -4,13 +4,28 @@ require 'tomoe'
 
 $KCODE = "u"
 
-class TomoeSpecBase
-  def setup
-    setup_context
-  end
+module TomoeSpecSetup
+  def before_context_eval
+    super
+    @context_eval_module.class_eval do
+      include TomoeSpecUtils
 
-  def teardown
-    teardown_context
+      setup do
+        setup_context
+      end
+
+      teardown do
+        teardown_context
+      end
+    end
+  end
+end
+
+module Spec
+  module Runner
+    class Context
+      include TomoeSpecSetup
+    end
   end
 end
 
