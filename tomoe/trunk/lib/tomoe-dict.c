@@ -480,7 +480,7 @@ set_parse_error (GMarkupParseContext *context, GError **error,
     g_markup_parse_context_get_position (context, &line, &chr);
 
     g_snprintf (buf, G_N_ELEMENTS (buf),
-                "Tomoe XML dictionary parse error at line %d char %d of %s.",
+                "Invalid content at line %d char %d of %s.",
                 line, chr, data->priv->filename);
 
     *error = g_error_new (G_MARKUP_ERROR,
@@ -587,7 +587,7 @@ start_element_handler (GMarkupParseContext *context,
     if (!strcmp ("reading", element_name)) {
         gint idx;
 
-        if (data->state != STATE_READINGS) {
+        if (data->state != STATE_READING) {
             set_parse_error (context, error, data);
             return;
         }
