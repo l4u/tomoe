@@ -445,6 +445,7 @@ typedef struct _ParseData
     gboolean in_dict;
     gboolean in_literal;
     gboolean in_stroke;
+    gboolean in_readings;
     gboolean in_reading;
     gboolean in_meta;
 
@@ -464,8 +465,6 @@ start_element_handler (GMarkupParseContext *context,
                        gpointer             user_data,
                        GError             **error)
 {
-#warning FIXME: need error check
-
     ParseData *data = user_data;
 
     if (!strcmp ("tomoe_dictionary", element_name)) {
@@ -480,36 +479,46 @@ start_element_handler (GMarkupParseContext *context,
         return;
     }
 
+    if (!data->in_dict)
+        return;
+
     if (!strcmp ("character", element_name)) {
         data->chr = tomoe_char_new ();
         return;
     }
 
     if (!strcmp ("literal", element_name)) {
+        g_return_if_fail (data->chr);
         data->in_literal = TRUE;
         return;
     }
 
     if (!strcmp ("strokelist", element_name)) {
+        g_return_if_fail (data->chr);
         data->writing = tomoe_writing_new ();
         return;
     }
 
     if (!strcmp ("s", element_name)) {
+        g_return_if_fail (data->writing);
         data->in_stroke = TRUE;
         return;
     }
 
     if (!strcmp ("readings", element_name)) {
+        g_return_if_fail (data->chr);
+        data->in_readings = TRUE;
         return;
     }
 
     if (!strcmp ("r", element_name)) {
+        g_return_if_fail (data->in_readings);
         data->in_reading = TRUE;
         return;
     }
 
     if (!strcmp ("meta", element_name)) {
+        g_return_if_fail (data->chr);
         data->in_meta = TRUE;
         return;
     }
@@ -564,6 +573,7 @@ end_element_handler (GMarkupParseContext *context,
     }
 
     if (!strcmp ("readings", element_name)) {
+        data->in_readings = FALSE;
         return;
     }
 
@@ -630,6 +640,7 @@ text_handler (GMarkupParseContext *context,
 
     if (data->in_reading && data->chr) {
         TomoeReading *reading;
+
 #warning FIXME: detect reading type?
         reading = tomoe_reading_new (TOMOE_READING_INVALID, text);
         tomoe_char_add_reading (data->chr, reading);
@@ -681,16 +692,17 @@ tomoe_dict_load_xml (TomoeDict *dict)
     f = fopen (priv->filename, "rb");
     g_return_val_if_fail (f, FALSE);
 
-    data.dict    = dict;
-    data.priv    = priv;
-    data.in_dict = FALSE;
-    data.in_literal = FALSE;
-    data.in_stroke = FALSE;
-    data.in_reading = FALSE;
-    data.chr     = NULL;
-    data.writing = NULL;
-    data.key = NULL;
-    data.value = NULL;
+    data.dict        = dict;
+    data.priv        = priv;
+    data.in_dict     = FALSE;
+    data.in_literal  = FALSE;
+    data.in_stroke   = FALSE;
+    data.in_readings = FALSE;
+    data.in_reading  = FALSE;
+    data.chr         = NULL;
+    data.writing     = NULL;
+    data.key         = NULL;
+    data.value       = NULL;
 
     context = g_markup_parse_context_new (&parser, 0, &data, NULL);
 
