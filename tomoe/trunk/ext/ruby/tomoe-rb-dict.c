@@ -11,6 +11,12 @@ td_initialize(VALUE self, VALUE filename, VALUE editable)
 }
 
 static VALUE
+td_get_char(VALUE self, VALUE code_point)
+{
+    return GOBJ2RVAL(tomoe_dict_get_char(_SELF(self), RVAL2CSTR(code_point)));
+}
+
+static VALUE
 td_save(VALUE self)
 {
     tomoe_dict_save(_SELF(self));
@@ -26,6 +32,8 @@ Init_tomoe_dict(VALUE mTomoe)
     cTomoeDict = G_DEF_CLASS(TOMOE_TYPE_DICT, "Dict", mTomoe);
 
     rb_define_method(cTomoeDict, "initialize", td_initialize, 2);
+
+    rb_define_method(cTomoeDict, "[]", td_get_char, 1);
 
     rb_define_method(cTomoeDict, "save", td_save, 0);
 }
