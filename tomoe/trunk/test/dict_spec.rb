@@ -59,10 +59,16 @@ EOX
   specify "should load and save" do
     dicts = ObjectSpace.each_object(Tomoe::Dict) {}
     Proc.new do
-      Tomoe::Dict.new(@dict_file.path, true)
+      Proc.new do
+        dict = Tomoe::Dict.new(@dict_file.path, true)
+        dict.modified = true
+        dict = nil
+        GC.start
+      end.call
       truncate_content
       nil
-    end
+      GC.start
+    end.call
 
     GC.start # GCed Tomoe::Dict to ensure save
     current_dicts = ObjectSpace.each_object(Tomoe::Dict) {}
