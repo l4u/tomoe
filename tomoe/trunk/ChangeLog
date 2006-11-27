@@ -1,3 +1,7 @@
+2006-11-27  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* lib/tomoe-dict.c: Add an error handler for parsing XML.
+
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
 	* recognizer/tomoe-recognizer-simple-logic.c (get_vertex): updated

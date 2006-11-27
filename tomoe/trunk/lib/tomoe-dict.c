@@ -478,6 +478,14 @@ set_parse_error (GError **error, const gchar *format,
     g_free (s);
 }
 
+static gint
+get_line_number (GMarkupParseContext *context)
+{
+    gint line;
+    g_markup_parse_context_get_position (context, &line, NULL);
+    return line;
+}
+
 static void
 start_element_handler (GMarkupParseContext *context,
                        const gchar         *element_name,
@@ -502,7 +510,8 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (!data->in_dict) {
-        set_parse_error (error, "Invalid root element %s", element_name);
+        set_parse_error (error, "Invalid root element %s of %s.",
+                         element_name, data->priv->filename);
         return;
     }
 
@@ -511,14 +520,19 @@ start_element_handler (GMarkupParseContext *context,
         return;
     }
 
+    if (!data->chr) {
+        set_parse_error (error, "Invalid element %s at %d of %s.",
+                         element_name, get_line_number (context),
+                         data->priv->filename);
+        return;
+    }
+
     if (!strcmp ("code-point", element_name)) {
-        g_return_if_fail (data->chr);
         data->in_codepoint = TRUE;
         return;
     }
 
     if (!strcmp ("strokes", element_name)) {
-        g_return_if_fail (data->chr);
         data->writing = tomoe_writing_new ();
         return;
     }
@@ -553,7 +567,6 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (!strcmp ("readings", element_name)) {
-        g_return_if_fail (data->chr);
         data->in_readings = TRUE;
         return;
     }
@@ -579,13 +592,11 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (!strcmp ("meta", element_name)) {
-        g_return_if_fail (data->chr);
         data->in_meta = TRUE;
         return;
     }
 
     if (data->in_meta) {
-        g_return_if_fail (data->chr);
         g_free (data->key);
         g_free (data->value);
         data->key   = g_strdup (element_name);
@@ -673,7 +684,6 @@ text_handler (GMarkupParseContext *context,
     ParseData *data = user_data;
 
     if (data->in_codepoint) {
-        g_return_if_fail (data->chr);
         tomoe_char_set_code (data->chr, text);
         return;
     }
@@ -681,16 +691,12 @@ text_handler (GMarkupParseContext *context,
     if (data->in_reading) {
         TomoeReading *reading;
 
-        g_return_if_fail (data->chr);
-
         reading = tomoe_reading_new (data->reading_type, text);
         tomoe_char_add_reading (data->chr, reading);
         g_object_unref (reading);
     }
 
     if (data->in_meta) {
-        g_return_if_fail (data->chr);
-
         g_free (data->value);
         data->value = g_strdup (text);
     }
