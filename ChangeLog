@@ -1,3 +1,9 @@
+2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/dict_spec.rb: ensure destroying Tomoe::Dict to test #save.
+
+	* lib/tomoe-dict.c: check whether the dict is editable or not.
+
 2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.netb>
 
 	* recognizer/tomoe-recognizer-simple-logic.c: Remove redundant

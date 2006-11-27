@@ -179,7 +179,7 @@ tomoe_dict_dispose (GObject *object)
     dict = TOMOE_DICT(object);
     priv = TOMOE_DICT_GET_PRIVATE(dict);
 
-    if (priv->modified) {
+    if (priv->editable && priv->modified) {
         priv->modified = FALSE;
         tomoe_dict_save_xml (dict);
     }
