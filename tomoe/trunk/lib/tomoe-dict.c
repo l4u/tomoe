@@ -525,6 +525,7 @@ start_element_handler (GMarkupParseContext *context,
             tomoe_writing_line_to (data->writing, x, y);
 
         data->n_points++;
+        return;
     }
 
     if (!strcmp ("readings", element_name)) {

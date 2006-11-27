@@ -50,13 +50,13 @@ G_DEFINE_TYPE (TomoeReading, tomoe_reading, G_TYPE_OBJECT)
 
 static void tomoe_reading_dispose        (GObject         *object);
 static void tomoe_reading_set_property   (GObject         *object,
-                                       guint            prop_id,
-                                       const GValue    *value,
-                                       GParamSpec      *pspec);
+                                          guint            prop_id,
+                                          const GValue    *value,
+                                          GParamSpec      *pspec);
 static void tomoe_reading_get_property   (GObject         *object,
-                                       guint            prop_id,
-                                       GValue          *value,
-                                       GParamSpec      *pspec);
+                                          guint            prop_id,
+                                          GValue          *value,
+                                          GParamSpec      *pspec);
 
 static void
 tomoe_reading_class_init (TomoeReadingClass *klass)
