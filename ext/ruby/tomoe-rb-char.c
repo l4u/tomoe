@@ -16,6 +16,19 @@ tc_set_code(VALUE self, VALUE code)
 }
 
 static VALUE
+tc_get_n_strokes(VALUE self)
+{
+    return INT2NUM(tomoe_char_get_n_strokes(_SELF(self)));
+}
+
+static VALUE
+tc_set_n_strokes(VALUE self, VALUE n_strokes)
+{
+    tomoe_char_set_n_strokes(_SELF(self), NUM2INT(n_strokes));
+    return Qnil;
+}
+
+static VALUE
 tc_get_writing(VALUE self)
 {
     return GOBJ2RVAL(tomoe_char_get_writing(_SELF(self)));
@@ -47,7 +60,10 @@ Init_tomoe_char(VALUE mTomoe)
 
     rb_define_method(cTomoeChar, "code", tc_get_code, 0);
     rb_define_method(cTomoeChar, "code=", tc_set_code, 1);
+    rb_define_method(cTomoeChar, "n_strokes", tc_get_n_strokes, 0);
+    rb_define_method(cTomoeChar, "n_strokes=", tc_set_n_strokes, 1);
     rb_define_method(cTomoeChar, "writing", tc_get_writing, 0);
+
     rb_define_method(cTomoeChar, "to_xml", tc_to_xml, 0);
 }
 

@@ -14,4 +14,12 @@ context "Tomoe::Char" do
     xml << "  </character>\n"
     @char.to_xml.should == xml
   end
+
+  specify "should set/get n_strokes" do
+    @char = Tomoe::Char.new
+    @char.n_strokes.should_zero
+
+    @char.n_strokes = 5
+    @char.n_strokes.should == 5
+  end
 end
