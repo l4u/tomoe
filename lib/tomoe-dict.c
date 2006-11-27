@@ -543,7 +543,10 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (!strcmp ("stroke", element_name)) {
-        g_return_if_fail (data->writing);
+        if (!data->writing) {
+            set_parse_error (context, error, data);
+            return;
+        }
         data->state = STATE_STROKE;
         data->n_points = 0;
         return;
@@ -552,7 +555,10 @@ start_element_handler (GMarkupParseContext *context,
     if (!strcmp ("point", element_name)) {
         gint idx, x, y;
 
-        g_return_if_fail (data->state == STATE_STROKE);
+        if (data->state != STATE_STROKE) {
+            set_parse_error (context, error, data);
+            return;
+        }
 
         data->state = STATE_POINT;
 
@@ -581,7 +587,10 @@ start_element_handler (GMarkupParseContext *context,
     if (!strcmp ("reading", element_name)) {
         gint idx;
 
-        g_return_if_fail (data->state == STATE_READINGS);
+        if (data->state != STATE_READINGS) {
+            set_parse_error (context, error, data);
+            return;
+        }
 
         data->state = STATE_READING;
         data->reading_type = TOMOE_READING_INVALID;
@@ -609,6 +618,8 @@ start_element_handler (GMarkupParseContext *context,
         data->key   = g_strdup (element_name);
         data->value = NULL;
     }
+
+    /* thow error? */
 }
 
 static void
