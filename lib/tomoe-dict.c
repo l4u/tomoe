@@ -603,19 +603,20 @@ text_handler (GMarkupParseContext *context,
               gpointer             user_data,
               GError             **error)
 {
-#warning FIXME: need error check
-
     ParseData *data = user_data;
 
-    if (data->in_literal && data->chr) {
+    if (data->in_literal) {
+        g_return_if_fail (data->chr);
         tomoe_char_set_code (data->chr, text);
         return;
     }
 
     /* FIXME! */
-    if (data->in_stroke && data->chr) {
+    if (data->in_stroke) {
         const gchar *p = text;
         guint point_num = 0, k;
+
+        g_return_if_fail (data->chr);
 
         /* count stroke points */
         for (; *p; p++)
@@ -637,8 +638,10 @@ text_handler (GMarkupParseContext *context,
         }
     }
 
-    if (data->in_reading && data->chr) {
+    if (data->in_reading) {
         TomoeReading *reading;
+
+        g_return_if_fail (data->chr);
 
 #warning FIXME: detect reading type?
         reading = tomoe_reading_new (TOMOE_READING_INVALID, text);
@@ -647,6 +650,8 @@ text_handler (GMarkupParseContext *context,
     }
 
     if (data->in_meta && data->chr) {
+        g_return_if_fail (data->chr);
+
         g_free (data->value);
         data->value = g_strdup (text);
     }
@@ -704,6 +709,7 @@ tomoe_dict_load_xml (TomoeDict *dict)
     data.in_stroke   = FALSE;
     data.in_readings = FALSE;
     data.in_reading  = FALSE;
+    data.in_meta     = FALSE;
     data.chr         = NULL;
     data.writing     = NULL;
     data.key         = NULL;
