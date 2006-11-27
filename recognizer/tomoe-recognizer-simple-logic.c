@@ -24,7 +24,6 @@
 #include <string.h>
 #include <math.h>
 #include "tomoe-char.h"
-#include "tomoe-dict.h"
 #include "tomoe-candidate.h"
 #include "tomoe-recognizer-simple-logic.h"
 
@@ -586,9 +585,9 @@ get_candidates (GList *points, GPtrArray *cands)
 static int
 match_stroke_num (TomoeChar *chr, int input_stroke_num, GArray *adapted)
 {
-    int pj = 100;
+    gint pj = 100;
     gint adapted_num;
-    int d_stroke_num = tomoe_writing_get_n_strokes (tomoe_char_get_writing (chr));
+    gint d_stroke_num = tomoe_writing_get_n_strokes (tomoe_char_get_writing (chr));
 
     if (!adapted)
         return -1;
@@ -596,9 +595,7 @@ match_stroke_num (TomoeChar *chr, int input_stroke_num, GArray *adapted)
     adapted_num = adapted->len;
 
     if (d_stroke_num - input_stroke_num >= 3) {
-        int i, j;
-
-        pj = 100;
+        gint i, j;
 
         for (i = 0; i < adapted_num; i++) {
             j = g_array_index (adapted, gint, i);
