@@ -49,8 +49,8 @@ struct _cand_priv
     GArray          *adapted_strokes;
 };
 
-static cand_priv *cand_priv_new               (TomoeChar   *character);
-static void       cand_priv_free              (cand_priv   *cand_p);
+static cand_priv *cand_priv_new               (TomoeCandidate *candidate);
+static void       cand_priv_free              (cand_priv      *cand_p);
 static GPtrArray *get_candidates              (GList       *points,
                                                GPtrArray   *cands);
 static gint       match_stroke_num            (TomoeChar   *chr,
@@ -95,9 +95,8 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
     for (node = target_chars; node; node = g_list_next (node)) {
         TomoeCandidate *candidate = node->data;
         cand_priv *cand;
-        cand = cand_priv_new (tomoe_candidate_get_char (candidate));
+        cand = cand_priv_new (candidate);
         g_ptr_array_add (first_cands, cand);
-        g_object_unref (candidate);
     }
     g_list_free (target_chars);
 
@@ -210,12 +209,12 @@ stroke_calculate_metrics (GList *points, tomoe_metric **met)
  */
 
 static cand_priv *
-cand_priv_new (TomoeChar *character)
+cand_priv_new (TomoeCandidate *cand)
 {
     cand_priv *cand_p;
 
     cand_p                  = g_new (cand_priv, 1);
-    cand_p->cand            = tomoe_candidate_new (character);
+    cand_p->cand            = cand;
     cand_p->adapted_strokes = g_array_new (FALSE, FALSE, sizeof (gint));
 
     return cand_p;
