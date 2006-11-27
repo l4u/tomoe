@@ -772,6 +772,7 @@ tomoe_dict_load_xml (TomoeDict *dict)
     gint bytes;
     gchar buf[4096];
     ParseData data;
+    gboolean retval = TRUE;
 
     f = fopen (priv->filename, "rb");
     g_return_val_if_fail (f, FALSE);
@@ -797,6 +798,7 @@ tomoe_dict_load_xml (TomoeDict *dict)
         if (!success) {
             g_warning("Tomoe XML Dictionary: %s", error->message);
             g_error_free(error);
+            retval = FALSE;
             break;
         }
     }
@@ -807,7 +809,7 @@ tomoe_dict_load_xml (TomoeDict *dict)
     if (priv->letters)
         g_ptr_array_sort (priv->letters, letter_compare_func);
 
-    return TRUE;
+    return retval;
 }
 
 static void
