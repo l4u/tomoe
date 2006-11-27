@@ -798,108 +798,6 @@ tomoe_dict_load_xml (TomoeDict *dict)
     return TRUE;
 }
 
-
-
-static gboolean
-_write_readings (TomoeChar *chr, FILE *f)
-{
-    GList *node = (GList*) tomoe_char_get_readings (chr);
-    const gchar *head = "    <readings>\n";
-    const gchar *foot = "    </readings>\n";
-
-    if (fwrite (head, strlen (head), 1, f) < 1) return FALSE;
-
-    for (; node; node = g_list_next (node)) {
-        TomoeReading *reading = node->data;
-        gchar *str;
-
-        if (!TOMOE_IS_READING (reading)) continue;
-
-        str = g_markup_printf_escaped ("      <reading>%s</reading>\n",
-                                       tomoe_reading_get_reading (reading));
-        if (fwrite (str, strlen (str), 1, f) < 1) {
-            g_free (str);
-            return FALSE;
-        }
-        g_free (str);
-    }
-
-    if (fwrite (foot, strlen (foot), 1, f) < 1) return FALSE;
-
-    return TRUE;
-}
-
-static void
-_write_meta_datum (gpointer key, gpointer value, gpointer user_data)
-{
-    FILE *f = user_data;
-    gchar *str;
-
-    str = g_markup_printf_escaped ("      <%s>%s</%s>\n",
-                                   (gchar*)key, (gchar*)value, (gchar*)key);
-    fwrite (str, strlen (str), 1, f);
-    g_free (str);
-}
-
-static gboolean
-_write_meta_data (TomoeChar *chr, FILE *f)
-{
-    const gchar *tag1 = "    <meta>\n";
-    const gchar *tag2 = "    </meta>\n";
-
-    if (fwrite (tag1, strlen (tag1), 1, f) < 1) return FALSE;
-    tomoe_char_meta_data_foreach (chr, _write_meta_datum, f);
-    if (fwrite (tag2, strlen (tag2), 1, f) < 1) return FALSE;
-
-    return TRUE;
-}
-
-static gboolean
-_write_character (TomoeChar *chr, FILE *f)
-{
-    gchar *head;
-    const gchar *foot = "  </character>\n";
-    gchar *output;
-
-    g_return_val_if_fail (TOMOE_IS_CHAR (chr), FALSE);
-
-    /* open character element */
-    head = g_markup_printf_escaped ("  <character>\n"
-                                    "    <code-point>%s</code-point>\n",
-                                    tomoe_char_get_code (chr));
-    if (fwrite (head, strlen (head), 1, f) < 1) {
-        g_free (head);
-        return FALSE;
-    } else {
-        g_free (head);
-    }
-
-    /* reading */
-    if (tomoe_char_get_readings (chr))
-        if (!_write_readings (chr, f)) return FALSE;
-
-    /* writing */
-    if (tomoe_char_get_writing (chr)) {
-        gboolean failed;
-
-        output = tomoe_writing_to_xml (tomoe_char_get_writing (chr));
-        if (!output) return FALSE;
-
-        failed = fwrite (output, strlen (output), 1, f) < 1;
-        g_free (output);
-        if (failed) return FALSE;
-    }
-
-    /* meta */
-    if (tomoe_char_has_meta_data (chr))
-        if (!_write_meta_data (chr, f)) return FALSE;
-
-    /* close character element */
-    if (fwrite (foot, strlen (foot), 1, f) < 1) return FALSE;
-
-    return TRUE;
-}
-
 static void
 tomoe_dict_save_xml (TomoeDict *dict)
 {
@@ -933,8 +831,16 @@ tomoe_dict_save_xml (TomoeDict *dict)
 
     /* write each characters */
     for (i = 0; i < priv->letters->len; i++) {
+        gchar *xml;
+        gboolean failed;
         TomoeChar* chr = (TomoeChar*)g_ptr_array_index (priv->letters, i);
-        if (!_write_character (chr, f)) goto ERROR;
+
+        xml = tomoe_char_to_xml (chr);
+        if (!xml) goto ERROR;
+
+        failed = fwrite (xml, strlen (xml), 1, f) < 1;
+        g_free (xml);
+        if (failed) goto ERROR;
     }
 
     /* close root element */

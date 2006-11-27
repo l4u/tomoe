@@ -183,7 +183,7 @@ tomoe_writing_to_xml (TomoeWriting *writing)
     g_return_val_if_fail (TOMOE_IS_WRITING (writing), NULL);
 
     priv = TOMOE_WRITING_GET_PRIVATE(writing);
-    if (!priv->stroke_first) return NULL;
+    if (!priv->stroke_first) return g_strdup ("");
 
     output = g_string_new ("    <strokes>\n");
     for (stroke_list = priv->stroke_first;
