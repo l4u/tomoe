@@ -488,14 +488,6 @@ set_parse_error (GMarkupParseContext *context, GError **error,
                           buf);
 }
 
-static gint
-get_line_number (GMarkupParseContext *context)
-{
-    gint line;
-    g_markup_parse_context_get_position (context, &line, NULL);
-    return line;
-}
-
 static void
 start_element_handler (GMarkupParseContext *context,
                        const gchar         *element_name,

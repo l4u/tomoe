@@ -1,3 +1,7 @@
+2006-11-27  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* lib/tomoe-dict.c: Remove unused code.
+
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-char.[ch]: tomoe_char_(get|set)_code ->
