@@ -185,27 +185,29 @@ tomoe_writing_to_xml (TomoeWriting *writing)
     priv = TOMOE_WRITING_GET_PRIVATE(writing);
     if (!priv->stroke_first) return NULL;
 
-    output = g_string_new ("    <strokelist>\n");
+    output = g_string_new ("    <strokes>\n");
     for (stroke_list = priv->stroke_first;
          stroke_list;
          stroke_list = g_list_next (stroke_list)) {
         GList *point_list = stroke_list->data;
 
         if (!point_list) continue;
-        g_string_append (output, "      <s>");
+        g_string_append (output, "      <stroke>\n");
 
         for (; point_list; point_list = g_list_next (point_list)) {
             TomoePoint *p = point_list->data;
 
             if (!p) continue;
 
-            g_string_append_printf (output, "(%d %d) ", p->x, p->y);
+            g_string_append_printf (output,
+                                    "        <point x=\"%d\" y=\"%d\"/>\n",
+                                    p->x, p->y);
         }
 
-        g_string_append (output, "</s>\n");
+        g_string_append (output, "      </stroke>\n");
     }
 
-    g_string_append (output, "    </strokelist>\n");
+    g_string_append (output, "    </strokes>\n");
 
     return g_string_free (output, FALSE);
 }

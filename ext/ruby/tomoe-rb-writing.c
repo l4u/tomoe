@@ -79,6 +79,22 @@ tw_each(VALUE self)
     return rb_ary_each(tw_get_strokes(self));
 }
 
+static VALUE
+tw_to_xml(VALUE self)
+{
+    gchar *xml;
+
+    xml = tomoe_writing_to_xml(_SELF(self));
+    if (xml) {
+        VALUE result;
+        result = CSTR2RVAL(xml);
+        g_free(xml);
+        return result;
+    } else {
+        return Qnil;
+    }
+}
+
 void
 Init_tomoe_writing(VALUE mTomoe)
 {
@@ -101,4 +117,6 @@ Init_tomoe_writing(VALUE mTomoe)
 
     rb_define_method(cTomoeWriting, "strokes", tw_get_strokes, 0);
     rb_define_method(cTomoeWriting, "each", tw_each, 0);
+
+    rb_define_method(cTomoeWriting, "to_xml", tw_to_xml, 0);
 }
