@@ -47,17 +47,15 @@ typedef struct _cand_priv cand_priv;
 struct _cand_priv
 {
     TomoeCandidate  *cand;
-    gint             index;
     GArray          *adapted_strokes;
 };
 
-static cand_priv *cand_priv_new               (TomoeChar   *character,
-                                               int          index);
+static cand_priv *cand_priv_new               (TomoeChar   *character);
 static void       cand_priv_free              (cand_priv   *cand_p);
 static GPtrArray *get_candidates              (GList       *points,
                                                GPtrArray   *cands);
 static gint       match_stroke_num            (TomoeDict   *dict,
-                                               int          letter_index,
+                                               TomoeChar   *chr,
                                                int          input_stroke_num,
                                                GArray      *adapted);
 static TomoeWriting *create_sparse_writing    (TomoeWriting *writing);
@@ -113,7 +111,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
             continue;
 
         /* append a candidate to candidate list */
-        cand = cand_priv_new (p, i);
+        cand = cand_priv_new (p);
         g_ptr_array_add (first_cands, cand);
     }
 
@@ -131,17 +129,14 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
     matches = g_ptr_array_new ();
     for (i = 0; i < (guint)cands->len; i++) {
         cand_priv *cand_p;
-        GArray *adapted;
         gint pj;
-        gint index;
         TomoeChar *a;
         gboolean f = TRUE;
 
         cand_p = g_ptr_array_index (cands, i);
-        index = cand_p->index;
-        adapted = cand_p->adapted_strokes;
-        pj = match_stroke_num (dict, index,
-                               input_stroke_num, adapted);
+        pj = match_stroke_num (dict,
+                               tomoe_candidate_get_character (cand_p->cand),
+                               input_stroke_num, cand_p->adapted_strokes);
 
         if (pj < 0)
             continue;
@@ -230,13 +225,12 @@ stroke_calculate_metrics (GList *points, tomoe_metric **met)
  */
 
 static cand_priv *
-cand_priv_new (TomoeChar* character, int index)
+cand_priv_new (TomoeChar *character)
 {
     cand_priv *cand_p;
 
     cand_p                  = g_new (cand_priv, 1);
     cand_p->cand            = tomoe_candidate_new (character);
-    cand_p->index           = index;
     cand_p->adapted_strokes = g_array_new (FALSE, FALSE, sizeof (gint));
 
     return cand_p;
@@ -604,12 +598,10 @@ get_candidates (GList *points, GPtrArray *cands)
 }
 
 static int
-match_stroke_num (TomoeDict* dict, int letter_index, int input_stroke_num, GArray *adapted)
+match_stroke_num (TomoeDict* dict, TomoeChar *chr, int input_stroke_num, GArray *adapted)
 {
-    const GPtrArray *letters = tomoe_dict_get_letters(dict);
     int pj = 100;
     gint adapted_num;
-    TomoeChar* chr = (TomoeChar*) g_ptr_array_index (letters, letter_index);
     int d_stroke_num = tomoe_writing_get_number_of_strokes (tomoe_char_get_writing (chr));
 
     if (!adapted)
