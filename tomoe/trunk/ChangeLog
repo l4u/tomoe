@@ -1,3 +1,10 @@
+2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-char.[ch]: tomoe_char_(get|set)_code ->
+	tomoe_char_(get|set)_utf8.
+	* lib/tomoe-dict.c, ext/ruby/tomoe-rb-char.c, test/char_spec.rb,
+	test/context_spec.rb: followed new API.
+
 2006-11-27  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe-dict.c: Clean up error handling. code-point -> utf8.

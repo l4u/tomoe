@@ -34,7 +34,7 @@
 typedef struct _TomoeCharPrivate	TomoeCharPrivate;
 struct _TomoeCharPrivate
 {
-    gchar                *char_code;
+    gchar                *utf8;
     gint                  n_strokes;
     TomoeWriting         *writing;
     GList                *readings;
@@ -76,7 +76,7 @@ static void
 tomoe_char_init (TomoeChar *chr)
 {
     TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (chr);
-    priv->char_code  = NULL;
+    priv->utf8       = NULL;
     priv->n_strokes  = 0;
     priv->writing    = NULL;
     priv->meta       = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -95,8 +95,8 @@ tomoe_char_dispose (GObject *object)
 {
     TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (object);
 
-    if (priv->char_code)
-        g_free (priv->char_code);
+    if (priv->utf8)
+        g_free (priv->utf8);
     if (priv->writing)
         g_object_unref (G_OBJECT (priv->writing));
     if (priv->meta)
@@ -106,7 +106,7 @@ tomoe_char_dispose (GObject *object)
         g_list_free (priv->readings);
     }
 
-    priv->char_code = NULL;
+    priv->utf8      = NULL;
     priv->writing   = NULL;
     priv->meta      = NULL;
     priv->readings  = NULL;
@@ -152,26 +152,26 @@ tomoe_char_get_property (GObject    *object,
 }
 
 const gchar *
-tomoe_char_get_code (TomoeChar* chr)
+tomoe_char_get_utf8 (TomoeChar *chr)
 {
     TomoeCharPrivate *priv;
 
     g_return_val_if_fail (TOMOE_IS_CHAR (chr), NULL);
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
-    return priv->char_code;
+    return priv->utf8;
 }
 
 void
-tomoe_char_set_code (TomoeChar* chr, const char* code)
+tomoe_char_set_utf8 (TomoeChar *chr, const char *utf8)
 {
     TomoeCharPrivate *priv;
 
     g_return_if_fail (TOMOE_IS_CHAR (chr));
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
-    g_free (priv->char_code);
-    priv->char_code = code ? g_strdup (code) : NULL;
+    g_free (priv->utf8);
+    priv->utf8 = utf8 ? g_strdup (utf8) : NULL;
 }
 
 gint
@@ -256,8 +256,8 @@ tomoe_char_compare (const TomoeChar *a, const TomoeChar *b)
     priv_b = TOMOE_CHAR_GET_PRIVATE (b);
     if (!priv_a || !priv_b) return 0;
 
-    if (!priv_a->char_code || !priv_b->char_code) return 0;
-    return strcmp (priv_a->char_code, priv_b->char_code);
+    if (!priv_a->utf8 || !priv_b->utf8) return 0;
+    return strcmp (priv_a->utf8, priv_b->utf8);
 }
 
 void
@@ -306,17 +306,16 @@ tomoe_char_meta_data_foreach (TomoeChar* chr, GHFunc func, gpointer user_data)
 
 
 static void
-tomoe_char_to_xml_char_code (TomoeChar *chr, TomoeCharPrivate *priv,
-                             GString *output)
+tomoe_char_to_xml_utf8 (TomoeChar *chr, TomoeCharPrivate *priv,
+                        GString *output)
 {
-    gchar *code_point;
+    gchar *xml;
 
-    if (!priv->char_code) return;
+    if (!priv->utf8) return;
 
-    code_point = g_markup_printf_escaped ("    <code-point>%s</code-point>\n",
-                                          priv->char_code);
-    g_string_append (output, code_point);
-    g_free (code_point);
+    xml = g_markup_printf_escaped ("    <utf8>%s</utf8>\n", priv->utf8);
+    g_string_append (output, xml);
+    g_free (xml);
 }
 
 static void
@@ -394,7 +393,7 @@ tomoe_char_to_xml (TomoeChar* chr)
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
     output = g_string_new ("");
 
-    tomoe_char_to_xml_char_code (chr, priv, output);
+    tomoe_char_to_xml_utf8 (chr, priv, output);
     tomoe_char_to_xml_readings (chr, priv, output);
     tomoe_char_to_xml_writing (chr, priv, output);
     tomoe_char_to_xml_meta (chr, priv, output);

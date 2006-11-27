@@ -63,9 +63,9 @@ GType           tomoe_char_get_type (void) G_GNUC_CONST;
  */
 TomoeChar      *tomoe_char_new                  (void);
 
-const char     *tomoe_char_get_code             (TomoeChar     *chr);
-void            tomoe_char_set_code             (TomoeChar     *chr,
-                                                 const char    *code);
+const char     *tomoe_char_get_utf8             (TomoeChar     *chr);
+void            tomoe_char_set_utf8             (TomoeChar     *chr,
+                                                 const char    *utf8);
 gint            tomoe_char_get_n_strokes        (TomoeChar     *chr);
 void            tomoe_char_set_n_strokes        (TomoeChar     *chr,
                                                  gint           n_strokes);
