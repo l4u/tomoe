@@ -1,10 +1,21 @@
-<!ELEMENT tomoe_dictionary (character*)>
-<!ELEMENT character (literal, strokelist?, readings?, meta?)*>
-<!ELEMENT literal (#PCDATA)>
-<!ELEMENT strokelist (s*)>
-<!ATTLIST strokelist count CDATA #REQUIRED>
-<!ELEMENT s (#PCDATA)>
-<!ATTLIST s count CDATA #REQUIRED>
-<!ELEMENT readings (r*)>
-<!ELEMENT r (#PCDATA)>
+<!ELEMENT dictionary (character*)>
+<!ATTLIST dictionary
+          name CDATA #IMPLIED
+ >
+<!ELEMENT character (code-point, number-of-strokes?, strokes?,
+                     readings?, meta?)*>
+<!ELEMENT code-point (#PCDATA)>
+<!ELEMENT number-of-strokes (#PCDATA)>
+<!ELEMENT strokes (stroke*)>
+<!ELEMENT stroke (point*)>
+<!ELEMENT point EMPTY>
+<!ATTLIST point
+          x CDATA #REQUIRED
+          y CDATA #REQUIRED
+ >
+<!ELEMENT readings (reading*)>
+<!ELEMENT reading (#PCDATA)>
+<!ATTLIST reading
+          type CDATA #IMPLIED
+ >
 <!ELEMENT meta ANY>
