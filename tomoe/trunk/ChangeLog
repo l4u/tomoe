@@ -1,5 +1,12 @@
 2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.netb>
 
+	* recognizer/tomoe-recognizer-simple-logic.c: Reuse TomoeCandidate in
+	the list of return value of tomoe_dict_search_by_n_strokes().
+	Hmm, I have a question. Why TomoeDict has
+	tomoe_dict_search_by_n_strokes? Should be used tomoe_context_search?
+
+2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.netb>
+
 	* recognizer/tomoe-recognizer-simple-logic.c: Removed needless
 	an argument.
 
