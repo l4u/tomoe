@@ -1,3 +1,13 @@
+2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/glib-utils.[ch] (g_ptr_array_foreach_reverse): added.
+	* lib/tomoe-dict.[ch]: removed tomoe_dict_get_letters() but added
+	tomoe_dict_search_by_n_strokes().
+	* recognizer/tomoe-recognizer-simple-logic.c: used
+	tomoe_dict_search_by_n_strokes() instead of
+	tomoe_dict_get_letters().
+	* test/context_spec.rb: followed new API.
+
 2006-11-27  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe-char.[ch]: Change order of functions.

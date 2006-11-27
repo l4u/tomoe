@@ -62,6 +62,7 @@ pkginclude_HEADERS =			\
 lib_LTLIBRARIES = libtomoe.la
 
 libtomoe_la_SOURCES =		\
+	glib-utils.c		\
 	glib-utils.h		\
 	tomoe-enum-types.c	\
 	tomoe.c			\
