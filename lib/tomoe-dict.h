@@ -116,19 +116,19 @@ gboolean        tomoe_dict_register_char        (TomoeDict     *dict,
 /**
  * @brief Unregister a character by code point
  * @param dict   - Pointer to the TomoeDict object.
- * @param code_point - Code point of the character.
+ * @param utf8   - UTF-8 encoded value of the character.
  */
 gboolean        tomoe_dict_unregister_char      (TomoeDict     *dict,
-                                                 const gchar   *code_point);
+                                                 const gchar   *utf8);
 
 /**
  * @brief Get a character by code point
  * @param dict  - Pointer to the TomoeDict object.
- * @param code_point - Code point of the character.
+ * @param utf8  - UTF-8 encoded value of the character.
  * @return TomoeChar object.
  */
 TomoeChar      *tomoe_dict_get_char             (TomoeDict     *dict,
-                                                 const gchar   *code_point);
+                                                 const gchar   *utf8);
 
 /**
  * @brief Return an GPtrArray of TomoeChar which is kept in a TomoeDict.

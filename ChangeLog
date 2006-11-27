@@ -1,5 +1,7 @@
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-dict.[ch]: code_point -> utf8.
+
 	* lib/tomoe-char.c: changed internal variable name meta to meta_data.
 
 	* lib/tomoe-candidate.[ch]: tomoe_candidate_get_character() ->
