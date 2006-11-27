@@ -1,5 +1,7 @@
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/data/*.data: normalized to 100x100 from 300x300.
+
 	* data/all.xml: normalized canvas size to 100x100 from 300x300.
 
 	* data/Makefile.am: added validate make target.
