@@ -443,7 +443,7 @@ typedef struct _ParseData
     TomoeDictPrivate *priv;
 
     gboolean in_dict;
-    gboolean in_literal;
+    gboolean in_codepoint;
     gboolean in_stroke;
     gint     n_points;
     gboolean in_readings;
@@ -489,7 +489,7 @@ start_element_handler (GMarkupParseContext *context,
 
     if (!strcmp ("code-point", element_name)) {
         g_return_if_fail (data->chr);
-        data->in_literal = TRUE;
+        data->in_codepoint = TRUE;
         return;
     }
 
@@ -577,7 +577,7 @@ end_element_handler (GMarkupParseContext *context,
     }
 
     if (!strcmp("code-point", element_name)) {
-        data->in_literal = FALSE;
+        data->in_codepoint = FALSE;
         return;
     }
 
@@ -632,40 +632,11 @@ text_handler (GMarkupParseContext *context,
 {
     ParseData *data = user_data;
 
-    if (data->in_literal) {
+    if (data->in_codepoint) {
         g_return_if_fail (data->chr);
         tomoe_char_set_code (data->chr, text);
         return;
     }
-
-#if 0
-    /* FIXME! */
-    if (data->in_stroke) {
-        const gchar *p = text;
-        guint point_num = 0, k;
-
-        g_return_if_fail (data->chr);
-
-        /* count stroke points */
-        for (; *p; p++)
-            if (*p == '(') 
-                point_num ++;
-
-        /* parse stroke */
-        p = text;
-        for (k = 0; k < point_num; k++) {
-            gint x = 0, y = 0;
-
-            sscanf (p, " (%d %d)", &x, &y);
-            if (k == 0)
-                tomoe_writing_move_to (data->writing, x, y);
-            else
-                tomoe_writing_line_to (data->writing, x, y);
-
-            p = strchr (p, ')') + 1;
-        }
-    }
-#endif
 
     if (data->in_reading) {
         TomoeReading *reading;
@@ -734,7 +705,7 @@ tomoe_dict_load_xml (TomoeDict *dict)
     data.dict        = dict;
     data.priv        = priv;
     data.in_dict     = FALSE;
-    data.in_literal  = FALSE;
+    data.in_codepoint= FALSE;
     data.in_stroke   = FALSE;
     data.n_points    = 0;
     data.in_readings = FALSE;
