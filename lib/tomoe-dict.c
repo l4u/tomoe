@@ -460,6 +460,25 @@ typedef struct _ParseData
 } ParseData;
 
 static void
+set_parse_error (GError **error, const gchar *format,
+                 ...)
+{
+    gchar *s;
+    va_list args;
+
+    if (!error) return;
+
+    va_start (args, format);
+    s = g_strdup_vprintf (format, args);
+    va_end (args);
+
+    *error = g_error_new (G_MARKUP_ERROR,
+                          G_MARKUP_ERROR_INVALID_CONTENT,
+                          s);
+    g_free (s);
+}
+
+static void
 start_element_handler (GMarkupParseContext *context,
                        const gchar         *element_name,
                        const gchar        **attr_names,
@@ -482,7 +501,10 @@ start_element_handler (GMarkupParseContext *context,
         return;
     }
 
-    g_return_if_fail (data->in_dict);
+    if (!data->in_dict) {
+        set_parse_error (error, "Invalid root element %s", element_name);
+        return;
+    }
 
     if (!strcmp ("character", element_name)) {
         data->chr = tomoe_char_new ();
@@ -688,14 +710,6 @@ error_handler (GMarkupParseContext *context,
                GError              *error,
                gpointer             user_data)
 {
-    ParseData *data = user_data;
-    gint line = 0;
-
-    g_markup_parse_context_get_position (context, &line, NULL);
-    g_warning ("XML parse error at line %d of %s: %s\n",
-               line,
-               data->priv->filename,
-               error->message);
 }
 
 static GMarkupParser parser = {
@@ -742,7 +756,7 @@ tomoe_dict_load_xml (TomoeDict *dict)
 
         success = g_markup_parse_context_parse(context, buf, bytes, &error);
         if (!success) {
-            g_warning("XML parse error: %s", error->message);
+            g_warning("Tomoe XML Dictionary: %s", error->message);
             g_error_free(error);
             break;
         }
