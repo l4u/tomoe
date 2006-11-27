@@ -464,6 +464,7 @@ get_candidates (GList *points, GPtrArray *cands)
         TomoeCandidate *cand;
         GList *writing_strokes;
         guint stroke_num;
+	TomoePoint *pi0, *pi1, *pil;
 
         cand_p = g_ptr_array_index (cands, cand_index);
         tmp = _g_array_copy_int_value (cand_p->adapted_strokes);
@@ -472,10 +473,13 @@ get_candidates (GList *points, GPtrArray *cands)
         writing = tomoe_char_get_writing (lttr);
         writing_strokes = (GList *) tomoe_writing_get_strokes (writing);
         stroke_num = g_list_length (writing_strokes);
+        pi0 = (TomoePoint *) g_list_nth_data (points, 0);
+        pi1 = (TomoePoint *) g_list_nth_data (points, 1);
+        pil = (TomoePoint *) g_list_nth_data (points, i_nop - 1);
 
         for (strk_index = 0; strk_index < stroke_num; strk_index++) {
             GList *writing_points = (GList *) g_list_nth_data (writing_strokes, strk_index);
-            TomoePoint *pi, *pw;
+            TomoePoint *pw0, *pw1, *pwl;
             int d1 = 0, d2 = 0;
             int d3 = 0, d4 = 0;
             int score1 = 0, score2 = 0;
@@ -494,13 +498,11 @@ get_candidates (GList *points, GPtrArray *cands)
              * Distance between the point and ending point.
              * Number of characteristic points.
              */
-            pi = (TomoePoint *) g_list_nth_data (points, 0);
-            pw = (TomoePoint *) g_list_nth_data (writing_points, 0);
-            d1 = dist_tomoe_points (pi, pw);
+            pw0 = (TomoePoint *) g_list_nth_data (writing_points, 0);
+            d1 = dist_tomoe_points (pi0, pw0);
 
-            pi = (TomoePoint *) g_list_nth_data (points, i_nop - 1);
-            pw = (TomoePoint *) g_list_nth_data (writing_points, d_nop - 1);
-            d2 = dist_tomoe_points (pi, pw);
+            pwl = (TomoePoint *) g_list_nth_data (writing_points, d_nop - 1);
+            d2 = dist_tomoe_points (pil, pwl);
 
             score3 = (d1 + d2);
             tomoe_candidate_set_score (
@@ -513,13 +515,10 @@ get_candidates (GList *points, GPtrArray *cands)
                 continue;
             }
 
-            pi = (TomoePoint *) g_list_nth_data (points, 0);
-            pw = (TomoePoint *) g_list_nth_data (points, 1);
-            d3 = dist_tomoe_points (pi, pw);
+            d3 = dist_tomoe_points (pi0, pi1);
 
-            pi = (TomoePoint *) g_list_nth_data (writing_points, 0);
-            pw = (TomoePoint *) g_list_nth_data (writing_points, 1);
-            d4 = dist_tomoe_points (pi, pw);
+            pw1 = (TomoePoint *) g_list_nth_data (writing_points, 1);
+            d4 = dist_tomoe_points (pw0, pw1);
 
             /* threshold is (angle of bigining line) % 45[degree] (PI/4)*/
             if (d3 > LIMIT_LENGTH &&
