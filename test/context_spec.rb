@@ -5,7 +5,7 @@ context "Tomoe::Context" do
     @context = Tomoe::Context.new
     test_dir = File.expand_path(File.join(File.dirname(__FILE__)))
     @context.load_config(@config_file.path)
-    @context.load_recognizer(@recognizer_dir, "simple")
+    @context.load_recognizer(recognizer_dir, "simple")
   end
 
   def numbers_to_point(str)
@@ -14,9 +14,10 @@ context "Tomoe::Context" do
     point
   end
 
-  specify "Search by strokes" do
-    Dir.glob(File.join(@test_data_dir, "*.data")).each do |file|
-      base = File.basename(file)
+  test_data_dir = TomoeSpecUtils::Config.test_data_dir
+  Dir.glob(File.join(test_data_dir, "*.data")).each do |file|
+    base = File.basename(file)
+    specify "Search by strokes for #{base}" do
       expected = [base]
       writing = Tomoe::Writing.new
       File.open(file) do |f|
