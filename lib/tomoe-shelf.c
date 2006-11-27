@@ -149,7 +149,7 @@ tomoe_shelf_save_dict (gpointer key, gpointer value, gpointer user_data)
         tomoe_dict_save(dict);
 }
 
-void
+static void
 tomoe_shelf_save (TomoeShelf *shelf)
 {
     TomoeShelfPrivate *priv;

@@ -75,7 +75,6 @@ TomoeDict       *tomoe_shelf_get_dict       (TomoeShelf  *shelf,
 gboolean         tomoe_shelf_remove_dict    (TomoeShelf  *shelf,
                                              const gchar *name);
 GList           *tomoe_shelf_get_dict_names (TomoeShelf  *shelf);
-void             tomoe_shelf_save           (TomoeShelf  *shelf);
 gboolean         tomoe_shelf_has_dict       (TomoeShelf  *shelf,
                                              const gchar *name);
 

@@ -57,9 +57,17 @@ EOX
   end
 
   specify "should load and save" do
-    dict = Tomoe::Dict.new(@dict_file.path, true)
-    truncate_content
-    dict.save
+    dicts = ObjectSpace.each_object(Tomoe::Dict) {}
+    Proc.new do
+      Tomoe::Dict.new(@dict_file.path, true)
+      truncate_content
+      nil
+    end
+
+    GC.start # GCed Tomoe::Dict to ensure save
+    current_dicts = ObjectSpace.each_object(Tomoe::Dict) {}
+    current_dicts.should <= dicts
+
     content.should == @dict_content
   end
 
