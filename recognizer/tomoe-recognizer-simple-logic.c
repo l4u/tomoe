@@ -27,7 +27,8 @@
 #include "tomoe-candidate.h"
 #include "tomoe-recognizer-simple-logic.h"
 
-#define LIMIT_LENGTH ((300 * 0.25) * (300 * 0.25))
+#define TOMOE_WRITING_SIZE 300
+#define LIMIT_LENGTH ((TOMOE_WRITING_SIZE * 0.25) * (TOMOE_WRITING_SIZE * 0.25))
 
 typedef struct _tomoe_metric tomoe_metric;
 
@@ -59,6 +60,8 @@ static gint       match_stroke_num            (TomoeDict   *dict,
                                                int          letter_index,
                                                int          input_stroke_num,
                                                GArray      *adapted);
+static TomoeWriting *create_sparse_writing    (TomoeWriting *writing);
+
 static gboolean  _g_array_has_this_int_value  (GArray      *a,
                                                gint         i);
 static GArray   *_g_array_copy_int_value      (GArray      *a);
@@ -81,15 +84,17 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
     const GPtrArray *letters = NULL;
     const GList *input_strokes, *list;
     guint input_stroke_num, i, j;
+    TomoeWriting *sparse_writing;
 
     g_return_val_if_fail (input, NULL);
     g_return_val_if_fail (dict, NULL);
 
-    input_stroke_num = tomoe_writing_get_number_of_strokes (input);
-    g_return_val_if_fail (input_stroke_num > 0, NULL);
-
     letters = tomoe_dict_get_letters(dict);
     g_return_val_if_fail (letters, NULL);
+
+    sparse_writing = create_sparse_writing (input);
+    input_stroke_num = tomoe_writing_get_number_of_strokes (sparse_writing);
+    g_return_val_if_fail (input_stroke_num > 0, NULL);
 
     first_cands = g_ptr_array_new ();
     letters_num = letters->len;
@@ -112,7 +117,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
         g_ptr_array_add (first_cands, cand);
     }
 
-    input_strokes = tomoe_writing_get_strokes (input);
+    input_strokes = tomoe_writing_get_strokes (sparse_writing);
 
     cands = get_candidates (input_strokes->data, first_cands);
     for (list = g_list_next (input_strokes); list; list = g_list_next (list)) {
@@ -180,6 +185,8 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
 
     g_ptr_array_foreach (first_cands, (GFunc) cand_priv_free, NULL);
     g_ptr_array_free (first_cands, TRUE);
+
+    g_object_unref (sparse_writing);
 
     return matched;
 }
@@ -571,7 +578,7 @@ get_candidates (GList *points, GPtrArray *cands)
              * (Compare dictionary data with handwriting data)
              */
             score2 = match_dict_to_input (writing_points, points);
-            /* score2 = match_dict_to_input (points, writing_points); */
+            /* score2 = match_input_to_dict (writing_points, points); */
             if (score2 < 0) {
                 free (d_met);
                 tomoe_candidate_set_score (
@@ -632,6 +639,101 @@ match_stroke_num (TomoeDict* dict, int letter_index, int input_stroke_num, GArra
     return pj;
 }
 
+static gint
+get_distance (GList *first_node, GList *last_node, GList **most_node)
+{
+    /* Getting distance 
+     * MAX( |aw - bv + c| )
+     * a = x-p : b = y-q : c = py - qx
+     * first = (p, q) : last = (x, y) : other = (v, w)
+     */
+
+    GList *dot;
+    gint a, b, c;
+    gint dist = 0;
+    gint max  = 0;
+    gint denom;
+    TomoePoint *first = (TomoePoint*) first_node->data;
+    TomoePoint *last  = (TomoePoint*) last_node->data;
+    TomoePoint *p;
+
+    *most_node = NULL;
+    if (first_node == last_node) {
+        return 0;
+    }
+
+    a = last->x - first->x;
+    b = last->y - first->y;
+    c = last->y * first->x - last->x * first->y;
+
+    for (dot = first_node; dot != last_node; dot = dot->next) {
+        p = (TomoePoint*) dot->data;
+        dist = abs((a * p->y) - (b * p->x) + c);
+        if (dist > max) {
+            max = dist;
+            *most_node = dot;
+        }
+    }
+
+    denom = a * a + b * b;
+
+    if (denom == 0)
+        return 0;
+    else
+        return max * max / denom;
+}
+
+static GList*
+get_vertex (GList *first_node, GList *last_node)
+{
+    GList *rv = NULL;
+    GList *most_node;
+    gint dist;
+    gint error = TOMOE_WRITING_SIZE * TOMOE_WRITING_SIZE / 400; /* 5% */
+
+    dist = get_distance(first_node, last_node, &most_node);
+
+    if (dist > error) {
+        rv = g_list_concat(get_vertex(first_node, most_node),
+                           get_vertex(most_node, last_node));
+    } else {
+        rv = g_list_append(rv, last_node->data);
+    }
+    return rv;
+}
+
+static TomoeWriting *
+create_sparse_writing (TomoeWriting *writing)
+{
+    TomoeWriting *new;
+    const GList *strokes, *list;
+
+    g_return_val_if_fail (TOMOE_IS_WRITING (writing), NULL);
+
+    new = tomoe_writing_new ();
+
+    strokes = tomoe_writing_get_strokes (writing);
+    for (list = strokes; list; list = g_list_next (list)) {
+        GList *points = (GList *) list->data;
+        GList *point, *new_points;
+        TomoePoint *start_point = (TomoePoint *) points->data;
+
+        tomoe_writing_move_to (new, start_point->x, start_point->y);
+    
+        new_points = g_list_prepend (get_vertex(points, g_list_last(points)),
+                                     points->data);
+    
+        for (point = new_points; point; point = g_list_next (point)) {
+            TomoePoint *p = (TomoePoint *) point->data;
+            gint x, y;
+            x = p->x * ((gdouble)TOMOE_WRITING_SIZE / TOMOE_WRITING_SIZE /* priv->size */);
+            y = p->y * ((gdouble)TOMOE_WRITING_SIZE / TOMOE_WRITING_SIZE /* priv->size */);
+            tomoe_writing_line_to (new, x, y);
+        }
+    }
+
+    return new;
+}
 
 static gboolean
 _g_array_has_this_int_value (GArray *a, gint i)
