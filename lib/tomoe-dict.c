@@ -473,7 +473,7 @@ set_parse_error (GMarkupParseContext *context, GError **error,
                  ParseData *data)
 {
     gchar buf[1024];
-    gint line, chr;
+    gint line = 0, chr = 0;
 
     if (!error) return;
 
