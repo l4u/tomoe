@@ -523,6 +523,7 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (data->in_meta) {
+        g_return_if_fail (data->chr);
         g_free (data->key);
         g_free (data->value);
         data->key   = g_strdup (element_name);
