@@ -120,13 +120,12 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
         gboolean f = TRUE;
 
         cand_p = g_ptr_array_index (cands, i);
-        pj = match_stroke_num (tomoe_candidate_get_char (cand_p->cand),
-                               input_stroke_num, cand_p->adapted_strokes);
+        a = tomoe_candidate_get_char (cand_p->cand);
+        pj = match_stroke_num (a, input_stroke_num, cand_p->adapted_strokes);
 
         if (pj <= 0)
             continue;
 
-        a = tomoe_candidate_get_char (cand_p->cand);
         ac = tomoe_char_get_utf8 (a);
 
         for (j = 0; j < (guint)matches->len; j++) {
@@ -140,11 +139,10 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
         if (f) {
             TomoeCandidate *c = cand_p->cand;
             TomoeCandidate *cand;
-            TomoeChar *chr = tomoe_candidate_get_char (c);
-            cand = tomoe_candidate_new (chr);
+            cand = tomoe_candidate_new (a);
             tomoe_candidate_set_score (cand, tomoe_candidate_get_score (c) / pj);
             matched = g_list_prepend (matched, cand);
-            g_ptr_array_add (matches, (gpointer) tomoe_char_get_utf8 (chr));
+            g_ptr_array_add (matches, (gpointer) ac);
         }
     }
 
