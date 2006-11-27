@@ -64,6 +64,8 @@ static void     tomoe_config_get_property (GObject       *object,
                                            GValue        *value,
                                            GParamSpec    *pspec);
 
+static void     tomoe_config_save         (TomoeConfig *config);
+
 static gboolean _tomoe_dict_key_file_get_boolean_value (GKeyFile *key_file,
                                                         const gchar *group,
                                                         const gchar *key,
@@ -117,7 +119,13 @@ tomoe_config_new (const char *config_file)
 static void
 tomoe_config_dispose (GObject *object)
 {
-    TomoeConfigPrivate *priv = TOMOE_CONFIG_GET_PRIVATE (object);
+    TomoeConfig *config;
+    TomoeConfigPrivate *priv;
+
+    config = TOMOE_CONFIG (object);
+    priv = TOMOE_CONFIG_GET_PRIVATE (config);
+
+    tomoe_config_save (config);
 
     if (priv->filename) {
         g_free (priv->filename);
@@ -201,7 +209,7 @@ tomoe_config_load (TomoeConfig *config)
     priv->key_file = key_file;
 }
 
-void
+static void
 tomoe_config_save (TomoeConfig *config)
 {
     TomoeConfigPrivate *priv;

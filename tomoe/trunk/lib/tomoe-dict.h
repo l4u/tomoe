@@ -70,12 +70,6 @@ TomoeDict      *tomoe_dict_new                  (const char    *filename,
                                                  gboolean       editable);
 
 /**
- * @brief Save tomoe dictionary.
- * @param dict - Pointer to the TomoeDict object.
- */
-void            tomoe_dict_save                 (TomoeDict     *dict);
-
-/**
  * @brief Get the file name of the tomoe dictionary.
  * @param dict - Pointer to the TomoeDict object.
  * @return File name of the tomoe dictionary. Return NULL if the dictionary

@@ -130,20 +130,6 @@ tomoe_context_load_recognizer (TomoeContext       *ctx,
     priv->recognizer = tomoe_recognizer_new (base_dir, name);
 }
 
-void
-tomoe_context_save (TomoeContext *context)
-{
-    TomoeContextPrivate *priv;
-
-    g_return_if_fail (context);
-    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
-
-    if (priv->shelf)
-        tomoe_shelf_save(priv->shelf);
-    if (priv->config)
-        tomoe_config_save(priv->config);
-}
-
 static gint
 _candidate_compare_func (gconstpointer a, gconstpointer b)
 {

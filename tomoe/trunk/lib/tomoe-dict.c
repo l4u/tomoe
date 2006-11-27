@@ -184,6 +184,11 @@ tomoe_dict_dispose (GObject *object)
     dict = TOMOE_DICT(object);
     priv = TOMOE_DICT_GET_PRIVATE(dict);
 
+    if (priv->modified) {
+        priv->modified = FALSE;
+        tomoe_dict_save_xml (dict);
+    }
+
     g_free(priv->name);
     g_free(priv->filename);
     if (priv->letters)
@@ -863,6 +868,7 @@ tomoe_dict_save_xml (TomoeDict *dict)
     /* clean */
     g_free (head);
     fclose (f);
+    tomoe_dict_set_modified (dict, FALSE);
     return;
 
 ERROR:
