@@ -3,7 +3,7 @@ require 'tomoe-spec-utils'
 context "Tomoe::Context" do
   setup do
     @dict_file = Tempfile.new("tomoe-dict")
-    @code_point = "あ"
+    @utf8 = "あ"
     @strokes = [
                 [
                  [18, 19],
@@ -36,12 +36,13 @@ context "Tomoe::Context" do
       strokes_xml << "      </stroke>\n"
     end
     strokes_xml << "    </strokes>"
+
     @dict_content = <<-EOX
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE dictionary SYSTEM "tomoe-dict.dtd">
 <dictionary>
   <character>
-    <code-point>#{@code_point}</code-point>
+    <utf8>#{@utf8}</utf8>
 #{strokes_xml}
   </character>
 </dictionary>
@@ -51,7 +52,7 @@ EOX
 
   specify "should load" do
     dict = Tomoe::Dict.new(@dict_file.path, true)
-    a = dict[@code_point]
+    a = dict[@utf8]
     a.writing.strokes.should == @strokes
   end
 

@@ -1,5 +1,8 @@
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
+	* data/all.xml, data/tomoe-dict.dtd, kanjidic2-original.xsl,
+	test/dict_spec.rb: code-point -> utf8.
+
 	* lib/tomoe-dict.c (text_handler): used tomoe_char_set_n_strokes;
 
 	* lib/tomoe-char.[ch] (tomoe_char_set_n_strokes,
