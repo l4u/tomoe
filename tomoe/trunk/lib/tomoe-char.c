@@ -245,21 +245,6 @@ tomoe_char_set_writing (TomoeChar* chr, TomoeWriting* writing)
     priv->writing = g_object_ref (writing);
 }
 
-gint
-tomoe_char_compare (const TomoeChar *a, const TomoeChar *b)
-{
-    TomoeCharPrivate *priv_a, *priv_b;
-
-    if (!a || !b) return 0;
-
-    priv_a = TOMOE_CHAR_GET_PRIVATE (a);
-    priv_b = TOMOE_CHAR_GET_PRIVATE (b);
-    if (!priv_a || !priv_b) return 0;
-
-    if (!priv_a->utf8 || !priv_b->utf8) return 0;
-    return strcmp (priv_a->utf8, priv_b->utf8);
-}
-
 void
 tomoe_char_register_meta_data (TomoeChar *chr, const gchar *key,
                                const gchar *value)
@@ -302,6 +287,21 @@ tomoe_char_meta_data_foreach (TomoeChar* chr, GHFunc func, gpointer user_data)
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
     g_hash_table_foreach (priv->meta, func, user_data);
+}
+
+gint
+tomoe_char_compare (const TomoeChar *a, const TomoeChar *b)
+{
+    TomoeCharPrivate *priv_a, *priv_b;
+
+    if (!a || !b) return 0;
+
+    priv_a = TOMOE_CHAR_GET_PRIVATE (a);
+    priv_b = TOMOE_CHAR_GET_PRIVATE (b);
+    if (!priv_a || !priv_b) return 0;
+
+    if (!priv_a->utf8 || !priv_b->utf8) return 0;
+    return strcmp (priv_a->utf8, priv_b->utf8);
 }
 
 
