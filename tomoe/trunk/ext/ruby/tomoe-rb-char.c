@@ -8,6 +8,12 @@ tc_get_code(VALUE self)
     return CSTR2RVAL(tomoe_char_get_code(_SELF(self)));
 }
 
+static VALUE
+tc_get_writing(VALUE self)
+{
+    return GOBJ2RVAL(tomoe_char_get_writing(_SELF(self)));
+}
+
 void
 Init_tomoe_char(VALUE mTomoe)
 {
@@ -16,5 +22,6 @@ Init_tomoe_char(VALUE mTomoe)
     cTomoeChar = G_DEF_CLASS(TOMOE_TYPE_CHAR, "Char", mTomoe);
 
     rb_define_method(cTomoeChar, "code", tc_get_code, 0);
+    rb_define_method(cTomoeChar, "writing", tc_get_writing, 0);
 }
 
