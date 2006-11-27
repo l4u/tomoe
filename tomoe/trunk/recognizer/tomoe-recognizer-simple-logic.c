@@ -688,7 +688,7 @@ get_vertex (GList *first_node, GList *last_node)
     GList *rv = NULL;
     GList *most_node;
     gint dist;
-    gint error = TOMOE_WRITING_WIDTH * TOMOE_WRITING_WIDTH / 400; /* 5% */
+    gint error = TOMOE_WRITING_WIDTH * TOMOE_WRITING_WIDTH / 4444; /* 5% */
 
     dist = get_distance(first_node, last_node, &most_node);
 

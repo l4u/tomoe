@@ -32,8 +32,8 @@
 
 G_BEGIN_DECLS
 
-#define TOMOE_WRITING_WIDTH 100
-#define TOMOE_WRITING_HEIGHT 100
+#define TOMOE_WRITING_WIDTH 1000
+#define TOMOE_WRITING_HEIGHT 1000
 
 #define TOMOE_TYPE_WRITING            (tomoe_writing_get_type ())
 #define TOMOE_WRITING(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_WRITING, TomoeWriting))
