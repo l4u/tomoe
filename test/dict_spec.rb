@@ -31,14 +31,14 @@ context "Tomoe::Context" do
     @strokes.each do |stroke|
       strokes_xml << "      <stroke>\n"
       stroke.each do |x, y|
-        strokes_xml << "        <point x=\"#{x}\" y=\"#{y}\">\n"
+        strokes_xml << "        <point x=\"#{x}\" y=\"#{y}\"/>\n"
       end
       strokes_xml << "      </stroke>\n"
     end
     strokes_xml << "    </strokes>"
     @dict_content = <<-EOX
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE tomoe_dictionary SYSTEM "tomoe-dict.dtd">
+<!DOCTYPE dictionary SYSTEM "tomoe-dict.dtd">
 <dictionary>
   <character>
     <code-point>#{@code_point}</code-point>
