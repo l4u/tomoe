@@ -20,9 +20,14 @@
 
 EXTRA_DIST =		\
 	aki.data	\
+	asi.data	\
 	fuyu.data	\
 	haru.data	\
 	hayashi.data	\
+	ike.data	\
 	matu.data	\
+	minami.data	\
 	natu.data	\
-	nichi.data
+	nichi.data	\
+	niku.data	\
+	su.data
