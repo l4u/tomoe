@@ -1,5 +1,9 @@
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-candidate.[ch]: tomoe_candidate_get_character() ->
+	tomoe_candidate_get_char().
+	* recognizer/tomoe-recognizer-simple-logic.c: followed the change.
+
 	* lib/tomoe-dict.c:
 	- letters -> chars.
 	- hide letters property. Use tomoe_dict_search_*() instead.

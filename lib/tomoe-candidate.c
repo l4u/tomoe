@@ -168,7 +168,7 @@ tomoe_candidate_new (TomoeChar *chr)
 }
 
 TomoeChar *
-tomoe_candidate_get_character (TomoeCandidate *cand)
+tomoe_candidate_get_char (TomoeCandidate *cand)
 {
     TomoeCandidatePrivate *priv;
 

@@ -97,7 +97,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
     for (node = target_chars; node; node = g_list_next (node)) {
         TomoeCandidate *candidate = node->data;
         cand_priv *cand;
-        cand = cand_priv_new (tomoe_candidate_get_character (candidate));
+        cand = cand_priv_new (tomoe_candidate_get_char (candidate));
         g_ptr_array_add (first_cands, cand);
         g_object_unref (candidate);
     }
@@ -123,7 +123,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
 
         cand_p = g_ptr_array_index (cands, i);
         pj = match_stroke_num (dict,
-                               tomoe_candidate_get_character (cand_p->cand),
+                               tomoe_candidate_get_char (cand_p->cand),
                                input_stroke_num, cand_p->adapted_strokes);
 
         if (pj < 0)
@@ -134,7 +134,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
                 cand_p->cand,
                 tomoe_candidate_get_score (cand_p->cand) / pj);
 
-        a = tomoe_candidate_get_character (cand_p->cand);
+        a = tomoe_candidate_get_char (cand_p->cand);
 
         for (j = 0; j < (guint)matches->len; j++) {
             const gchar *c = g_ptr_array_index (matches, j);
@@ -148,7 +148,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
         if (f) {
             TomoeCandidate *c = cand_p->cand;
             TomoeCandidate *cand;
-            TomoeChar *chr = tomoe_candidate_get_character (c);
+            TomoeChar *chr = tomoe_candidate_get_char (c);
             cand = tomoe_candidate_new (chr);
             tomoe_candidate_set_score (cand, tomoe_candidate_get_score (c));
             matched = g_list_prepend (matched, cand);
@@ -472,7 +472,7 @@ get_candidates (GList *points, GPtrArray *cands)
         cand_p = g_ptr_array_index (cands, cand_index);
         tmp = _g_array_copy_int_value (cand_p->adapted_strokes);
         cand = TOMOE_CANDIDATE (cand_p->cand);
-        lttr = tomoe_candidate_get_character (cand);
+        lttr = tomoe_candidate_get_char (cand);
         writing = tomoe_char_get_writing (lttr);
         writing_strokes = (GList *) tomoe_writing_get_strokes (writing);
         stroke_num = g_list_length (writing_strokes);
