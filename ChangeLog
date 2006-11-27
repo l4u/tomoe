@@ -1,3 +1,7 @@
+2006-11-27  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* lib/tomoe-dict.c: Follow new XML format, but still broken;-P
+
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
 	* ext/ruby/tomoe-rb-writing.c: added Tomoe::Writing#to_xml.
