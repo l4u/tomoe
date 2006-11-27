@@ -26,9 +26,9 @@ tw_clear(VALUE self)
 }
 
 static VALUE
-tw_get_number_of_strokes(VALUE self)
+tw_get_n_strokes(VALUE self)
 {
-    return UINT2NUM(tomoe_writing_get_number_of_strokes(_SELF(self)));
+    return UINT2NUM(tomoe_writing_get_n_strokes(_SELF(self)));
 }
 
 static VALUE
@@ -110,8 +110,7 @@ Init_tomoe_writing(VALUE mTomoe)
     rb_define_method(cTomoeWriting, "move_to", tw_move_to, 2);
     rb_define_method(cTomoeWriting, "line_to", tw_line_to, 2);
     rb_define_method(cTomoeWriting, "clear", tw_clear, 0);
-    rb_define_method(cTomoeWriting, "number_of_strokes",
-                     tw_get_number_of_strokes, 0);
+    rb_define_method(cTomoeWriting, "n_strokes", tw_get_n_strokes, 0);
     rb_define_method(cTomoeWriting, "remove_last_stroke",
                      tw_remove_last_stroke, 0);
 

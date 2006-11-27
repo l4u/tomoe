@@ -382,7 +382,7 @@ tomoe_dict_collect_chars_by_n_strokes (gpointer data, gpointer user_data)
     writing = tomoe_char_get_writing (chr);
     if (!writing) return;
 
-    n_strokes = tomoe_writing_get_number_of_strokes (writing);
+    n_strokes = tomoe_writing_get_n_strokes (writing);
     if ((context->min_n_strokes < 0 || context->min_n_strokes <= n_strokes) &&
         (context->max_n_strokes < 0 || context->max_n_strokes >= n_strokes)) {
         context->results = g_list_prepend (context->results,
