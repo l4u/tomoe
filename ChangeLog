@@ -1,5 +1,12 @@
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/dict_spec.rb: added tests for parsing XML.
+
+	* lib/tomoe-writing.h: added TOMOE_WRITING_WIDTH and
+	TOMOE_READING_HEIGHT.
+	* ext/ruby/tomoe-rb-writing.c: added Tomoe::Writing::WIDTH and
+	Tomoe::Writing::HEIGHT.
+
 	* test/data/Makefile.am (EXTRA_DIST): added missing test data.
 
 	* test/data/*.data: normalized to 100x100 from 300x300.
