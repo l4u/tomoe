@@ -1,5 +1,7 @@
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-shelf.c, lib/tomoe-dict.c: suppressed warnings.
+
 	* lib/tomoe-context.[ch], lib/tomoe-dict.[ch],
 	lib/tomoe-config.[ch], lib/tomoe-shelf.[ch]: removed save related
 	functions. We want them to be saved automatically.

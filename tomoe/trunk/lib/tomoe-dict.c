@@ -267,12 +267,6 @@ tomoe_dict_load (TomoeDict *dict)
     return tomoe_dict_load_xml (dict);
 }
 
-void
-tomoe_dict_save (TomoeDict *dict)
-{
-    tomoe_dict_save_xml (dict);
-}
-
 const char*
 tomoe_dict_get_filename (TomoeDict* dict)
 {
