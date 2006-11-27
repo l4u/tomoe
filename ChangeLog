@@ -1,3 +1,7 @@
+2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
+
+	* ext/ruby/tomoe-rb-dict.c: added Tomoe::Dict#[].
+
 2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* recognizer/tomoe-recognizer-simple-logic.c: Use TOMOE_WRITING_WIDTH.
@@ -7,7 +11,7 @@
 	* test/dict_spec.rb: added tests for parsing XML.
 
 	* lib/tomoe-writing.h: added TOMOE_WRITING_WIDTH and
-	TOMOE_READING_HEIGHT.
+	TOMOE_WRITING_HEIGHT.
 	* ext/ruby/tomoe-rb-writing.c: added Tomoe::Writing::WIDTH and
 	Tomoe::Writing::HEIGHT.
 
