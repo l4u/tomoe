@@ -86,6 +86,9 @@ Init_tomoe_writing(VALUE mTomoe)
 
     cTomoeWriting = G_DEF_CLASS(TOMOE_TYPE_WRITING, "Writing", mTomoe);
 
+    rb_define_const(cTomoeWriting, "WIDTH", INT2NUM(TOMOE_WRITING_WIDTH));
+    rb_define_const(cTomoeWriting, "HEIGHT", INT2NUM(TOMOE_WRITING_HEIGHT));
+
     rb_include_module(cTomoeWriting, rb_mEnumerable);
 
     rb_define_method(cTomoeWriting, "move_to", tw_move_to, 2);
