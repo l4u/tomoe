@@ -1,3 +1,7 @@
+2006-11-27  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* lib/tomoe-dict.c: Clean up error handling. code-point -> utf8.
+
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
 	* data/all.xml, data/tomoe-dict.dtd, kanjidic2-original.xsl,

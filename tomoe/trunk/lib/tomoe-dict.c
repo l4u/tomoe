@@ -340,7 +340,7 @@ tomoe_dict_unregister_char (TomoeDict* dict, const gchar *code_point)
     chars = TOMOE_DICT_GET_PRIVATE(dict)->letters;
     for (i = 0; i < chars->len; i++) {
         TomoeChar *chr = g_ptr_array_index (chars, i);
-        if (0 == strcmp(tomoe_char_get_code(chr), code_point)) {
+        if (0 == strcmp(tomoe_char_get_utf8(chr), code_point)) {
             index = i;
             removed = chr;
             break;
@@ -369,7 +369,7 @@ tomoe_dict_get_char (TomoeDict* dict, const gchar *code_point)
     chars = TOMOE_DICT_GET_PRIVATE(dict)->letters;
     for (i = 0; i < chars->len; i++) {
         TomoeChar *chr = g_ptr_array_index (chars, i);
-        if (0 == strcmp(tomoe_char_get_code(chr), code_point)) {
+        if (0 == strcmp(tomoe_char_get_utf8(chr), code_point)) {
             return chr;
         }
     }
@@ -439,7 +439,7 @@ letter_compare_func (gconstpointer a, gconstpointer b)
  */
 typedef enum {
     STATE_NONE,
-    STATE_CODEPOINT,
+    STATE_UTF8,
     STATE_N_STROKES,
     STATE_STROKES,
     STATE_READINGS,
@@ -469,22 +469,23 @@ typedef struct _ParseData
 } ParseData;
 
 static void
-set_parse_error (GError **error, const gchar *format,
-                 ...)
+set_parse_error (GMarkupParseContext *context, GError **error,
+                 ParseData *data)
 {
-    gchar *s;
-    va_list args;
+    gchar buf[1024];
+    gint line, chr;
 
     if (!error) return;
 
-    va_start (args, format);
-    s = g_strdup_vprintf (format, args);
-    va_end (args);
+    g_markup_parse_context_get_position (context, &line, &chr);
+
+    g_snprintf (buf, G_N_ELEMENTS (buf),
+                "Tomoe XML dictionary parse error at line %d char %d of %s.",
+                line, chr, data->priv->filename);
 
     *error = g_error_new (G_MARKUP_ERROR,
                           G_MARKUP_ERROR_INVALID_CONTENT,
-                          s);
-    g_free (s);
+                          buf);
 }
 
 static gint
@@ -519,10 +520,7 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (!data->in_dict) {
-        set_parse_error (error, "Invalid root element %s at line %d of %s.",
-                         element_name,
-                         get_line_number (context),
-                         data->priv->filename);
+        set_parse_error (context, error, data);
         return;
     }
 
@@ -532,15 +530,12 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (!data->chr) {
-        set_parse_error (error, "Invalid element %s at line %d of %s.",
-                         element_name,
-                         get_line_number (context),
-                         data->priv->filename);
+        set_parse_error (context, error, data);
         return;
     }
 
-    if (!strcmp ("code-point", element_name)) {
-        data->state = STATE_CODEPOINT;
+    if (!strcmp ("utf8", element_name)) {
+        data->state = STATE_UTF8;
         return;
     }
 
@@ -638,7 +633,7 @@ end_element_handler (GMarkupParseContext *context,
     }
 
     if (!strcmp ("character", element_name)) {
-        if (tomoe_char_get_code (data->chr))
+        if (tomoe_char_get_utf8 (data->chr))
             g_ptr_array_add (data->priv->letters, data->chr);
         else
             g_object_unref (G_OBJECT (data->chr));
@@ -646,7 +641,7 @@ end_element_handler (GMarkupParseContext *context,
         return;
     }
 
-    if (!strcmp("code-point", element_name)) {
+    if (!strcmp("utf8", element_name)) {
         data->state = STATE_NONE;
         return;
     }
@@ -711,9 +706,9 @@ text_handler (GMarkupParseContext *context,
     ParseData *data = user_data;
 
     switch (data->state) {
-    case STATE_CODEPOINT:
+    case STATE_UTF8:
     {
-        tomoe_char_set_code (data->chr, text);
+        tomoe_char_set_utf8 (data->chr, text);
         return;
     }
     case STATE_N_STROKES:
