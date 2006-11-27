@@ -40,6 +40,7 @@ tomoe_public_h_sources =	\
 	tomoe-query.h		\
 	tomoe-reading.h		\
 	tomoe-recognizer.h	\
+	tomoe-recognizer-impl.h	\
 	tomoe-shelf.h		\
 	tomoe-writing.h
 
@@ -74,7 +75,6 @@ libtomoe_la_SOURCES =		\
 	tomoe-query.c		\
 	tomoe-reading.c		\
 	tomoe-recognizer.c	\
-	tomoe-recognizer-impl.h	\
 	tomoe-shelf.c		\
 	tomoe-writing.c
 

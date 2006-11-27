@@ -1,5 +1,7 @@
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/Makefile.am: moved tomoe-recognizer-impl.h to public headers.
+
 	* lib/tomoe-writing.[ch], lib/tomoe-query.[ch]: number_of_strokes
 	-> n_strokes.
 	* recognizer/tomoe-recognizer-simple-logic.c, lib/tomoe-dict.c,
