@@ -860,11 +860,17 @@ tomoe_dict_save_xml (TomoeDict *dict)
     g_return_if_fail (f);
 
     /* write the header */
-    head = g_markup_printf_escaped (
+    head = g_strdup (
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-        "<!DOCTYPE dictionary SYSTEM \"tomoe-dict.dtd\">\n"
-        "<dictionary name=\"%s\">\n",
-        priv->name);
+        "<!DOCTYPE dictionary SYSTEM \"tomoe-dict.dtd\">\n");
+    if (fwrite (head, strlen (head), 1, f) < 1) goto ERROR;
+    g_free (head);
+
+    if (priv->name)
+        head = g_markup_printf_escaped ("<dictionary name=\"%s\">\n",
+                                        priv->name);
+    else
+        head = g_strdup ("<dictionary>\n");
     if (fwrite (head, strlen (head), 1, f) < 1) goto ERROR;
 
     /* write each characters */
