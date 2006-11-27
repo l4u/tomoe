@@ -1,3 +1,9 @@
+2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-writing.[ch] (tomoe_writing_to_xml): added
+	* lib/tomoe-dict.c: used tomoe_writing_to_xml();
+	* lib/tomoe-char.c: suppressed a warning.
+
 2006-11-27  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe-dict.c: Add some error handler for XML parser.

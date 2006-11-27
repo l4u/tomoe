@@ -173,6 +173,43 @@ tomoe_writing_get_strokes (TomoeWriting  *writing)
     return TOMOE_WRITING_GET_PRIVATE(writing)->stroke_first;
 }
 
+gchar *
+tomoe_writing_to_xml (TomoeWriting *writing)
+{
+    TomoeWritingPrivate *priv;
+    GList *stroke_list;
+    GString *output;
+
+    g_return_val_if_fail (TOMOE_IS_WRITING (writing), NULL);
+
+    priv = TOMOE_WRITING_GET_PRIVATE(writing);
+    if (!priv->stroke_first) return NULL;
+
+    output = g_string_new ("    <strokelist>\n");
+    for (stroke_list = priv->stroke_first;
+         stroke_list;
+         stroke_list = g_list_next (stroke_list)) {
+        GList *point_list = stroke_list->data;
+
+        if (!point_list) continue;
+        g_string_append (output, "      <s>");
+
+        for (; point_list; point_list = g_list_next (point_list)) {
+            TomoePoint *p = point_list->data;
+
+            if (!p) continue;
+
+            g_string_append_printf (output, "(%d %d) ", p->x, p->y);
+        }
+
+        g_string_append (output, "</s>\n");
+    }
+
+    g_string_append (output, "    </strokelist>\n");
+
+    return g_string_free (output, FALSE);
+}
+
 TomoePoint *
 tomoe_point_new (gint x, gint y)
 {

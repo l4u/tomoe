@@ -764,45 +764,6 @@ _write_readings (TomoeChar *chr, FILE *f)
     return TRUE;
 }
 
-static gboolean
-_write_writing (TomoeChar *chr, FILE *f)
-{
-    TomoeWriting *writing = tomoe_char_get_writing (chr);
-    GList *stroke_list = (GList*) tomoe_writing_get_strokes (writing);
-    gchar buf[256];
-
-    if (!stroke_list) return TRUE;
-
-    g_snprintf (buf, G_N_ELEMENTS (buf), "    <strokelist>\n");
-    if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
-
-    for (; stroke_list; stroke_list = g_list_next (stroke_list)) {
-        GList *point_list = stroke_list->data;
-
-        if (!point_list) continue;
-
-        g_snprintf (buf, G_N_ELEMENTS (buf), "      <s>");
-        if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
-
-        for (; point_list; point_list = g_list_next (point_list)) {
-            TomoePoint *p = point_list->data;
-
-            if (!p) continue;
-
-            g_snprintf (buf, G_N_ELEMENTS (buf), "(%d %d) ", p->x, p->y);
-            if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
-        }
-
-        g_snprintf (buf, G_N_ELEMENTS (buf), "</s>\n");
-        if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
-    }
-
-    g_snprintf (buf, G_N_ELEMENTS (buf), "    </strokelist>\n");
-    if (fwrite (buf, strlen (buf), 1, f) < 1) return FALSE;
-
-    return TRUE;
-}
-
 static void
 _write_meta_datum (gpointer key, gpointer value, gpointer user_data)
 {
@@ -833,6 +794,7 @@ _write_character (TomoeChar *chr, FILE *f)
 {
     gchar *head;
     const gchar *foot = "  </character>\n";
+    gchar *output;
 
     g_return_val_if_fail (TOMOE_IS_CHAR (chr), FALSE);
 
@@ -852,8 +814,16 @@ _write_character (TomoeChar *chr, FILE *f)
         if (!_write_readings (chr, f)) return FALSE;
 
     /* writing */
-    if (tomoe_char_get_writing (chr))
-        if (!_write_writing (chr, f)) return FALSE;
+    if (tomoe_char_get_writing (chr)) {
+        gboolean failed;
+
+        output = tomoe_writing_to_xml (tomoe_char_get_writing (chr));
+        if (!output) return FALSE;
+
+        failed = fwrite (output, strlen (output), 1, f) < 1;
+        g_free (output);
+        if (failed) return FALSE;
+    }
 
     /* meta */
     if (tomoe_char_has_meta_data (chr))

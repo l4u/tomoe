@@ -264,7 +264,7 @@ gboolean
 tomoe_char_has_meta_data (TomoeChar *chr)
 {
     TomoeCharPrivate *priv;
-    g_return_if_fail (chr);
+    g_return_val_if_fail (chr, FALSE);
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
     return g_hash_table_size (priv->meta) > 0;
