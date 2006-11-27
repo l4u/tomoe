@@ -592,7 +592,7 @@ start_element_handler (GMarkupParseContext *context,
     if (!strcmp ("reading", element_name)) {
         gint idx;
 
-        if (data->state != STATE_READING) {
+        if (data->state != STATE_READINGS) {
             set_parse_error (context, error, data);
             return;
         }
