@@ -78,9 +78,6 @@ use = true
 type = xml
 file = #{File.join(@data_dir, "kanjidic2.xml")}
 
-[readingtest-dictionary]
-file = #{File.join(@data_dir, "readingtest.xml")}
-user = true
 EOC
       @config_file.close
     end
