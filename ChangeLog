@@ -1,3 +1,7 @@
+2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* recognizer/tomoe-recognizer-simple-logic.c: Use TOMOE_WRITING_WIDTH.
+
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
 	* test/dict_spec.rb: added tests for parsing XML.
