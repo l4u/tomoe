@@ -3,38 +3,56 @@ require 'tomoe-spec-utils'
 context "Tomoe::Context" do
   setup do
     @dict_file = Tempfile.new("tomoe-dict")
+    @code_point = "あ"
+    @strokes = [
+                [
+                 [18, 19],
+                 [83, 22]
+                ],
+                [
+                 [49, 3],
+                 [48, 67],
+                 [60, 84],
+                ],
+                [
+                 [74, 34],
+                 [49, 76],
+                 [27, 80],
+                 [17, 68],
+                 [28, 49],
+                 [60, 46],
+                 [80, 57],
+                 [82, 74],
+                 [76, 83],
+                ],
+               ]
+
+    strokes_xml = "    <strokes>\n"
+    @strokes.each do |stroke|
+      strokes_xml << "      <stroke>\n"
+      stroke.each do |x, y|
+        strokes_xml << "        <point x=\"#{x}\" y=\"#{y}\">\n"
+      end
+      strokes_xml << "      </stroke>\n"
+    end
+    strokes_xml << "    </strokes>"
     @dict_content = <<-EOX
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE tomoe_dictionary SYSTEM "tomoe-dict.dtd">
 <dictionary>
   <character>
-    <code-point>あ</code-point>
-    <strokes>
-      <stroke>
-        <point x="54" y="58"/>
-        <point x="249" y="68"/>
-      </stroke>
-      <stroke>
-        <point x="147" y="10"/>
-        <point x="145" y="201"/>
-        <point x="182" y="252"/>
-      </stroke>
-      <stroke>
-        <point x="224" y="103"/>
-        <point x="149" y="230"/>
-        <point x="82" y="240"/>
-        <point x="53" y="204"/>
-        <point x="86" y="149"/>
-        <point x="182" y="139"/>
-        <point x="240" y="172"/>
-        <point x="248" y="224"/>
-        <point x="228" y="250"/>
-      </stroke>
-    </strokes>
+    <code-point>#{@code_point}</code-point>
+#{strokes_xml}
   </character>
 </dictionary>
 EOX
     set_content(@dict_content)
+  end
+
+  specify "should load" do
+    dict = Tomoe::Dict.new(@dict_file.path, true)
+    a = dict[@code_point]
+    a.writing.strokes.should == @strokes
   end
 
   specify "should load and save" do
