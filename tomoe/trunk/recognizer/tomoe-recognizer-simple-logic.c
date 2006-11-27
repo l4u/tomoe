@@ -430,7 +430,6 @@ get_candidates (GList *points, GPtrArray *cands)
     int            i_nop = 0;    /* input stroke number of points */
     tomoe_metric  *i_met = NULL; /* input stroke metrics */
     int            d_nop = 0;    /* dict stroke number of points */
-    tomoe_metric  *d_met = NULL; /* dict stroke metrics */
     TomoePoint *pi0, *pil;
 
     rtn_cands = g_ptr_array_new ();
@@ -462,11 +461,12 @@ get_candidates (GList *points, GPtrArray *cands)
 	     list;
 	     list = g_list_next (list), strk_index++) {
             GList *writing_points;
-            TomoePoint *pw0, *pwl;
+            TomoePoint *pw0, *pw1, *pwl;
             gint d1 = 0, d2 = 0;
             gint d3 = 0, d4 = 0;
             gint score1 = 0, score2 = 0;
             gint score3 = 0;
+	    gdouble d_angle = 0;
 
             /* if the stroke index is already appended to, the value is ignored */
             if (_g_array_has_this_int_value (tmp, strk_index))
@@ -498,17 +498,16 @@ get_candidates (GList *points, GPtrArray *cands)
 
             d3 = i_met[0].d;
 
-            stroke_calculate_metrics (writing_points, &d_met);
-            d4 = d_met[0].d;
+            pw1 = (TomoePoint *) g_list_nth_data (writing_points, 1);
+            d_angle = atan2 (pw1->y - pw0->y, pw1->x - pw0->x);
+            d4 = dist_tomoe_points (pw0, pw1);;
 
             /* threshold is (angle of bigining line) % 45[degree] (PI/4)*/
             if (d3 > LIMIT_LENGTH &&
                 d4 > LIMIT_LENGTH &&
-                abs (d_met[0].angle - i_met[0].angle) > M_PI_4) {
-                free (d_met);
+                abs (d_angle - i_met[0].angle) > M_PI_4) {
                 continue;
             }
-            free (d_met);
 
             /*
              * Distance and angle of each characteristic points:
