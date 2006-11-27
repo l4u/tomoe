@@ -130,16 +130,20 @@ gboolean        tomoe_dict_unregister_char      (TomoeDict     *dict,
 TomoeChar      *tomoe_dict_get_char             (TomoeDict     *dict,
                                                  const gchar   *utf8);
 
+/* search methods */
 /**
- * @brief Return an GPtrArray of TomoeChar which is kept in a TomoeDict.
+ * @brief Match number of strokes of TomoeChar with range.
  * @param dict - Pointer to the TomoeDict struct.
- * @return The array of TomoeChar.
+ * @param min  - Minimum value of the number of strokes. Use
+ *               -1 for no limit.
+ * @param max  - Maximum value of the number of strokes. Use
+ *               -1 for no limit.
+ * @return The GList of TomoeCandidate.
  */
 GList          *tomoe_dict_search_by_n_strokes  (TomoeDict     *dict,
                                                  gint           min,
                                                  gint           max);
 
-/* search methods */
 /**
  * @brief Match reading of TomoeChar with input.
  * @param dict   - Pointer to the TomoeDict object.
