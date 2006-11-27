@@ -1,5 +1,10 @@
 2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
+	* recognizer/tomoe-recognizer-simple-logic.c: Cleaning code.
+	Speed up.
+
+2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
 	* test/data/matu.data, test/data/fuyu.data: update.
 
 2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.net>
