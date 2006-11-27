@@ -1,3 +1,8 @@
+2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* test/data/aki.data: update.
+	* test/tomoe-spec-utils.rb: Removed readingtest.xml.
+
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
 	* ext/ruby/tomoe-rb-char.c: added Tomoe::Char#writing.
