@@ -536,8 +536,6 @@ end_element_handler (GMarkupParseContext *context,
                      gpointer             user_data,
                      GError             **error)
 {
-#warning FIXME: need error check
-
     ParseData *data = user_data;
 
     if (!strcmp ("tomoe_dictionary", element_name)) {
@@ -722,7 +720,6 @@ tomoe_dict_load_xml (TomoeDict *dict)
         gboolean success;
 
         success = g_markup_parse_context_parse(context, buf, bytes, &error);
-#warning FIXME
         if (!success) {
             g_warning("XML parse error: %s", error->message);
             g_error_free(error);
