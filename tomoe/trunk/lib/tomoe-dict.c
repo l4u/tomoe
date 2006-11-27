@@ -647,7 +647,7 @@ text_handler (GMarkupParseContext *context,
         g_object_unref (reading);
     }
 
-    if (data->in_meta && data->chr) {
+    if (data->in_meta) {
         g_return_if_fail (data->chr);
 
         g_free (data->value);
