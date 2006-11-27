@@ -77,6 +77,8 @@ void            tomoe_writing_remove_last_stroke(TomoeWriting  *writing);
 
 const GList    *tomoe_writing_get_strokes       (TomoeWriting  *writing);
 
+gchar          *tomoe_writing_to_xml            (TomoeWriting  *writing);
+
 
 GType           tomoe_point_get_type            (void) G_GNUC_CONST;
 TomoePoint     *tomoe_point_new                 (gint x, gint y);
