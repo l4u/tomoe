@@ -552,7 +552,7 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (!strcmp ("point", element_name)) {
-        gint idx, x, y;
+        gint idx, x = -1, y = -1;
 
         if (data->state != STATE_STROKE) {
             set_parse_error (context, error, data);
@@ -567,6 +567,11 @@ start_element_handler (GMarkupParseContext *context,
             } else if (!strcmp ("y", attr_names[idx])) {
                 y = atoi (attr_values[idx]);
             }
+        }
+
+        if (x < 0 || y < 0 || x >= 1000 || y >= 1000) {
+            g_warning ("Invalid writing data: %s: x = %d, y = %d\n",
+                       tomoe_char_get_utf8 (data->chr), x, y);
         }
 
         if (data->n_points == 0)
