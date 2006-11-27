@@ -71,7 +71,7 @@ void             tomoe_query_add_radical           (TomoeQuery   *query,
                                                     TomoeChar    *chr);
 void             tomoe_query_add_variant           (TomoeQuery   *query,
                                                     TomoeChar    *chr);
-void             tomoe_query_set_number_of_strokes (TomoeQuery   *query,
+void             tomoe_query_set_n_strokes         (TomoeQuery   *query,
                                                     gint num);
 void             tomoe_query_set_writing           (TomoeQuery   *query,
                                                     TomoeWriting *writing);

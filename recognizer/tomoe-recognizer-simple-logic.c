@@ -87,7 +87,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
     g_return_val_if_fail (dict, NULL);
 
     sparse_writing = create_sparse_writing (input);
-    input_stroke_num = tomoe_writing_get_number_of_strokes (sparse_writing);
+    input_stroke_num = tomoe_writing_get_n_strokes (sparse_writing);
     g_return_val_if_fail (input_stroke_num > 0, NULL);
 
     target_chars = tomoe_dict_search_by_n_strokes (dict, input_stroke_num, -1);
@@ -590,7 +590,7 @@ match_stroke_num (TomoeDict* dict, TomoeChar *chr, int input_stroke_num, GArray 
 {
     int pj = 100;
     gint adapted_num;
-    int d_stroke_num = tomoe_writing_get_number_of_strokes (tomoe_char_get_writing (chr));
+    int d_stroke_num = tomoe_writing_get_n_strokes (tomoe_char_get_writing (chr));
 
     if (!adapted)
         return -1;

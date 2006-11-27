@@ -74,8 +74,7 @@ void            tomoe_writing_line_to           (TomoeWriting  *writing,
                                                  gint           x,
                                                  gint           y);
 void            tomoe_writing_clear             (TomoeWriting  *writing);
-guint           tomoe_writing_get_number_of_strokes
-                                                (TomoeWriting  *writing);
+guint           tomoe_writing_get_n_strokes     (TomoeWriting  *writing);
 void            tomoe_writing_remove_last_stroke(TomoeWriting  *writing);
 
 const GList    *tomoe_writing_get_strokes       (TomoeWriting  *writing);

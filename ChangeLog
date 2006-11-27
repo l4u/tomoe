@@ -1,5 +1,10 @@
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-writing.[ch], lib/tomoe-query.[ch]: number_of_strokes
+	-> n_strokes.
+	* recognizer/tomoe-recognizer-simple-logic.c, lib/tomoe-dict.c,
+	ext/ruby/tomoe-rb-writing.c: follow the changes.
+
 	* lib/tomoe-dict.[ch]: code_point -> utf8.
 
 	* lib/tomoe-char.c: changed internal variable name meta to meta_data.

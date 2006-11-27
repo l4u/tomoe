@@ -34,7 +34,7 @@ struct _TomoeWritingPrivate
 {
     GList *stroke_first;
     GList *stroke_last;
-    guint  number_of_strokes;
+    guint  n_strokes;
 };
 
 G_DEFINE_TYPE (TomoeWriting, tomoe_writing, G_TYPE_OBJECT)
@@ -93,7 +93,7 @@ tomoe_writing_move_to (TomoeWriting *writing, gint x, gint y)
     if (!priv->stroke_first)
         priv->stroke_first = priv->stroke_last;
     priv->stroke_last = g_list_last (priv->stroke_last);
-    priv->number_of_strokes++;
+    priv->n_strokes++;
 }
 
 void
@@ -126,11 +126,11 @@ tomoe_writing_clear (TomoeWriting *writing)
 
     priv->stroke_first = NULL;
     priv->stroke_last  = NULL;
-    priv->number_of_strokes = 0;
+    priv->n_strokes = 0;
 }
 
 guint
-tomoe_writing_get_number_of_strokes (TomoeWriting *writing)
+tomoe_writing_get_n_strokes (TomoeWriting *writing)
 {
     TomoeWritingPrivate *priv;
 
@@ -139,7 +139,7 @@ tomoe_writing_get_number_of_strokes (TomoeWriting *writing)
     priv = TOMOE_WRITING_GET_PRIVATE(writing);
     g_return_val_if_fail (priv, 0);
 
-    return priv->number_of_strokes;
+    return priv->n_strokes;
 }
 
 void
@@ -160,7 +160,7 @@ tomoe_writing_remove_last_stroke (TomoeWriting *writing)
     priv->stroke_first = g_list_remove (priv->stroke_first, stroke);
     priv->stroke_last = g_list_last (priv->stroke_first);
 
-    priv->number_of_strokes--;
+    priv->n_strokes--;
 
     _stroke_free (stroke);
 }
