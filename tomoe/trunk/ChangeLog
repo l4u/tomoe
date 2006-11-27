@@ -1,3 +1,10 @@
+2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* recognizer/tomoe-recognizer-simple-logic.c: TomoeRecognizer now
+	accepts row stroke data.
+	* test/data/fuyu.data, test/data/matu.data, test/data/natu.data:
+	update.
+
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-writing.[ch] (tomoe_writing_to_xml): added
