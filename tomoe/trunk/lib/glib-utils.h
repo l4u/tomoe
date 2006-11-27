@@ -43,6 +43,10 @@ G_BEGIN_DECLS
     error = NULL;                                   \
 } while (FALSE)
 
+void g_ptr_array_foreach_reverse (GPtrArray *array,
+                                  GFunc      func,
+                                  gpointer   user_data);
+
 G_END_DECLS
 
 #endif /* __GLIB_UTILS_H__ */

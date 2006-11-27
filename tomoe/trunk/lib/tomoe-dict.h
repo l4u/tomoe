@@ -135,7 +135,9 @@ TomoeChar      *tomoe_dict_get_char             (TomoeDict     *dict,
  * @param dict - Pointer to the TomoeDict struct.
  * @return The array of TomoeChar.
  */
-const GPtrArray *tomoe_dict_get_letters          (TomoeDict     *dict);
+GList          *tomoe_dict_search_by_n_strokes  (TomoeDict     *dict,
+                                                 gint           min,
+                                                 gint           max);
 
 /* search methods */
 /**

@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2000 - 2004 Hiroyuki Komatsu <komatsu@taiyaki.org>
  *  Copyright (C) 2004 Hiroaki Nakamura <hnakamur@good-day.co.jp>
@@ -56,6 +56,8 @@ struct _TomoeDictPrivate
 };
 
 typedef struct _TomoeDictSearchContext {
+    gint min_n_strokes;
+    gint max_n_strokes;
     TomoeReading *reading;
     GList *results;
 } TomoeDictSearchContext;
@@ -376,11 +378,41 @@ tomoe_dict_get_char (TomoeDict* dict, const gchar *code_point)
     return NULL;
 }
 
-const GPtrArray*
-tomoe_dict_get_letters (TomoeDict *dict)
+static void
+tomoe_dict_collect_chars_by_n_strokes (gpointer data, gpointer user_data)
 {
-    g_return_val_if_fail(dict, NULL);
-    return TOMOE_DICT_GET_PRIVATE(dict)->letters;
+    TomoeChar *chr = data;
+    TomoeDictSearchContext *context = user_data;
+    TomoeWriting *writing;
+    gint n_strokes;
+
+    writing = tomoe_char_get_writing (chr);
+    if (!writing) return;
+
+    n_strokes = tomoe_writing_get_number_of_strokes (writing);
+    if ((context->min_n_strokes < 0 || context->min_n_strokes <= n_strokes) &&
+        (context->max_n_strokes < 0 || context->max_n_strokes >= n_strokes)) {
+        context->results = g_list_prepend (context->results,
+                                           tomoe_candidate_new (chr));
+    }
+}
+
+GList *
+tomoe_dict_search_by_n_strokes (TomoeDict *dict, gint min, gint max)
+{
+    TomoeDictPrivate *priv;
+    TomoeDictSearchContext context;
+
+    context.min_n_strokes = min;
+    context.max_n_strokes = max;
+    context.results = NULL;
+
+    priv = TOMOE_DICT_GET_PRIVATE(dict);
+    g_ptr_array_foreach_reverse (priv->letters,
+                                 tomoe_dict_collect_chars_by_n_strokes,
+                                 &context);
+
+    return context.results;
 }
 
 static gint
@@ -416,8 +448,9 @@ tomoe_dict_search_by_reading (TomoeDict* dict, TomoeReading *reading)
     context.results = NULL;
 
     priv = TOMOE_DICT_GET_PRIVATE(dict);
-    g_ptr_array_foreach (priv->letters, tomoe_dict_collect_chars_by_reading,
-                         &context);
+    g_ptr_array_foreach_reverse (priv->letters,
+                                 tomoe_dict_collect_chars_by_reading,
+                                 &context);
 
     return context.results;
 }

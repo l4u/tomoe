@@ -78,8 +78,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
     GPtrArray *matches = NULL;
     GPtrArray *cands = NULL;
     GPtrArray *first_cands = NULL;
-    guint letters_num = 0;
-    const GPtrArray *letters = NULL;
+    GList *target_chars, *node;
     const GList *input_strokes, *list;
     guint input_stroke_num, i, j;
     TomoeWriting *sparse_writing;
@@ -87,33 +86,22 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
     g_return_val_if_fail (input, NULL);
     g_return_val_if_fail (dict, NULL);
 
-    letters = tomoe_dict_get_letters(dict);
-    g_return_val_if_fail (letters, NULL);
-
     sparse_writing = create_sparse_writing (input);
     input_stroke_num = tomoe_writing_get_number_of_strokes (sparse_writing);
     g_return_val_if_fail (input_stroke_num > 0, NULL);
 
+    target_chars = tomoe_dict_search_by_n_strokes (dict, input_stroke_num, -1);
+    if (!target_chars) return NULL;
+
     first_cands = g_ptr_array_new ();
-    letters_num = letters->len;
-
-    for (i = 0; i < letters_num; i++) {
-        TomoeChar *p = (TomoeChar *) g_ptr_array_index (letters, i);
-        TomoeWriting *writing;
-        cand_priv *cand = NULL;
-
-        /* check for available writing data */
-        writing = tomoe_char_get_writing (p);
-        if (!writing) continue;
-
-        /* check the number of stroke */
-        if (input_stroke_num > tomoe_writing_get_number_of_strokes (writing))
-            continue;
-
-        /* append a candidate to candidate list */
-        cand = cand_priv_new (p);
+    for (node = target_chars; node; node = g_list_next (node)) {
+        TomoeCandidate *candidate = node->data;
+        cand_priv *cand;
+        cand = cand_priv_new (tomoe_candidate_get_character (candidate));
         g_ptr_array_add (first_cands, cand);
+        g_object_unref (candidate);
     }
+    g_list_free (target_chars);
 
     input_strokes = tomoe_writing_get_strokes (sparse_writing);
 
