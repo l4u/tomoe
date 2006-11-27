@@ -54,8 +54,7 @@ static cand_priv *cand_priv_new               (TomoeChar   *character);
 static void       cand_priv_free              (cand_priv   *cand_p);
 static GPtrArray *get_candidates              (GList       *points,
                                                GPtrArray   *cands);
-static gint       match_stroke_num            (TomoeDict   *dict,
-                                               TomoeChar   *chr,
+static gint       match_stroke_num            (TomoeChar   *chr,
                                                int          input_stroke_num,
                                                GArray      *adapted);
 static TomoeWriting *create_sparse_writing    (TomoeWriting *writing);
@@ -122,8 +121,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
         gboolean f = TRUE;
 
         cand_p = g_ptr_array_index (cands, i);
-        pj = match_stroke_num (dict,
-                               tomoe_candidate_get_char (cand_p->cand),
+        pj = match_stroke_num (tomoe_candidate_get_char (cand_p->cand),
                                input_stroke_num, cand_p->adapted_strokes);
 
         if (pj < 0)
@@ -586,7 +584,7 @@ get_candidates (GList *points, GPtrArray *cands)
 }
 
 static int
-match_stroke_num (TomoeDict* dict, TomoeChar *chr, int input_stroke_num, GArray *adapted)
+match_stroke_num (TomoeChar *chr, int input_stroke_num, GArray *adapted)
 {
     int pj = 100;
     gint adapted_num;
