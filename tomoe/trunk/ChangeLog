@@ -4,6 +4,7 @@
 	accepts row stroke data.
 	* test/data/fuyu.data, test/data/matu.data, test/data/natu.data:
 	update.
+	* test/data/ike.data, test/data/niku.data: New data.
 
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
