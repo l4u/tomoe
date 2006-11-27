@@ -38,7 +38,7 @@ struct _TomoeCharPrivate
     gint                  n_strokes;
     TomoeWriting         *writing;
     GList                *readings;
-    GHashTable           *meta;
+    GHashTable           *meta_data;
 };
 
 enum
@@ -79,7 +79,7 @@ tomoe_char_init (TomoeChar *chr)
     priv->utf8       = NULL;
     priv->n_strokes  = 0;
     priv->writing    = NULL;
-    priv->meta       = g_hash_table_new_full(g_str_hash, g_str_equal,
+    priv->meta_data  = g_hash_table_new_full(g_str_hash, g_str_equal,
                                              g_free, g_free);
     priv->readings   = NULL;
 }
@@ -99,8 +99,8 @@ tomoe_char_dispose (GObject *object)
         g_free (priv->utf8);
     if (priv->writing)
         g_object_unref (G_OBJECT (priv->writing));
-    if (priv->meta)
-        g_hash_table_destroy (priv->meta);
+    if (priv->meta_data)
+        g_hash_table_destroy (priv->meta_data);
     if (priv->readings) {
         g_list_foreach (priv->readings, (GFunc)g_object_unref, NULL);
         g_list_free (priv->readings);
@@ -108,7 +108,7 @@ tomoe_char_dispose (GObject *object)
 
     priv->utf8      = NULL;
     priv->writing   = NULL;
-    priv->meta      = NULL;
+    priv->meta_data = NULL;
     priv->readings  = NULL;
 
     G_OBJECT_CLASS (tomoe_char_parent_class)->dispose (object);
@@ -255,7 +255,7 @@ tomoe_char_register_meta_data (TomoeChar *chr, const gchar *key,
     g_return_if_fail (value);
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
-    g_hash_table_insert (priv->meta, g_strdup (key), g_strdup (value));
+    g_hash_table_insert (priv->meta_data, g_strdup (key), g_strdup (value));
 }
 
 const gchar*
@@ -266,7 +266,7 @@ tomoe_char_get_meta_data (TomoeChar* chr, const gchar *key)
     g_return_val_if_fail (key, NULL);
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
-    return g_hash_table_lookup (priv->meta, key);
+    return g_hash_table_lookup (priv->meta_data, key);
 }
 
 gboolean
@@ -276,7 +276,7 @@ tomoe_char_has_meta_data (TomoeChar *chr)
     g_return_val_if_fail (chr, FALSE);
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
-    return g_hash_table_size (priv->meta) > 0;
+    return g_hash_table_size (priv->meta_data) > 0;
 }
 
 void
@@ -286,7 +286,7 @@ tomoe_char_meta_data_foreach (TomoeChar* chr, GHFunc func, gpointer user_data)
     g_return_if_fail (chr);
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
-    g_hash_table_foreach (priv->meta, func, user_data);
+    g_hash_table_foreach (priv->meta_data, func, user_data);
 }
 
 gint
