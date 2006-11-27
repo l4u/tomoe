@@ -1,3 +1,7 @@
+2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* src/tomoe-char.c: charCode -> char_code.
+
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
 	* test/context_spec.rb: split each test data with a spec.

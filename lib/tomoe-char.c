@@ -34,7 +34,7 @@
 typedef struct _TomoeCharPrivate	TomoeCharPrivate;
 struct _TomoeCharPrivate
 {
-    char                 *charCode;
+    gchar                *char_code;
     TomoeWriting         *writing;
     GList                *readings;
     GHashTable           *meta;
@@ -75,11 +75,11 @@ static void
 tomoe_char_init (TomoeChar *chr)
 {
     TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (chr);
-    priv->charCode  = NULL;
-    priv->writing   = NULL;
-    priv->meta      = g_hash_table_new_full(g_str_hash, g_str_equal,
-                                            g_free, g_free);
-    priv->readings  = NULL;
+    priv->char_code  = NULL;
+    priv->writing    = NULL;
+    priv->meta       = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                             g_free, g_free);
+    priv->readings   = NULL;
 }
 
 TomoeChar*
@@ -93,8 +93,8 @@ tomoe_char_dispose (GObject *object)
 {
     TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (object);
 
-    if (priv->charCode)
-        g_free (priv->charCode);
+    if (priv->char_code)
+        g_free (priv->char_code);
     if (priv->writing)
         g_object_unref (G_OBJECT (priv->writing));
     if (priv->meta)
@@ -104,10 +104,10 @@ tomoe_char_dispose (GObject *object)
         g_list_free (priv->readings);
     }
 
-    priv->charCode = NULL;
-    priv->writing  = NULL;
-    priv->meta     = NULL;
-    priv->readings = NULL;
+    priv->char_code = NULL;
+    priv->writing   = NULL;
+    priv->meta      = NULL;
+    priv->readings  = NULL;
 
     G_OBJECT_CLASS (tomoe_char_parent_class)->dispose (object);
 }
@@ -149,7 +149,7 @@ tomoe_char_get_property (GObject    *object,
     }
 }
 
-const char*
+const gchar *
 tomoe_char_get_code (TomoeChar* chr)
 {
     TomoeCharPrivate *priv;
@@ -157,7 +157,7 @@ tomoe_char_get_code (TomoeChar* chr)
     g_return_val_if_fail (TOMOE_IS_CHAR (chr), NULL);
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
-    return priv->charCode;
+    return priv->char_code;
 }
 
 void
@@ -168,8 +168,8 @@ tomoe_char_set_code (TomoeChar* chr, const char* code)
     g_return_if_fail (TOMOE_IS_CHAR (chr));
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
-    g_free (priv->charCode);
-    priv->charCode = code ? g_strdup (code) : NULL;
+    g_free (priv->char_code);
+    priv->char_code = code ? g_strdup (code) : NULL;
 }
 
 const GList *
@@ -232,8 +232,8 @@ tomoe_char_compare (const TomoeChar *a, const TomoeChar *b)
     priv_b = TOMOE_CHAR_GET_PRIVATE (b);
     if (!priv_a || !priv_b) return 0;
 
-    if (!priv_a->charCode || !priv_b->charCode) return 0;
-    return strcmp (priv_a->charCode, priv_b->charCode);
+    if (!priv_a->char_code || !priv_b->char_code) return 0;
+    return strcmp (priv_a->char_code, priv_b->char_code);
 }
 
 void
