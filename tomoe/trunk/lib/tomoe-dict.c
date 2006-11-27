@@ -322,19 +322,19 @@ tomoe_dict_register_char (TomoeDict* dict, TomoeChar* add)
 }
 
 gboolean
-tomoe_dict_unregister_char (TomoeDict* dict, const gchar *code_point)
+tomoe_dict_unregister_char (TomoeDict* dict, const gchar *utf8)
 {
     GPtrArray *chars;
     TomoeChar *removed = NULL;
     guint i, index = -1;
 
     g_return_val_if_fail(dict, FALSE);
-    g_return_val_if_fail(code_point, FALSE);
+    g_return_val_if_fail(utf8, FALSE);
 
     chars = TOMOE_DICT_GET_PRIVATE(dict)->chars;
     for (i = 0; i < chars->len; i++) {
         TomoeChar *chr = g_ptr_array_index (chars, i);
-        if (0 == strcmp(tomoe_char_get_utf8(chr), code_point)) {
+        if (0 == strcmp(tomoe_char_get_utf8(chr), utf8)) {
             index = i;
             removed = chr;
             break;
@@ -352,18 +352,18 @@ tomoe_dict_unregister_char (TomoeDict* dict, const gchar *code_point)
 }
 
 TomoeChar *
-tomoe_dict_get_char (TomoeDict* dict, const gchar *code_point)
+tomoe_dict_get_char (TomoeDict* dict, const gchar *utf8)
 {
     GPtrArray *chars;
     guint i;
 
     g_return_val_if_fail(dict, NULL);
-    g_return_val_if_fail(code_point, NULL);
+    g_return_val_if_fail(utf8, NULL);
 
     chars = TOMOE_DICT_GET_PRIVATE(dict)->chars;
     for (i = 0; i < chars->len; i++) {
         TomoeChar *chr = g_ptr_array_index (chars, i);
-        if (0 == strcmp(tomoe_char_get_utf8(chr), code_point)) {
+        if (0 == strcmp(tomoe_char_get_utf8(chr), utf8)) {
             return chr;
         }
     }
