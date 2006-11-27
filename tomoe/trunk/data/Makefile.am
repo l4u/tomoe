@@ -18,10 +18,10 @@
 ## Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 ## Boston, MA  02111-1307  USA
 
-CLEANFILES = *~ *.bak
+CLEANFILES = *~ *.bak *.valid
 
 dicdir = $(datadir)/$(PACKAGE)
-dic_DATA = all.xml tomoe-dict.dtd kanjidic2.xml
+dic_DATA = tomoe-dict.dtd all.xml kanjidic2.xml
 
 confdir = $(sysconfdir)/$(PACKAGE)
 conf_DATA = config
@@ -33,3 +33,13 @@ EXTRA_DIST = \
 
 kanjidic2.xml: kanjidic2-original.xsl kanjidic2-original.xml
 	$(XSLTPROC) kanjidic2-original.xsl kanjidic2-original.xml > $@
+
+SUFFIXES: .xml .valid
+
+.xml.valid:
+	$(RXP) -s -V $<
+	touch $@
+
+.PHONY: validate
+
+validate: all.valid kanjidic2.valid

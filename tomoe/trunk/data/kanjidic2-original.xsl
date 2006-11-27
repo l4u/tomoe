@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-<xsl:output method = "xml" indent="yes" encoding="UTF-8" doctype-system = "tomoe-dict.dtd" standalone="no"/>
+<xsl:output method="xml" indent="yes" encoding="UTF-8" doctype-system="tomoe-dict.dtd" standalone="no"/>
 <xsl:template match="/">
-  <tomoe_dictionary name="Jim Breen's KanjiDic2" meta="meta.xsl">
+  <dictionary name="Jim Breen's KanjiDic2">
     <xsl:apply-templates select="//character"/>
-  </tomoe_dictionary>
+  </dictionary>
 </xsl:template>
 <xsl:template match="character">
   <character>
@@ -17,9 +17,9 @@
   </character>
 </xsl:template>
 <xsl:template match="literal">
-  <literal>
+  <code-point>
     <xsl:value-of select="."/>
-  </literal>
+  </code-point>
 </xsl:template>
 
 <xsl:template match="reading_meaning" mode="tomoe">
@@ -31,9 +31,10 @@
   </readings>
 </xsl:template>
 <xsl:template match="reading">
-  <r>
+  <xsl:element name="reading">
+    <xsl:attribute name="type"><xsl:value-of select="@r_type"/></xsl:attribute>
     <xsl:value-of select="."/>
-  </r>
+  </xsl:element>
 </xsl:template>
 
 <xsl:template match="misc">

@@ -6,16 +6,33 @@ context "Tomoe::Context" do
     @dict_content = <<-EOX
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE tomoe_dictionary SYSTEM "tomoe-dict.dtd">
-<tomoe_dictionary name="TOMOE Strokelist Dictionary">
+<dictionary>
   <character>
-    <literal>あ</literal>
-    <strokelist>
-      <s>(54 58) (249 68) </s>
-      <s>(147 10) (145 201) (182 252) </s>
-      <s>(224 103) (149 230) (82 240) (53 204) (86 149) (182 139) (240 172) (248 224) (228 250) </s>
-    </strokelist>
+    <code-point>あ</code-point>
+    <strokes>
+      <stroke>
+        <point x="54" y="58"/>
+        <point x="249" y="68"/>
+      </stroke>
+      <stroke>
+        <point x="147" y="10"/>
+        <point x="145" y="201"/>
+        <point x="182" y="252"/>
+      </stroke>
+      <stroke>
+        <point x="224" y="103"/>
+        <point x="149" y="230"/>
+        <point x="82" y="240"/>
+        <point x="53" y="204"/>
+        <point x="86" y="149"/>
+        <point x="182" y="139"/>
+        <point x="240" y="172"/>
+        <point x="248" y="224"/>
+        <point x="228" y="250"/>
+      </stroke>
+    </strokes>
   </character>
-</tomoe_dictionary>
+</dictionary>
 EOX
     set_content(@dict_content)
   end
