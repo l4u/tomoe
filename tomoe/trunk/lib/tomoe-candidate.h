@@ -57,7 +57,7 @@ GType           tomoe_candidate_get_type        (void) G_GNUC_CONST;
 
 TomoeCandidate *tomoe_candidate_new             (TomoeChar      *chr);
 
-TomoeChar      *tomoe_candidate_get_character   (TomoeCandidate *cand);
+TomoeChar      *tomoe_candidate_get_char        (TomoeCandidate *cand);
 
 void            tomoe_candidate_set_score       (TomoeCandidate *cand,
                                                  gint            score);
