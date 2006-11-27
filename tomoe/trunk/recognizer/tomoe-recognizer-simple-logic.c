@@ -449,11 +449,15 @@ get_candidates (GList *points, GPtrArray *cands)
     tomoe_metric  *i_met = NULL; /* input stroke metrics */
     int            d_nop = 0;    /* dict stroke number of points */
     tomoe_metric  *d_met = NULL; /* dict stroke metrics */
+    TomoePoint *pi0, *pi1, *pil;
 
     rtn_cands = g_ptr_array_new ();
 
     i_nop = g_list_length (points);
     stroke_calculate_metrics (points, &i_met);
+    pi0 = (TomoePoint *) g_list_nth_data (points, 0);
+    pi1 = (TomoePoint *) g_list_nth_data (points, 1);
+    pil = (TomoePoint *) g_list_nth_data (points, i_nop - 1);
 
     for (cand_index = 0; cand_index < cands->len; cand_index++) {
         gboolean match_flag = FALSE;
@@ -464,7 +468,6 @@ get_candidates (GList *points, GPtrArray *cands)
         TomoeCandidate *cand;
         GList *writing_strokes;
         guint stroke_num;
-	TomoePoint *pi0, *pi1, *pil;
 
         cand_p = g_ptr_array_index (cands, cand_index);
         tmp = _g_array_copy_int_value (cand_p->adapted_strokes);
@@ -473,25 +476,20 @@ get_candidates (GList *points, GPtrArray *cands)
         writing = tomoe_char_get_writing (lttr);
         writing_strokes = (GList *) tomoe_writing_get_strokes (writing);
         stroke_num = g_list_length (writing_strokes);
-        pi0 = (TomoePoint *) g_list_nth_data (points, 0);
-        pi1 = (TomoePoint *) g_list_nth_data (points, 1);
-        pil = (TomoePoint *) g_list_nth_data (points, i_nop - 1);
 
         for (strk_index = 0; strk_index < stroke_num; strk_index++) {
             GList *writing_points = (GList *) g_list_nth_data (writing_strokes, strk_index);
             TomoePoint *pw0, *pw1, *pwl;
-            int d1 = 0, d2 = 0;
-            int d3 = 0, d4 = 0;
-            int score1 = 0, score2 = 0;
-            int score3 = 0;
+            gint d1 = 0, d2 = 0;
+            gint d3 = 0, d4 = 0;
+            gint score1 = 0, score2 = 0;
+            gint score3 = 0;
 
             /* if the stroke index is already appended to, the value is ignored */
-            if (_g_array_has_this_int_value (tmp, strk_index)) {
+            if (_g_array_has_this_int_value (tmp, strk_index))
                 continue;
-            }
 
             d_nop = g_list_length (writing_points);
-            stroke_calculate_metrics (writing_points, &d_met);
 
             /*
              * Distance between the point and begining point.
@@ -511,7 +509,6 @@ get_candidates (GList *points, GPtrArray *cands)
             if (d1 > LIMIT_LENGTH ||
                 d2 > LIMIT_LENGTH ||
                 abs (d_nop - i_nop) > 3) {
-                free (d_met);
                 continue;
             }
 
@@ -520,6 +517,7 @@ get_candidates (GList *points, GPtrArray *cands)
             pw1 = (TomoePoint *) g_list_nth_data (writing_points, 1);
             d4 = dist_tomoe_points (pw0, pw1);
 
+            stroke_calculate_metrics (writing_points, &d_met);
             /* threshold is (angle of bigining line) % 45[degree] (PI/4)*/
             if (d3 > LIMIT_LENGTH &&
                 d4 > LIMIT_LENGTH &&
@@ -527,6 +525,7 @@ get_candidates (GList *points, GPtrArray *cands)
                 free (d_met);
                 continue;
             }
+            free (d_met);
 
             /*
              * Distance and angle of each characteristic points:
@@ -534,7 +533,6 @@ get_candidates (GList *points, GPtrArray *cands)
              */
             score1 = match_input_to_dict (points, writing_points);
             if (score1 < 0) {
-                free (d_met);
                 tomoe_candidate_set_score (
                     cand,
                     tomoe_candidate_get_score (cand) * 2);
@@ -551,7 +549,6 @@ get_candidates (GList *points, GPtrArray *cands)
             score2 = match_dict_to_input (writing_points, points);
             /* score2 = match_input_to_dict (writing_points, points); */
             if (score2 < 0) {
-                free (d_met);
                 tomoe_candidate_set_score (
                     cand,
                     tomoe_candidate_get_score (cand) * 2);
@@ -565,8 +562,6 @@ get_candidates (GList *points, GPtrArray *cands)
             match_flag = TRUE;
 
             strk_index = stroke_num;
-
-            free (d_met);
         }
 
         if (match_flag) {
