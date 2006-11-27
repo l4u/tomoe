@@ -1,5 +1,7 @@
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
+	* data/all.xml: normalized canvas size to 100x100 from 300x300.
+
 	* data/Makefile.am: added validate make target.
 	* configure.in: search rxp for validation.
 	* date/all.xml, data/kanjidic-original.xsl, data/tomoe-dict.dtd,
