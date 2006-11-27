@@ -116,25 +116,21 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
         cand_priv *cand_p;
         gint pj;
         TomoeChar *a;
+        const gchar *ac;
         gboolean f = TRUE;
 
         cand_p = g_ptr_array_index (cands, i);
         pj = match_stroke_num (tomoe_candidate_get_char (cand_p->cand),
                                input_stroke_num, cand_p->adapted_strokes);
 
-        if (pj < 0)
+        if (pj <= 0)
             continue;
 
-        if (pj != 0)
-            tomoe_candidate_set_score (
-                cand_p->cand,
-                tomoe_candidate_get_score (cand_p->cand) / pj);
-
         a = tomoe_candidate_get_char (cand_p->cand);
+        ac = tomoe_char_get_utf8 (a);
 
         for (j = 0; j < (guint)matches->len; j++) {
             const gchar *c = g_ptr_array_index (matches, j);
-            const gchar *ac = tomoe_char_get_utf8 (a);
             if (!strcmp(c, ac)) {
                 f = FALSE;
                 break;
@@ -146,7 +142,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
             TomoeCandidate *cand;
             TomoeChar *chr = tomoe_candidate_get_char (c);
             cand = tomoe_candidate_new (chr);
-            tomoe_candidate_set_score (cand, tomoe_candidate_get_score (c));
+            tomoe_candidate_set_score (cand, tomoe_candidate_get_score (c) / pj);
             matched = g_list_prepend (matched, cand);
             g_ptr_array_add (matches, (gpointer) tomoe_char_get_utf8 (chr));
         }
@@ -466,7 +462,7 @@ get_candidates (GList *points, GPtrArray *cands)
         TomoeChar *lttr;
         TomoeWriting *writing;
         TomoeCandidate *cand;
-        GList *writing_strokes;
+        GList *writing_strokes, *list;
         guint stroke_num;
 
         cand_p = g_ptr_array_index (cands, cand_index);
@@ -477,8 +473,10 @@ get_candidates (GList *points, GPtrArray *cands)
         writing_strokes = (GList *) tomoe_writing_get_strokes (writing);
         stroke_num = g_list_length (writing_strokes);
 
-        for (strk_index = 0; strk_index < stroke_num; strk_index++) {
-            GList *writing_points = (GList *) g_list_nth_data (writing_strokes, strk_index);
+        for (list = writing_strokes, strk_index = 0;
+	     list;
+	     list = g_list_next (list), strk_index++) {
+            GList *writing_points;
             TomoePoint *pw0, *pw1, *pwl;
             gint d1 = 0, d2 = 0;
             gint d3 = 0, d4 = 0;
@@ -489,6 +487,7 @@ get_candidates (GList *points, GPtrArray *cands)
             if (_g_array_has_this_int_value (tmp, strk_index))
                 continue;
 
+            writing_points = (GList *) list->data;
             d_nop = g_list_length (writing_points);
 
             /*
@@ -561,7 +560,7 @@ get_candidates (GList *points, GPtrArray *cands)
             g_array_append_val (cand_p->adapted_strokes, strk_index);
             match_flag = TRUE;
 
-            strk_index = stroke_num;
+            list = NULL;
         }
 
         if (match_flag) {
