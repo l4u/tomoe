@@ -162,7 +162,7 @@
       </stroke>
       <stroke>
         <point x="510" y="363"/>
-        <point x="1003" y="326"/>
+        <point x="990" y="326"/>
       </stroke>
       <stroke>
         <point x="726" y="90"/>
@@ -13607,11 +13607,11 @@
       <stroke>
         <point x="160" y="793"/>
         <point x="380" y="766"/>
-        <point x="330" y="1000"/>
+        <point x="330" y="990"/>
       </stroke>
       <stroke>
         <point x="266" y="666"/>
-        <point x="203" y="1010"/>
+        <point x="203" y="990"/>
       </stroke>
       <stroke>
         <point x="486" y="730"/>
@@ -14665,7 +14665,7 @@
       </stroke>
       <stroke>
         <point x="503" y="360"/>
-        <point x="486" y="1000"/>
+        <point x="486" y="990"/>
       </stroke>
       <stroke>
         <point x="480" y="773"/>
@@ -14917,7 +14917,7 @@
       </stroke>
       <stroke>
         <point x="350" y="903"/>
-        <point x="253" y="1000"/>
+        <point x="253" y="990"/>
       </stroke>
       <stroke>
         <point x="566" y="916"/>
@@ -27382,11 +27382,11 @@
       </stroke>
       <stroke>
         <point x="400" y="900"/>
-        <point x="310" y="1003"/>
+        <point x="310" y="990"/>
       </stroke>
       <stroke>
         <point x="616" y="900"/>
-        <point x="743" y="1000"/>
+        <point x="743" y="990"/>
       </stroke>
     </strokes>
   </character>
@@ -35072,7 +35072,7 @@
       <stroke>
         <point x="530" y="306"/>
         <point x="546" y="876"/>
-        <point x="1033" y="860"/>
+        <point x="990" y="860"/>
       </stroke>
     </strokes>
   </character>
@@ -35476,7 +35476,7 @@
     <strokes>
       <stroke>
         <point x="330" y="190"/>
-        <point x="-56" y="683"/>
+        <point x="100" y="683"/>
       </stroke>
       <stroke>
         <point x="193" y="416"/>
@@ -36885,11 +36885,11 @@
       </stroke>
       <stroke>
         <point x="266" y="923"/>
-        <point x="186" y="1003"/>
+        <point x="186" y="990"/>
       </stroke>
       <stroke>
         <point x="393" y="923"/>
-        <point x="486" y="1000"/>
+        <point x="486" y="990"/>
       </stroke>
       <stroke>
         <point x="523" y="923"/>
@@ -41340,7 +41340,7 @@
       </stroke>
       <stroke>
         <point x="493" y="743"/>
-        <point x="503" y="1000"/>
+        <point x="503" y="990"/>
       </stroke>
       <stroke>
         <point x="386" y="873"/>
@@ -70310,7 +70310,7 @@
       </stroke>
       <stroke>
         <point x="523" y="760"/>
-        <point x="550" y="1023"/>
+        <point x="550" y="990"/>
       </stroke>
     </strokes>
   </character>
@@ -142975,7 +142975,7 @@
       </stroke>
       <stroke>
         <point x="360" y="886"/>
-        <point x="243" y="1003"/>
+        <point x="243" y="990"/>
       </stroke>
       <stroke>
         <point x="580" y="886"/>
