@@ -2,6 +2,7 @@
 
 	* test/data/aki.data: update.
 	* test/tomoe-spec-utils.rb: Removed readingtest.xml.
+	* lib/tomoe-dict.c: Return.
 
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
