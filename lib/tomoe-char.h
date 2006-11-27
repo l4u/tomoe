@@ -81,16 +81,6 @@ void            tomoe_char_set_writing          (TomoeChar     *chr,
 TomoeChar      *tomoe_char_get_variant          (TomoeChar     *chr);
 void            tomoe_char_set_variant          (TomoeChar     *chr,
                                                  TomoeChar     *variant);
-
-/**
- * @brief Compare two tomoe_letter.
- * @param a - Pointer to the tomoe_letter 1 pointer.
- * @param b - Pointer to the tomoe_letter 2 pointer.
- * @return -1 a < b, 0 a= b, 1 a > b
- */
-gint            tomoe_char_compare              (const TomoeChar *a,
-                                                 const TomoeChar *b);
-
 const char     *tomoe_char_get_meta_data        (TomoeChar     *chr,
                                                  const gchar   *key);
 void            tomoe_char_register_meta_data   (TomoeChar     *chr,
@@ -100,6 +90,15 @@ gboolean        tomoe_char_has_meta_data        (TomoeChar* chr);
 void            tomoe_char_meta_data_foreach    (TomoeChar* chr,
                                                  GHFunc func,
                                                  gpointer user_data);
+
+/**
+ * @brief Compare two tomoe_letter.
+ * @param a - Pointer to the tomoe_letter 1 pointer.
+ * @param b - Pointer to the tomoe_letter 2 pointer.
+ * @return -1 a < b, 0 a= b, 1 a > b
+ */
+gint            tomoe_char_compare              (const TomoeChar *a,
+                                                 const TomoeChar *b);
 
 gchar          *tomoe_char_to_xml               (TomoeChar* chr);
 
