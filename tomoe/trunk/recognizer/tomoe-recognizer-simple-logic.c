@@ -21,6 +21,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include "tomoe-char.h"
 #include "tomoe-dict.h"
@@ -76,7 +77,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
 {
     /* TomoeRecognizerSimple *recognizer = context; */
     GList *matched = NULL;
-    GArray *matches = NULL;
+    GPtrArray *matches = NULL;
     GPtrArray *cands = NULL;
     GPtrArray *first_cands = NULL;
     guint letters_num = 0;
@@ -127,12 +128,14 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
         cands = tmp;
     }
 
-    matches = g_array_new (FALSE, FALSE, sizeof (gint));
+    matches = g_ptr_array_new ();
     for (i = 0; i < (guint)cands->len; i++) {
         cand_priv *cand_p;
         GArray *adapted;
         gint pj;
         gint index;
+        TomoeChar *a;
+        gboolean f = TRUE;
 
         cand_p = g_ptr_array_index (cands, i);
         index = cand_p->index;
@@ -148,30 +151,29 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
                 cand_p->cand,
                 tomoe_candidate_get_score (cand_p->cand) / pj);
 
-        if (!_g_array_has_this_int_value (matches, index)) {
-            const TomoeChar *a = tomoe_candidate_get_character (cand_p->cand);
-            gboolean f = TRUE;
+        a = tomoe_candidate_get_character (cand_p->cand);
 
-            for (j = 0; j < (guint)matches->len; j++) {
-                const TomoeChar *b = g_ptr_array_index (letters, g_array_index (matches, gint, j));
-                if (!tomoe_char_compare(a, b)) {
-                    f = FALSE;
-                    break;
-                }
+        for (j = 0; j < (guint)matches->len; j++) {
+            const gchar *c = g_ptr_array_index (matches, j);
+            const gchar *ac = tomoe_char_get_utf8 (a);
+            if (!strcmp(c, ac)) {
+                f = FALSE;
+                break;
             }
+        }
 
-            if (f) {
-                TomoeCandidate *c = cand_p->cand;
-                TomoeCandidate *cand;
-                cand = tomoe_candidate_new (tomoe_candidate_get_character (c));
-                tomoe_candidate_set_score (cand, tomoe_candidate_get_score (c));
-                matched = g_list_prepend (matched, cand);
-                g_array_append_val (matches, cand_p->index);
-            }
+        if (f) {
+            TomoeCandidate *c = cand_p->cand;
+            TomoeCandidate *cand;
+            TomoeChar *chr = tomoe_candidate_get_character (c);
+            cand = tomoe_candidate_new (chr);
+            tomoe_candidate_set_score (cand, tomoe_candidate_get_score (c));
+            matched = g_list_prepend (matched, cand);
+            g_ptr_array_add (matches, (gpointer) tomoe_char_get_utf8 (chr));
         }
     }
 
-    g_array_free (matches, TRUE);
+    g_ptr_array_free (matches, TRUE);
 
     matched = g_list_sort (matched, _candidate_compare_func);
 
