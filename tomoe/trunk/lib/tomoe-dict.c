@@ -444,6 +444,7 @@ typedef struct _ParseData
 
     gboolean in_dict;
     gboolean in_codepoint;
+    gboolean in_n_strokes;
     gboolean in_stroke;
     gboolean in_readings;
     gboolean in_reading;
@@ -529,6 +530,11 @@ start_element_handler (GMarkupParseContext *context,
 
     if (!strcmp ("code-point", element_name)) {
         data->in_codepoint = TRUE;
+        return;
+    }
+
+    if (!strcmp ("number-of-strokes", element_name)) {
+        data->in_n_strokes = TRUE;
         return;
     }
 
@@ -631,6 +637,11 @@ end_element_handler (GMarkupParseContext *context,
         return;
     }
 
+    if (!strcmp ("number-of-strokes", element_name)) {
+        data->in_n_strokes = FALSE;
+        return;
+    }
+
     if (!strcmp ("strokes", element_name)) {
         if (data->chr && data->writing)
             tomoe_char_set_writing (data->chr, data->writing);
@@ -688,17 +699,26 @@ text_handler (GMarkupParseContext *context,
         return;
     }
 
+    if (data->in_n_strokes) {
+        gint n_strokes = atoi (text);
+#if 0
+        tomoe_char_set_number_of_strokes (n_strokes);
+#endif
+    }
+
     if (data->in_reading) {
         TomoeReading *reading;
 
         reading = tomoe_reading_new (data->reading_type, text);
         tomoe_char_add_reading (data->chr, reading);
         g_object_unref (reading);
+        return;
     }
 
     if (data->in_meta) {
         g_free (data->value);
         data->value = g_strdup (text);
+        return;
     }
 }
 
@@ -743,6 +763,7 @@ tomoe_dict_load_xml (TomoeDict *dict)
     data.priv        = priv;
     data.in_dict     = FALSE;
     data.in_codepoint= FALSE;
+    data.in_n_strokes= FALSE;
     data.in_stroke   = FALSE;
     data.in_readings = FALSE;
     data.in_reading  = FALSE;
