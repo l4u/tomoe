@@ -1,5 +1,10 @@
 2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.netb>
 
+	* recognizer/tomoe-recognizer-simple-logic.c: Remove redundant
+	calculations. Speed up.
+
+2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.netb>
+
 	* recognizer/tomoe-recognizer-simple-logic.c: Speed up.
 
 2006-11-27  Hiroyuki Ikezoe  <poincare@ikezoe.netb>

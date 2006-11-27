@@ -189,7 +189,7 @@ stroke_calculate_metrics (GList *points, tomoe_metric **met)
         m[i].a     = x2 - x1;
         m[i].b     = y2 - y1;
         m[i].c     = x2 * y1 - y2 * x1;
-        m[i].d     = sqrt (m[i].a * m[i].a + m[i].b * m[i].b);
+        m[i].d     = m[i].a * m[i].a + m[i].b * m[i].b;
         m[i].e     = m[i].a * x1 + m[i].b * y1;
         m[i].angle = atan2 (y2 - y1, x2 - x1);
     }
@@ -284,17 +284,10 @@ match_input_to_dict (GList *input_points, GList *writing_points)
      * if the length between last point and second last point is lesser than
      * LIMIT_LENGTH, the last itinerary assumes "hane".
      */
-    {
-        TomoePoint *p1, *p2;
-
-        p1 = (TomoePoint *) g_list_nth_data (input_points, i_nop - 1);
-        p2 = (TomoePoint *) g_list_nth_data (input_points, i_nop - 2);
-
-        if (dist_tomoe_points(p1, p2) < LIMIT_LENGTH) {
-            i_k_end = i_nop - 2;
-        } else {
-            i_k_end = i_nop - 1;
-        }
+    if (i_met[i_nop - 2].d < LIMIT_LENGTH) {
+        i_k_end = i_nop - 2;
+    } else {
+        i_k_end = i_nop - 1;
     }
   
     m = 0;
@@ -320,8 +313,8 @@ match_input_to_dict (GList *input_points, GList *writing_points)
                     /* Distance between each characteristic points and line */
                     r = d_me.a * pi->x + d_me.b * pi->y - d_me.e;
                     d = abs (d_me.a * pi->y - d_me.b * pi->x - d_me.c);
-                    if (0 <= r && r <= d_me.d * d_me.d &&
-                        d < LIMIT_LENGTH * d_me.d &&
+                    if (0 <= r && r <= d_me.d &&
+                        d < LIMIT_LENGTH * sqrt (d_me.d) &&
                         abs (i_me.angle - d_me.angle) < M_PI_2) {
                         m = d_k;
                         ret += d;
@@ -373,17 +366,10 @@ match_dict_to_input (GList *writing_points, GList *input_points)
      * if the length between last point and second last point is lesser than
      * LIMIT_LENGTH, the last itineraryassumes "hane".
      */
-    {
-        TomoePoint *p1, *p2;
-
-        p1 = (TomoePoint *) g_list_nth_data (writing_points, d_nop - 1);
-        p2 = (TomoePoint *) g_list_nth_data (writing_points, d_nop - 2);
-
-        if (dist_tomoe_points (p1, p2) < LIMIT_LENGTH) {
-            d_k_end = d_nop - 2;
-        } else {
-            d_k_end = d_nop - 1;
-        }
+    if (d_met[d_nop - 2].d < LIMIT_LENGTH) {
+        d_k_end = d_nop - 2;
+    } else {
+        d_k_end = d_nop - 1;
     }
 
     m = 0;
@@ -408,8 +394,8 @@ match_dict_to_input (GList *writing_points, GList *input_points)
                     /* Distance between each characteristic points and line */
                     r = i_me.a * pw->x + i_me.b * pw->y - i_me.e;
                     d = abs (i_me.a * pw->y - i_me.b * pw->x - i_me.c);
-                    if (0 <= r && r <= i_me.d * i_me.d &&
-                        d < LIMIT_LENGTH * i_me.d &&
+                    if (0 <= r && r <= i_me.d &&
+                        d < LIMIT_LENGTH * sqrt (i_me.d) &&
                         abs (d_me.angle - i_me.angle) < M_PI_2) {
                         m = i_k;
                         ret += d;
@@ -445,14 +431,13 @@ get_candidates (GList *points, GPtrArray *cands)
     tomoe_metric  *i_met = NULL; /* input stroke metrics */
     int            d_nop = 0;    /* dict stroke number of points */
     tomoe_metric  *d_met = NULL; /* dict stroke metrics */
-    TomoePoint *pi0, *pi1, *pil;
+    TomoePoint *pi0, *pil;
 
     rtn_cands = g_ptr_array_new ();
 
     i_nop = g_list_length (points);
     stroke_calculate_metrics (points, &i_met);
     pi0 = (TomoePoint *) g_list_nth_data (points, 0);
-    pi1 = (TomoePoint *) g_list_nth_data (points, 1);
     pil = (TomoePoint *) g_list_nth_data (points, i_nop - 1);
 
     for (cand_index = 0; cand_index < cands->len; cand_index++) {
@@ -477,7 +462,7 @@ get_candidates (GList *points, GPtrArray *cands)
 	     list;
 	     list = g_list_next (list), strk_index++) {
             GList *writing_points;
-            TomoePoint *pw0, *pw1, *pwl;
+            TomoePoint *pw0, *pwl;
             gint d1 = 0, d2 = 0;
             gint d3 = 0, d4 = 0;
             gint score1 = 0, score2 = 0;
@@ -511,12 +496,11 @@ get_candidates (GList *points, GPtrArray *cands)
                 continue;
             }
 
-            d3 = dist_tomoe_points (pi0, pi1);
-
-            pw1 = (TomoePoint *) g_list_nth_data (writing_points, 1);
-            d4 = dist_tomoe_points (pw0, pw1);
+            d3 = i_met[0].d;
 
             stroke_calculate_metrics (writing_points, &d_met);
+            d4 = d_met[0].d;
+
             /* threshold is (angle of bigining line) % 45[degree] (PI/4)*/
             if (d3 > LIMIT_LENGTH &&
                 d4 > LIMIT_LENGTH &&
