@@ -52,18 +52,9 @@ enum
 
 G_DEFINE_TYPE (TomoeConfig, tomoe_config, G_TYPE_OBJECT)
 
-static const gchar* default_config =            \
-  "[dictionary]\n"                              \
-  "use_system_dictionaries = true\n"            \
-  "\n";
-
 static const gchar *system_config_file = TOMOESYSCONFDIR "/config";
-static const gchar *default_config_file = "/config";
 
 static void     tomoe_config_dispose      (GObject       *object);
-static GObject *tomoe_config_constructor  (GType                  type,
-                                           guint                  n_props,
-                                           GObjectConstructParam *props);
 static void     tomoe_config_set_property (GObject       *object,
                                            guint          prop_id,
                                            const GValue  *value,
@@ -73,7 +64,6 @@ static void     tomoe_config_get_property (GObject       *object,
                                            GValue        *value,
                                            GParamSpec    *pspec);
 
-static void     _tomoe_create_config_dir (void);
 static gboolean _tomoe_dict_key_file_get_boolean_value (GKeyFile *key_file,
                                                         const gchar *group,
                                                         const gchar *key,
@@ -89,7 +79,6 @@ tomoe_config_class_init (TomoeConfigClass *klass)
     gobject_class = G_OBJECT_CLASS (klass);
 
     gobject_class->dispose      = tomoe_config_dispose;
-    gobject_class->constructor  = tomoe_config_constructor;
     gobject_class->set_property = tomoe_config_set_property;
     gobject_class->get_property = tomoe_config_get_property;
 
@@ -102,72 +91,6 @@ tomoe_config_class_init (TomoeConfigClass *klass)
                                          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
     g_type_class_add_private (gobject_class, sizeof (TomoeConfigPrivate));
-}
-
-static GObject *
-tomoe_config_constructor (GType type, guint n_props,
-                          GObjectConstructParam *props)
-{
-    GObject *object;
-    TomoeConfigPrivate *priv;
-    GObjectClass *klass = G_OBJECT_CLASS (tomoe_config_parent_class);
-
-    object = klass->constructor (type, n_props, props);
-    priv = TOMOE_CONFIG_GET_PRIVATE (object);
-
-    /* check config file */
-#if 1
-#warning FIXME: need discussion
-    /*
-     * Shouldn't change the filename & create the file implicitly at this layer.
-     */
-    if (!priv->filename || !g_file_test (priv->filename, G_FILE_TEST_EXISTS)) {
-        /* use ~/.tomoe/config */
-        const gchar *home = g_get_home_dir ();
-
-        if (!home) {
-            /* use system configuration file */
-            priv->filename = g_strdup (system_config_file);
-        } else {
-            gchar *src;
-            gsize length;
-
-            _tomoe_create_config_dir ();
-
-            priv->filename = g_build_filename (home, "."PACKAGE,
-                                               default_config_file, NULL);
-
-            /* if not found, ensure to initialize the file */
-            if (!g_file_test (priv->filename, G_FILE_TEST_EXISTS)) {
-                FILE *f;
-                gboolean success = FALSE;
-
-                if (g_file_test (system_config_file, G_FILE_TEST_EXISTS))
-                    success = g_file_get_contents (system_config_file,
-                                                   &src, &length, NULL);
-                if (!success) {
-                    src = (gchar*) default_config;
-                    length = strlen (src);
-                }
-
-#warning FIXME: need mkdir
-
-                f = fopen(priv->filename, "wb");
-                if (f) {
-                    fwrite (src, length, 1, f);
-                    fclose (f);
-                } else {
-                    g_warning ("Faild to open %s for write.", priv->filename);
-                }
-
-                if (src != default_config)
-                    g_free (src);
-            }
-        }
-    }
-#endif
-
-    return object;
 }
 
 static void
@@ -254,6 +177,7 @@ tomoe_config_load (TomoeConfig *config)
     GKeyFile *key_file;
     GError *error = NULL;
     TomoeConfigPrivate *priv;
+    const gchar *config_file;
 
     g_return_if_fail (config);
 
@@ -265,23 +189,13 @@ tomoe_config_load (TomoeConfig *config)
     }
 
     key_file = g_key_file_new ();
-    if (priv->filename) {
-        if (!g_key_file_load_from_file (key_file, priv->filename,
-                                        G_KEY_FILE_KEEP_COMMENTS |
-                                        G_KEY_FILE_KEEP_TRANSLATIONS,
-                                        &error)) {
-            TOMOE_HANDLE_ERROR (error);
-            return;
-        }
-    } else {
-        if (!g_key_file_load_from_data (key_file, default_config,
-                                        strlen (default_config),
-                                        G_KEY_FILE_KEEP_COMMENTS |
-                                        G_KEY_FILE_KEEP_TRANSLATIONS,
-                                        &error)) {
-            TOMOE_HANDLE_ERROR (error);
-            return;
-        }
+    config_file = priv->filename ? priv->filename : system_config_file;
+    if (!g_key_file_load_from_file (key_file, config_file,
+                                    G_KEY_FILE_KEEP_COMMENTS |
+                                    G_KEY_FILE_KEEP_TRANSLATIONS,
+                                    &error)) {
+        TOMOE_HANDLE_ERROR (error);
+        return;
     }
 
     priv->key_file = key_file;
@@ -377,27 +291,6 @@ tomoe_config_make_shelf (TomoeConfig *config)
 
     g_strfreev(dicts);
     return shelf;
-}
-
-static void
-_tomoe_create_config_dir (void)
-{
-    gchar *path;
-    const gchar *home;
-
-    home = g_get_home_dir ();
-    if (!home)
-        return;
-
-    path = g_build_filename (home, "."PACKAGE, NULL);
-
-    if (!g_file_test (path, G_FILE_TEST_IS_DIR)) {
-        g_free (path);
-        return;
-    }
-
-    mkdir (path, 0711);
-    g_free (path);
 }
 
 static gboolean
