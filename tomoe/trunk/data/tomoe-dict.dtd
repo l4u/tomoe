@@ -2,9 +2,9 @@
 <!ATTLIST dictionary
           name CDATA #IMPLIED
  >
-<!ELEMENT character (code-point, number-of-strokes?, strokes?,
+<!ELEMENT character (utf8, number-of-strokes?, strokes?,
                      readings?, meta?)*>
-<!ELEMENT code-point (#PCDATA)>
+<!ELEMENT utf8 (#PCDATA)>
 <!ELEMENT number-of-strokes (#PCDATA)>
 <!ELEMENT strokes (stroke*)>
 <!ELEMENT stroke (point*)>

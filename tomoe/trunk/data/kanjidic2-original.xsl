@@ -17,9 +17,9 @@
   </character>
 </xsl:template>
 <xsl:template match="literal">
-  <code-point>
+  <utf8>
     <xsl:value-of select="."/>
-  </code-point>
+  </utf8>
 </xsl:template>
 
 <xsl:template match="reading_meaning" mode="tomoe">
