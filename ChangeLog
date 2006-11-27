@@ -1,5 +1,9 @@
 2006-11-27  Takuro Ashie  <ashie@homa.ne.jp>
 
+	* lib/tomoe-dict.c: Parse reading type.
+
+2006-11-27  Takuro Ashie  <ashie@homa.ne.jp>
+
 	* lib/tomoe-dict.c: Don't write dictionary name if it doesn't exist.
 
 2006-11-27  Takuro Ashie  <ashie@homa.ne.jp>

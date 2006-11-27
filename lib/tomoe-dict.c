@@ -445,13 +445,14 @@ typedef struct _ParseData
     gboolean in_dict;
     gboolean in_codepoint;
     gboolean in_stroke;
-    gint     n_points;
     gboolean in_readings;
     gboolean in_reading;
     gboolean in_meta;
 
-    TomoeChar    *chr;
-    TomoeWriting *writing;
+    TomoeChar        *chr;
+    TomoeWriting     *writing;
+    gint              n_points;
+    TomoeReadingType  reading_type;
 
     /* meta data */
     gchar *key;
@@ -470,6 +471,7 @@ start_element_handler (GMarkupParseContext *context,
 
     if (!strcmp ("dictionary", element_name)) {
         gint idx;
+
         for (idx = 0; attr_names && attr_names[idx]; idx++) {
             if (!strcmp ("name", attr_names[idx])) {
                 g_free (data->priv->name);
@@ -535,8 +537,22 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (!strcmp ("reading", element_name)) {
+        gint idx;
+
         g_return_if_fail (data->in_readings);
+
         data->in_reading = TRUE;
+        data->reading_type = TOMOE_READING_INVALID;
+
+        for (idx = 0; attr_names && attr_names[idx]; idx++) {
+            if (!strcmp ("type", attr_names[idx])) {
+                if (!strcmp ("ja_on", attr_values[idx]))
+                    data->reading_type = TOMOE_READING_ON;
+                else if (!strcmp ("ja_kun", attr_values[idx]))
+                    data->reading_type = TOMOE_READING_KUN;
+            }
+        }
+
         return;
     }
 
@@ -601,6 +617,7 @@ end_element_handler (GMarkupParseContext *context,
 
     if (!strcmp ("readings", element_name)) {
         data->in_readings = FALSE;
+        data->reading_type = TOMOE_READING_INVALID;
         return;
     }
 
@@ -644,8 +661,7 @@ text_handler (GMarkupParseContext *context,
 
         g_return_if_fail (data->chr);
 
-#warning FIXME: detect reading type?
-        reading = tomoe_reading_new (TOMOE_READING_INVALID, text);
+        reading = tomoe_reading_new (data->reading_type, text);
         tomoe_char_add_reading (data->chr, reading);
         g_object_unref (reading);
     }
@@ -708,7 +724,6 @@ tomoe_dict_load_xml (TomoeDict *dict)
     data.in_dict     = FALSE;
     data.in_codepoint= FALSE;
     data.in_stroke   = FALSE;
-    data.n_points    = 0;
     data.in_readings = FALSE;
     data.in_reading  = FALSE;
     data.in_meta     = FALSE;
@@ -716,6 +731,8 @@ tomoe_dict_load_xml (TomoeDict *dict)
     data.writing     = NULL;
     data.key         = NULL;
     data.value       = NULL;
+    data.n_points    = 0;
+    data.reading_type=TOMOE_READING_INVALID;
 
     context = g_markup_parse_context_new (&parser, 0, &data, NULL);
 
