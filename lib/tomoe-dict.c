@@ -437,18 +437,26 @@ letter_compare_func (gconstpointer a, gconstpointer b)
  *  XML related functions and data types.
  *  These will be moved to external class.
  */
+typedef enum {
+    STATE_NONE,
+    STATE_CODEPOINT,
+    STATE_N_STROKES,
+    STATE_STROKES,
+    STATE_READINGS,
+    STATE_READING,
+    STATE_WRITING,
+    STATE_STROKE,
+    STATE_POINT,
+    STATE_META
+} TomoeCharState;
+
 typedef struct _ParseData
 {
     TomoeDict        *dict;
     TomoeDictPrivate *priv;
 
-    gboolean in_dict;
-    gboolean in_codepoint;
-    gboolean in_n_strokes;
-    gboolean in_stroke;
-    gboolean in_readings;
-    gboolean in_reading;
-    gboolean in_meta;
+    gboolean          in_dict;
+    TomoeCharState    state;
 
     TomoeChar        *chr;
     TomoeWriting     *writing;
@@ -511,8 +519,10 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (!data->in_dict) {
-        set_parse_error (error, "Invalid root element %s of %s.",
-                         element_name, data->priv->filename);
+        set_parse_error (error, "Invalid root element %s at line %d of %s.",
+                         element_name,
+                         get_line_number (context),
+                         data->priv->filename);
         return;
     }
 
@@ -522,30 +532,32 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (!data->chr) {
-        set_parse_error (error, "Invalid element %s at %d of %s.",
-                         element_name, get_line_number (context),
+        set_parse_error (error, "Invalid element %s at line %d of %s.",
+                         element_name,
+                         get_line_number (context),
                          data->priv->filename);
         return;
     }
 
     if (!strcmp ("code-point", element_name)) {
-        data->in_codepoint = TRUE;
+        data->state = STATE_CODEPOINT;
         return;
     }
 
     if (!strcmp ("number-of-strokes", element_name)) {
-        data->in_n_strokes = TRUE;
+        data->state = STATE_N_STROKES;
         return;
     }
 
     if (!strcmp ("strokes", element_name)) {
+        data->state = STATE_WRITING;
         data->writing = tomoe_writing_new ();
         return;
     }
 
     if (!strcmp ("stroke", element_name)) {
         g_return_if_fail (data->writing);
-        data->in_stroke = TRUE;
+        data->state = STATE_STROKE;
         data->n_points = 0;
         return;
     }
@@ -553,7 +565,9 @@ start_element_handler (GMarkupParseContext *context,
     if (!strcmp ("point", element_name)) {
         gint idx, x, y;
 
-        g_return_if_fail (data->in_stroke);
+        g_return_if_fail (data->state == STATE_STROKE);
+
+        data->state = STATE_POINT;
 
         for (idx = 0; attr_names && attr_names[idx]; idx++) {
             if (!strcmp ("x", attr_names[idx])) {
@@ -573,16 +587,16 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (!strcmp ("readings", element_name)) {
-        data->in_readings = TRUE;
+        data->state = STATE_READINGS;
         return;
     }
 
     if (!strcmp ("reading", element_name)) {
         gint idx;
 
-        g_return_if_fail (data->in_readings);
+        g_return_if_fail (data->state == STATE_READINGS);
 
-        data->in_reading = TRUE;
+        data->state = STATE_READING;
         data->reading_type = TOMOE_READING_INVALID;
 
         for (idx = 0; attr_names && attr_names[idx]; idx++) {
@@ -598,11 +612,11 @@ start_element_handler (GMarkupParseContext *context,
     }
 
     if (!strcmp ("meta", element_name)) {
-        data->in_meta = TRUE;
+        data->state = STATE_META;
         return;
     }
 
-    if (data->in_meta) {
+    if (data->state == STATE_META) {
         g_free (data->key);
         g_free (data->value);
         data->key   = g_strdup (element_name);
@@ -633,12 +647,12 @@ end_element_handler (GMarkupParseContext *context,
     }
 
     if (!strcmp("code-point", element_name)) {
-        data->in_codepoint = FALSE;
+        data->state = STATE_NONE;
         return;
     }
 
     if (!strcmp ("number-of-strokes", element_name)) {
-        data->in_n_strokes = FALSE;
+        data->state = STATE_NONE;
         return;
     }
 
@@ -646,36 +660,38 @@ end_element_handler (GMarkupParseContext *context,
         if (data->chr && data->writing)
             tomoe_char_set_writing (data->chr, data->writing);
         data->writing = NULL;
+        data->state = STATE_NONE;
         return;
     }
 
     if (!strcmp ("stroke", element_name)) {
-        data->in_stroke = FALSE;
+        data->state = STATE_WRITING;
         data->n_points = 0;
         return;
     }
 
     if (!strcmp ("point", element_name)) {
+        data->state = STATE_STROKE;
         return;
     }
 
     if (!strcmp ("readings", element_name)) {
-        data->in_readings = FALSE;
+        data->state = STATE_NONE;
         data->reading_type = TOMOE_READING_INVALID;
         return;
     }
 
     if (!strcmp ("reading", element_name)) {
-        data->in_reading = FALSE;
+        data->state = STATE_READINGS;
         return;
     }
 
     if (!strcmp ("meta", element_name)) {
-        data->in_meta = FALSE;
+        data->state = STATE_NONE;
         return;
     }
 
-    if (data->in_meta) {
+    if (data->state == STATE_META) {
         if (data->chr && data->key && data->value)
             tomoe_char_register_meta_data (data->chr, data->key, data->value);
         g_free (data->key);
@@ -694,19 +710,22 @@ text_handler (GMarkupParseContext *context,
 {
     ParseData *data = user_data;
 
-    if (data->in_codepoint) {
+    switch (data->state) {
+    case STATE_CODEPOINT:
+    {
         tomoe_char_set_code (data->chr, text);
         return;
     }
-
-    if (data->in_n_strokes) {
+    case STATE_N_STROKES:
+    {
         gint n_strokes = atoi (text);
 #if 0
         tomoe_char_set_number_of_strokes (n_strokes);
 #endif
+        return;
     }
-
-    if (data->in_reading) {
+    case STATE_READING:
+    {
         TomoeReading *reading;
 
         reading = tomoe_reading_new (data->reading_type, text);
@@ -714,11 +733,14 @@ text_handler (GMarkupParseContext *context,
         g_object_unref (reading);
         return;
     }
-
-    if (data->in_meta) {
+    case STATE_META:
+    {
         g_free (data->value);
         data->value = g_strdup (text);
         return;
+    }
+    default:
+        break;
     }
 }
 
@@ -759,21 +781,16 @@ tomoe_dict_load_xml (TomoeDict *dict)
     f = fopen (priv->filename, "rb");
     g_return_val_if_fail (f, FALSE);
 
-    data.dict        = dict;
-    data.priv        = priv;
-    data.in_dict     = FALSE;
-    data.in_codepoint= FALSE;
-    data.in_n_strokes= FALSE;
-    data.in_stroke   = FALSE;
-    data.in_readings = FALSE;
-    data.in_reading  = FALSE;
-    data.in_meta     = FALSE;
-    data.chr         = NULL;
-    data.writing     = NULL;
-    data.key         = NULL;
-    data.value       = NULL;
-    data.n_points    = 0;
-    data.reading_type=TOMOE_READING_INVALID;
+    data.dict         = dict;
+    data.priv         = priv;
+    data.in_dict      = FALSE;
+    data.state        = STATE_NONE;
+    data.chr          = NULL;
+    data.writing      = NULL;
+    data.key          = NULL;
+    data.value        = NULL;
+    data.n_points     = 0;
+    data.reading_type =TOMOE_READING_INVALID;
 
     context = g_markup_parse_context_new (&parser, 0, &data, NULL);
 
