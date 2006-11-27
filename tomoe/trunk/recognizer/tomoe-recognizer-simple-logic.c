@@ -238,15 +238,9 @@ cand_priv_free (cand_priv *cand_p)
 #define SQUARE_LENGTH(x, y) ((x) * (x) + (y) * (y))
 
 static gint
-sq_dist (gint x1, gint y1, gint x2, gint y2)
-{
-    return SQUARE_LENGTH (x1 - x2, y1 - y2);
-}
-
-static gint
 dist_tomoe_points (TomoePoint *a, TomoePoint *b)
 {
-    return sq_dist (a->x, a->y, b->x, b->y);
+    return SQUARE_LENGTH (a->x - b->x, a->y - b->y);
 }
 
 /*
