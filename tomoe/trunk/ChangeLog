@@ -1,5 +1,7 @@
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
+	* recognizer/tomoe-recognizer-simple-logic.c: clearn-up cand_priv.
+
 	* lib/tomoe-shelf.c, lib/tomoe-dict.c: suppressed warnings.
 
 	* lib/tomoe-context.[ch], lib/tomoe-dict.[ch],
