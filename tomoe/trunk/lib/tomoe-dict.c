@@ -479,8 +479,7 @@ start_element_handler (GMarkupParseContext *context,
         return;
     }
 
-    if (!data->in_dict)
-        return;
+    g_return_if_fail (data->in_dict);
 
     if (!strcmp ("character", element_name)) {
         data->chr = tomoe_char_new ();
@@ -660,7 +659,6 @@ passthrough_handler (GMarkupParseContext *context,
                      gpointer             user_data,
                      GError             **error)
 {
-#warning FIXME: need implement?
 }
 
 static void
@@ -668,7 +666,14 @@ error_handler (GMarkupParseContext *context,
                GError              *error,
                gpointer             user_data)
 {
-#warning FIXME: need error check
+    ParseData *data = user_data;
+    gint line = 0;
+
+    g_markup_parse_context_get_position (context, &line, NULL);
+    g_warning ("XML parse error at line %d of %s: %s\n",
+               line,
+               data->priv->filename,
+               error->message);
 }
 
 static GMarkupParser parser = {
@@ -713,7 +718,7 @@ tomoe_dict_load_xml (TomoeDict *dict)
         success = g_markup_parse_context_parse(context, buf, bytes, &error);
 #warning FIXME
         if (!success) {
-            g_warning("XML parse error!: %s", error->message);
+            g_warning("XML parse error: %s", error->message);
             g_error_free(error);
             break;
         }
