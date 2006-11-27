@@ -280,6 +280,110 @@ tomoe_char_meta_data_foreach (TomoeChar* chr, GHFunc func, gpointer user_data)
     g_hash_table_foreach (priv->meta, func, user_data);
 }
 
+
+static void
+tomoe_char_to_xml_char_code (TomoeChar *chr, TomoeCharPrivate *priv,
+                             GString *output)
+{
+    gchar *code_point;
+
+    if (!priv->char_code) return;
+
+    code_point = g_markup_printf_escaped ("    <code-point>%s</code-point>\n",
+                                          priv->char_code);
+    g_string_append (output, code_point);
+    g_free (code_point);
+}
+
+static void
+tomoe_char_to_xml_readings (TomoeChar *chr, TomoeCharPrivate *priv,
+                            GString *output)
+{
+    GList *node;
+
+    if (!priv->readings) return;
+
+    g_string_append (output, "    <readings>\n");
+    for (node = priv->readings; node; node = g_list_next (node)) {
+        TomoeReading *reading = node->data;
+        gchar *xml;
+
+        if (!TOMOE_IS_READING (reading)) continue;
+
+        xml = g_markup_printf_escaped ("      <reading>%s</reading>\n",
+                                       tomoe_reading_get_reading (reading));
+        g_string_append (output, xml);
+        g_free (xml);
+    }
+    g_string_append (output, "    </readings>\n");
+}
+
+static void
+tomoe_char_to_xml_writing (TomoeChar *chr, TomoeCharPrivate *priv,
+                           GString *output)
+{
+    gchar *xml;
+
+    if (!priv->writing) return;
+
+    xml = tomoe_writing_to_xml (priv->writing);
+
+    if (xml && xml[0] != '\0') {
+        g_string_append (output, xml);
+        g_free (xml);
+    }
+}
+
+
+static void
+tomoe_char_to_xml_meta_datum (gpointer key, gpointer value, gpointer user_data)
+{
+    GString *output = user_data;
+    gchar *meta_key = key;
+    gchar *meta_value = value;
+    gchar *result;
+
+    result = g_markup_printf_escaped ("      <%s>%s</%s>\n",
+                                      meta_key, meta_value, meta_key);
+    g_string_append (output, result);
+    g_free (result);
+}
+
+static void
+tomoe_char_to_xml_meta (TomoeChar *chr, TomoeCharPrivate *priv, GString *output)
+{
+    if (!tomoe_char_has_meta_data (chr)) return;
+
+    g_string_append (output, "    <meta>\n");
+    tomoe_char_meta_data_foreach (chr, tomoe_char_to_xml_meta_datum, output);
+    g_string_append (output, "    </meta>\n");
+}
+
+gchar *
+tomoe_char_to_xml (TomoeChar* chr)
+{
+    TomoeCharPrivate *priv;
+    GString *output;
+
+    g_return_val_if_fail (TOMOE_IS_CHAR (chr), NULL);
+
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+    output = g_string_new ("");
+
+    tomoe_char_to_xml_char_code (chr, priv, output);
+    tomoe_char_to_xml_readings (chr, priv, output);
+    tomoe_char_to_xml_writing (chr, priv, output);
+    tomoe_char_to_xml_meta (chr, priv, output);
+
+    if (output->len > 0) {
+        g_string_prepend (output, "  <character>\n");
+        g_string_append (output, "  </character>\n");
+    }
+
+    return g_string_free (output, FALSE);
+}
+
+
 /*
 vi:ts=4:nowrap:ai:expandtab
 */

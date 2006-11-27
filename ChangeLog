@@ -1,3 +1,18 @@
+2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-dict.c: moved serializing TomoeChar to XML code to
+	TomoeChar.
+	* lib/tomoe-char.[ch]: added tomoe_char_to_xml().
+	* ext/ruby/tomoe-rb-char.c: added Tomoe::Char#to_xml and
+	Tomoe::Char#code=.
+
+	* test/context_spec.rb: shared Tomoe::Context.
+
+	* test/char_spec.rb, test/Makefile.am: added tests for
+	Tomoe::Char#to_xml.
+
+	* lib/tomoe-writing.c: returned empty string if no data to write.
+
 2006-11-27  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe-dict.c: Parse number-of-strokes element, but the value is

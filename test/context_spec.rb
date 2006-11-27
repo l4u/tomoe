@@ -1,11 +1,13 @@
 require 'tomoe-spec-utils'
 
 context "Tomoe::Context" do
-  setup do
-    @context = Tomoe::Context.new
-    test_dir = File.expand_path(File.join(File.dirname(__FILE__)))
-    @context.load_config(@config_file.path)
-    @context.load_recognizer(recognizer_dir, "simple")
+  @@context = nil
+  def context
+    return @@context if @@context
+    @@context = Tomoe::Context.new
+    @@context.load_config(@config_file.path)
+    @@context.load_recognizer(recognizer_dir, "simple")
+    @@context
   end
 
   def numbers_to_point(str)
@@ -38,7 +40,7 @@ context "Tomoe::Context" do
       end
       query = Tomoe::Query.new
       query.writing = writing
-      cands = @context.search(query)
+      cands = context.search(query)
 
       [base, cands.collect {|cand| cand.character.code}].should == expected
     end
@@ -47,7 +49,7 @@ context "Tomoe::Context" do
   specify "Search by reading" do
     query = Tomoe::Query.new
     query.add_reading(Tomoe::Reading.new(Tomoe::READING_KUN, "せい"))
-    cands = @context.search(query)
+    cands = context.search(query)
     cands.collect {|cand| cand.character.code}.should == ["脊", "背", "汐"]
   end
 end

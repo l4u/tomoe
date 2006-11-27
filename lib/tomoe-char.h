@@ -98,6 +98,8 @@ void            tomoe_char_meta_data_foreach    (TomoeChar* chr,
                                                  GHFunc func,
                                                  gpointer user_data);
 
+gchar          *tomoe_char_to_xml               (TomoeChar* chr);
+
 G_END_DECLS
 
 #endif /* __TOMOE_CHAR_H__ */
