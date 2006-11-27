@@ -35,6 +35,7 @@ typedef struct _TomoeCharPrivate	TomoeCharPrivate;
 struct _TomoeCharPrivate
 {
     gchar                *char_code;
+    gint                  n_strokes;
     TomoeWriting         *writing;
     GList                *readings;
     GHashTable           *meta;
@@ -76,6 +77,7 @@ tomoe_char_init (TomoeChar *chr)
 {
     TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (chr);
     priv->char_code  = NULL;
+    priv->n_strokes  = 0;
     priv->writing    = NULL;
     priv->meta       = g_hash_table_new_full(g_str_hash, g_str_equal,
                                              g_free, g_free);
@@ -170,6 +172,28 @@ tomoe_char_set_code (TomoeChar* chr, const char* code)
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
     g_free (priv->char_code);
     priv->char_code = code ? g_strdup (code) : NULL;
+}
+
+gint
+tomoe_char_get_n_strokes (TomoeChar *chr)
+{
+    TomoeCharPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_CHAR (chr), 0);
+
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+    return priv->n_strokes;
+}
+
+void
+tomoe_char_set_n_strokes (TomoeChar *chr, gint n_strokes)
+{
+    TomoeCharPrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_CHAR (chr));
+
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+    priv->n_strokes = n_strokes;
 }
 
 const GList *

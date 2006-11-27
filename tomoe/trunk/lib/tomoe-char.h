@@ -66,6 +66,9 @@ TomoeChar      *tomoe_char_new                  (void);
 const char     *tomoe_char_get_code             (TomoeChar     *chr);
 void            tomoe_char_set_code             (TomoeChar     *chr,
                                                  const char    *code);
+gint            tomoe_char_get_n_strokes        (TomoeChar     *chr);
+void            tomoe_char_set_n_strokes        (TomoeChar     *chr,
+                                                 gint           n_strokes);
 const GList    *tomoe_char_get_readings         (TomoeChar     *chr);
 void            tomoe_char_add_reading          (TomoeChar     *chr,
                                                  TomoeReading  *reading);

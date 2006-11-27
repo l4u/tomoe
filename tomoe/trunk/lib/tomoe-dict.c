@@ -718,10 +718,7 @@ text_handler (GMarkupParseContext *context,
     }
     case STATE_N_STROKES:
     {
-        gint n_strokes = atoi (text);
-#if 0
-        tomoe_char_set_number_of_strokes (n_strokes);
-#endif
+        tomoe_char_set_n_strokes (data->chr, atoi (text));
         return;
     }
     case STATE_READING:

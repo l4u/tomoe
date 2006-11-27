@@ -1,3 +1,14 @@
+2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-dict.c (text_handler): used tomoe_char_set_n_strokes;
+
+	* lib/tomoe-char.[ch] (tomoe_char_set_n_strokes,
+	tomoe_char_get_n_strokes): implemented.
+	* ext/ruby/tomoe-rb-char.c: implemented Tomoe::Char#n_strokes and
+	Tomoe::Char#n_strokes=.
+	* test/char_spec.r: added tests for Tomoe::Char#n_strokes and
+	Tomoe::Char#n_strokes=.
+
 2006-11-27  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe-dict.c: Use "state" flag instead of "in_hoge" flag for XML
