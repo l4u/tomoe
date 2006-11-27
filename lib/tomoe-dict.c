@@ -49,7 +49,7 @@ struct _TomoeDictPrivate
 {
     char                *filename;
     char                *name;
-    GPtrArray           *letters;
+    GPtrArray           *chars;
 
     gboolean             editable;
     gboolean             modified;
@@ -68,7 +68,6 @@ enum
   PROP_0,
   PROP_NAME,
   PROP_FILENAME,
-  PROP_LETTERS,
   PROP_EDITABLE,
   PROP_MODIFIED,
 };
@@ -124,12 +123,6 @@ tomoe_dict_class_init (TomoeDictClass *klass)
                                 G_PARAM_CONSTRUCT_ONLY);
     g_object_class_install_property (gobject_class, PROP_FILENAME, spec);
 
-    spec = g_param_spec_pointer ("letters",
-                                 N_("Letters"),
-                                 N_("Letters of the dictionary."),
-                                 G_PARAM_READABLE);
-    g_object_class_install_property (gobject_class, PROP_LETTERS, spec);
-
     spec = g_param_spec_boolean ("editable",
                                  N_("Editable"),
                                  N_("Whether the dictionary is editable."),
@@ -155,7 +148,7 @@ tomoe_dict_init (TomoeDict *dict)
 
     priv->filename = NULL;
     priv->name     = NULL;
-    priv->letters  = g_ptr_array_new();
+    priv->chars    = g_ptr_array_new();
     priv->modified = FALSE;
 }
 
@@ -193,12 +186,12 @@ tomoe_dict_dispose (GObject *object)
 
     g_free(priv->name);
     g_free(priv->filename);
-    if (priv->letters)
-        TOMOE_PTR_ARRAY_FREE_ALL(priv->letters, g_object_unref);
+    if (priv->chars)
+        TOMOE_PTR_ARRAY_FREE_ALL(priv->chars, g_object_unref);
 
     priv->name     = NULL;
     priv->filename = NULL;
-    priv->letters  = NULL;
+    priv->chars    = NULL;
 
     G_OBJECT_CLASS (tomoe_dict_parent_class)->dispose (object);
 }
@@ -309,7 +302,7 @@ guint
 tomoe_dict_get_size (TomoeDict* dict)
 {
     g_return_val_if_fail(dict, 0);
-    return TOMOE_DICT_GET_PRIVATE(dict)->letters->len;
+    return TOMOE_DICT_GET_PRIVATE(dict)->chars->len;
 }
 
 gboolean
@@ -321,8 +314,8 @@ tomoe_dict_register_char (TomoeDict* dict, TomoeChar* add)
     g_return_val_if_fail(add, FALSE);
 
     priv = TOMOE_DICT_GET_PRIVATE(dict);
-    g_ptr_array_add (priv->letters, g_object_ref (G_OBJECT (add)));
-    g_ptr_array_sort (priv->letters, letter_compare_func);
+    g_ptr_array_add (priv->chars, g_object_ref (G_OBJECT (add)));
+    g_ptr_array_sort (priv->chars, letter_compare_func);
     tomoe_dict_set_modified (dict, TRUE);
 
     return TRUE;
@@ -338,7 +331,7 @@ tomoe_dict_unregister_char (TomoeDict* dict, const gchar *code_point)
     g_return_val_if_fail(dict, FALSE);
     g_return_val_if_fail(code_point, FALSE);
 
-    chars = TOMOE_DICT_GET_PRIVATE(dict)->letters;
+    chars = TOMOE_DICT_GET_PRIVATE(dict)->chars;
     for (i = 0; i < chars->len; i++) {
         TomoeChar *chr = g_ptr_array_index (chars, i);
         if (0 == strcmp(tomoe_char_get_utf8(chr), code_point)) {
@@ -367,7 +360,7 @@ tomoe_dict_get_char (TomoeDict* dict, const gchar *code_point)
     g_return_val_if_fail(dict, NULL);
     g_return_val_if_fail(code_point, NULL);
 
-    chars = TOMOE_DICT_GET_PRIVATE(dict)->letters;
+    chars = TOMOE_DICT_GET_PRIVATE(dict)->chars;
     for (i = 0; i < chars->len; i++) {
         TomoeChar *chr = g_ptr_array_index (chars, i);
         if (0 == strcmp(tomoe_char_get_utf8(chr), code_point)) {
@@ -408,7 +401,7 @@ tomoe_dict_search_by_n_strokes (TomoeDict *dict, gint min, gint max)
     context.results = NULL;
 
     priv = TOMOE_DICT_GET_PRIVATE(dict);
-    g_ptr_array_foreach_reverse (priv->letters,
+    g_ptr_array_foreach_reverse (priv->chars,
                                  tomoe_dict_collect_chars_by_n_strokes,
                                  &context);
 
@@ -448,7 +441,7 @@ tomoe_dict_search_by_reading (TomoeDict* dict, TomoeReading *reading)
     context.results = NULL;
 
     priv = TOMOE_DICT_GET_PRIVATE(dict);
-    g_ptr_array_foreach_reverse (priv->letters,
+    g_ptr_array_foreach_reverse (priv->chars,
                                  tomoe_dict_collect_chars_by_reading,
                                  &context);
 
@@ -674,7 +667,7 @@ end_element_handler (GMarkupParseContext *context,
 
     if (!strcmp ("character", element_name)) {
         if (tomoe_char_get_utf8 (data->chr))
-            g_ptr_array_add (data->priv->letters, data->chr);
+            g_ptr_array_add (data->priv->chars, data->chr);
         else
             g_object_unref (G_OBJECT (data->chr));
         data->chr = NULL;
@@ -843,8 +836,8 @@ tomoe_dict_load_xml (TomoeDict *dict)
     fclose (f);
     g_markup_parse_context_free (context);
 
-    if (priv->letters)
-        g_ptr_array_sort (priv->letters, letter_compare_func);
+    if (priv->chars)
+        g_ptr_array_sort (priv->chars, letter_compare_func);
 
     return retval;
 }
@@ -881,10 +874,10 @@ tomoe_dict_save_xml (TomoeDict *dict)
     if (fwrite (head, strlen (head), 1, f) < 1) goto ERROR;
 
     /* write each characters */
-    for (i = 0; i < priv->letters->len; i++) {
+    for (i = 0; i < priv->chars->len; i++) {
         gchar *xml;
         gboolean failed;
-        TomoeChar* chr = (TomoeChar*)g_ptr_array_index (priv->letters, i);
+        TomoeChar* chr = (TomoeChar*)g_ptr_array_index (priv->chars, i);
 
         xml = tomoe_char_to_xml (chr);
         if (!xml) goto ERROR;
