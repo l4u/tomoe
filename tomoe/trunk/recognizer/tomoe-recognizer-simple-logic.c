@@ -27,8 +27,7 @@
 #include "tomoe-candidate.h"
 #include "tomoe-recognizer-simple-logic.h"
 
-#define TOMOE_WRITING_SIZE 300
-#define LIMIT_LENGTH ((TOMOE_WRITING_SIZE * 0.25) * (TOMOE_WRITING_SIZE * 0.25))
+#define LIMIT_LENGTH ((TOMOE_WRITING_WIDTH * 0.25) * (TOMOE_WRITING_WIDTH * 0.25))
 
 typedef struct _tomoe_metric tomoe_metric;
 
@@ -689,7 +688,7 @@ get_vertex (GList *first_node, GList *last_node)
     GList *rv = NULL;
     GList *most_node;
     gint dist;
-    gint error = TOMOE_WRITING_SIZE * TOMOE_WRITING_SIZE / 400; /* 5% */
+    gint error = TOMOE_WRITING_WIDTH * TOMOE_WRITING_WIDTH / 400; /* 5% */
 
     dist = get_distance(first_node, last_node, &most_node);
 
@@ -725,10 +724,7 @@ create_sparse_writing (TomoeWriting *writing)
     
         for (point = new_points; point; point = g_list_next (point)) {
             TomoePoint *p = (TomoePoint *) point->data;
-            gint x, y;
-            x = p->x * ((gdouble)TOMOE_WRITING_SIZE / TOMOE_WRITING_SIZE /* priv->size */);
-            y = p->y * ((gdouble)TOMOE_WRITING_SIZE / TOMOE_WRITING_SIZE /* priv->size */);
-            tomoe_writing_line_to (new, x, y);
+            tomoe_writing_line_to (new, p->x, p->y);
         }
     }
 
