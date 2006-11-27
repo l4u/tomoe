@@ -445,6 +445,7 @@ typedef struct _ParseData
     gboolean in_dict;
     gboolean in_literal;
     gboolean in_stroke;
+    gint     n_points;
     gboolean in_readings;
     gboolean in_reading;
     gboolean in_meta;
@@ -467,7 +468,7 @@ start_element_handler (GMarkupParseContext *context,
 {
     ParseData *data = user_data;
 
-    if (!strcmp ("tomoe_dictionary", element_name)) {
+    if (!strcmp ("dictionary", element_name)) {
         gint idx;
         for (idx = 0; attr_names && attr_names[idx]; idx++) {
             if (!strcmp ("name", attr_names[idx])) {
@@ -486,22 +487,44 @@ start_element_handler (GMarkupParseContext *context,
         return;
     }
 
-    if (!strcmp ("literal", element_name)) {
+    if (!strcmp ("code-point", element_name)) {
         g_return_if_fail (data->chr);
         data->in_literal = TRUE;
         return;
     }
 
-    if (!strcmp ("strokelist", element_name)) {
+    if (!strcmp ("strokes", element_name)) {
         g_return_if_fail (data->chr);
         data->writing = tomoe_writing_new ();
         return;
     }
 
-    if (!strcmp ("s", element_name)) {
+    if (!strcmp ("stroke", element_name)) {
         g_return_if_fail (data->writing);
         data->in_stroke = TRUE;
+        data->n_points = 0;
         return;
+    }
+
+    if (!strcmp ("point", element_name)) {
+        gint idx, x, y;
+
+        g_return_if_fail (data->in_stroke);
+
+        for (idx = 0; attr_names && attr_names[idx]; idx++) {
+            if (!strcmp ("x", attr_names[idx])) {
+                x = atoi (attr_values[idx]);
+            } else if (!strcmp ("y", attr_names[idx])) {
+                y = atoi (attr_values[idx]);
+            }
+        }
+
+        if (data->n_points == 0)
+            tomoe_writing_move_to (data->writing, x, y);
+        else
+            tomoe_writing_line_to (data->writing, x, y);
+
+        data->n_points++;
     }
 
     if (!strcmp ("readings", element_name)) {
@@ -510,7 +533,7 @@ start_element_handler (GMarkupParseContext *context,
         return;
     }
 
-    if (!strcmp ("r", element_name)) {
+    if (!strcmp ("reading", element_name)) {
         g_return_if_fail (data->in_readings);
         data->in_reading = TRUE;
         return;
@@ -539,7 +562,7 @@ end_element_handler (GMarkupParseContext *context,
 {
     ParseData *data = user_data;
 
-    if (!strcmp ("tomoe_dictionary", element_name)) {
+    if (!strcmp ("dictionary", element_name)) {
         data->in_dict = FALSE;
         return;
     }
@@ -553,20 +576,25 @@ end_element_handler (GMarkupParseContext *context,
         return;
     }
 
-    if (!strcmp("literal", element_name)) {
+    if (!strcmp("code-point", element_name)) {
         data->in_literal = FALSE;
         return;
     }
 
-    if (!strcmp ("strokelist", element_name)) {
+    if (!strcmp ("strokes", element_name)) {
         if (data->chr && data->writing)
             tomoe_char_set_writing (data->chr, data->writing);
         data->writing = NULL;
         return;
     }
 
-    if (!strcmp ("s", element_name)) {
+    if (!strcmp ("stroke", element_name)) {
         data->in_stroke = FALSE;
+        data->n_points = 0;
+        return;
+    }
+
+    if (!strcmp ("point", element_name)) {
         return;
     }
 
@@ -575,7 +603,7 @@ end_element_handler (GMarkupParseContext *context,
         return;
     }
 
-    if (!strcmp ("r", element_name)) {
+    if (!strcmp ("reading", element_name)) {
         data->in_reading = FALSE;
         return;
     }
@@ -610,6 +638,7 @@ text_handler (GMarkupParseContext *context,
         return;
     }
 
+#if 0
     /* FIXME! */
     if (data->in_stroke) {
         const gchar *p = text;
@@ -636,6 +665,7 @@ text_handler (GMarkupParseContext *context,
             p = strchr (p, ')') + 1;
         }
     }
+#endif
 
     if (data->in_reading) {
         TomoeReading *reading;
@@ -706,6 +736,7 @@ tomoe_dict_load_xml (TomoeDict *dict)
     data.in_dict     = FALSE;
     data.in_literal  = FALSE;
     data.in_stroke   = FALSE;
+    data.n_points    = 0;
     data.in_readings = FALSE;
     data.in_reading  = FALSE;
     data.in_meta     = FALSE;
@@ -754,7 +785,7 @@ _write_readings (TomoeChar *chr, FILE *f)
 
         if (!TOMOE_IS_READING (reading)) continue;
 
-        str = g_markup_printf_escaped ("      <r>%s</r>\n",
+        str = g_markup_printf_escaped ("      <reading>%s</reading>\n",
                                        tomoe_reading_get_reading (reading));
         if (fwrite (str, strlen (str), 1, f) < 1) {
             g_free (str);
@@ -804,7 +835,7 @@ _write_character (TomoeChar *chr, FILE *f)
 
     /* open character element */
     head = g_markup_printf_escaped ("  <character>\n"
-                                    "    <literal>%s</literal>\n",
+                                    "    <code-point>%s</code-point>\n",
                                     tomoe_char_get_code (chr));
     if (fwrite (head, strlen (head), 1, f) < 1) {
         g_free (head);
@@ -845,7 +876,7 @@ tomoe_dict_save_xml (TomoeDict *dict)
     TomoeDictPrivate *priv;
     FILE *f;
     gchar *head;
-    const gchar *foot = "</tomoe_dictionary>\n";
+    const gchar *foot = "</dictionary>\n";
     guint i;
 
     g_return_if_fail (TOMOE_IS_DICT (dict));
@@ -859,8 +890,8 @@ tomoe_dict_save_xml (TomoeDict *dict)
     /* write the header */
     head = g_markup_printf_escaped (
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-        "<!DOCTYPE tomoe_dictionary SYSTEM \"tomoe-dict.dtd\">\n"
-        "<tomoe_dictionary name=\"%s\">\n",
+        "<!DOCTYPE dictionary SYSTEM \"tomoe-dict.dtd\">\n"
+        "<dictionary name=\"%s\">\n",
         priv->name);
     if (fwrite (head, strlen (head), 1, f) < 1) goto ERROR;
 
