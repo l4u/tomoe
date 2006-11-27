@@ -42,7 +42,7 @@ context "Tomoe::Context" do
       query.writing = writing
       cands = context.search(query)
 
-      [base, cands.collect {|cand| cand.character.code}].should == expected
+      [base, cands.collect {|cand| cand.character.utf8}].should == expected
     end
   end
 
@@ -50,6 +50,6 @@ context "Tomoe::Context" do
     query = Tomoe::Query.new
     query.add_reading(Tomoe::Reading.new(Tomoe::READING_KUN, "せい"))
     cands = context.search(query)
-    cands.collect {|cand| cand.character.code}.should == ["脊", "背", "汐"]
+    cands.collect {|cand| cand.character.utf8}.should == ["脊", "背", "汐"]
   end
 end

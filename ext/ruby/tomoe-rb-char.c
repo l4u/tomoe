@@ -3,15 +3,15 @@
 #define _SELF(obj) (TOMOE_CHAR(RVAL2GOBJ(obj)))
 
 static VALUE
-tc_get_code(VALUE self)
+tc_get_utf8(VALUE self)
 {
-    return CSTR2RVAL(tomoe_char_get_code(_SELF(self)));
+    return CSTR2RVAL(tomoe_char_get_utf8(_SELF(self)));
 }
 
 static VALUE
-tc_set_code(VALUE self, VALUE code)
+tc_set_utf8(VALUE self, VALUE utf8)
 {
-    tomoe_char_set_code(_SELF(self), RVAL2CSTR(code));
+    tomoe_char_set_utf8(_SELF(self), RVAL2CSTR(utf8));
     return Qnil;
 }
 
@@ -58,8 +58,8 @@ Init_tomoe_char(VALUE mTomoe)
 
     cTomoeChar = G_DEF_CLASS(TOMOE_TYPE_CHAR, "Char", mTomoe);
 
-    rb_define_method(cTomoeChar, "code", tc_get_code, 0);
-    rb_define_method(cTomoeChar, "code=", tc_set_code, 1);
+    rb_define_method(cTomoeChar, "utf8", tc_get_utf8, 0);
+    rb_define_method(cTomoeChar, "utf8=", tc_set_utf8, 1);
     rb_define_method(cTomoeChar, "n_strokes", tc_get_n_strokes, 0);
     rb_define_method(cTomoeChar, "n_strokes=", tc_set_n_strokes, 1);
     rb_define_method(cTomoeChar, "writing", tc_get_writing, 0);

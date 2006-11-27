@@ -8,9 +8,9 @@ context "Tomoe::Char" do
 
   specify "should dump XML with code-point" do
     @char = Tomoe::Char.new
-    @char.code = "あ"
+    @char.utf8 = "あ"
     xml = "  <character>\n"
-    xml << "    <code-point>あ</code-point>\n"
+    xml << "    <utf8>あ</utf8>\n"
     xml << "  </character>\n"
     @char.to_xml.should == xml
   end
