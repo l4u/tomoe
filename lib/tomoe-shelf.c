@@ -141,25 +141,6 @@ tomoe_shelf_get_dict_names (TomoeShelf* shelf)
     return names;
 }
 
-static void
-tomoe_shelf_save_dict (gpointer key, gpointer value, gpointer user_data)
-{
-    TomoeDict *dict = value;
-    if (tomoe_dict_is_modified(dict))
-        tomoe_dict_save(dict);
-}
-
-static void
-tomoe_shelf_save (TomoeShelf *shelf)
-{
-    TomoeShelfPrivate *priv;
-
-    g_return_if_fail (shelf);
-    priv = TOMOE_SHELF_GET_PRIVATE (shelf);
-
-    g_hash_table_foreach(priv->dicts, tomoe_shelf_save_dict, NULL);
-}
-
 gboolean
 tomoe_shelf_has_dict (TomoeShelf *shelf, const gchar *name)
 {
