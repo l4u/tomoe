@@ -55,9 +55,7 @@ struct _TomoeDictPrivate
 };
 
 typedef struct _TomoeDictSearchContext {
-    gint min_n_strokes;
-    gint max_n_strokes;
-    TomoeReading *reading;
+    TomoeQuery *query;
     GList *results;
 } TomoeDictSearchContext;
 
@@ -368,41 +366,22 @@ tomoe_dict_get_char (TomoeDict* dict, const gchar *utf8)
     return NULL;
 }
 
-static void
-tomoe_dict_collect_chars_by_n_strokes (gpointer data, gpointer user_data)
+static gboolean
+tomoe_dict_does_match_char_with_n_strokes (TomoeChar *chr, gint min, gint max)
 {
-    TomoeChar *chr = data;
-    TomoeDictSearchContext *context = user_data;
     TomoeWriting *writing;
     gint n_strokes;
 
+    if (min < 0 && max < 0)
+        return TRUE;
+
     writing = tomoe_char_get_writing (chr);
-    if (!writing) return;
+    if (!writing)
+        return FALSE;
 
     n_strokes = tomoe_writing_get_n_strokes (writing);
-    if ((context->min_n_strokes < 0 || context->min_n_strokes <= n_strokes) &&
-        (context->max_n_strokes < 0 || context->max_n_strokes >= n_strokes)) {
-        context->results = g_list_prepend (context->results,
-                                           tomoe_candidate_new (chr));
-    }
-}
-
-GList *
-tomoe_dict_search_by_n_strokes (TomoeDict *dict, gint min, gint max)
-{
-    TomoeDictPrivate *priv;
-    TomoeDictSearchContext context;
-
-    context.min_n_strokes = min;
-    context.max_n_strokes = max;
-    context.results = NULL;
-
-    priv = TOMOE_DICT_GET_PRIVATE(dict);
-    g_ptr_array_foreach_reverse (priv->chars,
-                                 tomoe_dict_collect_chars_by_n_strokes,
-                                 &context);
-
-    return context.results;
+    return ((min < 0 || min <= n_strokes) &&
+            (max < 0 || max >= n_strokes));
 }
 
 static gint
@@ -416,31 +395,59 @@ tomoe_dict_compare_reading (gconstpointer a, gconstpointer b)
                   tomoe_reading_get_reading(searched_reading));
 }
 
+static gboolean
+tomoe_dict_does_match_char_with_readings (TomoeChar *chr, TomoeReading *reading)
+{
+    if (!reading)
+        return TRUE;
+
+    if (g_list_find_custom ((GList *)tomoe_char_get_readings (chr),
+                            reading, tomoe_dict_compare_reading))
+        return TRUE;
+    else
+        return FALSE;
+}
+
 static void
-tomoe_dict_collect_chars_by_reading (gpointer data, gpointer user_data)
+tomoe_dict_collect_chars_by_query (gpointer data, gpointer user_data)
 {
     TomoeChar *chr = data;
     TomoeDictSearchContext *context = user_data;
+    TomoeQuery *query;
+    TomoeReading *reading;
+    gint min_n_strokes, max_n_strokes;
 
-    if (g_list_find_custom ((GList *)tomoe_char_get_readings (chr),
-                            context->reading, tomoe_dict_compare_reading))
-        context->results = g_list_prepend (context->results,
-                                           tomoe_candidate_new (chr));
+    query = context->query;
+
+    min_n_strokes = tomoe_query_get_min_n_strokes (query);
+    max_n_strokes = tomoe_query_get_max_n_strokes (query);
+    if (!tomoe_dict_does_match_char_with_n_strokes (chr,
+                                                    min_n_strokes,
+                                                    max_n_strokes))
+        return;
+
+    reading = g_list_nth_data ((GList *)tomoe_query_get_readings (query), 0);
+    if (!tomoe_dict_does_match_char_with_readings (chr, reading))
+        return;
+
+    context->results = g_list_prepend (context->results,
+                                       tomoe_candidate_new (chr));
 }
 
 GList *
-tomoe_dict_search_by_reading (TomoeDict* dict, TomoeReading *reading)
+tomoe_dict_search (TomoeDict *dict, TomoeQuery *query)
 {
     TomoeDictPrivate *priv;
     TomoeDictSearchContext context;
 
-    context.reading = reading;
+    context.query = g_object_ref (query);
     context.results = NULL;
 
     priv = TOMOE_DICT_GET_PRIVATE(dict);
     g_ptr_array_foreach_reverse (priv->chars,
-                                 tomoe_dict_collect_chars_by_reading,
+                                 tomoe_dict_collect_chars_by_query,
                                  &context);
+    g_object_unref (context.query);
 
     return context.results;
 }

@@ -1,5 +1,12 @@
 2006-11-28  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-dict.[ch]: unified tomoe_dict_search_by_*() as
+	tomoe_dict_search().
+	* lib/tomoe-query.[ch]: added
+	tomoe_query_(set|get)_(min|max)_n_strokes().
+	* lib/tomoe-context.c, recognizer/tomoe-recognizer-simple-logic.c:
+	followed the changes.
+
 	* test/dict_spec.rb: (maybe) clean up.
 
 	* lib/tomoe-char.[ch]:
