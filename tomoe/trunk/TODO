@@ -3,6 +3,9 @@
   should be language independent.
 * Implement advanced searching.
 * Modulized dictionary types.
+  - XML
+  - Hyper Estraier
+  - CHISE?
 * Asynchronous dictionary loading?
 * Asynchronous searching?
 * Prepare character data base.
