@@ -1,3 +1,7 @@
+2006-11-28  Takuro Ashei  <ashie@homa.ne.jp>
+
+	* configure.in. Makefile.am: Remove utils.
+
 2006-11-28  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-query.[ch]: improved interface but not implemented.

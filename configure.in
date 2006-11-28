@@ -248,7 +248,6 @@ benchmark/Makefile
 doc/Makefile
 doc/reference/Makefile
 doc/reference/version.xml
-utils/Makefile
 tomoe.pc
 ])
 
