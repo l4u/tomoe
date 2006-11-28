@@ -47,13 +47,13 @@ static void tomoe_recognizer_dispose     (GObject *object);
 static void
 tomoe_recognizer_class_init (TomoeRecognizerClass *klass)
 {
-  GObjectClass *gobject_class;
+    GObjectClass *gobject_class;
 
-  gobject_class = G_OBJECT_CLASS (klass);
+    gobject_class = G_OBJECT_CLASS (klass);
 
-  gobject_class->dispose = tomoe_recognizer_dispose;
+    gobject_class->dispose = tomoe_recognizer_dispose;
 
-  g_type_class_add_private (gobject_class, sizeof (TomoeRecognizerPrivate));
+    g_type_class_add_private (gobject_class, sizeof (TomoeRecognizerPrivate));
 }
 
 static void
