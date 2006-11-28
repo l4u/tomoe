@@ -2,6 +2,7 @@
 
 	* lib/tomoe-dict.c: dispose () is possible to be called many times so
 	private values should be checked that it already is freed.
+	* configure.in: Preparation for next version.
 
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
