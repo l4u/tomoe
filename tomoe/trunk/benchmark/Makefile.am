@@ -10,3 +10,5 @@ benchmark: $(top_builddir)/ext/ruby/tomoe.la
 	  echo "running benchmark: $$bench";	\
 	  $(RUBY) $$bench;			\
 	done
+
+EXTRA_DIST = $(benchmark_files)
