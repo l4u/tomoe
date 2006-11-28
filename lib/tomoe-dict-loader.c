@@ -66,13 +66,13 @@ load (GTypeModule *module)
 
     if (!tomoe_module_load_func (loader->module,
                                  G_STRINGIFY (TOMOE_DICT_IMPL_INIT),
-                                 (gpointer *)&loader->init) ||
+                                 (gpointer )&loader->init) ||
         !tomoe_module_load_func (loader->module,
                                  G_STRINGIFY (TOMOE_DICT_IMPL_EXIT),
-                                 (gpointer *)&loader->exit) ||
+                                 (gpointer )&loader->exit) ||
         !tomoe_module_load_func (loader->module,
                                  G_STRINGIFY (TOMOE_DICT_IMPL_INSTANTIATE),
-                                 (gpointer *)&loader->instantiate))
+                                 (gpointer )&loader->instantiate))
     {
         tomoe_module_close (loader->module);
         loader->module = NULL;
@@ -157,8 +157,8 @@ void
 tomoe_dict_loader_unload (void)
 {
     g_list_foreach (dicts, (GFunc) g_object_unref, NULL);
-    g_free (dicts);
-    dicts = NULL;
+    g_free (dicts); 
+    dicts = NULL; 
 }
 
 TomoeDict *
@@ -171,7 +171,7 @@ tomoe_dict_loader_instantiate (const gchar *name, const gchar *filename,
         TomoeDictLoader *loader = node->data;
 
         if (g_type_module_use (G_TYPE_MODULE (loader))) {
-            TomoeDict *dict;
+            TomoeDict *dict = NULL;
             if (tomoe_module_match_name (loader->module, name)) {
                 dict = loader->instantiate (filename, editable);
             }
