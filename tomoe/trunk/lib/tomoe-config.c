@@ -105,7 +105,7 @@ tomoe_config_init (TomoeConfig *config)
 }
 
 TomoeConfig *
-tomoe_config_new (const char *config_file)
+tomoe_config_new (const gchar *config_file)
 {
     TomoeConfig *config;
 
