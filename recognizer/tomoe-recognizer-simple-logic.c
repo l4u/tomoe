@@ -33,12 +33,12 @@ typedef struct _tomoe_metric tomoe_metric;
 
 struct _tomoe_metric
 {
-    int    a;
-    int    b;
-    int    c;
-    double d;
-    int    e;
-    double angle;
+    gint    a;
+    gint    b;
+    gint    c;
+    gdouble d;
+    gint    e;
+    gdouble angle;
 };
 
 typedef struct _cand_priv cand_priv;
@@ -252,19 +252,19 @@ dist_tomoe_points (TomoePoint *a, TomoePoint *b)
 static gint
 match_input_to_dict (GList *input_points, GList *writing_points)
 {
-    int i_nop = 0;              /* input stroke number of points */
+    gint i_nop = 0;              /* input stroke number of points */
     tomoe_metric *i_met = NULL; /* input stroke metrics */
-    int d_nop = 0;              /* dict stroke number of points */
+    gint d_nop = 0;              /* dict stroke number of points */
     tomoe_metric *d_met = NULL; /* dict stroke metrics */
-    int i_k_end = 0;
-    int i_k = 0;
-    int d_k = 0;
-    int m = 0;
+    gint i_k_end = 0;
+    gint i_k = 0;
+    gint d_k = 0;
+    gint m = 0;
     tomoe_metric i_me;
     tomoe_metric d_me;
-    int r = 0;
-    int d = 0;
-    int ret = 0;
+    gint r = 0;
+    gint d = 0;
+    gint ret = 0;
 
     i_nop = g_list_length (input_points);
     stroke_calculate_metrics (input_points, &i_met);
@@ -335,19 +335,19 @@ match_input_to_dict (GList *input_points, GList *writing_points)
 static int
 match_dict_to_input (GList *writing_points, GList *input_points)
 {
-    int           d_nop = 0;    /* dict stroke number of points */
+    gint           d_nop = 0;    /* dict stroke number of points */
     tomoe_metric *d_met = NULL; /* dict stroke metrics */
-    int           i_nop = 0;    /* input stroke number of points */
+    gint           i_nop = 0;    /* input stroke number of points */
     tomoe_metric *i_met = NULL; /* input stroke metrics */
-    int d_k_end = 0;
-    int d_k = 0;
-    int i_k = 0;
-    int m = 0;
+    gint d_k_end = 0;
+    gint d_k = 0;
+    gint i_k = 0;
+    gint m = 0;
     tomoe_metric d_me;
     tomoe_metric i_me;
-    int r = 0;
-    int d = 0;
-    int ret = 0;
+    gint r = 0;
+    gint d = 0;
+    gint ret = 0;
 
     d_nop = g_list_length (writing_points);
     stroke_calculate_metrics (writing_points, &d_met);
@@ -419,9 +419,9 @@ get_candidates (GList *points, GPtrArray *cands)
     GPtrArray     *rtn_cands;
     guint          cand_index = 0;
     guint          strk_index = 0;
-    int            i_nop = 0;    /* input stroke number of points */
+    gint           i_nop = 0;    /* input stroke number of points */
     tomoe_metric  *i_met = NULL; /* input stroke metrics */
-    int            d_nop = 0;    /* dict stroke number of points */
+    gint           d_nop = 0;    /* dict stroke number of points */
     TomoePoint *pi0, *pil;
 
     rtn_cands = g_ptr_array_new ();
@@ -458,7 +458,7 @@ get_candidates (GList *points, GPtrArray *cands)
             gint d3 = 0, d4 = 0;
             gint score1 = 0, score2 = 0;
             gint score3 = 0;
-	    gdouble d_angle = 0;
+            gdouble d_angle = 0;
 
             /* if the stroke index is already appended to, the value is ignored */
             if (_g_array_has_this_int_value (tmp, strk_index))
