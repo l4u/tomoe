@@ -1,5 +1,7 @@
 2006-11-28  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-query.[ch]: improved interface but not implemented.
+
 	* ext/ruby/rbtomoe.h, ext/ruby/tomoe-rb.h, ext/ruby/Makefile.am:
 	added rbtomoe.h.
 
