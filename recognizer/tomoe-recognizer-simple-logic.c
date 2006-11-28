@@ -80,6 +80,7 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
     const GList *input_strokes, *list;
     guint input_stroke_num, i, j;
     TomoeWriting *sparse_writing;
+    TomoeQuery *query;
 
     g_return_val_if_fail (input, NULL);
     g_return_val_if_fail (dict, NULL);
@@ -88,7 +89,10 @@ _tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWr
     input_stroke_num = tomoe_writing_get_n_strokes (sparse_writing);
     g_return_val_if_fail (input_stroke_num > 0, NULL);
 
-    target_chars = tomoe_dict_search_by_n_strokes (dict, input_stroke_num, -1);
+    query = tomoe_query_new ();
+    tomoe_query_set_min_n_strokes (query, input_stroke_num);
+    target_chars = tomoe_dict_search (dict, query);
+    g_object_unref (query);
     if (!target_chars) return NULL;
 
     first_cands = g_ptr_array_new ();

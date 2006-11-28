@@ -148,6 +148,7 @@ tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
     GList *matched = NULL;
 
     if (!context) return matched;
+    if (!input) return matched;
 
     priv = TOMOE_CONTEXT_GET_PRIVATE (context);
     shelf = priv->shelf;
@@ -173,7 +174,7 @@ tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
 }
 
 static GList *
-tomoe_context_search_by_reading (TomoeContext *context, TomoeReading *reading)
+tomoe_context_search_by_dict (TomoeContext *context, TomoeQuery *query)
 {
     TomoeContextPrivate *priv;
     TomoeShelf *shelf;
@@ -192,8 +193,7 @@ tomoe_context_search_by_reading (TomoeContext *context, TomoeReading *reading)
     for (name = names; name; name = name->next) {
         TomoeDict *dict;
         dict = tomoe_shelf_get_dict(shelf, name->data);
-        results = g_list_concat (tomoe_dict_search_by_reading (dict, reading),
-                                 results);
+        results = g_list_concat (tomoe_dict_search (dict, query), results);
     }
     results = g_list_sort (results, _candidate_compare_func);
 
@@ -203,18 +203,13 @@ tomoe_context_search_by_reading (TomoeContext *context, TomoeReading *reading)
 GList *
 tomoe_context_search (TomoeContext *context, TomoeQuery *query)
 {
-    const GList *readings;
     TomoeWriting *writing;
 
     writing = tomoe_query_get_writing (query);
     if (writing)
         return tomoe_context_search_by_strokes (context, writing);
-
-    readings = tomoe_query_get_readings (query);
-    if (readings)
-        return tomoe_context_search_by_reading (context, readings->data);
-
-    return NULL;
+    else
+        return tomoe_context_search_by_dict (context, query);
 }
 
 /*

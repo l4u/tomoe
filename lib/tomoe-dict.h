@@ -37,6 +37,7 @@
 G_BEGIN_DECLS
 
 #include "tomoe-char.h"
+#include "tomoe-query.h"
 
 #define TOMOE_TYPE_DICT            (tomoe_dict_get_type ())
 #define TOMOE_DICT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_DICT, TomoeDict))
@@ -130,28 +131,9 @@ gboolean        tomoe_dict_unregister_char      (TomoeDict     *dict,
 TomoeChar      *tomoe_dict_get_char             (TomoeDict     *dict,
                                                  const gchar   *utf8);
 
-/* search methods */
-/**
- * @brief Match number of strokes of TomoeChar with range.
- * @param dict - Pointer to the TomoeDict struct.
- * @param min  - Minimum value of the number of strokes. Use
- *               -1 for no limit.
- * @param max  - Maximum value of the number of strokes. Use
- *               -1 for no limit.
- * @return The GList of TomoeCandidate.
- */
-GList          *tomoe_dict_search_by_n_strokes  (TomoeDict     *dict,
-                                                 gint           min,
-                                                 gint           max);
-
-/**
- * @brief Match reading of TomoeChar with input.
- * @param dict   - Pointer to the TomoeDict object.
- * @param reading - Pointer to string matchkey
- * @return The GList of TomoeCandidate.
- */
-GList           *tomoe_dict_search_by_reading    (TomoeDict     *dict,
-                                                  TomoeReading  *reading);
+/* search method */
+GList          *tomoe_dict_search               (TomoeDict     *dict,
+                                                 TomoeQuery    *query);
 
 G_END_DECLS
 

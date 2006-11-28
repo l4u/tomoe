@@ -38,7 +38,8 @@ struct _TomoeQueryPrivate
     GList        *readings;
     GList        *radicals;
     GList        *variants;
-    gint          n_strokes;
+    gint          min_n_strokes;
+    gint          max_n_strokes;
     TomoeWriting *writing;
 };
 
@@ -48,7 +49,8 @@ enum
     PROP_READINGS,
     PROP_RADICALS,
     PROP_VARIANTS,
-    PROP_N_STROKES,
+    PROP_MIN_N_STROKES,
+    PROP_MAX_N_STROKES,
     PROP_WRITING
 };
 
@@ -86,7 +88,8 @@ tomoe_query_init (TomoeQuery *query)
     priv->readings = NULL;
     priv->radicals = NULL;
     priv->variants = NULL;
-    priv->n_strokes = -1;
+    priv->min_n_strokes = -1;
+    priv->max_n_strokes = -1;
     priv->writing = NULL;
 }
 
@@ -120,7 +123,8 @@ tomoe_query_dispose (GObject *object)
     priv->readings = NULL;
     priv->radicals = NULL;
     priv->variants = NULL;
-    priv->n_strokes = -1;
+    priv->min_n_strokes = -1;
+    priv->max_n_strokes = -1;
     priv->writing = NULL;
 
     G_OBJECT_CLASS (tomoe_query_parent_class)->dispose (object);
@@ -185,6 +189,49 @@ tomoe_query_get_readings (TomoeQuery* query)
     return priv->readings;
 }
 
+void
+tomoe_query_set_min_n_strokes (TomoeQuery *query, gint n_strokes)
+{
+    TomoeQueryPrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_QUERY (query));
+
+    priv = TOMOE_QUERY_GET_PRIVATE (query);
+    priv->min_n_strokes = n_strokes;
+}
+
+gint
+tomoe_query_get_min_n_strokes (TomoeQuery *query)
+{
+    TomoeQueryPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_QUERY (query), -1);
+
+    priv = TOMOE_QUERY_GET_PRIVATE (query);
+    return priv->min_n_strokes;
+}
+
+void
+tomoe_query_set_max_n_strokes (TomoeQuery *query, gint n_strokes)
+{
+    TomoeQueryPrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_QUERY (query));
+
+    priv = TOMOE_QUERY_GET_PRIVATE (query);
+    priv->max_n_strokes = n_strokes;
+}
+
+gint
+tomoe_query_get_max_n_strokes (TomoeQuery *query)
+{
+    TomoeQueryPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_QUERY (query), -1);
+
+    priv = TOMOE_QUERY_GET_PRIVATE (query);
+    return priv->max_n_strokes;
+}
 
 void
 tomoe_query_set_writing (TomoeQuery* query, TomoeWriting *writing)
