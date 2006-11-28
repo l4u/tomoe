@@ -5,3 +5,4 @@ Overview of Changes from libtomoe-0.3.0 to libtomoe-0.4.0
 * Reconstruct and GObjectize all API.
 * Release from libxml.
 * Ruby binding.
+* Test suite based on Ruby binding.
