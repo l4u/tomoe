@@ -1,37 +1,31 @@
 #include "tomoe-rb.h"
 
-#define _SELF(obj) (TOMOE_CHAR(RVAL2GOBJ(obj)))
+#define _SELF(obj) RVAL2TCHR(obj)
 
 static VALUE
-tc_get_utf8(VALUE self)
+tc_get_readings(VALUE self)
 {
-    return CSTR2RVAL(tomoe_char_get_utf8(_SELF(self)));
+    return GLIST2ARY((GList *)tomoe_char_get_readings(_SELF(self)));
 }
 
 static VALUE
-tc_set_utf8(VALUE self, VALUE utf8)
+tc_add_reading(VALUE self, VALUE reading)
 {
-    tomoe_char_set_utf8(_SELF(self), RVAL2CSTR(utf8));
+    tomoe_char_add_reading(_SELF(self), RVAL2TRDG(reading));
     return Qnil;
 }
 
 static VALUE
-tc_get_n_strokes(VALUE self)
+tc_get_radicals(VALUE self)
 {
-    return INT2NUM(tomoe_char_get_n_strokes(_SELF(self)));
+    return GLIST2ARY((GList *)tomoe_char_get_radicals(_SELF(self)));
 }
 
 static VALUE
-tc_set_n_strokes(VALUE self, VALUE n_strokes)
+tc_add_radical(VALUE self, VALUE radical)
 {
-    tomoe_char_set_n_strokes(_SELF(self), NUM2INT(n_strokes));
+    tomoe_char_add_radical(_SELF(self), RVAL2TCHR(radical));
     return Qnil;
-}
-
-static VALUE
-tc_get_writing(VALUE self)
-{
-    return GOBJ2RVAL(tomoe_char_get_writing(_SELF(self)));
 }
 
 static VALUE
@@ -58,12 +52,10 @@ Init_tomoe_char(VALUE mTomoe)
 
     cTomoeChar = G_DEF_CLASS(TOMOE_TYPE_CHAR, "Char", mTomoe);
 
-    rb_define_method(cTomoeChar, "utf8", tc_get_utf8, 0);
-    rb_define_method(cTomoeChar, "utf8=", tc_set_utf8, 1);
-    rb_define_method(cTomoeChar, "n_strokes", tc_get_n_strokes, 0);
-    rb_define_method(cTomoeChar, "n_strokes=", tc_set_n_strokes, 1);
-    rb_define_method(cTomoeChar, "writing", tc_get_writing, 0);
+    rb_define_method(cTomoeChar, "readings", tc_get_readings, 0);
+    rb_define_method(cTomoeChar, "add_reading", tc_add_reading, 1);
+    rb_define_method(cTomoeChar, "radicals", tc_get_radicals, 0);
+    rb_define_method(cTomoeChar, "add_radical", tc_add_radical, 1);
 
     rb_define_method(cTomoeChar, "to_xml", tc_to_xml, 0);
 }
-

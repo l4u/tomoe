@@ -1,3 +1,15 @@
+2006-11-28  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-char.[ch]:
+	- implemented all functions.
+	- added properties.
+	* ext/ruby/tomoe-rb-char.c: followed the changes.
+	* test/char_spec.rb: added tests for Tomoe::Char.
+
+	* ext/ruby/tomoe-rb-reading.c, ext/ruby/tomoe-rb.h: clean up.
+
+	* test/context_spec.rb: KUN -> JA_KUN.
+
 2006-11-28  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe-reading.h, lib/tomoe-dict.c:
