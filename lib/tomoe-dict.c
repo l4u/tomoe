@@ -202,11 +202,9 @@ tomoe_dict_set_property (GObject         *object,
                          const GValue    *value,
                          GParamSpec      *pspec)
 {
-    TomoeDict *dict;
     TomoeDictPrivate *priv;
 
-    dict = TOMOE_DICT(object);
-    priv = TOMOE_DICT_GET_PRIVATE(dict);
+    priv = TOMOE_DICT_GET_PRIVATE(object);
 
     switch (prop_id) {
       case PROP_FILENAME:
@@ -231,11 +229,9 @@ tomoe_dict_get_property (GObject    *object,
                          GValue     *value,
                          GParamSpec *pspec)
 {
-    TomoeDict *dict;
     TomoeDictPrivate *priv;
 
-    dict = TOMOE_DICT(object);
-    priv = TOMOE_DICT_GET_PRIVATE(dict);
+    priv = TOMOE_DICT_GET_PRIVATE(object);
 
     switch (prop_id) {
       case PROP_NAME:
