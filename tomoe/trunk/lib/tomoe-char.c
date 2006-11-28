@@ -65,7 +65,7 @@ tomoe_char_class_init (TomoeCharClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->dispose  = tomoe_char_dispose;
+    gobject_class->dispose      = tomoe_char_dispose;
     gobject_class->set_property = tomoe_char_set_property;
     gobject_class->get_property = tomoe_char_get_property;
 

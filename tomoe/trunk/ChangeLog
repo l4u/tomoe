@@ -1,3 +1,8 @@
+2006-11-28  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* lib/tomoe-dict.c: dispose () is possible to be called many times so
+	private values should be checked that it already is freed.
+
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
 	* test/dict_spec.rb: ensure destroying Tomoe::Dict to test #save.
