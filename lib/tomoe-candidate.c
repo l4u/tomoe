@@ -208,6 +208,15 @@ tomoe_candidate_get_score (TomoeCandidate *cand)
     return priv->score;
 }
 
+/**
+ * tomoe_candidate_compare:
+ * @a: 1st TomoeCandidate object to compare.
+ * @b: 2nd TomoeCandidate object to compare.
+ *
+ * Compare two TomoeCandidate.
+ *
+ * Return value: -1 a < b, 0 a= b, 1 a > b
+ */
 gint
 tomoe_candidate_compare (const TomoeCandidate *a, const TomoeCandidate *b)
 {

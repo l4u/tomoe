@@ -21,10 +21,6 @@
  *  $Id$
  */
 
-/** @file tomoe-candidate.h
- *  @brief 
- */
-
 #ifndef __TOMOE_CANDIDATE_H__
 #define __TOMOE_CANDIDATE_H__
 
@@ -64,12 +60,6 @@ void            tomoe_candidate_set_score       (TomoeCandidate *cand,
 
 gint            tomoe_candidate_get_score       (TomoeCandidate *cand);
 
-/**
- * @brief Compare two TomoeCandidate.
- * @param a - 1st TomoeCandidate object to compare.
- * @param b - 2nd TomoeCandidate object to compare.
- * @return -1 a < b, 0 a= b, 1 a > b
- */
 gint            tomoe_candidate_compare         (const TomoeCandidate *a,
                                                  const TomoeCandidate *b);
 
