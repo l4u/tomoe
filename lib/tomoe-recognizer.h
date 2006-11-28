@@ -32,6 +32,7 @@
 
 G_BEGIN_DECLS
 
+#include "tomoe-module.h"
 #include "tomoe-dict.h"
 #include "tomoe-writing.h"
 
@@ -47,12 +48,12 @@ typedef struct _TomoeRecognizerClass TomoeRecognizerClass;
 
 struct _TomoeRecognizer
 {
-    GObject object;
+    TomoeModule object;
 };
 
 struct _TomoeRecognizerClass
 {
-    GObjectClass parent_class;
+    TomoeModuleClass parent_class;
 };
 
 GType            tomoe_recognizer_get_type (void) G_GNUC_CONST;
