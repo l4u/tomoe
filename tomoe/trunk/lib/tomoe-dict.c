@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include <glib.h>
 #include <glib/gi18n.h>
 
@@ -812,11 +811,11 @@ tomoe_dict_load_xml (TomoeDict *dict)
     data.key          = NULL;
     data.value        = NULL;
     data.n_points     = 0;
-    data.reading_type =TOMOE_READING_INVALID;
+    data.reading_type = TOMOE_READING_INVALID;
 
     context = g_markup_parse_context_new (&parser, 0, &data, NULL);
 
-    while ((bytes = fread (buf, sizeof (char), 4096, f)) > 0) {
+    while ((bytes = fread (buf, sizeof (gchar), 4096, f)) > 0) {
         GError *error = NULL;
         gboolean success;
 
