@@ -1,5 +1,7 @@
 2006-11-28  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-dict-impl.h: added.
+
 	* configure.in, Makefile.am, dict/, lib/tomoe-dict.[ch]: supported
 	dynamically dictionary backend loading.
 	* lib/tomoe-module.[ch], test/dict_spec.rb,
