@@ -10,39 +10,16 @@ context "Tomoe::Context" do
     @@context
   end
 
-  def numbers_to_point(str)
-    point = str.split.collect {|x| Integer(x)}
-    raise ArgumentError if point.size != 2
-    point
-  end
-
-  test_data_dir = TomoeSpecUtils::Config.test_data_dir
-  Dir.glob(File.join(test_data_dir, "*.data")).each do |file|
+  TomoeSpecUtils::Config.test_data_files.each do |file|
     base = File.basename(file)
     specify "Search by strokes for #{base}" do
-      expected = [base]
-      writing = Tomoe::Writing.new
-      File.open(file) do |f|
-        expected << f.gets.split
-        f.each do |line|
-          next if /\A\s*\z/ =~ line
-          begin
-            first_point, *rest_points = line.split(/,/)
-            numbered_first_point = numbers_to_point(first_point)
-            writing.move_to(*numbered_first_point)
-            rest_points.each do |point|
-              writing.line_to(*numbers_to_point(point))
-            end
-          rescue ArgumentError
-            raise "invalid format in #{file} at #{f.lineno}: #{line}"
-          end
-        end
-      end
+      expected, writing = TomoeSpecUtils::TestData.parse(file)
       query = Tomoe::Query.new
       query.writing = writing
       cands = context.search(query)
+      actual = cands.collect {|cand| cand.character.utf8}
 
-      [base, cands.collect {|cand| cand.character.utf8}].should == expected
+      [base, actual].should == [base, expected]
     end
   end
 
