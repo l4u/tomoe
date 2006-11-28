@@ -29,7 +29,7 @@ typedef struct _TomoeRecognizerSimple TomoeRecognizerSimple;
 
 struct _TomoeRecognizerSimple
 {
-    int ref;
+    gint ref;
 };
 
 
