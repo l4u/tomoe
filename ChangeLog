@@ -36,7 +36,6 @@
 	* recognizer/tomoe-recognizer-simple-logic.c: Removed needless
 	an argument.
 
->>>>>>> 1.302
 2006-11-27  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-dict.h: updated documents.
