@@ -35,9 +35,9 @@ G_BEGIN_DECLS
 #include "tomoe-dict.h"
 #include "tomoe-writing.h"
 
-typedef void       *(*TomoeRecognizerNewFunc)    (void);
-typedef void        (*TomoeRecognizerFreeFunc)   (void *recognizer);
-typedef GList      *(*TomoeRecognizerSearchFunc) (void *recognizer,
+typedef gpointer    (*TomoeRecognizerNewFunc)    (void);
+typedef void        (*TomoeRecognizerFreeFunc)   (gpointer     context);
+typedef GList      *(*TomoeRecognizerSearchFunc) (gpointer     context,
                                                   TomoeDict    *dict,
                                                   TomoeWriting *input);
 
@@ -46,9 +46,9 @@ typedef GList      *(*TomoeRecognizerSearchFunc) (void *recognizer,
 #define TOMOE_RECOGNIZER_IMPL_SEARCH  tomoe_recognizer_impl_search
 
 
-void       *TOMOE_RECOGNIZER_IMPL_NEW    (void);
-void        TOMOE_RECOGNIZER_IMPL_FREE   (void *context);
-GList      *TOMOE_RECOGNIZER_IMPL_SEARCH (void *context,
+gpointer    TOMOE_RECOGNIZER_IMPL_NEW    (void);
+void        TOMOE_RECOGNIZER_IMPL_FREE   (gpointer      context);
+GList      *TOMOE_RECOGNIZER_IMPL_SEARCH (gpointer      context,
                                           TomoeDict    *dict,
                                           TomoeWriting *input);
 
