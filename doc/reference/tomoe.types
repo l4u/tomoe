@@ -2,9 +2,6 @@
 
 tomoe_candidate_get_type
 tomoe_char_get_type
-tomoe_dict_get_type
-tomoe_config_get_type
-tomoe_context_get_type
 tomoe_config_get_type
 tomoe_context_get_type
 tomoe_dict_get_type
