@@ -1,3 +1,7 @@
+2006-11-29  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* lib/tomoe-recognizer.c: Nullify klass->search.
+
 2006-11-29  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-dict-loader.[ch], lib/tomoe-recognizer-loader.[ch],
