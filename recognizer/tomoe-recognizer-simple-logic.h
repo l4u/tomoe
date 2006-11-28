@@ -33,8 +33,9 @@ extern "C" {
 #endif
 
 #include "tomoe-dict.h"
+#include "tomoe-recognizer.h"
 
-GList     *_tomoe_recognizer_simple_get_candidates (void         *context,
+GList     *_tomoe_recognizer_simple_get_candidates (TomoeRecognizer *recognizer,
                                                     TomoeDict    *dict,
                                                     TomoeWriting *input);
 

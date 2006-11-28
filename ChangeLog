@@ -1,6 +1,8 @@
 2006-11-29  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-recognizer.c: Nullify klass->search.
+	* recognizer/tomoe-recognizer-simple-logic.[ch]: void *context ->
+	TomoeRecognizer *recognizer.
 
 2006-11-29  Kouhei Sutou  <kou@cozmixng.org>
 
