@@ -69,9 +69,8 @@ _candidate_compare_func (gconstpointer a, gconstpointer b)
 }
 
 GList *
-_tomoe_recognizer_simple_get_candidates (void *context, TomoeDict *dict, TomoeWriting *input)
+_tomoe_recognizer_simple_get_candidates (TomoeRecognizer *recognizer, TomoeDict *dict, TomoeWriting *input)
 {
-    /* TomoeRecognizerSimple *recognizer = context; */
     GList *matched = NULL;
     GPtrArray *matches = NULL;
     GPtrArray *cands = NULL;
