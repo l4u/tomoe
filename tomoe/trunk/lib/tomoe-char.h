@@ -72,7 +72,7 @@ void            tomoe_char_set_n_strokes        (TomoeChar     *chr,
 const GList    *tomoe_char_get_readings         (TomoeChar     *chr);
 void            tomoe_char_add_reading          (TomoeChar     *chr,
                                                  TomoeReading  *reading);
-GList          *tomoe_char_get_radicals         (TomoeChar     *chr);
+const GList    *tomoe_char_get_radicals         (TomoeChar     *chr);
 void            tomoe_char_add_radical          (TomoeChar     *chr,
                                                  TomoeChar     *radical);
 TomoeWriting   *tomoe_char_get_writing          (TomoeChar     *chr);

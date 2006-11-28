@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
+#include <glib/gi18n.h>
 
 #include "tomoe-char.h"
 #include "tomoe-dict.h"
@@ -36,14 +37,20 @@ struct _TomoeCharPrivate
 {
     gchar                *utf8;
     gint                  n_strokes;
-    TomoeWriting         *writing;
     GList                *readings;
+    GList                *radicals;
+    TomoeWriting         *writing;
+    TomoeChar            *variant;
     GHashTable           *meta_data;
 };
 
 enum
 {
-  PROP_0
+    PROP_0,
+    PROP_UTF8,
+    PROP_N_STROKES,
+    PROP_WRITING,
+    PROP_VARIANT
 };
 
 G_DEFINE_TYPE (TomoeChar, tomoe_char, G_TYPE_OBJECT)
@@ -62,12 +69,41 @@ static void
 tomoe_char_class_init (TomoeCharClass *klass)
 {
     GObjectClass *gobject_class;
+    GParamSpec *spec;
 
     gobject_class = G_OBJECT_CLASS (klass);
 
     gobject_class->dispose      = tomoe_char_dispose;
     gobject_class->set_property = tomoe_char_set_property;
     gobject_class->get_property = tomoe_char_get_property;
+
+    spec = g_param_spec_string ("utf8",
+                                N_("UTF8"),
+                                N_("UTF8 encoding of the character."),
+                                NULL,
+                                G_PARAM_READABLE | G_PARAM_WRITABLE);
+    g_object_class_install_property (gobject_class, PROP_UTF8, spec);
+
+    spec = g_param_spec_int ("n_strokes",
+                             N_("Number of strokes"),
+                             N_("Number of strokes of the character."),
+                             -1, G_MAXINT32, -1,
+                             G_PARAM_READABLE | G_PARAM_WRITABLE);
+    g_object_class_install_property (gobject_class, PROP_N_STROKES, spec);
+
+    spec = g_param_spec_object ("writing",
+                                N_("Writing"),
+                                N_("Writing of the character."),
+                                TOMOE_TYPE_WRITING,
+                                G_PARAM_READABLE | G_PARAM_WRITABLE);
+    g_object_class_install_property (gobject_class, PROP_WRITING, spec);
+
+    spec = g_param_spec_object ("variant",
+                                N_("Variant"),
+                                N_("Variant of the character."),
+                                TOMOE_TYPE_CHAR,
+                                G_PARAM_READABLE | G_PARAM_WRITABLE);
+    g_object_class_install_property (gobject_class, PROP_VARIANT, spec);
 
     g_type_class_add_private (gobject_class, sizeof (TomoeCharPrivate));
 }
@@ -77,11 +113,13 @@ tomoe_char_init (TomoeChar *chr)
 {
     TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (chr);
     priv->utf8       = NULL;
-    priv->n_strokes  = 0;
+    priv->n_strokes  = -1;
+    priv->readings   = NULL;
+    priv->radicals   = NULL;
     priv->writing    = NULL;
+    priv->variant    = NULL;
     priv->meta_data  = g_hash_table_new_full(g_str_hash, g_str_equal,
                                              g_free, g_free);
-    priv->readings   = NULL;
 }
 
 TomoeChar*
@@ -97,22 +135,32 @@ tomoe_char_dispose (GObject *object)
 
     if (priv->utf8)
         g_free (priv->utf8);
-    if (priv->writing)
-        g_object_unref (G_OBJECT (priv->writing));
-    if (priv->meta_data)
-        g_hash_table_destroy (priv->meta_data);
     if (priv->readings) {
         g_list_foreach (priv->readings, (GFunc)g_object_unref, NULL);
         g_list_free (priv->readings);
     }
+    if (priv->radicals) {
+        g_list_foreach (priv->radicals, (GFunc)g_object_unref, NULL);
+        g_list_free (priv->radicals);
+    }
+    if (priv->writing)
+        g_object_unref (G_OBJECT (priv->writing));
+    if (priv->variant)
+        g_object_unref (G_OBJECT (priv->variant));
+    if (priv->meta_data)
+        g_hash_table_destroy (priv->meta_data);
 
     priv->utf8      = NULL;
-    priv->writing   = NULL;
-    priv->meta_data = NULL;
+    priv->n_strokes = -1;
     priv->readings  = NULL;
+    priv->radicals  = NULL;
+    priv->writing   = NULL;
+    priv->variant   = NULL;
+    priv->meta_data = NULL;
 
     G_OBJECT_CLASS (tomoe_char_parent_class)->dispose (object);
 }
+
 static void
 tomoe_char_set_property (GObject      *object,
                          guint         prop_id,
@@ -120,13 +168,22 @@ tomoe_char_set_property (GObject      *object,
                          GParamSpec   *pspec)
 {
     TomoeChar *chr;
-    TomoeCharPrivate *priv;
 
     chr = TOMOE_CHAR(object);
-    priv = TOMOE_CHAR_GET_PRIVATE (chr);
-
     switch (prop_id) {
-    default:
+      case PROP_UTF8:
+        tomoe_char_set_utf8 (chr, g_value_get_string (value));
+        break;
+      case PROP_N_STROKES:
+        tomoe_char_set_n_strokes (chr, g_value_get_int (value));
+        break;
+      case PROP_WRITING:
+        tomoe_char_set_writing (chr, g_value_get_object (value));
+        break;
+      case PROP_VARIANT:
+        tomoe_char_set_variant (chr, g_value_get_object (value));
+        break;
+      default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
     }
@@ -145,7 +202,19 @@ tomoe_char_get_property (GObject    *object,
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
 
     switch (prop_id) {
-    default:
+      case PROP_UTF8:
+        g_value_set_string (value, priv->utf8);
+        break;
+      case PROP_N_STROKES:
+        g_value_set_int (value, priv->n_strokes);
+        break;
+      case PROP_WRITING:
+        g_value_set_object (value, priv->writing);
+        break;
+      case PROP_VARIANT:
+        g_value_set_object (value, priv->variant);
+        break;
+      default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
     }
@@ -216,11 +285,34 @@ tomoe_char_add_reading (TomoeChar* chr, TomoeReading *reading)
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
 
-    priv->readings = g_list_prepend(priv->readings, g_object_ref(reading));
+    priv->readings = g_list_prepend (priv->readings, g_object_ref (reading));
 }
 
-TomoeWriting*
-tomoe_char_get_writing (TomoeChar* chr)
+const GList *
+tomoe_char_get_radicals (TomoeChar* chr)
+{
+    TomoeCharPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_CHAR (chr), NULL);
+
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+    return priv->radicals;
+}
+
+void
+tomoe_char_add_radical (TomoeChar* chr, TomoeChar *radical)
+{
+    TomoeCharPrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_CHAR (chr));
+
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+
+    priv->radicals = g_list_prepend (priv->radicals, g_object_ref (radical));
+}
+
+TomoeWriting *
+tomoe_char_get_writing (TomoeChar *chr)
 {
     TomoeCharPrivate *priv;
 
@@ -228,11 +320,11 @@ tomoe_char_get_writing (TomoeChar* chr)
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
 
-    return priv->writing; 
+    return priv->writing;
 }
 
 void
-tomoe_char_set_writing (TomoeChar* chr, TomoeWriting* writing)
+tomoe_char_set_writing (TomoeChar *chr, TomoeWriting *writing)
 {
     TomoeCharPrivate *priv;
 
@@ -243,6 +335,32 @@ tomoe_char_set_writing (TomoeChar* chr, TomoeWriting* writing)
     if (priv->writing)
         g_object_unref (G_OBJECT (priv->writing));
     priv->writing = g_object_ref (writing);
+}
+
+TomoeChar *
+tomoe_char_get_variant (TomoeChar *chr)
+{
+    TomoeCharPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_CHAR (chr), NULL);
+
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+
+    return priv->variant;
+}
+
+void
+tomoe_char_set_variant (TomoeChar *chr, TomoeChar *variant)
+{
+    TomoeCharPrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_CHAR (chr));
+
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+
+    if (priv->variant)
+        g_object_unref (G_OBJECT (priv->variant));
+    priv->variant = g_object_ref (variant);
 }
 
 void

@@ -25,7 +25,7 @@ context "Tomoe::Context" do
 
   specify "Search by reading" do
     query = Tomoe::Query.new
-    query.add_reading(Tomoe::Reading.new(Tomoe::READING_KUN, "せい"))
+    query.add_reading(Tomoe::Reading.new(Tomoe::READING_JA_KUN, "せい"))
     cands = context.search(query)
     cands.collect {|cand| cand.character.utf8}.should == ["汐", "背", "脊"]
   end
