@@ -77,14 +77,14 @@ TomoeDict      *tomoe_dict_new                  (const char    *filename,
  *         wasn't load from a file, or newly allocated in a program and it
  *         doesn't saved yet.
  */
-const char     *tomoe_dict_get_filename         (TomoeDict     *dict);
+const gchar    *tomoe_dict_get_filename         (TomoeDict     *dict);
 
 /**
  * @brief Get the dictionary name.
  * @param dict - Pointer to the TomoeDict object.
  * @return Name of the dictionary.
  */
-const char     *tomoe_dict_get_name             (TomoeDict     *dict);
+const gchar    *tomoe_dict_get_name             (TomoeDict     *dict);
 
 /**
  * @brief Get editable property.
