@@ -53,8 +53,9 @@ struct _TomoeReadingClass
 
 typedef enum {
     TOMOE_READING_INVALID,
-    TOMOE_READING_ON,
-    TOMOE_READING_KUN
+    TOMOE_READING_ALL,
+    TOMOE_READING_JA_ON,
+    TOMOE_READING_JA_KUN
 } TomoeReadingType;
 
 GType             tomoe_reading_get_type (void) G_GNUC_CONST;

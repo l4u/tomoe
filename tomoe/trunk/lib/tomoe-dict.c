@@ -625,9 +625,9 @@ start_element_handler (GMarkupParseContext *context,
         for (idx = 0; attr_names && attr_names[idx]; idx++) {
             if (!strcmp ("type", attr_names[idx])) {
                 if (!strcmp ("ja_on", attr_values[idx]))
-                    data->reading_type = TOMOE_READING_ON;
+                    data->reading_type = TOMOE_READING_JA_ON;
                 else if (!strcmp ("ja_kun", attr_values[idx]))
-                    data->reading_type = TOMOE_READING_KUN;
+                    data->reading_type = TOMOE_READING_JA_KUN;
             }
         }
 
