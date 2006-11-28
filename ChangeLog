@@ -1,5 +1,8 @@
 2006-11-28  Kouhei Sutou  <kou@cozmixng.org>
 
+	* ext/ruby/rbtomoe.h, ext/ruby/tomoe-rb.h, ext/ruby/Makefile.am:
+	added rbtomoe.h.
+
 	* Makefile.am: added doc target.
 	* ext/ruby/Makefile.am: added tomoe.rb to distributed files.
 
