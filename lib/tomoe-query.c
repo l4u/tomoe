@@ -35,23 +35,25 @@
 typedef struct _TomoeQueryPrivate	TomoeQueryPrivate;
 struct _TomoeQueryPrivate
 {
-    GList        *readings;
-    GList        *radicals;
-    GList        *variants;
+    gchar        *utf8;
     gint          min_n_strokes;
     gint          max_n_strokes;
+    GList        *readings;
+    GList        *radicals;
     TomoeWriting *writing;
+    TomoeChar    *variant;
 };
 
 enum
 {
     PROP_0,
-    PROP_READINGS,
-    PROP_RADICALS,
-    PROP_VARIANTS,
+    PROP_UTF8,
     PROP_MIN_N_STROKES,
     PROP_MAX_N_STROKES,
-    PROP_WRITING
+    PROP_READINGS,
+    PROP_RADICALS,
+    PROP_WRITING,
+    PROP_VARIANTS
 };
 
 G_DEFINE_TYPE (TomoeQuery, tomoe_query, G_TYPE_OBJECT)
@@ -85,12 +87,13 @@ tomoe_query_init (TomoeQuery *query)
 {
     TomoeQueryPrivate *priv = TOMOE_QUERY_GET_PRIVATE (query);
 
-    priv->readings = NULL;
-    priv->radicals = NULL;
-    priv->variants = NULL;
+    priv->utf8     = NULL;
     priv->min_n_strokes = -1;
     priv->max_n_strokes = -1;
-    priv->writing = NULL;
+    priv->readings = NULL;
+    priv->radicals = NULL;
+    priv->writing  = NULL;
+    priv->variant  = NULL;
 }
 
 TomoeQuery *
@@ -104,6 +107,8 @@ tomoe_query_dispose (GObject *object)
 {
     TomoeQueryPrivate *priv = TOMOE_QUERY_GET_PRIVATE (object);
 
+    if (priv->utf8)
+        g_free (priv->utf8);
     if (priv->readings) {
         g_list_foreach (priv->readings, (GFunc)g_object_unref, NULL);
         g_list_free (priv->readings);
@@ -112,20 +117,18 @@ tomoe_query_dispose (GObject *object)
         g_list_foreach (priv->radicals, (GFunc)g_object_unref, NULL);
         g_list_free (priv->radicals);
     }
-    if (priv->variants) {
-        g_list_foreach (priv->variants, (GFunc)g_object_unref, NULL);
-        g_list_free (priv->variants);
-    }
-
+    if (priv->variant)
+        g_object_unref (priv->variant);
     if (priv->writing)
         g_object_unref (priv->writing);
 
-    priv->readings = NULL;
-    priv->radicals = NULL;
-    priv->variants = NULL;
+    priv->utf8     = NULL;
     priv->min_n_strokes = -1;
     priv->max_n_strokes = -1;
-    priv->writing = NULL;
+    priv->readings = NULL;
+    priv->radicals = NULL;
+    priv->writing  = NULL;
+    priv->variant  = NULL;
 
     G_OBJECT_CLASS (tomoe_query_parent_class)->dispose (object);
 }
