@@ -34,7 +34,7 @@ struct _TomoeRecognizerSimple
 
 
 void *
-tomoe_recognizer_impl_new (void)
+TOMOE_RECOGNIZER_IMPL_NEW (void)
 {
     TomoeRecognizerSimple *recognizer;
     recognizer = calloc (1, sizeof (TomoeRecognizerSimple));
@@ -45,7 +45,7 @@ tomoe_recognizer_impl_new (void)
 }
 
 void
-tomoe_recognizer_impl_free (void *context)
+TOMOE_RECOGNIZER_IMPL_FREE (void *context)
 {
     TomoeRecognizerSimple *recognizer = context;
     if (!recognizer) return;
@@ -53,7 +53,7 @@ tomoe_recognizer_impl_free (void *context)
 }
 
 GList *
-tomoe_recognizer_impl_search (void *context, TomoeDict *dict, TomoeWriting *input)
+TOMOE_RECOGNIZER_IMPL_SEARCH (void *context, TomoeDict *dict, TomoeWriting *input)
 {
     return _tomoe_recognizer_simple_get_candidates (context, dict, input);
 }
