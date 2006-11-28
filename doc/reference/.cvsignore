@@ -2,6 +2,17 @@ Makefile
 Makefile.in
 doxygen.conf
 html
+xml
+tomoe-decl-list.txt
+tomoe-decl.txt
+tomoe-undocumented.txt
+tomoe-unused.txt
+tomoe.args
+tomoe.hierarchy
+tomoe.interfaces
+tomoe.prerequisites
+tomoe.signals
+version.xml
 *.bak
 *~
 *.log
