@@ -5,6 +5,8 @@
 * Modulized dictionary types.
   - XML
   - Hyper Estraier
+  - QDBM?
+  - MySQL?
   - CHISE?
 * Asynchronous dictionary loading?
 * Asynchronous searching?
