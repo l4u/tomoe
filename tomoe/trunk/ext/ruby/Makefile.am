@@ -7,6 +7,7 @@ EXTRA_DIST = \
 	$(rubylib_DATA)
 
 rubyarchdir = $(RUBY_EXTDIR)
+rubyarch_HEADERS = rbtomoe.h
 rubyarch_LTLIBRARIES = tomoe.la
 
 AM_CPPFLAGS = \
