@@ -4,3 +4,4 @@ Overview of Changes from libtomoe-0.3.0 to libtomoe-0.4.0
 * Modularization handwriting recognizer.
 * Reconstruct and GObjectize all API.
 * Release from libxml.
+* Ruby binding.
