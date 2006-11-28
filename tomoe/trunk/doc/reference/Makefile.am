@@ -24,6 +24,14 @@ IGNORE_HFILES=			\
 	glib-utils.h		\
 	config.h
 
+INCLUDES = \
+	-I$(top_srcdir)/lib 	\
+	-I$(top_builddir)/lib	\
+	$(GLIB_CFLAGS)
+GTKDOC_LIBS = \
+	$(top_builddir)/lib/libtomoe.la \
+	$(GLIB_LIBS)
+
 # Extra options to supply to gtkdoc-mkdb
 MKDB_OPTIONS=--sgml-mode --output-format=xml --ignore-files=trio
 

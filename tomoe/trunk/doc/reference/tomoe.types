@@ -1,0 +1,4 @@
+#include <tomoe.h>
+
+tomoe_candidate_get_type
+tomoe_char_get_type
