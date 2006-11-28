@@ -17,19 +17,6 @@ tc_load_config(int argc, VALUE *argv, VALUE self)
 }
 
 static VALUE
-tc_load_recognizer(int argc, VALUE *argv, VALUE self)
-{
-    VALUE base_dir, name;
-
-    rb_scan_args(argc, argv, "02", &base_dir, &name);
-
-    tomoe_context_load_recognizer(_SELF(self),
-                                  NIL_P(base_dir) ? NULL : RVAL2CSTR(base_dir),
-                                  NIL_P(name) ? NULL : RVAL2CSTR(name));
-    return Qnil;
-}
-
-static VALUE
 tc_search(VALUE self, VALUE query)
 {
     return GLIST2ARYF(tomoe_context_search(_SELF(self), RVAL2TQRY(query)));
@@ -51,7 +38,6 @@ Init_tomoe_context(VALUE mTomoe)
     cTomoeContext = G_DEF_CLASS(TOMOE_TYPE_CONTEXT, "Context", mTomoe);
 
     rb_define_method(cTomoeContext, "load_config", tc_load_config, -1);
-    rb_define_method(cTomoeContext, "load_recognizer", tc_load_recognizer, -1);
     rb_define_method(cTomoeContext, "search", tc_search, 1);
 /*     rb_define_method(cTomoeContext, "multi_search", tc_multi_search, 1); */
 }

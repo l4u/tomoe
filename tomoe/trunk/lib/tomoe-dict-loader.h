@@ -21,37 +21,29 @@
  */
 
 /**
- *  @file tomoe-dict-impl.h
- *  @brief Provide a set of API to access to a tomoe dictionary.
+ *  @file tomoe-dict-loader.h
+ *  @brief Provide a set of API to load dictionary.
  */
 
-#ifndef __TOMOE_DICT_IMPL_H__
-#define __TOMOE_DICT_IMPL_H__
+#ifndef __TOMOE_DICT_LOADER_H__
+#define __TOMOE_DICT_LOADER_H__
 
 #include <glib-object.h>
 
 G_BEGIN_DECLS
 
+#include "tomoe-module.h"
 #include "tomoe-dict.h"
 
-typedef void             (*TomoeDictInitFunc)        (GTypeModule *module);
-typedef void             (*TomoeDictExitFunc)        (void);
-typedef TomoeDict       *(*TomoeDictInstantiateFunc) (const gchar *filename,
-                                                      gboolean     editable);
-
-#define TOMOE_DICT_IMPL_INIT        tomoe_dict_impl_init
-#define TOMOE_DICT_IMPL_EXIT        tomoe_dict_impl_exit
-#define TOMOE_DICT_IMPL_INSTANTIATE tomoe_dict_impl_instantiate
-
-
-void             TOMOE_DICT_IMPL_INIT        (GTypeModule  *module);
-void             TOMOE_DICT_IMPL_EXIT        (void);
-TomoeDict       *TOMOE_DICT_IMPL_INSTANTIATE (const gchar *filename,
-                                              gboolean     editable);
+void             tomoe_dict_loader_load        (const gchar *base_dir);
+void             tomoe_dict_loader_unload      (void);
+TomoeDict       *tomoe_dict_loader_instantiate (const gchar *name,
+                                                const gchar *filename,
+                                                gboolean editable);
 
 G_END_DECLS
 
-#endif /* __TOMOE_DICT_IMPL_H__ */
+#endif /* __TOMOE_DICT_LOADER_H__ */
 
 /*
 vi:ts=4:nowrap:ai:expandtab

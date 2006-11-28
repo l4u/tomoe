@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2000 - 2004 Hiroyuki Komatsu <komatsu@taiyaki.org>
  *  Copyright (C) 2004 Hiroaki Nakamura <hnakamur@good-day.co.jp>
@@ -36,7 +36,6 @@
 
 G_BEGIN_DECLS
 
-#include "tomoe-module.h"
 #include "tomoe-char.h"
 #include "tomoe-query.h"
 
@@ -52,26 +51,25 @@ typedef struct _TomoeDictClass TomoeDictClass;
 
 struct _TomoeDict
 {
-    TomoeModule object;
+    GObject object;
 };
 
 struct _TomoeDictClass
 {
-    TomoeModuleClass parent_class;
+    GObjectClass parent_class;
+
+    const gchar    *(*get_name)            (TomoeDict     *dict);
+    gboolean        (*register_char)       (TomoeDict     *dict,
+                                            TomoeChar     *chr);
+    gboolean        (*unregister_char)     (TomoeDict     *dict,
+                                            const gchar   *utf8);
+    TomoeChar      *(*get_char)            (TomoeDict     *dict,
+                                            const gchar   *utf8);
+    GList          *(*search)              (TomoeDict     *dict,
+                                            TomoeQuery    *query);
 };
 
 GType           tomoe_dict_get_type (void) G_GNUC_CONST;
-
-/**
- * @brief Create a dictionary from a file.
- * @param filename - Name of dictionary file to load.
- * @param editable - Editability of the dictionary.
- * @return Pointer to newly allocated TomoeDict object.
- */
-TomoeDict      *tomoe_dict_new                  (const gchar   *filename,
-                                                 gboolean       editable,
-                                                 const gchar   *base_dir,
-                                                 const gchar   *name);
 
 /**
  * @brief Get the dictionary name.

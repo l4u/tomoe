@@ -1,3 +1,15 @@
+2006-11-29  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-dict-loader.[ch], lib/tomoe-recognizer-loader.[ch],
+	lib/tomoe-dict-impl.h, lib/tomoe-recognizer-impl.h,
+	lib/tomoe-module.c: used GTypeModule.
+	* dict/tomoe-dict-xml.c, recognizer/tomoe-recognizer-simple.c,
+	lib/tomoe-config.c, lib/tomoe-context.c, lib/tomoe.[ch],
+	lib/Makefile.am, ext/ruby/tomoe-rb-context.c,
+	ext/ruby/tomoe-rb-dict.c, ext/ruby/tomo-rb-recognizer.c,
+	test/tomoe-spec-utils.rb, test/context_spec.rb, test/dict_spec.rb:
+	followed the changes.
+
 2006-11-28  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-dict-impl.h: added.

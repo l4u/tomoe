@@ -1,3 +1,4 @@
+
 /* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2006 Kouhei Sutou <kou@cozmixng.org>
@@ -22,11 +23,9 @@
 
 #include <stdlib.h>
 
-#include <gmodule.h>
 #include "tomoe-recognizer.h"
-#include "tomoe-recognizer-impl.h"
 
-G_DEFINE_TYPE (TomoeRecognizer, tomoe_recognizer, TOMOE_TYPE_MODULE)
+G_DEFINE_ABSTRACT_TYPE (TomoeRecognizer, tomoe_recognizer, G_TYPE_OBJECT)
 
 static void
 tomoe_recognizer_class_init (TomoeRecognizerClass *klass)
@@ -38,45 +37,19 @@ tomoe_recognizer_init (TomoeRecognizer *recognizer)
 {
 }
 
-TomoeRecognizer *
-tomoe_recognizer_new (const gchar *base_dir, const gchar *name)
-{
-    TomoeRecognizer *recognizer;
-
-    recognizer = g_object_new (TOMOE_TYPE_RECOGNIZER,
-                               "default_base_dir", RECOGNIZERDIR,
-                               "new_func_name",
-                               G_STRINGIFY(TOMOE_RECOGNIZER_IMPL_NEW),
-                               "free_func_name",
-                               G_STRINGIFY(TOMOE_RECOGNIZER_IMPL_FREE),
-                               NULL);
-    tomoe_module_find_module (TOMOE_MODULE (recognizer), base_dir, name);
-    return recognizer;
-}
-
 GList *
-tomoe_recognizer_search (const TomoeRecognizer *recognizer,
+tomoe_recognizer_search (TomoeRecognizer *recognizer,
                          TomoeDict *dict, TomoeWriting *input)
 {
-    TomoeModule *module;
-    GList *result = NULL;
-    TomoeRecognizerSearchFunc search_func;
-    TomoeRecognizerSearchFunc *search_func_p;
-    gpointer *p;
+    TomoeRecognizerClass *klass;
 
     g_return_val_if_fail (TOMOE_IS_RECOGNIZER (recognizer), NULL);
-    module = TOMOE_MODULE (recognizer);
-    search_func_p = &search_func;
-    p = (gpointer *)search_func_p;
-    if (tomoe_module_load_func (module,
-                                G_STRINGIFY(TOMOE_RECOGNIZER_IMPL_SEARCH),
-                                p)) {
-        result = search_func (tomoe_module_get_context (module), dict, input);
-    } else {
-        tomoe_module_show_error (module);
-    }
 
-    return result;
+    klass = TOMOE_RECOGNIZER_GET_CLASS (recognizer);
+    if (klass->search)
+        return klass->search (recognizer, dict, input);
+    else
+        return NULL;
 }
 
 /*

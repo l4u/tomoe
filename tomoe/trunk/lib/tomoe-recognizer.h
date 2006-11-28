@@ -32,7 +32,6 @@
 
 G_BEGIN_DECLS
 
-#include "tomoe-module.h"
 #include "tomoe-dict.h"
 #include "tomoe-writing.h"
 
@@ -48,17 +47,19 @@ typedef struct _TomoeRecognizerClass TomoeRecognizerClass;
 
 struct _TomoeRecognizer
 {
-    TomoeModule object;
+    GObject object;
 };
 
 struct _TomoeRecognizerClass
 {
-    TomoeModuleClass parent_class;
+    GObjectClass parent_class;
+
+    GList  *(*search) (TomoeRecognizer *recognizer,
+                       TomoeDict       *dict,
+                       TomoeWriting    *input);
 };
 
 GType            tomoe_recognizer_get_type (void) G_GNUC_CONST;
-TomoeRecognizer *tomoe_recognizer_new      (const gchar *base_dir,
-                                            const gchar *name);
 
 /**
  * @brief Match strokes of tomoe_char with input.
@@ -67,9 +68,9 @@ TomoeRecognizer *tomoe_recognizer_new      (const gchar *base_dir,
  * @param input  - Pointer to tomoe_glyph matchkey.
  * @return The array of TomoeCandidate.
  */
-GList           *tomoe_recognizer_search   (const TomoeRecognizer *recognizer,
-                                            TomoeDict    *dict,
-                                            TomoeWriting *inputs);
+GList           *tomoe_recognizer_search   (TomoeRecognizer *recognizer,
+                                            TomoeDict       *dict,
+                                            TomoeWriting    *input);
 
 G_END_DECLS
 

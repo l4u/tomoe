@@ -6,7 +6,6 @@ context "Tomoe::Context" do
     return @@context if @@context
     @@context = Tomoe::Context.new
     @@context.load_config(@config_file.path)
-    @@context.load_recognizer(recognizer_dir, "simple")
     @@context
   end
 
