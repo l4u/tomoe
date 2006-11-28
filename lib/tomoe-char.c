@@ -232,7 +232,7 @@ tomoe_char_get_utf8 (TomoeChar *chr)
 }
 
 void
-tomoe_char_set_utf8 (TomoeChar *chr, const char *utf8)
+tomoe_char_set_utf8 (TomoeChar *chr, const gchar *utf8)
 {
     TomoeCharPrivate *priv;
 
