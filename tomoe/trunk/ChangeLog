@@ -1,5 +1,7 @@
 2006-11-28  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/dict_spec.rb: (maybe) clean up.
+
 	* lib/tomoe-char.[ch]:
 	- implemented all functions.
 	- added properties.
