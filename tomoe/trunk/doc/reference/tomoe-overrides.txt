@@ -1,0 +1,3 @@
+# This file makes most of the thread related macros look like
+# functions, which they really were, if possible easy.
+
