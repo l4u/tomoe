@@ -1,5 +1,8 @@
 2006-11-28  Kouhei Sutou  <kou@cozmixng.org>
 
+	* Makefile.am: added doc target.
+	* ext/ruby/Makefile.am: added tomoe.rb to distributed files.
+
 	* lib/tomoe-dict.[ch]: unified tomoe_dict_search_by_*() as
 	tomoe_dict_search().
 	* lib/tomoe-query.[ch]: added
