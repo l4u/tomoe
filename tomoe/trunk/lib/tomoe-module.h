@@ -20,11 +20,6 @@
  *  $Id$
  */
 
-/**
- *  @file tomoe-module.h
- *  @brief Provide a set of API to load shared library dynamically.
- */
-
 #ifndef __TOMOE_MODULE_H__
 #define __TOMOE_MODULE_H__
 

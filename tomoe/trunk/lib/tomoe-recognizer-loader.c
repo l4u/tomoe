@@ -66,14 +66,13 @@ load (GTypeModule *module)
 
     if (!tomoe_module_load_func (loader->module,
                                  G_STRINGIFY (TOMOE_RECOGNIZER_IMPL_INIT),
-                                 (gpointer *)&loader->init) ||
+                                 (gpointer )&loader->init) ||
         !tomoe_module_load_func (loader->module,
                                  G_STRINGIFY (TOMOE_RECOGNIZER_IMPL_EXIT),
-                                 (gpointer *)&loader->exit) ||
+                                 (gpointer )&loader->exit) ||
         !tomoe_module_load_func (loader->module,
                                  G_STRINGIFY (TOMOE_RECOGNIZER_IMPL_INSTANTIATE),
-                                 (gpointer *)&loader->instantiate))
-    {
+                                 (gpointer )&loader->instantiate)) {
         tomoe_module_close (loader->module);
         loader->module = NULL;
         return FALSE;
@@ -172,7 +171,7 @@ tomoe_recognizer_loader_instantiate (const gchar *name)
         TomoeRecognizerLoader *loader = node->data;
 
         if (g_type_module_use (G_TYPE_MODULE (loader))) {
-            TomoeRecognizer *recognizer;
+            TomoeRecognizer *recognizer = NULL;
             if (tomoe_module_match_name (loader->module, name)) {
                 recognizer = loader->instantiate ();
             }
