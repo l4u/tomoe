@@ -69,33 +69,72 @@ module TomoeSpecUtils
 
     def setup_context
       super
-      @config_file = Tempfile.new("tomoe")
-      setup_config_file
+      @config_file = make_config_file
     end
 
     def teardown_context
       super
     end
 
-    def setup_config_file
-      files = %w(kanjidic2.xml readingtest.xml all.xml)
-      names = files.collect {|file| File.join(data_dir, file)}.join(";")
-      @config_file.open
-      @config_file.puts(<<-EOC)
+    def dictionaries
+      %w(kanjidic2.xml all.xml).collect do |xml|
+        File.join(data_dir, xml)
+      end
+    end
+
+    def test_data_files
+      Dir.glob(File.join(test_data_dir, "*.data"))
+    end
+
+    def make_config_file(name=nil)
+      name ||= "tomoe"
+      config_file = Tempfile.new(name)
+      config_file.open
+      config_file.puts(<<-EOC)
 [config]
 use_system_dictionaries = false
-
-[all-dictionary]
-type = xml
-file = #{File.join(data_dir, "all.xml")}
-use = true
-
-[kanjidic2-dictionary]
-type = xml
-file = #{File.join(data_dir, "kanjidic2.xml")}
-
 EOC
-      @config_file.close
+      dictionaries.each_with_index do |dictionary, i|
+        config_file.puts(<<-EOC)
+[#{File.basename(dictionary)}-dictionary]
+type = xml
+file = #{dictionary}
+#{(i % 2).zero? ? 'use = true' : ''}
+EOC
+      end
+      config_file.close
+      config_file
+    end
+  end
+
+  module TestData
+    module_function
+    def parse(file)
+      expected = nil
+      writing = Tomoe::Writing.new
+      File.open(file) do |f|
+        expected = f.gets.split
+        f.each do |line|
+          next if /\A\s*\z/ =~ line
+          begin
+            first_point, *rest_points = line.split(/,/)
+            numbered_first_point = numbers_to_point(first_point)
+            writing.move_to(*numbered_first_point)
+            rest_points.each do |point|
+              writing.line_to(*numbers_to_point(point))
+            end
+          rescue ArgumentError
+            raise "invalid format in #{file} at #{f.lineno}: #{line}"
+          end
+        end
+      end
+      [expected, writing]
+    end
+
+    def numbers_to_point(str)
+      point = str.split.collect {|x| Integer(x)}
+      raise ArgumentError if point.size != 2
+      point
     end
   end
 end

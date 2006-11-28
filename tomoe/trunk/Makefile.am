@@ -18,7 +18,7 @@
 ## Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 ## Boston, MA  02111-1307  USA
 
-SUBDIRS = lib src recognizer data ext test doc utils
+SUBDIRS = lib src recognizer data ext test benchmark doc utils
 
 EXTRA_DIST = autogen.sh tomoe.pc
 
@@ -30,3 +30,9 @@ DISTCLEANFILES = tomoe.pc
 
 # build documentation when doing distcheck
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
+
+validate:
+	cd data && $(MAKE) $(AM_MAKEFLAGS) validate
+
+benchmark: all
+	cd benchmark && $(MAKE) $(AM_MAKEFLAGS) benchmark
