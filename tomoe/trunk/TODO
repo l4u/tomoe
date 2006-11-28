@@ -1,6 +1,7 @@
 * Merge same characters of different dictionaries in search output.
 * Transformation of reading search pattern, e.g. ka > か, か > カ, か > ka
   should be language independent.
+* Implement advanced searching.
 * Modulized dictionary types.
 * Asynchronous dictionary loading?
 * Asynchronous searching?
