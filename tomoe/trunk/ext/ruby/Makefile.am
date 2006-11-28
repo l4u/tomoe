@@ -3,6 +3,9 @@
 rubylibdir = $(RUBY_LIBDIR)
 rubylib_DATA = tomoe.rb
 
+EXTRA_DIST = \
+	$(rubylib_DATA)
+
 rubyarchdir = $(RUBY_EXTDIR)
 rubyarch_LTLIBRARIES = tomoe.la
 

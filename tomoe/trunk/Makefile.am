@@ -31,6 +31,9 @@ DISTCLEANFILES = tomoe.pc
 # build documentation when doing distcheck
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
+doc: all
+	cd doc && $(MAKE) $(AM_MAKEFLAGS) doc
+
 validate:
 	cd data && $(MAKE) $(AM_MAKEFLAGS) validate
 
