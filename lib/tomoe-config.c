@@ -274,11 +274,11 @@ tomoe_config_make_shelf (TomoeConfig *config)
 
         if (_tomoe_dict_key_file_get_boolean_value (key_file, dict_name,
                                                     "user", TRUE)) {
-            dict = tomoe_dict_new (filename, TRUE);
+            dict = tomoe_dict_new (filename, TRUE, NULL, NULL);
         } else {
             gchar *dict_filename;
             dict_filename = g_build_filename (TOMOEDATADIR, filename, NULL);
-            dict = tomoe_dict_new (dict_filename, FALSE);
+            dict = tomoe_dict_new (dict_filename, FALSE, NULL, NULL);
             g_free (dict_filename);
         }
 
@@ -345,7 +345,7 @@ _tomoe_dict_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
             continue;
         }
 
-        dict = tomoe_dict_new (path, FALSE);
+        dict = tomoe_dict_new (path, FALSE, NULL, NULL);
         if (dict) {
             tomoe_shelf_add_dict (shelf, dict);
             g_object_unref (dict);

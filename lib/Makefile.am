@@ -26,7 +26,8 @@ AM_CPPFLAGS =							\
 	-DDATADIR=\""$(datadir)"\"				\
 	-DTOMOESYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\"	\
 	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"		\
-	-DRECOGNIZERDIR=\""$(recognizerdir)"\"
+	-DRECOGNIZERDIR=\""$(recognizerdir)"\"			\
+	-DDICTDIR=\""$(dictdir)"\"
 
 INCLUDES = $(GLIB_CFLAGS)
 

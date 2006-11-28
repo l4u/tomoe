@@ -139,6 +139,12 @@ recognizerdir="${libdir}/\$(PACKAGE)/recognizer"
 AC_SUBST(recognizerdir)
 
 dnl **************************************************************
+dnl Configure for dictionaries.
+dnl **************************************************************
+dictdir="${libdir}/\$(PACKAGE)/dict"
+AC_SUBST(dictdir)
+
+dnl **************************************************************
 dnl Bindings: Check for Ruby.
 dnl **************************************************************
 ruby_available="no"
@@ -237,6 +243,7 @@ AM_CONDITIONAL([WITH_RUBY], [test "$ruby_available" = "yes"])
 AC_CONFIG_FILES([
 Makefile
 lib/Makefile
+dict/Makefile
 recognizer/Makefile
 data/Makefile
 ext/Makefile
