@@ -67,6 +67,10 @@ module TomoeSpecUtils
       File.join(top_dir, "recognizer", ".libs")
     end
 
+    def dict_dir
+      File.join(top_dir, "dict", ".libs")
+    end
+
     def setup_context
       super
       @config_file = make_config_file

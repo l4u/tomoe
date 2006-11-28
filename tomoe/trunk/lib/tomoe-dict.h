@@ -36,6 +36,7 @@
 
 G_BEGIN_DECLS
 
+#include "tomoe-module.h"
 #include "tomoe-char.h"
 #include "tomoe-query.h"
 
@@ -51,12 +52,12 @@ typedef struct _TomoeDictClass TomoeDictClass;
 
 struct _TomoeDict
 {
-    GObject object;
+    TomoeModule object;
 };
 
 struct _TomoeDictClass
 {
-    GObjectClass parent_class;
+    TomoeModuleClass parent_class;
 };
 
 GType           tomoe_dict_get_type (void) G_GNUC_CONST;
@@ -67,17 +68,10 @@ GType           tomoe_dict_get_type (void) G_GNUC_CONST;
  * @param editable - Editability of the dictionary.
  * @return Pointer to newly allocated TomoeDict object.
  */
-TomoeDict      *tomoe_dict_new                  (const char    *filename,
-                                                 gboolean       editable);
-
-/**
- * @brief Get the file name of the tomoe dictionary.
- * @param dict - Pointer to the TomoeDict object.
- * @return File name of the tomoe dictionary. Return NULL if the dictionary
- *         wasn't load from a file, or newly allocated in a program and it
- *         doesn't saved yet.
- */
-const gchar    *tomoe_dict_get_filename         (TomoeDict     *dict);
+TomoeDict      *tomoe_dict_new                  (const gchar   *filename,
+                                                 gboolean       editable,
+                                                 const gchar   *base_dir,
+                                                 const gchar   *name);
 
 /**
  * @brief Get the dictionary name.
@@ -85,24 +79,6 @@ const gchar    *tomoe_dict_get_filename         (TomoeDict     *dict);
  * @return Name of the dictionary.
  */
 const gchar    *tomoe_dict_get_name             (TomoeDict     *dict);
-
-/**
- * @brief Get editable property.
- * @param dict - Pointer to the TomoeDict object.
- * @return TRUE - is editable, FALSE - is not editable
- */
-gboolean        tomoe_dict_is_editable          (TomoeDict     *dict);
-
-gboolean        tomoe_dict_is_modified          (TomoeDict     *dict);
-void            tomoe_dict_set_modified         (TomoeDict     *dict,
-                                                 gboolean      modified);
-
-/**
- * @brief Get character count
- * @param dict - Pointer to the TomoeDict object.
- * @return Count of the characters.
- */
-guint           tomoe_dict_get_size             (TomoeDict     *dict);
 
 /* Editable methods */
 

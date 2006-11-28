@@ -152,7 +152,8 @@ tomoe_module_show_error (TomoeModule *module)
     g_return_if_fail (TOMOE_IS_MODULE (module));
     priv = TOMOE_MODULE_GET_PRIVATE (module);
 
-    message = g_locale_to_utf8(g_module_error(), -1, NULL, NULL, NULL);
+    if (!g_module_error ()) return;
+    message = g_locale_to_utf8 (g_module_error(), -1, NULL, NULL, NULL);
 
     if (priv->module) {
         gchar *name;
@@ -246,14 +247,14 @@ tomoe_module_load(TomoeModule *module, const gchar *base_dir, const gchar *name)
     return success;
 }
 
-void
+gboolean
 tomoe_module_find_module(TomoeModule *module,
                          const gchar *base_dir, const gchar *name)
 {
     TomoeModulePrivate *priv;
     GDir *dir;
 
-    g_return_if_fail (TOMOE_IS_MODULE (module));
+    g_return_val_if_fail (TOMOE_IS_MODULE (module), FALSE);
     priv = TOMOE_MODULE_GET_PRIVATE (module);
 
     if (!base_dir)
@@ -274,6 +275,8 @@ tomoe_module_find_module(TomoeModule *module,
             g_dir_close(dir);
         }
     }
+
+    return priv->module ? TRUE : FALSE;
 }
 
 static void

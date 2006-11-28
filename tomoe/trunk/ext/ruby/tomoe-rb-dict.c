@@ -3,10 +3,16 @@
 #define _SELF(obj) RVAL2TDIC(obj)
 
 static VALUE
-td_initialize(VALUE self, VALUE filename, VALUE editable)
+td_initialize(VALUE self, VALUE filename, VALUE editable,
+              VALUE rb_base_dir, VALUE rb_name)
 {
+    gchar *base_dir, *name;
+
+    base_dir = NIL_P(rb_base_dir) ? NULL : RVAL2CSTR(rb_base_dir);
+    name = NIL_P(rb_name) ? NULL : RVAL2CSTR(rb_name);
     G_INITIALIZE(self, tomoe_dict_new(RVAL2CSTR(filename),
-                                      RVAL2CBOOL(editable)));
+                                      RVAL2CBOOL(editable),
+                                      base_dir, name));
     return Qnil;
 }
 
@@ -24,7 +30,7 @@ Init_tomoe_dict(VALUE mTomoe)
 
     cTomoeDict = G_DEF_CLASS(TOMOE_TYPE_DICT, "Dict", mTomoe);
 
-    rb_define_method(cTomoeDict, "initialize", td_initialize, 2);
+    rb_define_method(cTomoeDict, "initialize", td_initialize, 4);
 
     rb_define_method(cTomoeDict, "[]", td_get_char, 1);
 }

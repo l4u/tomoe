@@ -1,5 +1,11 @@
 2006-11-28  Kouhei Sutou  <kou@cozmixng.org>
 
+	* configure.in, Makefile.am, dict/, lib/tomoe-dict.[ch]: supported
+	dynamically dictionary backend loading.
+	* lib/tomoe-module.[ch], test/dict_spec.rb,
+	test/tomoe-spec-utils.rb, lib/tomoe-config.c,
+	ext/ruby/tomoe-rb-dict.c: followed the changes.
+
 	* lib/tomoe-recognizer-impl.h,
 	recognizer/tomoe-recognizer-simple.c: used gpointer instead of
 	void *.

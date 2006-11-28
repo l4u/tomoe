@@ -6,30 +6,9 @@ context "Tomoe::Context" do
   end
 
   specify "should load" do
-    dict = Tomoe::Dict.new(@dict_file.path, true)
+    dict = Tomoe::Dict.new(@dict_file.path, true, dict_dir, "xml")
     a = dict[@utf8]
     a.writing.strokes.should == @strokes
-  end
-
-  specify "should load and save" do
-    dicts = ObjectSpace.each_object(Tomoe::Dict) {}
-    Proc.new do
-      Proc.new do
-        dict = Tomoe::Dict.new(@dict_file.path, true)
-        dict.modified = true
-        dict = nil
-        GC.start
-      end.call
-      truncate_content
-      nil
-      GC.start
-    end.call
-
-    GC.start # GCed Tomoe::Dict to ensure save
-    current_dicts = ObjectSpace.each_object(Tomoe::Dict) {}
-    current_dicts.should <= dicts
-
-    content.should == @dict_content
   end
 
   def setup_strokes

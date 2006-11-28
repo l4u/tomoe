@@ -32,9 +32,6 @@
 
 G_BEGIN_DECLS
 
-#include "tomoe-dict.h"
-#include "tomoe-writing.h"
-
 #define TOMOE_TYPE_MODULE            (tomoe_module_get_type ())
 #define TOMOE_MODULE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_MODULE, TomoeModule))
 #define TOMOE_MODULE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_MODULE, TomoeModuleClass))
@@ -61,7 +58,7 @@ typedef void     (*TomoeModuleFreeFunc)   (gpointer context);
 GType            tomoe_module_get_type    (void) G_GNUC_CONST;
 
 gpointer         tomoe_module_get_context (TomoeModule *module);
-void             tomoe_module_find_module (TomoeModule *module,
+gboolean         tomoe_module_find_module (TomoeModule *module,
                                            const gchar *base_dir,
                                            const gchar *name);
 void             tomoe_module_show_error  (TomoeModule *module);
