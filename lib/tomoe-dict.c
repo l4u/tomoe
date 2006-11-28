@@ -183,8 +183,10 @@ tomoe_dict_dispose (GObject *object)
         tomoe_dict_save_xml (dict);
     }
 
-    g_free(priv->name);
-    g_free(priv->filename);
+    if (priv->name)
+        g_free(priv->name);
+    if (priv->filename)
+        g_free(priv->filename);
     if (priv->chars)
         TOMOE_PTR_ARRAY_FREE_ALL(priv->chars, g_object_unref);
 
