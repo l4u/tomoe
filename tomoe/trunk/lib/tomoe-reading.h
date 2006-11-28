@@ -53,7 +53,7 @@ struct _TomoeReadingClass
 
 typedef enum {
     TOMOE_READING_INVALID,
-    TOMOE_READING_ALL,
+    TOMOE_READING_UNKNOWN,
     TOMOE_READING_JA_ON,
     TOMOE_READING_JA_KUN
 } TomoeReadingType;

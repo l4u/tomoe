@@ -620,7 +620,7 @@ start_element_handler (GMarkupParseContext *context,
         }
 
         data->state = STATE_READING;
-        data->reading_type = TOMOE_READING_INVALID;
+        data->reading_type = TOMOE_READING_UNKNOWN;
 
         for (idx = 0; attr_names && attr_names[idx]; idx++) {
             if (!strcmp ("type", attr_names[idx])) {
