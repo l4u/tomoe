@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2006 Kouhei Sutou <kou@cozmixng.org>
  *
@@ -41,10 +41,14 @@ typedef GList      *(*TomoeRecognizerSearchFunc) (void *recognizer,
                                                   TomoeDict    *dict,
                                                   TomoeWriting *input);
 
+#define TOMOE_RECOGNIZER_IMPL_NEW     tomoe_recognizer_impl_new
+#define TOMOE_RECOGNIZER_IMPL_FREE    tomoe_recognizer_impl_free
+#define TOMOE_RECOGNIZER_IMPL_SEARCH  tomoe_recognizer_impl_search
 
-void       *tomoe_recognizer_impl_new    (void);
-void        tomoe_recognizer_impl_free   (void *context);
-GList      *tomoe_recognizer_impl_search (void *context,
+
+void       *TOMOE_RECOGNIZER_IMPL_NEW    (void);
+void        TOMOE_RECOGNIZER_IMPL_FREE   (void *context);
+GList      *TOMOE_RECOGNIZER_IMPL_SEARCH (void *context,
                                           TomoeDict    *dict,
                                           TomoeWriting *input);
 

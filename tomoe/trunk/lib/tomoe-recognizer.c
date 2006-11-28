@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2006 Kouhei Sutou <kou@cozmixng.org>
  *
@@ -26,10 +26,6 @@
 #include "tomoe-recognizer.h"
 #include "tomoe-recognizer-impl.h"
 
-#define RECOGNIZER_NEW_FUNC "tomoe_recognizer_impl_new"
-#define RECOGNIZER_FREE_FUNC "tomoe_recognizer_impl_free"
-#define RECOGNIZER_SEARCH_FUNC "tomoe_recognizer_impl_search"
-
 G_DEFINE_TYPE (TomoeRecognizer, tomoe_recognizer, TOMOE_TYPE_MODULE)
 
 static void
@@ -49,8 +45,10 @@ tomoe_recognizer_new (const gchar *base_dir, const gchar *name)
 
     recognizer = g_object_new (TOMOE_TYPE_RECOGNIZER,
                                "default_base_dir", RECOGNIZERDIR,
-                               "new_func_name", RECOGNIZER_NEW_FUNC,
-                               "free_func_name", RECOGNIZER_FREE_FUNC,
+                               "new_func_name",
+                               G_STRINGIFY(TOMOE_RECOGNIZER_IMPL_NEW),
+                               "free_func_name",
+                               G_STRINGIFY(TOMOE_RECOGNIZER_IMPL_FREE),
                                NULL);
     tomoe_module_find_module (TOMOE_MODULE (recognizer), base_dir, name);
     return recognizer;
@@ -70,7 +68,9 @@ tomoe_recognizer_search (const TomoeRecognizer *recognizer,
     module = TOMOE_MODULE (recognizer);
     search_func_p = &search_func;
     p = (gpointer *)search_func_p;
-    if (tomoe_module_load_func (module, RECOGNIZER_SEARCH_FUNC, p)) {
+    if (tomoe_module_load_func (module,
+                                G_STRINGIFY(TOMOE_RECOGNIZER_IMPL_SEARCH),
+                                p)) {
         result = search_func (tomoe_module_get_context (module), dict, input);
     } else {
         tomoe_module_show_error (module);

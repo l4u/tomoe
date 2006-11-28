@@ -1,5 +1,8 @@
 2006-11-28  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-recognizer.c, lib/tomoe-recognizer-impl.h,
+	recognizer/tomoe-recognizer-simple.c: used TOMOE_RECOGNIZER_IMPL_*.
+
 	* lib/tomoe-module.[ch]: added for parent class of
 	TomoeRecognizer.
 	* lib/tomoe-recognizer.[ch]: used TomoeModule as parent.
