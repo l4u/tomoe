@@ -30,6 +30,7 @@ G_DEFINE_ABSTRACT_TYPE (TomoeRecognizer, tomoe_recognizer, G_TYPE_OBJECT)
 static void
 tomoe_recognizer_class_init (TomoeRecognizerClass *klass)
 {
+    klass->search = NULL;
 }
 
 static void
