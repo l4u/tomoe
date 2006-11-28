@@ -1,0 +1,10 @@
+Makefile
+Makefile.in
+doxygen.conf
+html
+*.bak
+*~
+*.log
+*.rej
+*.orig
+*.stamp
