@@ -32,25 +32,20 @@
 
 G_BEGIN_DECLS
 
-#include "tomoe-dict.h"
-#include "tomoe-writing.h"
+#include "tomoe-recognizer.h"
 
-typedef gpointer    (*TomoeRecognizerNewFunc)    (void);
-typedef void        (*TomoeRecognizerFreeFunc)   (gpointer     context);
-typedef GList      *(*TomoeRecognizerSearchFunc) (gpointer     context,
-                                                  TomoeDict    *dict,
-                                                  TomoeWriting *input);
+typedef void             (*TomoeRecognizerInitFunc)        (GTypeModule *module);
+typedef void             (*TomoeRecognizerExitFunc)        (void);
+typedef TomoeRecognizer *(*TomoeRecognizerInstantiateFunc) (void);
 
-#define TOMOE_RECOGNIZER_IMPL_NEW     tomoe_recognizer_impl_new
-#define TOMOE_RECOGNIZER_IMPL_FREE    tomoe_recognizer_impl_free
-#define TOMOE_RECOGNIZER_IMPL_SEARCH  tomoe_recognizer_impl_search
+#define TOMOE_RECOGNIZER_IMPL_INIT        tomoe_recognizer_impl_init
+#define TOMOE_RECOGNIZER_IMPL_EXIT        tomoe_recognizer_impl_exit
+#define TOMOE_RECOGNIZER_IMPL_INSTANTIATE tomoe_recognizer_impl_instantiate
 
 
-gpointer    TOMOE_RECOGNIZER_IMPL_NEW    (void);
-void        TOMOE_RECOGNIZER_IMPL_FREE   (gpointer      context);
-GList      *TOMOE_RECOGNIZER_IMPL_SEARCH (gpointer      context,
-                                          TomoeDict    *dict,
-                                          TomoeWriting *input);
+void             TOMOE_RECOGNIZER_IMPL_INIT        (GTypeModule  *module);
+void             TOMOE_RECOGNIZER_IMPL_EXIT        (void);
+TomoeRecognizer *TOMOE_RECOGNIZER_IMPL_INSTANTIATE (void);
 
 G_END_DECLS
 

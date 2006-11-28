@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2000 - 2004 Hiroyuki Komatsu <komatsu@taiyaki.org>
  *  Copyright (C) 2004 Hiroaki Nakamura <hnakamur@good-day.co.jp>
@@ -28,29 +28,36 @@
 #include <string.h>
 #include <glib/garray.h>
 #include "tomoe.h"
-#include "tomoe-dict.h"
-#include "tomoe-context.h"
-#include "tomoe-config.h"
 
-/* 
- * Initialize tomoe 
+static gboolean initialized = FALSE;
+
+/*
+ * Initialize tomoe
  */
 void
 tomoe_init (void)
 {
-    static gboolean initialized = FALSE;
-
     if (!initialized) {
+        initialized = TRUE;
         GTypeDebugFlags debug_flag = G_TYPE_DEBUG_NONE;
         g_type_init_with_debug_flags (debug_flag);
+        tomoe_dict_loader_load (NULL);
+        tomoe_recognizer_loader_load (NULL);
     }
 }
 
 /* finalize tomoe */
-void 
+void
 tomoe_quit (void)
 {
-    /* TODO unfreed tomoe objects check */
+    if (initialized) {
+        initialized = FALSE;
+#warning FIXME: those causes memory warnings
+#if 0
+        tomoe_dict_loader_unload ();
+        tomoe_recognizer_loader_unload ();
+#endif
+    }
 }
 
 /*

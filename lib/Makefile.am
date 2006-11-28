@@ -38,6 +38,7 @@ tomoe_public_h_sources =	\
 	tomoe-context.h		\
 	tomoe-config.h		\
 	tomoe-dict.h		\
+	tomoe-dict-impl.h	\
 	tomoe-module.h		\
 	tomoe-query.h		\
 	tomoe-reading.h		\
@@ -74,10 +75,12 @@ libtomoe_la_SOURCES =		\
 	tomoe-context.c		\
 	tomoe-config.c		\
 	tomoe-dict.c		\
+	tomoe-dict-loader.c	\
 	tomoe-module.c		\
 	tomoe-query.c		\
 	tomoe-reading.c		\
 	tomoe-recognizer.c	\
+	tomoe-recognizer-loader.c	\
 	tomoe-shelf.c		\
 	tomoe-writing.c
 

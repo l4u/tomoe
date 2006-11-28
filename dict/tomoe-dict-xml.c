@@ -34,7 +34,7 @@
 #include <tomoe-candidate.h>
 #include <glib-utils.h>
 
-#define TOMOE_TYPE_DICT_XML            (tomoe_dict_xml_get_type ())
+#define TOMOE_TYPE_DICT_XML            tomoe_type_dict_xml
 #define TOMOE_DICT_XML(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_DICT_XML, TomoeDictXML))
 #define TOMOE_DICT_XML_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_DICT_XML, TomoeDictXMLClass))
 #define TOMOE_IS_DICT_XML(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TOMOE_TYPE_DICT_XML))
@@ -45,9 +45,9 @@ typedef struct _TomoeDictXML TomoeDictXML;
 typedef struct _TomoeDictXMLClass TomoeDictXMLClass;
 struct _TomoeDictXML
 {
-    GObject              parent;
-    char                *filename;
-    char                *name;
+    TomoeDict            object;
+    gchar               *filename;
+    gchar               *name;
     GPtrArray           *chars;
 
     gboolean             editable;
@@ -56,7 +56,7 @@ struct _TomoeDictXML
 
 struct _TomoeDictXMLClass
 {
-    GObjectClass parent_class;
+    TomoeDictClass parent_class;
 };
 
 typedef struct _TomoeDictSearchContext {
@@ -64,34 +64,46 @@ typedef struct _TomoeDictSearchContext {
     GList *results;
 } TomoeDictSearchContext;
 
-struct _TomoeRecognizerClass
-{
-    GObjectClass parent_class;
-};
+static GType tomoe_type_dict_xml = 0;
+static GObjectClass *parent_class;
 
-static GType    tomoe_dict_xml_get_type   (void) G_GNUC_CONST;
-
-G_DEFINE_TYPE (TomoeDictXML, tomoe_dict_xml, G_TYPE_OBJECT)
-
-static void     dispose                   (GObject         *object);
-static gboolean tomoe_dict_xml_load       (TomoeDictXML    *dict);
-static void     tomoe_dict_xml_save       (TomoeDictXML    *dict);
-static gint     letter_compare_func       (gconstpointer    a,
-                                           gconstpointer    b);
-
+static void         dispose                   (GObject       *object);
+static const gchar *get_name                  (TomoeDict     *dict);
+static gboolean     register_char             (TomoeDict     *dict,
+                                               TomoeChar     *chr);
+static gboolean     unregister_char           (TomoeDict     *dict,
+                                               const gchar   *utf8);
+static TomoeChar    *get_char                 (TomoeDict     *dict,
+                                               const gchar   *utf8);
+static GList        *search                   (TomoeDict     *dict,
+                                               TomoeQuery    *query);
+static gboolean      tomoe_dict_xml_load      (TomoeDictXML  *dict);
+static void          tomoe_dict_xml_save      (TomoeDictXML  *dict);
+static gint          letter_compare_func      (gconstpointer  a,
+                                               gconstpointer  b);
 
 static void
-tomoe_dict_xml_class_init (TomoeDictXMLClass *klass)
+class_init (TomoeDictXMLClass *klass)
 {
     GObjectClass *gobject_class;
+    TomoeDictClass *dict_class;
+
+    parent_class = g_type_class_peek_parent (klass);
 
     gobject_class = G_OBJECT_CLASS (klass);
 
     gobject_class->dispose = dispose;
+
+    dict_class = TOMOE_DICT_CLASS (klass);
+    dict_class->get_name        = get_name;
+    dict_class->register_char   = register_char;
+    dict_class->unregister_char = unregister_char;
+    dict_class->get_char        = get_char;
+    dict_class->search          = search;
 }
 
 static void
-tomoe_dict_xml_init (TomoeDictXML *dict)
+init (TomoeDictXML *dict)
 {
     dict->filename = NULL;
     dict->name     = NULL;
@@ -100,34 +112,53 @@ tomoe_dict_xml_init (TomoeDictXML *dict)
     dict->editable = FALSE;
 }
 
-
-gpointer
-TOMOE_DICT_IMPL_NEW (void)
+static void
+register_type (GTypeModule *type_module)
 {
-    return g_object_new(TOMOE_TYPE_DICT_XML, NULL);
+    static const GTypeInfo info =
+        {
+            sizeof (TomoeDictXMLClass),
+            (GBaseInitFunc) NULL,
+            (GBaseFinalizeFunc) NULL,
+            (GClassInitFunc) class_init,
+            NULL,           /* class_finalize */
+            NULL,           /* class_data */
+            sizeof (TomoeDictXML),
+            0,
+            (GInstanceInitFunc) init,
+        };
+
+    tomoe_type_dict_xml = g_type_module_register_type (type_module,
+                                                       TOMOE_TYPE_DICT,
+                                                       "TomoeDictXML",
+                                                       &info, 0);
 }
 
 void
-TOMOE_DICT_IMPL_LOAD (gpointer context, const gchar *filename,
-                      gboolean editable)
+TOMOE_DICT_IMPL_INIT (GTypeModule *type_module)
 {
-    TomoeDictXML *dict = context;
+    register_type (type_module);
+}
 
-    if (!filename && !*filename) return;
+void
+TOMOE_DICT_IMPL_EXIT (void)
+{
+}
 
+TomoeDict *
+TOMOE_DICT_IMPL_INSTANTIATE (const gchar *filename, gboolean editable)
+{
+    TomoeDictXML *dict;
+
+    if (!filename && !*filename) return NULL;
+
+    dict = g_object_new (TOMOE_TYPE_DICT_XML, NULL);
     dict->filename = g_strdup (filename);
     dict->editable = editable;
+
     tomoe_dict_xml_load (dict);
-}
 
-void
-TOMOE_DICT_IMPL_FREE (gpointer context)
-{
-    TomoeDictXML *dict = context;
-
-    g_return_if_fail (TOMOE_IS_DICT_XML (dict));
-
-    g_object_unref (dict);
+    return TOMOE_DICT (dict);
 }
 
 static void
@@ -153,24 +184,23 @@ dispose (GObject *object)
     dict->filename = NULL;
     dict->chars    = NULL;
 
-    G_OBJECT_CLASS (tomoe_dict_xml_parent_class)->dispose (object);
+    G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 const gchar*
-TOMOE_DICT_IMPL_GET_NAME (gpointer context)
+get_name (TomoeDict *_dict)
 {
-    TomoeDictXML *dict = context;
-    g_return_val_if_fail(TOMOE_IS_DICT_XML(dict), NULL);
+    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
+    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), NULL);
     return dict->name;
 }
 
 gboolean
-TOMOE_DICT_IMPL_REGISTER_CHAR (gpointer context, TomoeChar *add)
+register_char (TomoeDict *_dict, TomoeChar *add)
 {
-    TomoeDictXML *dict = context;
-
-    g_return_val_if_fail(dict, FALSE);
-    g_return_val_if_fail(add, FALSE);
+    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
+    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
+    g_return_val_if_fail (add, FALSE);
 
     g_ptr_array_add (dict->chars, g_object_ref (G_OBJECT (add)));
     g_ptr_array_sort (dict->chars, letter_compare_func);
@@ -180,15 +210,15 @@ TOMOE_DICT_IMPL_REGISTER_CHAR (gpointer context, TomoeChar *add)
 }
 
 gboolean
-TOMOE_DICT_IMPL_UNREGISTER_CHAR (gpointer context, const gchar *utf8)
+unregister_char (TomoeDict *_dict, const gchar *utf8)
 {
-    TomoeDictXML *dict = context;
+    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
     GPtrArray *chars;
     TomoeChar *removed = NULL;
     guint i, index = -1;
 
-    g_return_val_if_fail(dict, FALSE);
-    g_return_val_if_fail(utf8 && *utf8 != '\0', FALSE);
+    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
+    g_return_val_if_fail (utf8 && *utf8 != '\0', FALSE);
 
     chars = dict->chars;
     for (i = 0; i < chars->len; i++) {
@@ -211,9 +241,9 @@ TOMOE_DICT_IMPL_UNREGISTER_CHAR (gpointer context, const gchar *utf8)
 }
 
 TomoeChar *
-TOMOE_DICT_IMPL_GET_CHAR (gpointer context, const gchar *utf8)
+get_char (TomoeDict *_dict, const gchar *utf8)
 {
-    TomoeDictXML *dict = context;
+    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
     GPtrArray *chars;
     guint i;
 
@@ -302,9 +332,9 @@ tomoe_dict_xml_collect_chars_by_query (gpointer data, gpointer user_data)
 }
 
 GList *
-TOMOE_DICT_IMPL_SEARCH (gpointer context, TomoeQuery *query)
+search (TomoeDict *_dict, TomoeQuery *query)
 {
-    TomoeDictXML *dict = context;
+    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
     TomoeDictSearchContext search_context;
 
     search_context.query = g_object_ref (query);
