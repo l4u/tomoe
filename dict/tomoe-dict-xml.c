@@ -647,7 +647,7 @@ start_element_handler (GMarkupParseContext *context,
         data->value = NULL;
     }
 
-    /* thow error? */
+    /* throw error? */
 }
 
 static void

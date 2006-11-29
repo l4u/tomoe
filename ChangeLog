@@ -1,5 +1,10 @@
 2006-11-29  Takuro Ashie  <ashie@homa.ne.jp>
 
+	* dict/tomoe-dict-xml.c: Fix typo.
+	* doc/reference/tomoe.types: Remove tomoe_module_get_type().
+
+2006-11-29  Takuro Ashie  <ashie@homa.ne.jp>
+
 	* lib/Makefile.am: Add missing header files.
 
 2006-11-29  Kouhei Sutou  <kou@cozmixng.org>
