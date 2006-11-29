@@ -243,8 +243,9 @@ AM_CONDITIONAL([WITH_RUBY], [test "$ruby_available" = "yes"])
 AC_CONFIG_FILES([
 Makefile
 lib/Makefile
-dict/Makefile
-recognizer/Makefile
+module/Makefile
+module/dict/Makefile
+module/recognizer/Makefile
 data/Makefile
 ext/Makefile
 ext/ruby/Makefile
