@@ -102,10 +102,18 @@ TOMOE_RECOGNIZER_IMPL_EXIT (void)
 {
 }
 
-G_MODULE_EXPORT TomoeRecognizer *
-TOMOE_RECOGNIZER_IMPL_INSTANTIATE (void)
+G_MODULE_EXPORT GObject *
+TOMOE_RECOGNIZER_IMPL_INSTANTIATE (const gchar *first_property,...)
 {
-    return g_object_new (TOMOE_TYPE_RECOGNIZER_SIMPLE, NULL);
+    GObject *object;
+    va_list var_args;
+
+    va_start (var_args, first_property);
+    object = g_object_new_valist (TOMOE_TYPE_RECOGNIZER_SIMPLE, 
+                                  first_property, var_args);
+    va_end (var_args);
+
+    return object;
 }
 
 static GList *
