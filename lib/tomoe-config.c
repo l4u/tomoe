@@ -31,7 +31,7 @@
 #include <glib/gi18n.h>
 
 #include "tomoe-config.h"
-#include "tomoe-dict-loader.h"
+#include "tomoe-dict.h"
 #include "tomoe-config.h"
 #include "glib-utils.h"
 
@@ -276,11 +276,13 @@ tomoe_config_make_shelf (TomoeConfig *config)
 
         if (_tomoe_dict_key_file_get_boolean_value (key_file, dict_name,
                                                     "user", TRUE)) {
-            dict = tomoe_dict_loader_instantiate ("xml", filename, TRUE);
+            dict = tomoe_dict_new ("xml", "filename", filename,
+                                   "editable", TRUE, NULL);
         } else {
             gchar *dict_filename;
             dict_filename = g_build_filename (TOMOEDATADIR, filename, NULL);
-            dict = tomoe_dict_loader_instantiate ("xml", filename, TRUE);
+            dict = tomoe_dict_new ("xml", "filename", filename,
+                                   "editable", TRUE, NULL);
             g_free (dict_filename);
         }
 
@@ -347,7 +349,8 @@ _tomoe_dict_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
             continue;
         }
 
-        dict = tomoe_dict_loader_instantiate ("xml", path, FALSE);
+        dict = tomoe_dict_new ("xml", "filename", path, "editable", FALSE,
+                               NULL);
         if (dict) {
             tomoe_shelf_add_dict (shelf, dict);
             g_object_unref (dict);

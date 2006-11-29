@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <gmodule.h>
 
-#include <tomoe-recognizer-impl.h>
+#include <tomoe-module-impl.h>
 #include "tomoe-recognizer-simple-logic.h"
 
 #define TOMOE_TYPE_RECOGNIZER_SIMPLE            tomoe_type_recognizer_simple
@@ -92,22 +92,22 @@ register_type (GTypeModule *type_module)
 }
 
 G_MODULE_EXPORT void
-TOMOE_RECOGNIZER_IMPL_INIT (GTypeModule *type_module)
+TOMOE_MODULE_IMPL_INIT (GTypeModule *type_module)
 {
     register_type (type_module);
 }
 
 G_MODULE_EXPORT void
-TOMOE_RECOGNIZER_IMPL_EXIT (void)
+TOMOE_MODULE_IMPL_EXIT (void)
 {
 }
 
 G_MODULE_EXPORT GObject *
-TOMOE_RECOGNIZER_IMPL_INSTANTIATE (const gchar *first_property, va_list args)
+TOMOE_MODULE_IMPL_INSTANTIATE (const gchar *first_property, va_list args)
 {
     GObject *object;
 
-    object = g_object_new_valist (TOMOE_TYPE_RECOGNIZER_SIMPLE, 
+    object = g_object_new_valist (TOMOE_TYPE_RECOGNIZER_SIMPLE,
                                   first_property, args);
 
     return object;

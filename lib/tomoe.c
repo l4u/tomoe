@@ -41,8 +41,8 @@ tomoe_init (void)
         initialized = TRUE;
         GTypeDebugFlags debug_flag = G_TYPE_DEBUG_NONE;
         g_type_init_with_debug_flags (debug_flag);
-        tomoe_dict_loader_load (NULL);
-        tomoe_recognizer_loader_load (NULL);
+        tomoe_dict_load (NULL);
+        tomoe_recognizer_load (NULL);
     }
 }
 
@@ -54,8 +54,8 @@ tomoe_quit (void)
         initialized = FALSE;
 #warning FIXME: those causes memory warnings
 #if 0
-        tomoe_dict_loader_unload ();
-        tomoe_recognizer_loader_unload ();
+        tomoe_dict_unload ();
+        tomoe_recognizer_unload ();
 #endif
     }
 }

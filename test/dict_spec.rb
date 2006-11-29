@@ -6,7 +6,7 @@ context "Tomoe::Context" do
   end
 
   specify "should load" do
-    dict = Tomoe::DictLoader.instantiate("xml", @dict_file.path, true)
+    dict = Tomoe::Dict.new("xml", @dict_file.path, true)
     a = dict[@utf8]
     a.writing.strokes.should == @strokes
   end

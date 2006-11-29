@@ -143,7 +143,7 @@ EOC
   end
 end
 
-Tomoe::DictLoader.unload
-Tomoe::DictLoader.load(TomoeSpecUtils::Config.dict_dir)
-Tomoe::RecognizerLoader.unload
-Tomoe::RecognizerLoader.load(TomoeSpecUtils::Config.recognizer_dir)
+Tomoe::Dict.unload
+Tomoe::Dict.load(TomoeSpecUtils::Config.dict_dir)
+Tomoe::Recognizer.unload
+Tomoe::Recognizer.load(TomoeSpecUtils::Config.recognizer_dir)

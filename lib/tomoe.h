@@ -40,9 +40,6 @@ G_BEGIN_DECLS
 #include "tomoe-recognizer.h"
 #include "tomoe-writing.h"
 
-#include "tomoe-dict-loader.h"
-#include "tomoe-recognizer-loader.h"
-
 /**
  * @brief Initialize tomoe library.
  */

@@ -31,8 +31,9 @@
 #include <glib/gi18n.h>
 #include <gmodule.h>
 
-#include "tomoe-dict-impl.h"
-#include "tomoe-candidate.h"
+#include <tomoe-module-impl.h>
+#include <tomoe-dict.h>
+#include <tomoe-candidate.h>
 #include "glib-utils.h"
 
 #define TOMOE_TYPE_DICT_XML            tomoe_type_dict_xml
@@ -175,18 +176,18 @@ register_type (GTypeModule *type_module)
 }
 
 G_MODULE_EXPORT void
-TOMOE_DICT_IMPL_INIT (GTypeModule *type_module)
+TOMOE_MODULE_IMPL_INIT (GTypeModule *type_module)
 {
     register_type (type_module);
 }
 
 G_MODULE_EXPORT void
-TOMOE_DICT_IMPL_EXIT (void)
+TOMOE_MODULE_IMPL_EXIT (void)
 {
 }
 
 G_MODULE_EXPORT GObject *
-TOMOE_DICT_IMPL_INSTANTIATE (const gchar *first_property, va_list args)
+TOMOE_MODULE_IMPL_INSTANTIATE (const gchar *first_property, va_list args)
 {
     GObject *object;
 

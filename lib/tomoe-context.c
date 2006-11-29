@@ -21,7 +21,7 @@
  */
 
 #include "tomoe-dict.h"
-#include "tomoe-recognizer-loader.h"
+#include "tomoe-recognizer.h"
 #include "tomoe-context.h"
 #include "tomoe-config.h"
 #include "tomoe-shelf.h"
@@ -142,7 +142,7 @@ tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
     if (!names) return matched;
 
     if (!priv->recognizer)
-        priv->recognizer = tomoe_recognizer_loader_instantiate ("simple");
+        priv->recognizer = tomoe_recognizer_new ("simple", NULL);
 
     for (name = names; name; name = name->next) {
         TomoeDict *dict;
