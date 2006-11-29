@@ -187,7 +187,7 @@ TOMOE_DICT_IMPL_EXIT (void)
 {
 }
 
-G_MODULE_EXPORT TomoeDict *
+G_MODULE_EXPORT GObject *
 TOMOE_DICT_IMPL_INSTANTIATE (const gchar *first_property,...)
 {
     GObject *object;
@@ -198,7 +198,7 @@ TOMOE_DICT_IMPL_INSTANTIATE (const gchar *first_property,...)
                                   first_property, var_args);
     va_end (var_args);
 
-    return TOMOE_DICT (object);
+    return object;
 }
 
 static GObject *
