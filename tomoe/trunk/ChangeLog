@@ -1,5 +1,7 @@
 2006-11-29  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-module-impl.h: added.
+
 	* lib/tomoe-module.[ch], lib/tomoe-recognizer-loader.[ch],
 	lib/tomoe-dict-loader.[ch], lib/tomoe-recognizer-impl.h,
 	lib/tomoe-dict-impl.h, lib/Makefile.am: removed loaders!
