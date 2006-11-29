@@ -30,4 +30,5 @@ EXTRA_DIST =		\
 	natu.data	\
 	nichi.data	\
 	niku.data	\
+	one.data	\
 	su.data
