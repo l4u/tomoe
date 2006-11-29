@@ -1,3 +1,9 @@
+2006-11-29  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* lib/tomoe-recognizer-impl.h, lib/tomoe-dict-impl.h,
+	dict/tomoe-dict-xml.c, recognizer/tomoe-recognizer-simple.c: Give me
+	va_list directry.
+
 2006-11-29  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* dict/tomoe-dict-xml.c: Fix typo.
