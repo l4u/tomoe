@@ -187,7 +187,7 @@ dispose (GObject *object)
     G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
-const gchar*
+static const gchar*
 get_name (TomoeDict *_dict)
 {
     TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
@@ -195,7 +195,7 @@ get_name (TomoeDict *_dict)
     return dict->name;
 }
 
-gboolean
+static gboolean
 register_char (TomoeDict *_dict, TomoeChar *add)
 {
     TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
@@ -209,7 +209,7 @@ register_char (TomoeDict *_dict, TomoeChar *add)
     return TRUE;
 }
 
-gboolean
+static gboolean
 unregister_char (TomoeDict *_dict, const gchar *utf8)
 {
     TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
@@ -240,7 +240,7 @@ unregister_char (TomoeDict *_dict, const gchar *utf8)
     }
 }
 
-TomoeChar *
+static TomoeChar *
 get_char (TomoeDict *_dict, const gchar *utf8)
 {
     TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
@@ -331,7 +331,7 @@ tomoe_dict_xml_collect_chars_by_query (gpointer data, gpointer user_data)
                                        tomoe_candidate_new (chr));
 }
 
-GList *
+static GList *
 search (TomoeDict *_dict, TomoeQuery *query)
 {
     TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
