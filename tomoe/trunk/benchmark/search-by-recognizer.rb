@@ -13,7 +13,6 @@ require 'tomoe-spec-utils'
 context = Tomoe::Context.new
 config_file = TomoeSpecUtils::Config.make_config_file
 context.load_config(config_file.path)
-context.load_recognizer(TomoeSpecUtils::Config.recognizer_dir, "simple")
 
 n = 10
 Benchmark.bmbm do |x|
