@@ -45,7 +45,7 @@ typedef TomoeRecognizer *(*TomoeRecognizerInstantiateFunc) (void);
 
 void             TOMOE_RECOGNIZER_IMPL_INIT        (GTypeModule  *module);
 void             TOMOE_RECOGNIZER_IMPL_EXIT        (void);
-TomoeRecognizer *TOMOE_RECOGNIZER_IMPL_INSTANTIATE (void);
+GObject         *TOMOE_RECOGNIZER_IMPL_INSTANTIATE (const gchar *first_property,...);
 
 G_END_DECLS
 

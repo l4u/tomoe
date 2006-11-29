@@ -22,6 +22,10 @@
 	* recognizer/tomoe-recognizer-simple.c: Append G_MODULE_EXPORT.
 	* dict/tomoe-dict-xml.c: Append static. Append G_MODULE_EXPORT.
 	* lib/tomoe-dict.c: Nullify virtual function's pointer.
+	* dict/tomoe-dict-xml.c: va_list welcome.
+	* lib/tomoe-dict-impl.h: va_list welcome.
+	* lib/tomoe-recognizer-impl.h, recognizer/tomoe-recognizer-simple.c:
+	va_list welcome.
 
 2006-11-29  Kouhei Sutou  <kou@cozmixng.org>
 
