@@ -158,7 +158,7 @@ void
 tomoe_recognizer_loader_unload (void)
 {
     g_list_foreach (recognizers, (GFunc) g_type_module_unuse, NULL);
-    g_free (recognizers);
+    g_list_free (recognizers);
     recognizers = NULL;
 }
 

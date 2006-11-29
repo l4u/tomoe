@@ -3,6 +3,8 @@
 	* lib/tomoe-recognizer.c: Nullify klass->search.
 	* recognizer/tomoe-recognizer-simple-logic.[ch]: void *context ->
 	TomoeRecognizer *recognizer.
+	* lib/tomoe-dict-loader.c, lib/tomoe-recognizer-loader.c: g_free ->
+	g_list_free. Hi Kohei, were you sleepy last night?
 
 2006-11-29  Kouhei Sutou  <kou@cozmixng.org>
 
