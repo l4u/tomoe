@@ -72,9 +72,6 @@ TomoeContext    *tomoe_context_new      (void);
  */
 void            tomoe_context_load_config     (TomoeContext       *ctx,
                                                const gchar        *config_file);
-void            tomoe_context_load_recognizer (TomoeContext       *ctx,
-                                               const gchar        *base_dir,
-                                               const gchar        *name);
 
 GList          *tomoe_context_search          (TomoeContext       *ctx,
                                                TomoeQuery         *query);
