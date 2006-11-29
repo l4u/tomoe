@@ -42,6 +42,12 @@
 #define TOMOE_IS_DICT_XML_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_DICT_XML))
 #define TOMOE_DICT_XML_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_DICT_XML, TomoeDictXMLClass))
 
+enum {
+    PROP_0,
+    PROP_FILENAME,
+    PROP_EDITABLE
+};
+
 typedef struct _TomoeDictXML TomoeDictXML;
 typedef struct _TomoeDictXMLClass TomoeDictXMLClass;
 struct _TomoeDictXML
@@ -68,7 +74,18 @@ typedef struct _TomoeDictSearchContext {
 static GType tomoe_type_dict_xml = 0;
 static GObjectClass *parent_class;
 
+static GObject     *constructor               (GType                  type,
+                                               guint                  n_props,
+                                               GObjectConstructParam *props);
 static void         dispose                   (GObject       *object);
+static void         set_property              (GObject       *object,
+                                               guint         prop_id,
+                                               const GValue  *value,
+                                               GParamSpec    *pspec);
+static void         get_property              (GObject       *object,
+                                               guint          prop_id,
+                                               GValue        *value,
+                                               GParamSpec    *pspec);
 static const gchar *get_name                  (TomoeDict     *dict);
 static gboolean     register_char             (TomoeDict     *dict,
                                                TomoeChar     *chr);
@@ -93,7 +110,10 @@ class_init (TomoeDictXMLClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->dispose = dispose;
+    gobject_class->constructor  = constructor;
+    gobject_class->dispose      = dispose;
+    gobject_class->set_property = set_property;
+    gobject_class->get_property = get_property;
 
     dict_class = TOMOE_DICT_CLASS (klass);
     dict_class->get_name        = get_name;
@@ -101,6 +121,27 @@ class_init (TomoeDictXMLClass *klass)
     dict_class->unregister_char = unregister_char;
     dict_class->get_char        = get_char;
     dict_class->search          = search;
+    
+    g_object_class_install_property (
+        gobject_class,
+        PROP_FILENAME,
+        g_param_spec_object (
+            "character",
+            "Character",
+            "A tomoe character object",
+            TOMOE_TYPE_CHAR,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+    g_object_class_install_property(
+        gobject_class,
+        PROP_EDITABLE,
+        g_param_spec_uint(
+            "score",
+            "Score",
+            "Score of this candidate. Lower value has higher priority.",
+            0,
+            G_MAXINT,
+            0,
+            G_PARAM_READWRITE));
 }
 
 static void
@@ -147,19 +188,77 @@ TOMOE_DICT_IMPL_EXIT (void)
 }
 
 G_MODULE_EXPORT TomoeDict *
-TOMOE_DICT_IMPL_INSTANTIATE (const gchar *filename, gboolean editable)
+TOMOE_DICT_IMPL_INSTANTIATE (const gchar *first_property,...)
 {
+    GObject *object;
+    va_list var_args;
+
+    va_start (var_args, first_property);
+    object = g_object_new_valist (TOMOE_TYPE_DICT_XML, 
+                                  first_property, var_args);
+    va_end (var_args);
+
+    return TOMOE_DICT (object);
+}
+
+static GObject *
+constructor (GType type, guint n_props,
+             GObjectConstructParam *props)
+{
+
+    GObject *object;
+    GObjectClass *klass = G_OBJECT_CLASS (parent_class);
     TomoeDictXML *dict;
 
-    if (!filename && !*filename) return NULL;
-
-    dict = g_object_new (TOMOE_TYPE_DICT_XML, NULL);
-    dict->filename = g_strdup (filename);
-    dict->editable = editable;
+    object = klass->constructor (type, n_props, props);
+    dict = TOMOE_DICT_XML (object);
 
     tomoe_dict_xml_load (dict);
 
-    return TOMOE_DICT (dict);
+    return object;
+}
+
+static void
+set_property (GObject *object,
+              guint prop_id,
+              const GValue *value,
+              GParamSpec *pspec)
+{
+    TomoeDictXML *dict = TOMOE_DICT_XML (object);
+
+    switch (prop_id) {
+    case PROP_FILENAME:
+        dict->filename = g_value_dup_string (value);
+        break;
+    case PROP_EDITABLE:
+        dict->editable = g_value_get_boolean (value);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
+    }
+}
+
+
+static void
+get_property (GObject *object,
+              guint prop_id,
+              GValue *value,
+              GParamSpec *pspec)
+{
+    TomoeDictXML *dict = TOMOE_DICT_XML (object);
+
+    switch (prop_id) {
+    case PROP_FILENAME:
+        g_value_set_string (value, dict->filename);
+        break;
+    case PROP_EDITABLE:
+        g_value_set_boolean (value, dict->editable);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
+    }
 }
 
 static void

@@ -46,8 +46,8 @@ typedef TomoeDict       *(*TomoeDictInstantiateFunc) (const gchar *filename,
 
 void             TOMOE_DICT_IMPL_INIT        (GTypeModule  *module);
 void             TOMOE_DICT_IMPL_EXIT        (void);
-TomoeDict       *TOMOE_DICT_IMPL_INSTANTIATE (const gchar *filename,
-                                              gboolean     editable);
+GObject         *TOMOE_DICT_IMPL_INSTANTIATE (const gchar  *first_property,
+                                              ...);
 
 G_END_DECLS
 
