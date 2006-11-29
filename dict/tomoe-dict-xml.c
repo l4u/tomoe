@@ -188,15 +188,12 @@ TOMOE_DICT_IMPL_EXIT (void)
 }
 
 G_MODULE_EXPORT GObject *
-TOMOE_DICT_IMPL_INSTANTIATE (const gchar *first_property,...)
+TOMOE_DICT_IMPL_INSTANTIATE (const gchar *first_property, va_list args)
 {
     GObject *object;
-    va_list var_args;
 
-    va_start (var_args, first_property);
     object = g_object_new_valist (TOMOE_TYPE_DICT_XML, 
-                                  first_property, var_args);
-    va_end (var_args);
+                                  first_property, args);
 
     return object;
 }

@@ -46,8 +46,7 @@ typedef TomoeDict       *(*TomoeDictInstantiateFunc) (const gchar *filename,
 
 void             TOMOE_DICT_IMPL_INIT        (GTypeModule  *module);
 void             TOMOE_DICT_IMPL_EXIT        (void);
-GObject         *TOMOE_DICT_IMPL_INSTANTIATE (const gchar  *first_property,
-                                              ...);
+GObject         *TOMOE_DICT_IMPL_INSTANTIATE (const gchar *first_property, va_list args);
 
 G_END_DECLS
 
