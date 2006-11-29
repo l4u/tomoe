@@ -1,5 +1,7 @@
 2006-11-29  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe.c: removed warnings.
+
 	* lib/tomoe-module-impl.h: added.
 
 	* lib/tomoe-module.[ch], lib/tomoe-recognizer-loader.[ch],
