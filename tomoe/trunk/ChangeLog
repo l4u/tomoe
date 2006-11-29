@@ -1,3 +1,7 @@
+2006-11-29  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* version 0.4.0.
+
 2006-11-29  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe.c: removed warnings.
