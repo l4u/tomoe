@@ -24,6 +24,7 @@
 #include <gmodule.h>
 
 #include <tomoe-module-impl.h>
+#include <tomoe-recognizer.h>
 #include "tomoe-recognizer-simple-logic.h"
 
 #define TOMOE_TYPE_RECOGNIZER_SIMPLE            tomoe_type_recognizer_simple
