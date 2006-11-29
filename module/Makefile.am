@@ -18,24 +18,4 @@
 ## Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 ## Boston, MA  02111-1307  USA
 
-SUBDIRS = lib module data ext test benchmark doc
-
-EXTRA_DIST = autogen.sh tomoe.pc
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA= tomoe.pc
-
-CLEANFILES = *~ *.bak
-DISTCLEANFILES = tomoe.pc
-
-# build documentation when doing distcheck
-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
-
-doc: all
-	cd doc && $(MAKE) $(AM_MAKEFLAGS) doc
-
-validate:
-	cd data && $(MAKE) $(AM_MAKEFLAGS) validate
-
-benchmark: all
-	cd benchmark && $(MAKE) $(AM_MAKEFLAGS) benchmark
+SUBDIRS = dict recognizer
