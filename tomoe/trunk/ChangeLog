@@ -6,7 +6,7 @@
 	* lib/tomoe-dict-loader.c, lib/tomoe-recognizer-loader.c: g_free ->
 	g_list_free. Hi Kohei, were you sleepy last night?
 	* recognizer/tomoe-recognizer-simple.c: Append G_MODULE_EXPORT.
-	* dict/tomoe-dict-xml.c: Append static.
+	* dict/tomoe-dict-xml.c: Append static. Append G_MODULE_EXPORT.
 
 2006-11-29  Kouhei Sutou  <kou@cozmixng.org>
 

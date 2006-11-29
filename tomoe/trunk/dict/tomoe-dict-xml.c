@@ -29,10 +29,11 @@
 #include <string.h>
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <gmodule.h>
 
-#include <tomoe-dict-impl.h>
-#include <tomoe-candidate.h>
-#include <glib-utils.h>
+#include "tomoe-dict-impl.h"
+#include "tomoe-candidate.h"
+#include "glib-utils.h"
 
 #define TOMOE_TYPE_DICT_XML            tomoe_type_dict_xml
 #define TOMOE_DICT_XML(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_DICT_XML, TomoeDictXML))
@@ -134,18 +135,18 @@ register_type (GTypeModule *type_module)
                                                        &info, 0);
 }
 
-void
+G_MODULE_EXPORT void
 TOMOE_DICT_IMPL_INIT (GTypeModule *type_module)
 {
     register_type (type_module);
 }
 
-void
+G_MODULE_EXPORT void
 TOMOE_DICT_IMPL_EXIT (void)
 {
 }
 
-TomoeDict *
+G_MODULE_EXPORT TomoeDict *
 TOMOE_DICT_IMPL_INSTANTIATE (const gchar *filename, gboolean editable)
 {
     TomoeDictXML *dict;
