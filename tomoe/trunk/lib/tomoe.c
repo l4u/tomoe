@@ -52,11 +52,6 @@ tomoe_quit (void)
 {
     if (initialized) {
         initialized = FALSE;
-#warning FIXME: those causes memory warnings
-#if 0
-        tomoe_dict_unload ();
-        tomoe_recognizer_unload ();
-#endif
     }
 }
 
