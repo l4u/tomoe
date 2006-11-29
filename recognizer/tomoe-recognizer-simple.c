@@ -21,6 +21,7 @@
  */
 
 #include <stdlib.h>
+#include <gmodule.h>
 
 #include <tomoe-recognizer-impl.h>
 #include "tomoe-recognizer-simple-logic.h"
@@ -90,24 +91,24 @@ register_type (GTypeModule *type_module)
                                      &info, 0);
 }
 
-void
+G_MODULE_EXPORT void
 TOMOE_RECOGNIZER_IMPL_INIT (GTypeModule *type_module)
 {
     register_type (type_module);
 }
 
-void
+G_MODULE_EXPORT void
 TOMOE_RECOGNIZER_IMPL_EXIT (void)
 {
 }
 
-TomoeRecognizer *
+G_MODULE_EXPORT TomoeRecognizer *
 TOMOE_RECOGNIZER_IMPL_INSTANTIATE (void)
 {
     return g_object_new (TOMOE_TYPE_RECOGNIZER_SIMPLE, NULL);
 }
 
-GList *
+static GList *
 search (TomoeRecognizer *recognizer, TomoeDict *dict, TomoeWriting *input)
 {
     return _tomoe_recognizer_simple_get_candidates (recognizer, dict, input);
