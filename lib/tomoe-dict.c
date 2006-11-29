@@ -27,6 +27,11 @@ G_DEFINE_ABSTRACT_TYPE (TomoeDict, tomoe_dict, G_TYPE_OBJECT)
 static void
 tomoe_dict_class_init (TomoeDictClass *klass)
 {
+    klass->get_name        = NULL;
+    klass->register_char   = NULL;
+    klass->unregister_char = NULL;
+    klass->get_char        = NULL;
+    klass->search          = NULL;
 }
 
 static void
