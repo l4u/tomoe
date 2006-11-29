@@ -192,6 +192,55 @@ tomoe_query_get_readings (TomoeQuery* query)
     return priv->readings;
 }
 
+const GList *
+tomoe_query_get_radicals (TomoeQuery *query)
+{
+    TomoeQueryPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_QUERY (query), NULL);
+
+    priv = TOMOE_QUERY_GET_PRIVATE (query);
+    return priv->radicals;
+}
+
+void
+tomoe_query_add_radical (TomoeQuery *query, TomoeChar *radical)
+{
+    TomoeQueryPrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_QUERY (query));
+
+    priv = TOMOE_QUERY_GET_PRIVATE (query);
+
+    priv->radicals = g_list_prepend (priv->radicals, g_object_ref (radical));
+}
+
+TomoeChar *
+tomoe_query_get_variant (TomoeQuery *query)
+{
+    TomoeQueryPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_QUERY (query), NULL);
+
+    priv = TOMOE_QUERY_GET_PRIVATE (query);
+
+    return priv->variant;
+}
+
+void
+tomoe_query_set_variant (TomoeQuery *query, TomoeChar *variant)
+{
+    TomoeQueryPrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_QUERY (query));
+
+    priv = TOMOE_QUERY_GET_PRIVATE (query);
+
+    if (priv->variant)
+        g_object_unref (G_OBJECT (priv->variant));
+    priv->variant = g_object_ref (variant);
+}
+
 void
 tomoe_query_set_min_n_strokes (TomoeQuery *query, gint n_strokes)
 {

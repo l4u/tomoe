@@ -1,3 +1,8 @@
+2006-11-29  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* lib/tomoe-query.c: Add implementation of setter/getter of radicals
+	and variant.
+
 2006-11-29  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-recognizer-impl.h, lib/tomoe-dict-impl.h,
