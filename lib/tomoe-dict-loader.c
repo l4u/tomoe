@@ -157,7 +157,7 @@ void
 tomoe_dict_loader_unload (void)
 {
     g_list_foreach (dicts, (GFunc) g_object_unref, NULL);
-    g_free (dicts); 
+    g_list_free (dicts); 
     dicts = NULL; 
 }
 
