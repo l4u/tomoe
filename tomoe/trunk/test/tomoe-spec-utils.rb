@@ -63,12 +63,16 @@ module TomoeSpecUtils
       File.join(base_dir, "data")
     end
 
+    def module_dir
+      File.join(top_dir, "module")
+    end
+
     def recognizer_dir
-      File.join(top_dir, "recognizer", ".libs")
+      File.join(module_dir, "recognizer", ".libs")
     end
 
     def dict_dir
-      File.join(top_dir, "dict", ".libs")
+      File.join(module_dir, "dict", ".libs")
     end
 
     def setup_context
