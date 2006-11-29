@@ -201,7 +201,6 @@ static GObject *
 constructor (GType type, guint n_props,
              GObjectConstructParam *props)
 {
-
     GObject *object;
     GObjectClass *klass = G_OBJECT_CLASS (parent_class);
     TomoeDictXML *dict;
