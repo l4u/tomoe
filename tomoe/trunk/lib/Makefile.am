@@ -31,20 +31,22 @@ AM_CPPFLAGS =							\
 
 INCLUDES = $(GLIB_CFLAGS)
 
-tomoe_public_h_sources =	\
-	tomoe.h			\
-	tomoe-candidate.h	\
-	tomoe-char.h		\
-	tomoe-context.h		\
-	tomoe-config.h		\
-	tomoe-dict.h		\
-	tomoe-dict-impl.h	\
-	tomoe-module.h		\
-	tomoe-query.h		\
-	tomoe-reading.h		\
-	tomoe-recognizer.h	\
-	tomoe-recognizer-impl.h	\
-	tomoe-shelf.h		\
+tomoe_public_h_sources =		\
+	tomoe.h				\
+	tomoe-candidate.h		\
+	tomoe-char.h			\
+	tomoe-context.h			\
+	tomoe-config.h			\
+	tomoe-dict.h			\
+	tomoe-dict-impl.h		\
+	tomoe-dict-loader.h		\
+	tomoe-module.h			\
+	tomoe-query.h			\
+	tomoe-reading.h			\
+	tomoe-recognizer.h		\
+	tomoe-recognizer-impl.h		\
+	tomoe-recognizer-loader.h	\
+	tomoe-shelf.h			\
 	tomoe-writing.h
 
 enum_source_prefix = tomoe-enum-types
