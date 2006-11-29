@@ -1,36 +1,34 @@
 #include "tomoe-rb.h"
 
 static VALUE
-trl_s_load(VALUE self, VALUE base_dir)
+tr_s_load(VALUE self, VALUE base_dir)
 {
-    tomoe_recognizer_loader_load(NIL_P(base_dir) ? NULL : RVAL2CSTR(base_dir));
+    tomoe_recognizer_load(NIL_P(base_dir) ? NULL : RVAL2CSTR(base_dir));
     return Qnil;
 }
 
 static VALUE
-trl_s_unload(VALUE self)
+tr_s_unload(VALUE self)
 {
-    tomoe_recognizer_loader_unload();
+    tomoe_recognizer_unload();
     return Qnil;
 }
 
 static VALUE
-trl_s_instantiate(VALUE self, VALUE name)
+tr_s_new(VALUE self, VALUE name)
 {
-    return GOBJ2RVAL(tomoe_recognizer_loader_instantiate(RVAL2CSTR(name)));
+    return GOBJ2RVAL(tomoe_recognizer_new(RVAL2CSTR(name), NULL));
 }
 
 void
 Init_tomoe_recognizer(VALUE mTomoe)
 {
-    VALUE cTomoeRecognizer, mTomoeRecognizerLoader;
+    VALUE cTomoeRecognizer;
 
     cTomoeRecognizer = G_DEF_CLASS(TOMOE_TYPE_RECOGNIZER, "Recognizer", mTomoe);
-    mTomoeRecognizerLoader = rb_define_module_under(mTomoe, "RecognizerLoader");
 
-    rb_define_module_function(mTomoeRecognizerLoader, "load", trl_s_load, 1);
-    rb_define_module_function(mTomoeRecognizerLoader, "unload",
-                              trl_s_unload, 0);
-    rb_define_module_function(mTomoeRecognizerLoader, "instantiate",
-                              trl_s_instantiate, 3);
+    rb_define_singleton_method(cTomoeRecognizer, "load", tr_s_load, 1);
+    rb_define_singleton_method(cTomoeRecognizer, "unload", tr_s_unload, 0);
+
+    rb_define_singleton_method(cTomoeRecognizer, "new", tr_s_new, 1);
 }

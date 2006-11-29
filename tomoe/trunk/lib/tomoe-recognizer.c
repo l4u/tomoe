@@ -23,7 +23,28 @@
 
 #include <stdlib.h>
 
+#include "tomoe-module.h"
 #include "tomoe-recognizer.h"
+
+static GList *recognizers = NULL;
+
+void
+tomoe_recognizer_load (const gchar *base_dir)
+{
+    if (!base_dir)
+        base_dir = RECOGNIZERDIR;
+
+    recognizers = g_list_concat (tomoe_module_load_modules (base_dir),
+                                 recognizers);
+}
+
+void
+tomoe_recognizer_unload (void)
+{
+    g_list_foreach (recognizers, (GFunc) g_object_unref, NULL);
+    g_list_free (recognizers);
+    recognizers = NULL;
+}
 
 G_DEFINE_ABSTRACT_TYPE (TomoeRecognizer, tomoe_recognizer, G_TYPE_OBJECT)
 
@@ -36,6 +57,20 @@ tomoe_recognizer_class_init (TomoeRecognizerClass *klass)
 static void
 tomoe_recognizer_init (TomoeRecognizer *recognizer)
 {
+}
+
+TomoeRecognizer *
+tomoe_recognizer_new (const gchar *name, const gchar *first_property, ...)
+{
+    GObject *recognizer;
+    va_list var_args;
+
+    va_start (var_args, first_property);
+    recognizer = tomoe_module_instantiate (recognizers, name,
+                                           first_property, var_args);
+    va_end (var_args);
+
+    return TOMOE_RECOGNIZER (recognizer);
 }
 
 GList *

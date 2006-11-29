@@ -1,3 +1,15 @@
+2006-11-29  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-module.[ch], lib/tomoe-recognizer-loader.[ch],
+	lib/tomoe-dict-loader.[ch], lib/tomoe-recognizer-impl.h,
+	lib/tomoe-dict-impl.h, lib/Makefile.am: removed loaders!
+	TomoeModule, works hard!
+	* lib/tomoe-config.c, lib/tomoe.[ch], lib/tomoe-context.c
+	lib/tomoe-dict.[ch], lib/tomoe-recognizer.[ch],
+	dict/tomoe-dict-xml.c, recognizer/tomoe-recognizer-simple.c,
+	ext/ruby/tomoe-rb-dict.c, ext/ruby/tomoe-rb-recognizer.c,
+	benchmark/load-dict.rb, test/dict_spec.rb: followed the changes.
+
 2006-11-29  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* lib/tomoe-query.c: Add implementation of setter/getter of radicals

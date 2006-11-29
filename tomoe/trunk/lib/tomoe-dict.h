@@ -71,6 +71,13 @@ struct _TomoeDictClass
 
 GType           tomoe_dict_get_type (void) G_GNUC_CONST;
 
+void            tomoe_dict_load        (const gchar *base_dir);
+void            tomoe_dict_unload      (void);
+
+TomoeDict      *tomoe_dict_new         (const gchar *name,
+                                        const gchar *first_property,
+                                        ...);
+
 /**
  * @brief Get the dictionary name.
  * @param dict - Pointer to the TomoeDict object.

@@ -21,6 +21,26 @@
  */
 
 #include "tomoe-dict.h"
+#include "tomoe-module.h"
+
+static GList *dicts = NULL;
+
+void
+tomoe_dict_load (const gchar *base_dir)
+{
+    if (!base_dir)
+        base_dir = DICTDIR;
+
+    dicts = g_list_concat (tomoe_module_load_modules (base_dir), dicts);
+}
+
+void
+tomoe_dict_unload (void)
+{
+    g_list_foreach (dicts, (GFunc) g_object_unref, NULL);
+    g_list_free (dicts);
+    dicts = NULL;
+}
 
 G_DEFINE_ABSTRACT_TYPE (TomoeDict, tomoe_dict, G_TYPE_OBJECT)
 
@@ -37,6 +57,19 @@ tomoe_dict_class_init (TomoeDictClass *klass)
 static void
 tomoe_dict_init (TomoeDict *dict)
 {
+}
+
+TomoeDict *
+tomoe_dict_new (const gchar *name, const gchar *first_property, ...)
+{
+    GObject *dict;
+    va_list var_args;
+
+    va_start (var_args, first_property);
+    dict = tomoe_module_instantiate (dicts, name, first_property, var_args);
+    va_end (var_args);
+
+    return TOMOE_DICT (dict);
 }
 
 const gchar *

@@ -24,22 +24,38 @@
 #define __TOMOE_MODULE_H__
 
 #include <glib-object.h>
-#include <gmodule.h>
 
 G_BEGIN_DECLS
 
-typedef gpointer (*TomoeModuleInstantiateFunc) (const gchar *mod_path);
+#define TOMOE_TYPE_MODULE            (tomoe_module_get_type ())
+#define TOMOE_MODULE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_MODULE, TomoeModule))
+#define TOMOE_MODULE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_MODULE, TomoeModuleClass))
+#define TOMOE_IS_MODULE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TOMOE_TYPE_MODULE))
+#define TOMOE_IS_MODULE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_MODULE))
+#define TOMOE_MODULE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_MODULE, TomoeModuleClass))
 
-void      tomoe_module_show_error   (GModule     *module);
-GModule  *tomoe_module_open         (const gchar *mod_path);
-void      tomoe_module_close        (GModule     *module);
-gboolean  tomoe_module_load_func    (GModule     *module,
-                                     const gchar *func_name,
-                                     gpointer    *symbol);
-GList    *tomoe_module_load_modules (const gchar *base_dir,
-                                     TomoeModuleInstantiateFunc instantiate);
-gboolean  tomoe_module_match_name   (GModule     *module,
-                                     const gchar *name);
+typedef struct _TomoeModule TomoeModule;
+typedef struct _TomoeModuleClass TomoeModuleClass;
+
+struct _TomoeModule
+{
+    GTypeModule object;
+};
+
+struct _TomoeModuleClass
+{
+    GTypeModuleClass parent_class;
+};
+
+GType     tomoe_module_get_type (void) G_GNUC_CONST;
+
+
+GList    *tomoe_module_load_modules (const gchar *base_dir);
+
+GObject  *tomoe_module_instantiate  (GList       *modules,
+                                     const gchar *name,
+                                     const gchar *first_property,
+                                     va_list      var_args);
 
 G_END_DECLS
 
