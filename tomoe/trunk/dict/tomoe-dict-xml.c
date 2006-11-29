@@ -125,22 +125,20 @@ class_init (TomoeDictXMLClass *klass)
     g_object_class_install_property (
         gobject_class,
         PROP_FILENAME,
-        g_param_spec_object (
-            "character",
-            "Character",
-            "A tomoe character object",
-            TOMOE_TYPE_CHAR,
+        g_param_spec_string (
+            "filename",
+            "Filename",
+            "The filename of xml file",
+            NULL,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
     g_object_class_install_property(
         gobject_class,
         PROP_EDITABLE,
-        g_param_spec_uint(
-            "score",
-            "Score",
-            "Score of this candidate. Lower value has higher priority.",
-            0,
-            G_MAXINT,
-            0,
+        g_param_spec_boolean(
+            "editable",
+            "Editable",
+            "Editable flag",
+            TRUE,
             G_PARAM_READWRITE));
 }
 
