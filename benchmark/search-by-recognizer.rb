@@ -24,7 +24,7 @@ Benchmark.bmbm do |x|
     x.report(base) do
       failed = false
       n.times do
-	actual = context.search(query).collect {|cand| cand.character.utf8}
+	actual = context.search(query).collect {|cand| cand.char.utf8}
         failed = true if actual != expected
       end
       p "search result doesn't match #{base}" if failed

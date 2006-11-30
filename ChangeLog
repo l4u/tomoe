@@ -4,6 +4,7 @@
 	"character".
 	* ext/ruby/tomoe-rb-candidate.rb, test/context_spec.rb: followed
 	the changes.
+	* benchmark/search-by-recognizer.rb: followed the changes.
 
 	* benchmark/load-dict.rb: followed the changes.
 
