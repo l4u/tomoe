@@ -1,5 +1,8 @@
 2006-11-30  Kouhei Sutou  <kou@cozmixng.org>
 
+	* utils/dictionary.rb, utils/gtk2dictview.rb,
+	utils/makexmldict.rb: removed needless files.
+
 	* lib/tomoe-reading.[ch]: added tomoe_reading_to_xml().
 	* ext/ruby/tomoe-rb-reading.c: added Tomoe::Reading#to_xml.
 	* lib/tomoe-char.c (tomoe_char_to_xml_readings),
