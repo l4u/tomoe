@@ -1,5 +1,14 @@
 2006-11-30  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/tomoe-dict-est.c, module/dict/Makefile.am,
+	configure.in: added Hyper Estraier dictionary backend.
+	* ext/ruby/tomoe-rb-dict.c: supported Hyper Estraier dictionary.
+	* test/tomoe-spec-utils.rb, test/dict_spec.rb: added test for
+	Hyper Estraier backend.
+
+	* module/dict-tomoe-dict-xml.c,
+	module/recognizer/tomoe-recognizer-simple.c: cleanup.
+
 	* lib/tomoe-module.c: checked whether mod_path exists or not.
 
 	* ext/ruby/tomoe-rb-char.c: added Tomoe::Char#<=> and made

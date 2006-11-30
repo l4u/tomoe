@@ -133,6 +133,15 @@ AM_PATH_GLIB_2_0(2.4.0, [], [], [gmodule gobject])
 AC_PATH_PROG(GLIB_MKENUMS, glib-mkenums)
 
 dnl **************************************************************
+dnl Check for Hyper Estraier.
+dnl **************************************************************
+
+est_exists=no
+PKG_CHECK_MODULES(EST, hyperestraier,
+                  [est_exists=yes], [est_exists=no])
+AM_CONDITIONAL([WITH_EST], [test "$est_exists" = "yes"])
+
+dnl **************************************************************
 dnl Configure for recognizers.
 dnl **************************************************************
 recognizerdir="${libdir}/\$(PACKAGE)/recognizer"

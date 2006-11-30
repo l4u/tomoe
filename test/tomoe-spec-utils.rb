@@ -1,4 +1,5 @@
 require 'tempfile'
+require 'fileutils'
 
 require 'tomoe'
 
@@ -59,6 +60,10 @@ module TomoeSpecUtils
       File.expand_path(File.dirname(__FILE__))
     end
 
+    def tmp_dir
+      File.join(base_dir, "tmp")
+    end
+
     def top_dir
       File.expand_path(File.join(base_dir, ".."))
     end
@@ -86,10 +91,12 @@ module TomoeSpecUtils
     def setup_context
       super
       @config_file = make_config_file
+      FileUtils.mkdir_p(tmp_dir)
     end
 
     def teardown_context
       super
+      FileUtils.rm_rf(tmp_dir)
     end
 
     def dictionaries

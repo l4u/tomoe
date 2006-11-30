@@ -25,18 +25,21 @@ AM_CPPFLAGS =							\
 	-DSYSCONFDIR=\""$(sysconfdir)"\"			\
 	-DDATADIR=\""$(datadir)"\"				\
 	-DTOMOESYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\"	\
-	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"		\
-	-I$(top_srcdir)/lib
+	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"
 
-INCLUDES = $(GLIB_CFLAGS)
-
-dict_LTLIBRARIES = libxml.la
-
-libxml_la_SOURCES = \
-	tomoe-dict-xml.c
-
-libxml_la_LDFLAGS =						\
+INCLUDES = -I$(top_srcdir)/lib $(GLIB_CFLAGS) $(EST_CFLAGS)
+LIBADD = $(GLIB_LIBS)
+LDFLAGS =							\
   -version-info $(LT_VERSION_INFO)				\
   -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)
 
-libxml_la_LIBADD = $(GLIB_LIBS)
+dict_LTLIBRARIES = libxml.la
+
+libxml_la_SOURCES = tomoe-dict-xml.c
+
+if WITH_EST
+dict_LTLIBRARIES += libest.la
+
+libest_la_SOURCES = tomoe-dict-est.c
+libest_la_LIBADD = $(EST_LIBS)
+endif
