@@ -1,0 +1,141 @@
+<!-- ##### SECTION Title ##### -->
+TomoeQuery
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT TomoeQuery ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION tomoe_query_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_query_add_reading ##### -->
+<para>
+
+</para>
+
+@query: 
+@reading: 
+
+
+<!-- ##### FUNCTION tomoe_query_get_readings ##### -->
+<para>
+
+</para>
+
+@query: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_query_add_radical ##### -->
+<para>
+
+</para>
+
+@query: 
+@chr: 
+
+
+<!-- ##### FUNCTION tomoe_query_get_radicals ##### -->
+<para>
+
+</para>
+
+@query: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_query_set_variant ##### -->
+<para>
+
+</para>
+
+@query: 
+@chr: 
+
+
+<!-- ##### FUNCTION tomoe_query_get_variant ##### -->
+<para>
+
+</para>
+
+@query: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_query_set_min_n_strokes ##### -->
+<para>
+
+</para>
+
+@query: 
+@n_strokes: 
+
+
+<!-- ##### FUNCTION tomoe_query_get_min_n_strokes ##### -->
+<para>
+
+</para>
+
+@query: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_query_set_max_n_strokes ##### -->
+<para>
+
+</para>
+
+@query: 
+@n_strokes: 
+
+
+<!-- ##### FUNCTION tomoe_query_get_max_n_strokes ##### -->
+<para>
+
+</para>
+
+@query: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_query_set_writing ##### -->
+<para>
+
+</para>
+
+@query: 
+@writing: 
+
+
+<!-- ##### FUNCTION tomoe_query_get_writing ##### -->
+<para>
+
+</para>
+
+@query: 
+@Returns: 
+
+

@@ -1,0 +1,47 @@
+<!-- ##### SECTION Title ##### -->
+TomoeRecognizer
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT TomoeRecognizer ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION tomoe_recognizer_new ##### -->
+<para>
+
+</para>
+
+@name: 
+@first_property: 
+@Varargs: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_recognizer_search ##### -->
+<para>
+
+</para>
+
+@recognizer: 
+@dict: 
+@input: 
+@Returns: 
+
+

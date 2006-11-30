@@ -1,0 +1,81 @@
+<!-- ##### SECTION Title ##### -->
+TomoeShelf
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT TomoeShelf ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION tomoe_shelf_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_shelf_add_dict ##### -->
+<para>
+
+</para>
+
+@shelf: 
+@dict: 
+
+
+<!-- ##### FUNCTION tomoe_shelf_get_dict ##### -->
+<para>
+
+</para>
+
+@shelf: 
+@name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_shelf_remove_dict ##### -->
+<para>
+
+</para>
+
+@shelf: 
+@name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_shelf_get_dict_names ##### -->
+<para>
+
+</para>
+
+@shelf: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_shelf_has_dict ##### -->
+<para>
+
+</para>
+
+@shelf: 
+@name: 
+@Returns: 
+
+
