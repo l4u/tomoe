@@ -72,14 +72,23 @@ tc_to_xml(VALUE self)
     }
 }
 
+static VALUE
+tc_compare(VALUE self, VALUE other)
+{
+    return INT2NUM(tomoe_char_compare(_SELF(self), RVAL2TCHR(other)));
+}
+
 void
 Init_tomoe_char(VALUE mTomoe)
 {
     VALUE cTomoeChar;
 
     cTomoeChar = G_DEF_CLASS(TOMOE_TYPE_CHAR, "Char", mTomoe);
+    rb_include_module(cTomoeChar, rb_mComparable);
 
     rb_define_method(cTomoeChar, "initialize", tc_initialize, -1);
+
+    rb_define_method(cTomoeChar, "<=>", tc_compare, 1);
 
     rb_define_method(cTomoeChar, "readings", tc_get_readings, 0);
     rb_define_method(cTomoeChar, "add_reading", tc_add_reading, 1);

@@ -86,4 +86,12 @@ context "Tomoe::Char" do
     char.add_radical(radical2)
     char.radicals.sort.should == [radical1, radical2].sort
   end
+
+  specify "should be comparable" do
+    char1 = Tomoe::Char.new
+    char1.utf8 = "あ"
+    char2 = Tomoe::Char.new
+    char2.utf8 = "あ"
+    char1.should == char2
+  end
 end
