@@ -79,7 +79,9 @@ libtomoe_la_SOURCES =		\
 	tomoe-reading.c		\
 	tomoe-recognizer.c	\
 	tomoe-shelf.c		\
-	tomoe-writing.c
+	tomoe-writing.c         \
+	tomoe-xml-parser.c	\
+	tomoe-xml-parser.h
 
 libtomoe_la_LDFLAGS =						\
   -version-info $(LT_VERSION_INFO)				\

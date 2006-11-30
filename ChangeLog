@@ -1,3 +1,14 @@
+2006-11-30  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-xml-parser.[ch], lib/Makefile.am: split XML parsing
+	related functions from tomoe-dict-xml.[ch].
+	* module/dict/tomoe-dict-xml.c: used
+	_tomoe_xml_parser_parse_dictionary_file().
+	* lib/tomoe-char.[ch]: added tomoe_char_new_from_xml_data().
+	* ext/ruby/tomoe-rb-char.c: followed the changes.
+	* test/char_spec.rb: added test for dumping to XML and loading
+	from XML.
+
 2006-11-29  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-context.h: removed needless function.
