@@ -65,6 +65,12 @@ td_unregister_char(VALUE self, VALUE utf8)
     return CBOOL2RVAL(tomoe_dict_unregister_char(_SELF(self), RVAL2CSTR(utf8)));
 }
 
+static VALUE
+td_flush(VALUE self)
+{
+    return CBOOL2RVAL(tomoe_dict_flush(_SELF(self)));
+}
+
 void
 Init_tomoe_dict(VALUE mTomoe)
 {
@@ -80,4 +86,6 @@ Init_tomoe_dict(VALUE mTomoe)
     rb_define_method(cTomoeDict, "[]", td_get_char, 1);
     rb_define_method(cTomoeDict, "register", td_register_char, 1);
     rb_define_method(cTomoeDict, "unregister", td_unregister_char, 1);
+
+    rb_define_method(cTomoeDict, "flush", td_flush, 0);
 }

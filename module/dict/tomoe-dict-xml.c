@@ -97,8 +97,9 @@ static TomoeChar    *get_char                 (TomoeDict     *dict,
                                                const gchar   *utf8);
 static GList        *search                   (TomoeDict     *dict,
                                                TomoeQuery    *query);
+static gboolean      flush                    (TomoeDict     *dict);
 static gboolean      tomoe_dict_xml_load      (TomoeDictXML  *dict);
-static void          tomoe_dict_xml_save      (TomoeDictXML  *dict);
+static gboolean      tomoe_dict_xml_save      (TomoeDictXML  *dict);
 static gint          letter_compare_func      (gconstpointer  a,
                                                gconstpointer  b);
 
@@ -123,7 +124,8 @@ class_init (TomoeDictXMLClass *klass)
     dict_class->unregister_char = unregister_char;
     dict_class->get_char        = get_char;
     dict_class->search          = search;
-    
+    dict_class->flush           = flush;
+
     g_object_class_install_property (
         gobject_class,
         PROP_FILENAME,
@@ -259,10 +261,7 @@ dispose (GObject *object)
 
     dict = TOMOE_DICT_XML(object);
 
-    if (dict->editable && dict->modified) {
-        dict->modified = FALSE;
-        tomoe_dict_xml_save (dict);
-    }
+    flush (TOMOE_DICT (dict));
 
     if (dict->name)
         g_free (dict->name);
@@ -439,6 +438,19 @@ search (TomoeDict *_dict, TomoeQuery *query)
     return search_context.results;
 }
 
+static gboolean
+flush (TomoeDict *_dict)
+{
+    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
+
+    if (dict->editable && dict->modified) {
+        dict->modified = FALSE;
+        return tomoe_dict_xml_save (dict);
+    } else {
+        return TRUE;
+    }
+}
+
 static gint
 letter_compare_func (gconstpointer a, gconstpointer b)
 {
@@ -466,7 +478,7 @@ tomoe_dict_xml_load (TomoeDictXML *dict)
     return success;
 }
 
-static void
+static gboolean
 tomoe_dict_xml_save (TomoeDictXML *dict)
 {
     FILE *f;
@@ -474,11 +486,11 @@ tomoe_dict_xml_save (TomoeDictXML *dict)
     const gchar *foot = "</dictionary>\n";
     guint i;
 
-    g_return_if_fail (TOMOE_IS_DICT (dict));
-    if (!dict->editable) return;
+    g_return_val_if_fail (TOMOE_IS_DICT (dict), FALSE);
+    if (!dict->editable) return FALSE;
 
     f = fopen (dict->filename, "wb");
-    g_return_if_fail (f);
+    g_return_val_if_fail (f, FALSE);
 
     /* write the header */
     head = g_strdup (
@@ -515,13 +527,13 @@ tomoe_dict_xml_save (TomoeDictXML *dict)
     g_free (head);
     fclose (f);
     dict->modified = FALSE;
-    return;
+    return TRUE;
 
 ERROR:
     g_free (head);
     g_warning ("Faild to write %s.", dict->filename);
     fclose (f);
-    return;
+    return FALSE;
 }
 
 /*
