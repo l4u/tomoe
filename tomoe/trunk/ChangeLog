@@ -1,5 +1,7 @@
 2006-11-30  Kouhei Sutou  <kou@cozmixng.org>
 
+	* utils/xml2est.rb: added converter for Hyper Estraier backend.
+
 	* utils/dictionary.rb, utils/gtk2dictview.rb,
 	utils/makexmldict.rb: removed needless files.
 
