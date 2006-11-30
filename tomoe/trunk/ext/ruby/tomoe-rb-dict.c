@@ -78,6 +78,6 @@ Init_tomoe_dict(VALUE mTomoe)
     rb_define_singleton_method(cTomoeDict, "new", td_s_new, 2);
 
     rb_define_method(cTomoeDict, "[]", td_get_char, 1);
-    rb_define_method(cTomoeDict, "register_char", td_register_char, 1);
-    rb_define_method(cTomoeDict, "unregister_char", td_unregister_char, 1);
+    rb_define_method(cTomoeDict, "register", td_register_char, 1);
+    rb_define_method(cTomoeDict, "unregister", td_unregister_char, 1);
 }
