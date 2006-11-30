@@ -1,8 +1,11 @@
 2006-11-30  Kouhei Sutou  <kou@cozmixng.org>
 
+	* ext/ruby/tomoe-rb-dict.rb: removed _char suffix.
+
 	* module/dict/tomoe-dict-est.c, module/dict/Makefile.am,
 	configure.in: added Hyper Estraier dictionary backend.
 	* ext/ruby/tomoe-rb-dict.c: supported Hyper Estraier dictionary.
+
 	* test/tomoe-spec-utils.rb, test/dict_spec.rb: added test for
 	Hyper Estraier backend.
 
