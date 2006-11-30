@@ -25,7 +25,7 @@
 
 enum {
     PROP_0,
-    PROP_CHARACTER,
+    PROP_CHAR,
     PROP_SCORE
 };
 
@@ -63,11 +63,11 @@ tomoe_candidate_class_init (TomoeCandidateClass *klass)
 
     g_object_class_install_property (
         gobject_class,
-        PROP_CHARACTER,
+        PROP_CHAR,
         g_param_spec_object (
-            "character",
+            "char",
             "Character",
-            "A tomoe character object",
+            "A TomoeChar object",
             TOMOE_TYPE_CHAR,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
     g_object_class_install_property(
@@ -117,7 +117,7 @@ tomoe_candidate_set_property (GObject *object,
     TomoeCandidatePrivate *priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
 
     switch (prop_id) {
-    case PROP_CHARACTER:
+    case PROP_CHAR:
     {
         GObject *obj = g_value_get_object (value);
         priv->character = TOMOE_CHAR (g_object_ref (obj));
@@ -143,7 +143,7 @@ tomoe_candidate_get_property (GObject *object,
     TomoeCandidatePrivate *priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
 
     switch (prop_id) {
-    case PROP_CHARACTER:
+    case PROP_CHAR:
         g_value_set_object (value, G_OBJECT (priv->character));
         break;
     case PROP_SCORE:
@@ -161,7 +161,7 @@ tomoe_candidate_new (TomoeChar *chr)
     TomoeCandidate *cand;
 
     cand = g_object_new(TOMOE_TYPE_CANDIDATE,
-                        "character", chr,
+                        "char", chr,
                         NULL);
 
     return cand;

@@ -1,5 +1,10 @@
 2006-11-30  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-candidate.c: renamed property name to "char" from
+	"character".
+	* ext/ruby/tomoe-rb-candidate.rb, test/context_spec.rb: followed
+	the changes.
+
 	* benchmark/load-dict.rb: followed the changes.
 
 	* lib/tomoe-dict.[ch], module/dict/tomoe-dict-est.c,

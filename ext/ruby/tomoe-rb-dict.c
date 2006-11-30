@@ -66,6 +66,12 @@ td_unregister_char(VALUE self, VALUE utf8)
 }
 
 static VALUE
+td_search(VALUE self, VALUE query)
+{
+    return GLIST2ARYF(tomoe_dict_search(_SELF(self), RVAL2TQRY(query)));
+}
+
+static VALUE
 td_flush(VALUE self)
 {
     return CBOOL2RVAL(tomoe_dict_flush(_SELF(self)));
@@ -86,6 +92,8 @@ Init_tomoe_dict(VALUE mTomoe)
     rb_define_method(cTomoeDict, "[]", td_get_char, 1);
     rb_define_method(cTomoeDict, "register", td_register_char, 1);
     rb_define_method(cTomoeDict, "unregister", td_unregister_char, 1);
+
+    rb_define_method(cTomoeDict, "search", td_search, 1);
 
     rb_define_method(cTomoeDict, "flush", td_flush, 0);
 }
