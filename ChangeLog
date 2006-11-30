@@ -1,5 +1,7 @@
 2006-11-30  Kouhei Sutou  <kou@cozmixng.org>
 
+	* benchmark/load-dict.rb: followed the changes.
+
 	* lib/tomoe-dict.[ch], module/dict/tomoe-dict-est.c,
 	module/dict/tomoe-dict-xml.c, ext/ruby/tomoe-rb-dict.rb:
 	implemented tomoe_dict_flush().

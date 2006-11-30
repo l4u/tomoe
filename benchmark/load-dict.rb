@@ -13,7 +13,9 @@ n = 10
 Benchmark.bmbm do |x|
   TomoeSpecUtils::Config.dictionaries.sort.each do |dictionary|
     x.report(File.basename(dictionary)) do
-      n.times {Tomoe::Dict.new("xml", dictionary, false)}
+      n.times {Tomoe::Dict.new("xml",
+                               "filename" => dictionary,
+                               "editable" => false)}
     end
     GC.start
   end
