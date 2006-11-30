@@ -3,6 +3,24 @@
 #define _SELF(obj) RVAL2TCHR(obj)
 
 static VALUE
+tc_initialize(int argc, VALUE *argv, VALUE self)
+{
+    VALUE xml;
+    TomoeChar *chr;
+
+    rb_scan_args (argc, argv, "01", &xml);
+
+    if (NIL_P(xml)) {
+        chr = tomoe_char_new();
+    } else {
+        chr = tomoe_char_new_from_xml_data(RVAL2CSTR(xml), RSTRING(xml)->len);
+    }
+
+    G_INITIALIZE(self, chr);
+    return Qnil;
+}
+
+static VALUE
 tc_get_readings(VALUE self)
 {
     return GLIST2ARY((GList *)tomoe_char_get_readings(_SELF(self)));
@@ -51,6 +69,8 @@ Init_tomoe_char(VALUE mTomoe)
     VALUE cTomoeChar;
 
     cTomoeChar = G_DEF_CLASS(TOMOE_TYPE_CHAR, "Char", mTomoe);
+
+    rb_define_method(cTomoeChar, "initialize", tc_initialize, -1);
 
     rb_define_method(cTomoeChar, "readings", tc_get_readings, 0);
     rb_define_method(cTomoeChar, "add_reading", tc_add_reading, 1);

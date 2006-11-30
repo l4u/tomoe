@@ -28,6 +28,7 @@
 
 #include "tomoe-char.h"
 #include "tomoe-dict.h"
+#include "tomoe-xml-parser.h"
 #include "glib-utils.h"
 
 #define TOMOE_CHAR_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_CHAR, TomoeCharPrivate))
@@ -126,6 +127,12 @@ TomoeChar*
 tomoe_char_new (void)
 {
     return g_object_new(TOMOE_TYPE_CHAR, NULL);
+}
+
+TomoeChar*
+tomoe_char_new_from_xml_data (const gchar *data, gssize len)
+{
+    return _tomoe_xml_parser_parse_char_data (data, len);
 }
 
 static void

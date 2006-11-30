@@ -15,6 +15,13 @@ context "Tomoe::Char" do
     char.to_xml.should == xml
   end
 
+  specify "should load from dumped XML" do
+    char = Tomoe::Char.new
+    char.utf8 = "あ"
+    new_char = Tomoe::Char.new(char.to_xml)
+    new_char.utf8.should == char.utf8
+  end
+
   specify "should set/get n_strokes" do
     char = Tomoe::Char.new
     char.n_strokes.should == -1
