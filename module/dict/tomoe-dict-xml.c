@@ -56,7 +56,7 @@ struct _TomoeDictXML
 {
     TomoeDict            object;
     gchar               *filename;
-    gchar               *name;
+    gchar               *dict_name;
     GPtrArray           *chars;
 
     gboolean             editable;
@@ -148,7 +148,7 @@ static void
 init (TomoeDictXML *dict)
 {
     dict->filename = NULL;
-    dict->name     = NULL;
+    dict->dict_name = NULL;
     dict->chars    = g_ptr_array_new();
     dict->modified = FALSE;
     dict->editable = FALSE;
@@ -269,14 +269,14 @@ dispose (GObject *object)
         tomoe_dict_xml_save (dict);
     }
 
-    if (dict->name)
-        g_free (dict->name);
+    if (dict->dict_name)
+        g_free (dict->dict_name);
     if (dict->filename)
         g_free (dict->filename);
     if (dict->chars)
         TOMOE_PTR_ARRAY_FREE_ALL(dict->chars, g_object_unref);
 
-    dict->name     = NULL;
+    dict->dict_name = NULL;
     dict->filename = NULL;
     dict->chars    = NULL;
 
@@ -288,7 +288,7 @@ get_name (TomoeDict *_dict)
 {
     TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
     g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), NULL);
-    return dict->name;
+    return dict->dict_name;
 }
 
 static gboolean
@@ -462,8 +462,8 @@ tomoe_dict_xml_load (TomoeDictXML *dict)
     result.chars = dict->chars;
     success = _tomoe_xml_parser_parse_dictionary_file (dict->filename, &result);
     if (result.name) {
-        g_free (dict->name);
-        dict->name = g_strdup (result.name);
+        g_free (dict->dict_name);
+        dict->dict_name = g_strdup (result.name);
         g_free (result.name);
     }
     g_ptr_array_sort (dict->chars, letter_compare_func);
@@ -492,9 +492,9 @@ tomoe_dict_xml_save (TomoeDictXML *dict)
     if (fwrite (head, strlen (head), 1, f) < 1) goto ERROR;
     g_free (head);
 
-    if (dict->name)
+    if (dict->dict_name)
         head = g_markup_printf_escaped ("<dictionary name=\"%s\">\n",
-                                        dict->name);
+                                        dict->dict_name);
     else
         head = g_strdup ("<dictionary>\n");
     if (fwrite (head, strlen (head), 1, f) < 1) goto ERROR;
