@@ -19,7 +19,8 @@ TomoeShelf
 
 <!-- ##### STRUCT TomoeShelf ##### -->
 <para>
-
+The #TomoeShelf struct contains only
+private fields and should not be directly accessed.
 </para>
 
 

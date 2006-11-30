@@ -19,7 +19,8 @@ TomoeReading
 
 <!-- ##### STRUCT TomoeReading ##### -->
 <para>
-
+The #TomoeReading struct contains only
+private fields and should not be directly accessed.
 </para>
 
 
