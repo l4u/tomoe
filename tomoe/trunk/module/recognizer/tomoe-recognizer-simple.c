@@ -104,14 +104,10 @@ TOMOE_MODULE_IMPL_EXIT (void)
 }
 
 G_MODULE_EXPORT GObject *
-TOMOE_MODULE_IMPL_INSTANTIATE (const gchar *first_property, va_list args)
+TOMOE_MODULE_IMPL_INSTANTIATE (const gchar *first_property, va_list var_args)
 {
-    GObject *object;
-
-    object = g_object_new_valist (TOMOE_TYPE_RECOGNIZER_SIMPLE,
-                                  first_property, args);
-
-    return object;
+    return g_object_new_valist (TOMOE_TYPE_RECOGNIZER_SIMPLE,
+                                first_property, var_args);
 }
 
 static GList *

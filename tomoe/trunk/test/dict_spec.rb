@@ -1,14 +1,34 @@
 require 'tomoe-spec-utils'
 
-context "Tomoe::Context" do
+context "Tomoe::Dict" do
   setup do
     setup_dict_file
+    setup_est_draft_file
   end
 
-  specify "should load" do
-    dict = Tomoe::Dict.new("xml", @dict_file.path, true)
+  specify "should load XML dictionary" do
+    dict = Tomoe::Dict.new("xml",
+                           "filename" => @dict_file.path,
+                           "editable" => true)
     a = dict[@utf8]
     a.writing.strokes.should == @strokes
+  end
+
+  specify "should make Hyper Estraier dictionary" do
+    begin
+      est_db = File.join(tmp_dir, "est")
+
+      `estcmd create #{est_db.dump}`
+      `estcmd put #{est_db.dump} #{@est_draft_file.path.dump}`
+
+      dict = Tomoe::Dict.new("est",
+                             "database_name" => est_db,
+                             "editable" => true)
+      a = dict[@utf8]
+      a.writing.strokes.should == @strokes
+    ensure
+      FileUtils.rm_rf(est_db)
+    end
   end
 
   def setup_strokes
@@ -37,7 +57,7 @@ context "Tomoe::Context" do
   end
 
   def setup_dict_file
-    @dict_file = Tempfile.new("tomoe-dict")
+    @dict_file = Tempfile.new("tomoe-dict-xml")
     @utf8 = "あ"
 
     setup_strokes
@@ -51,39 +71,54 @@ context "Tomoe::Context" do
     end
     strokes_xml << "    </strokes>"
 
-    @dict_content = <<-EOX
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE dictionary SYSTEM "tomoe-dict.dtd">
-<dictionary>
+    @character_xml = <<-EOC
   <character>
     <utf8>#{@utf8}</utf8>
 #{strokes_xml}
   </character>
+EOC
+
+    @dict_content = <<-EOX
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE dictionary SYSTEM "tomoe-dict.dtd">
+<dictionary>
+#{@character_xml}
 </dictionary>
 EOX
-    set_content(@dict_content)
+    set_content(@dict_file, @dict_content)
   end
 
-  def set_content(content)
-    @dict_file.open
-    @dict_file.truncate(0)
-    @dict_file.rewind
-    @dict_file.print(content)
-    @dict_file.close
+  def setup_est_draft_file
+    @est_draft_file = Tempfile.new("tomoe-dict-est-draft")
+    @est_draft_content = <<-EOC
+@uri=font:#{@utf8}
+utf8=#{@utf8}
 
-    @dict_file.open
-    @dict_file.read.should == content
-    @dict_file.close
+#{@character_xml.collect {|line| "\t#{line}"}}
+EOC
+    set_content(@est_draft_file, @est_draft_content)
   end
 
-  def truncate_content
-    set_content("")
+  def set_content(file, content)
+    file.open
+    file.truncate(0)
+    file.rewind
+    file.print(content)
+    file.close
+
+    file.open
+    file.read.should == content
+    file.close
   end
 
-  def content
-    @dict_file.open
-    @dict_file.read
+  def truncate_content(file)
+    file.set_content("")
+  end
+
+  def content(file)
+    file.open
+    file.read
   ensure
-    @dict_file.close
+    file.close
   end
 end
