@@ -223,7 +223,8 @@ _tomoe_module_load (const gchar *base_dir, const gchar *name)
     TomoeModule *module = NULL;
 
     mod_path = g_module_build_path (base_dir, name);
-    if (g_str_has_suffix (mod_path, G_MODULE_SUFFIX)) {
+    if (g_str_has_suffix (mod_path, G_MODULE_SUFFIX) &&
+        g_file_test (mod_path, G_FILE_TEST_EXISTS)) {
         TomoeModulePrivate *priv;
         module = g_object_new (TOMOE_TYPE_MODULE, NULL);
         priv = TOMOE_MODULE_GET_PRIVATE (module);
