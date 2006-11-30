@@ -19,7 +19,8 @@ TomoeQuery
 
 <!-- ##### STRUCT TomoeQuery ##### -->
 <para>
-
+The #TomoeQuery struct contains only
+private fields and should not be directly accessed.
 </para>
 
 

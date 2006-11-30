@@ -19,7 +19,8 @@ TomoeChar
 
 <!-- ##### STRUCT TomoeChar ##### -->
 <para>
-
+The #TomoeChar struct contains only
+private fields and should not be directly accessed.
 </para>
 
 
