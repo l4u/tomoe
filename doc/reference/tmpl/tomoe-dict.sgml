@@ -1,0 +1,85 @@
+<!-- ##### SECTION Title ##### -->
+TomoeDict
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT TomoeDict ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION tomoe_dict_new ##### -->
+<para>
+
+</para>
+
+@name: 
+@first_property: 
+@Varargs: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_dict_get_name ##### -->
+<para>
+
+</para>
+
+@dict: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_dict_register_char ##### -->
+<para>
+
+</para>
+
+@dict: 
+@chr: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_dict_unregister_char ##### -->
+<para>
+
+</para>
+
+@dict: 
+@utf8: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_dict_get_char ##### -->
+<para>
+
+</para>
+
+@dict: 
+@utf8: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_dict_search ##### -->
+<para>
+
+</para>
+
+@dict: 
+@query: 
+@Returns: 
+
+

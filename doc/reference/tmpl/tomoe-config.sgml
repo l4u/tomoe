@@ -1,0 +1,65 @@
+<!-- ##### SECTION Title ##### -->
+TomoeConfig
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT TomoeConfig ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG TomoeConfig:filename ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION tomoe_config_new ##### -->
+<para>
+
+</para>
+
+@config_file: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_config_load ##### -->
+<para>
+
+</para>
+
+@config: 
+
+
+<!-- ##### FUNCTION tomoe_config_get_filename ##### -->
+<para>
+
+</para>
+
+@config: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_config_make_shelf ##### -->
+<para>
+
+</para>
+
+@config: 
+@Returns: 
+
+
