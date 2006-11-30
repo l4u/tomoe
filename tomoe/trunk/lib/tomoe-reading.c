@@ -191,6 +191,42 @@ tomoe_reading_get_reading (TomoeReading* reading)
     return priv->reading;
 }
 
+gchar *
+tomoe_reading_to_xml (TomoeReading *reading)
+{
+    TomoeReadingPrivate *priv;
+    gchar *format, *type_name;
+
+    g_return_val_if_fail (TOMOE_IS_READING (reading), NULL);
+
+    priv = TOMOE_READING_GET_PRIVATE (reading);
+
+    type_name = NULL;
+    if (priv->type == TOMOE_READING_INVALID)
+        format = "      <reading>%s</reading>\n";
+    else
+        format = "      <reading type=\"%s\">%s</reading>\n";
+
+    switch (priv->type) {
+      case TOMOE_READING_INVALID:
+        break;
+      case TOMOE_READING_UNKNOWN:
+        type_name = "unknown";
+        break;
+      case TOMOE_READING_JA_ON:
+        type_name = "ja_on";
+        break;
+      case TOMOE_READING_JA_KUN:
+        type_name = "ja_kun";
+        break;
+    }
+
+    if (type_name)
+        return g_markup_printf_escaped (format, type_name, priv->reading);
+    else
+        return g_markup_printf_escaped (format, priv->reading);
+}
+
 /*
 vi:ts=4:nowrap:ai:expandtab
 */

@@ -457,12 +457,11 @@ tomoe_char_to_xml_readings (TomoeChar *chr, TomoeCharPrivate *priv,
         TomoeReading *reading = node->data;
         gchar *xml;
 
-        if (!TOMOE_IS_READING (reading)) continue;
-
-        xml = g_markup_printf_escaped ("      <reading>%s</reading>\n",
-                                       tomoe_reading_get_reading (reading));
-        g_string_append (output, xml);
-        g_free (xml);
+        xml = tomoe_reading_to_xml (reading);
+        if (xml) {
+            g_string_append (output, xml);
+            g_free (xml);
+        }
     }
     g_string_append (output, "    </readings>\n");
 }

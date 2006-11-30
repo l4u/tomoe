@@ -44,6 +44,7 @@
 
 enum {
     PROP_0,
+    PROP_NAME,
     PROP_DATABASE_NAME,
     PROP_EDITABLE
 };
@@ -122,6 +123,15 @@ class_init (TomoeDictEstClass *klass)
     dict_class->search          = search;
     dict_class->flush           = flush;
 
+    g_object_class_install_property (
+        gobject_class,
+        PROP_NAME,
+        g_param_spec_string (
+            "name",
+            "Name",
+            "The name of the dictionary",
+            NULL,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
     g_object_class_install_property (
         gobject_class,
         PROP_DATABASE_NAME,
@@ -214,13 +224,16 @@ set_property (GObject *object,
     TomoeDictEst *dict = TOMOE_DICT_EST (object);
 
     switch (prop_id) {
-    case PROP_DATABASE_NAME:
+      case PROP_NAME:
+        dict->name = g_value_dup_string (value);
+        break;
+      case PROP_DATABASE_NAME:
         dict->database_name = g_value_dup_string (value);
         break;
-    case PROP_EDITABLE:
+      case PROP_EDITABLE:
         dict->editable = g_value_get_boolean (value);
         break;
-    default:
+      default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
         break;
     }
@@ -236,13 +249,16 @@ get_property (GObject *object,
     TomoeDictEst *dict = TOMOE_DICT_EST (object);
 
     switch (prop_id) {
-    case PROP_DATABASE_NAME:
+      case PROP_NAME:
+        g_value_set_string (value, dict->name);
+        break;
+      case PROP_DATABASE_NAME:
         g_value_set_string (value, dict->database_name);
         break;
-    case PROP_EDITABLE:
+      case PROP_EDITABLE:
         g_value_set_boolean (value, dict->editable);
         break;
-    default:
+      default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
         break;
     }
@@ -301,6 +317,13 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
     }
 
     n_strokes = tomoe_char_get_n_strokes (chr);
+    if (n_strokes < 0) {
+        TomoeWriting *writing;
+        writing = tomoe_char_get_writing (chr);
+        if (writing)
+            n_strokes = tomoe_writing_get_n_strokes (writing);
+    }
+
     if (n_strokes >= 0) {
         value = g_strdup_printf ("%d", n_strokes);
         est_doc_add_attr (doc, "n_strokes", value);
@@ -411,6 +434,7 @@ search (TomoeDict *_dict, TomoeQuery *query)
     g_return_val_if_fail (TOMOE_IS_DICT_EST (dict), candidates);
 
     cond = est_cond_new ();
+    est_cond_set_order (cond, "utf8 STRA");
 
     min_n_strokes = tomoe_query_get_min_n_strokes (query);
     if (min_n_strokes >= 0) {
@@ -428,22 +452,7 @@ search (TomoeDict *_dict, TomoeQuery *query)
 
     reading = g_list_nth_data ((GList *)tomoe_query_get_readings (query), 0);
     if (reading) {
-        const gchar *type;
-        switch (tomoe_reading_get_reading_type (reading)) {
-          case TOMOE_READING_JA_ON:
-            type = "ja_on";
-            break;
-          case TOMOE_READING_JA_KUN:
-            type = "ja_kun";
-            break;
-          default:
-            type = "unknown";
-            break;
-        }
-
-        expr = g_strdup_printf ("<reading type=\"%s\">%s</reading>",
-                                type,
-                                tomoe_reading_get_reading (reading));
+        expr = tomoe_reading_to_xml (reading);
         est_cond_set_phrase (cond, expr);
         g_free (expr);
     }

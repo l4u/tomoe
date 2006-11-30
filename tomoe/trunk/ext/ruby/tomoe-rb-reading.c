@@ -11,6 +11,21 @@ tr_initialize(VALUE self, VALUE type, VALUE reading)
     return Qnil;
 }
 
+static VALUE
+tr_to_xml(VALUE self)
+{
+    VALUE rb_xml = Qnil;
+    gchar *xml;
+
+    xml = tomoe_reading_to_xml(_SELF(self));
+    if (xml) {
+        rb_xml = CSTR2RVAL(xml);
+        g_free(xml);
+    }
+
+    return rb_xml;
+}
+
 void
 Init_tomoe_reading(VALUE mTomoe)
 {
@@ -21,4 +36,6 @@ Init_tomoe_reading(VALUE mTomoe)
     G_DEF_CONSTANTS(cTomoeReading, TOMOE_TYPE_READING_TYPE, "TOMOE_READING_");
 
     rb_define_method(cTomoeReading, "initialize", tr_initialize, 2);
+
+    rb_define_method(cTomoeReading, "to_xml", tr_to_xml, 0);
 }
