@@ -70,6 +70,8 @@ TomoeReading     *tomoe_reading_new              (TomoeReadingType type,
 TomoeReadingType  tomoe_reading_get_reading_type (TomoeReading     *reading);
 const gchar      *tomoe_reading_get_reading      (TomoeReading     *reading);
 
+gchar            *tomoe_reading_to_xml           (TomoeReading     *reading);
+
 G_END_DECLS
 
 #endif /* __TOMOE_READING_H__ */

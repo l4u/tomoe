@@ -1,5 +1,15 @@
 2006-11-30  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-reading.[ch]: added tomoe_reading_to_xml().
+	* ext/ruby/tomoe-rb-reading.c: added Tomoe::Reading#to_xml.
+	* lib/tomoe-char.c (tomoe_char_to_xml_readings),
+	module/dict/tomoe-dict-est.c: used tomoe_reading_to_xml().
+
+	* test/context_spec.rb: sort result.
+
+	* lib/tomoe-config.c, test/tomoe-spec-utils.rb: supported Hyper
+	Estraier backend.
+
 	* lib/tomoe-candidate.c: renamed property name to "char" from
 	"character".
 	* ext/ruby/tomoe-rb-candidate.rb, test/context_spec.rb: followed
