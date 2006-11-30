@@ -26,6 +26,14 @@ module Spec
     class Context
       include TomoeSpecSetup
     end
+
+    module Formatter
+      class ProgressBarFormatter
+        def format_backtrace(backtrace)
+          super(backtrace.collect {|bt| bt.sub(/\A([^:]+:\d+)$/, '\\1:')})
+        end
+      end
+    end
   end
 end
 

@@ -36,13 +36,22 @@ tc_add_reading(VALUE self, VALUE reading)
 static VALUE
 tc_get_radicals(VALUE self)
 {
-    return GLIST2ARY((GList *)tomoe_char_get_radicals(_SELF(self)));
+    VALUE radicals;
+    const GList *node;
+
+    radicals = rb_ary_new ();
+    for (node = tomoe_char_get_radicals(_SELF(self));
+         node;
+         node = g_list_next (node)) {
+        rb_ary_push (radicals, CSTR2RVAL (node->data));
+    }
+    return radicals;
 }
 
 static VALUE
 tc_add_radical(VALUE self, VALUE radical)
 {
-    tomoe_char_add_radical(_SELF(self), RVAL2TCHR(radical));
+    tomoe_char_add_radical(_SELF(self), RVAL2CSTR(radical));
     return Qnil;
 }
 
