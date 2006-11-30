@@ -1,5 +1,12 @@
 2006-11-30  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-char.[ch]: represented radical and variant as gchar *
+	instead of TomoeChar *.
+	* ext/ruby/tomoe-rb-char.c, test/char_spec.rb: followed the
+	changes.
+	* test/tomoe-spec-utils.rb: added utility for making backtraces
+	more emacs-style.
+
 	* lib/tomoe-xml-parser.[ch], lib/Makefile.am: split XML parsing
 	related functions from tomoe-dict-xml.[ch].
 	* module/dict/tomoe-dict-xml.c: used

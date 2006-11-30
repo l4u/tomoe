@@ -31,14 +31,13 @@ context "Tomoe::Char" do
   end
 
   specify "should set/get variant" do
-    variant = Tomoe::Char.new
-    variant.n_strokes = 5
+    variant = "異"
 
     char = Tomoe::Char.new
     char.variant.should_nil
 
     char.variant = variant
-    char.variant.n_strokes.should == 5
+    char.variant.should == variant
   end
 
   specify "should set/get writing" do
@@ -75,23 +74,16 @@ context "Tomoe::Char" do
   end
 
   specify "should add/get radical" do
-    radical1 = Tomoe::Char.new
-    radical1.n_strokes = 5
-
-    radical2 = Tomoe::Char.new
-    radical2.n_strokes = 10
+    radical1 = "木"
+    radical2 = "水"
 
     char = Tomoe::Char.new
     char.radicals.should_empty
 
     char.add_radical(radical1)
-    char.radicals.collect do |radical|
-      radical.n_strokes
-    end.sort.should == [radical1.n_strokes]
+    char.radicals.sort.should == [radical1]
 
     char.add_radical(radical2)
-    char.radicals.collect do |radical|
-      radical.n_strokes
-    end.sort.should == [radical1.n_strokes, radical2.n_strokes].sort
+    char.radicals.sort.should == [radical1, radical2].sort
   end
 end

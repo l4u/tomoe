@@ -76,13 +76,13 @@ void            tomoe_char_add_reading          (TomoeChar     *chr,
                                                  TomoeReading  *reading);
 const GList    *tomoe_char_get_radicals         (TomoeChar     *chr);
 void            tomoe_char_add_radical          (TomoeChar     *chr,
-                                                 TomoeChar     *radical);
+                                                 const gchar   *radical);
 TomoeWriting   *tomoe_char_get_writing          (TomoeChar     *chr);
 void            tomoe_char_set_writing          (TomoeChar     *chr,
                                                  TomoeWriting  *writing);
-TomoeChar      *tomoe_char_get_variant          (TomoeChar     *chr);
+const gchar    *tomoe_char_get_variant          (TomoeChar     *chr);
 void            tomoe_char_set_variant          (TomoeChar     *chr,
-                                                 TomoeChar     *variant);
+                                                 const gchar   *variant);
 const gchar    *tomoe_char_get_meta_data        (TomoeChar     *chr,
                                                  const gchar   *key);
 void            tomoe_char_register_meta_data   (TomoeChar     *chr,

@@ -41,7 +41,7 @@ struct _TomoeCharPrivate
     GList                *readings;
     GList                *radicals;
     TomoeWriting         *writing;
-    TomoeChar            *variant;
+    gchar                *variant;
     GHashTable           *meta_data;
 };
 
@@ -99,10 +99,10 @@ tomoe_char_class_init (TomoeCharClass *klass)
                                 G_PARAM_READABLE | G_PARAM_WRITABLE);
     g_object_class_install_property (gobject_class, PROP_WRITING, spec);
 
-    spec = g_param_spec_object ("variant",
+    spec = g_param_spec_string ("variant",
                                 N_("Variant"),
                                 N_("Variant of the character."),
-                                TOMOE_TYPE_CHAR,
+                                NULL,
                                 G_PARAM_READABLE | G_PARAM_WRITABLE);
     g_object_class_install_property (gobject_class, PROP_VARIANT, spec);
 
@@ -147,13 +147,13 @@ tomoe_char_dispose (GObject *object)
         g_list_free (priv->readings);
     }
     if (priv->radicals) {
-        g_list_foreach (priv->radicals, (GFunc)g_object_unref, NULL);
+        g_list_foreach (priv->radicals, (GFunc)g_free, NULL);
         g_list_free (priv->radicals);
     }
     if (priv->writing)
         g_object_unref (G_OBJECT (priv->writing));
     if (priv->variant)
-        g_object_unref (G_OBJECT (priv->variant));
+        g_free (priv->variant);
     if (priv->meta_data)
         g_hash_table_destroy (priv->meta_data);
 
@@ -188,7 +188,7 @@ tomoe_char_set_property (GObject      *object,
         tomoe_char_set_writing (chr, g_value_get_object (value));
         break;
       case PROP_VARIANT:
-        tomoe_char_set_variant (chr, g_value_get_object (value));
+        tomoe_char_set_variant (chr, g_value_get_string (value));
         break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -219,7 +219,7 @@ tomoe_char_get_property (GObject    *object,
         g_value_set_object (value, priv->writing);
         break;
       case PROP_VARIANT:
-        g_value_set_object (value, priv->variant);
+        g_value_set_string (value, priv->variant);
         break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -307,15 +307,16 @@ tomoe_char_get_radicals (TomoeChar* chr)
 }
 
 void
-tomoe_char_add_radical (TomoeChar* chr, TomoeChar *radical)
+tomoe_char_add_radical (TomoeChar* chr, const gchar *radical)
 {
     TomoeCharPrivate *priv;
 
     g_return_if_fail (TOMOE_IS_CHAR (chr));
+    g_return_if_fail (radical && radical[0] != '\0');
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
 
-    priv->radicals = g_list_prepend (priv->radicals, g_object_ref (radical));
+    priv->radicals = g_list_prepend (priv->radicals, g_strdup (radical));
 }
 
 TomoeWriting *
@@ -344,7 +345,7 @@ tomoe_char_set_writing (TomoeChar *chr, TomoeWriting *writing)
     priv->writing = g_object_ref (writing);
 }
 
-TomoeChar *
+const gchar *
 tomoe_char_get_variant (TomoeChar *chr)
 {
     TomoeCharPrivate *priv;
@@ -357,7 +358,7 @@ tomoe_char_get_variant (TomoeChar *chr)
 }
 
 void
-tomoe_char_set_variant (TomoeChar *chr, TomoeChar *variant)
+tomoe_char_set_variant (TomoeChar *chr, const gchar *variant)
 {
     TomoeCharPrivate *priv;
 
@@ -366,8 +367,8 @@ tomoe_char_set_variant (TomoeChar *chr, TomoeChar *variant)
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
 
     if (priv->variant)
-        g_object_unref (G_OBJECT (priv->variant));
-    priv->variant = g_object_ref (variant);
+        g_free (priv->variant);
+    priv->variant = variant ? g_strdup (variant) : NULL;
 }
 
 void
