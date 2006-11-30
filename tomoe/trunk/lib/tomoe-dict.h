@@ -67,6 +67,7 @@ struct _TomoeDictClass
                                             const gchar   *utf8);
     GList          *(*search)              (TomoeDict     *dict,
                                             TomoeQuery    *query);
+    gboolean        (*flush)               (TomoeDict     *dict);
 };
 
 GType           tomoe_dict_get_type (void) G_GNUC_CONST;
@@ -115,6 +116,8 @@ TomoeChar      *tomoe_dict_get_char             (TomoeDict     *dict,
 /* search method */
 GList          *tomoe_dict_search               (TomoeDict     *dict,
                                                  TomoeQuery    *query);
+
+gboolean        tomoe_dict_flush                (TomoeDict     *dict);
 
 G_END_DECLS
 

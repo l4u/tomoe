@@ -1,5 +1,9 @@
 2006-11-30  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-dict.[ch], module/dict/tomoe-dict-est.c,
+	module/dict/tomoe-dict-xml.c, ext/ruby/tomoe-rb-dict.rb:
+	implemented tomoe_dict_flush().
+
 	* ext/ruby/tomoe-rb-dict.rb: removed _char suffix.
 
 	* module/dict/tomoe-dict-est.c, module/dict/Makefile.am,

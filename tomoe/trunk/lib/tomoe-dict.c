@@ -142,6 +142,20 @@ tomoe_dict_search (TomoeDict *dict, TomoeQuery *query)
         return NULL;
 }
 
+gboolean
+tomoe_dict_flush (TomoeDict *dict)
+{
+    TomoeDictClass *klass;
+
+    g_return_val_if_fail (TOMOE_IS_DICT (dict), FALSE);
+
+    klass = TOMOE_DICT_GET_CLASS (dict);
+    if (klass->flush)
+        return klass->flush (dict);
+    else
+        return FALSE;
+}
+
 /*
 vi:ts=4:nowrap:ai:expandtab
 */

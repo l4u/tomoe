@@ -95,6 +95,7 @@ static TomoeChar   *get_char                  (TomoeDict     *dict,
                                                const gchar   *utf8);
 static GList       *search                    (TomoeDict     *dict,
                                                TomoeQuery    *query);
+static gboolean     flush                     (TomoeDict     *dict);
 static gboolean     tomoe_dict_est_open       (TomoeDictEst  *dict);
 static gboolean     tomoe_dict_est_close      (TomoeDictEst  *dict);
 
@@ -119,6 +120,7 @@ class_init (TomoeDictEstClass *klass)
     dict_class->unregister_char = unregister_char;
     dict_class->get_char        = get_char;
     dict_class->search          = search;
+    dict_class->flush           = flush;
 
     g_object_class_install_property (
         gobject_class,
@@ -467,6 +469,14 @@ search (TomoeDict *_dict, TomoeQuery *query)
     g_free (results);
 
     return candidates;
+}
+
+static gboolean
+flush (TomoeDict *_dict)
+{
+    TomoeDictEst *dict = TOMOE_DICT_EST (_dict);
+
+    return est_db_sync (dict->db);
 }
 
 static gboolean
