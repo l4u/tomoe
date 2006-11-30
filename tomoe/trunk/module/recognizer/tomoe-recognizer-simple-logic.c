@@ -279,11 +279,10 @@ match_input_to_dict (GList *input_points, GList *writing_points)
      * if the length between last point and second last point is lesser than
      * LIMIT_LENGTH, the last itinerary assumes "hane".
      */
-    if (i_met[i_nop - 2].d < LIMIT_LENGTH) {
+    if (i_met[i_nop - 2].d < LIMIT_LENGTH)
         i_k_end = i_nop - 2;
-    } else {
+    else
         i_k_end = i_nop - 1;
-    }
   
     m = 0;
     for (i_k = 1; i_k < i_k_end; i_k++) {
@@ -361,11 +360,10 @@ match_dict_to_input (GList *writing_points, GList *input_points)
      * if the length between last point and second last point is lesser than
      * LIMIT_LENGTH, the last itineraryassumes "hane".
      */
-    if (d_met[d_nop - 2].d < LIMIT_LENGTH) {
+    if (d_met[d_nop - 2].d < LIMIT_LENGTH)
         d_k_end = d_nop - 2;
-    } else {
+    else
         d_k_end = d_nop - 1;
-    }
 
     m = 0;
     for (d_k = 1; d_k < d_k_end - 1; d_k++) /* note difference: -1 */ {
@@ -569,9 +567,8 @@ match_stroke_num (TomoeChar *chr, int input_stroke_num, GArray *adapted)
 
         for (i = 0; i < adapted_num; i++) {
             j = g_array_index (adapted, gint, i);
-            if (j - pj >= 3) {
+            if (j - pj >= 3)
                 return -1;
-            }
             pj = j;
         }
     }
@@ -597,9 +594,8 @@ get_distance (GList *first_node, GList *last_node, GList **most_node)
     TomoePoint *p;
 
     *most_node = NULL;
-    if (first_node == last_node) {
+    if (first_node == last_node)
         return 0;
-    }
 
     a = last->x - first->x;
     b = last->y - first->y;
@@ -680,7 +676,7 @@ _g_array_has_this_int_value (GArray *a, gint i)
 
     for (l = 0; l < a->len; l++) {
         if (g_array_index (a, gint, l) == i)
-	        return TRUE;
+	    return TRUE;
     }
     return FALSE;
 }
@@ -691,9 +687,9 @@ _g_array_copy_int_value (GArray *a)
     guint i;
     GArray *b = g_array_new (FALSE, FALSE, sizeof (gint));
 
-    for (i = 0; i < a->len; i++) {
+    for (i = 0; i < a->len; i++)
         g_array_append_val (b, g_array_index (a, gint, i));
-    }
+
     return b;
 }
 
