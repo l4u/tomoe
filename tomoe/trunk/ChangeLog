@@ -1,7 +1,5 @@
 2006-11-30  Kouhei Sutou  <kou@cozmixng.org>
 
-	* module/dict/tomoe-dict-xml.c: name -> dict_name.
-
 	* ext/ruby/tomoe-rb-char.c: added Tomoe::Char#<=> and made
 	Tomoe::Char comparable.
 	* test/char_spec.rb: added tests for comparing Tomoe::Char.
