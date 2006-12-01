@@ -20,10 +20,6 @@
  *  $Id$
  */
 
-/** @file tomoe-reading.h
- *  @brief 
- */
-
 #ifndef __TOMOE_READING_H__
 #define __TOMOE_READING_H__
 

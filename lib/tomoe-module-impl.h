@@ -20,11 +20,6 @@
  *  $Id$
  */
 
-/**
- *  @file tomoe-module-impl.h
- *  @brief Provide a set of API to load dynamic module.
- */
-
 #ifndef __TOMOE_MODULE_IMPL_H__
 #define __TOMOE_MODULE_IMPL_H__
 

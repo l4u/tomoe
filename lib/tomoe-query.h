@@ -20,11 +20,6 @@
  *  $Id$
  */
 
-/**
- *  @file tomoe-search-condition.h
- *  @brief
- */
-
 #ifndef __TOMOE_QUERY_H__
 #define __TOMOE_QUERY_H__
 
@@ -58,10 +53,6 @@ struct _TomoeQueryClass
 
 GType            tomoe_query_get_type (void) G_GNUC_CONST;
 
-/**
- * @brief Create a database.
- * @return Pointer to newly allocated TomoeQuery struct.
- */
 TomoeQuery      *tomoe_query_new      (void);
 
 void             tomoe_query_add_reading           (TomoeQuery   *query,

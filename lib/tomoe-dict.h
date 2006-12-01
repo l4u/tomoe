@@ -24,11 +24,6 @@
  *  $Id$
  */
 
-/**
- *  @file tomoe-dict.h
- *  @brief Provide a set of API to access to a tomoe dictionary.
- */
-
 #ifndef __TOMOE_DICT_H__
 #define __TOMOE_DICT_H__
 
