@@ -73,6 +73,16 @@ tomoe_recognizer_new (const gchar *name, const gchar *first_property, ...)
     return TOMOE_RECOGNIZER (recognizer);
 }
 
+/**
+ * tomoe_recognizer_search:
+ * @recognizer: a TomoeRecognizer object.
+ * @dict   - Pointer to the TomoeDict object.
+ * @input  - Pointer to tomoe_glyph matchkey.
+ *
+ * Match strokes of TomoeChar with TomoeWriting.
+ *
+ * Return value: A newly-allocated list of TomoeCandidate. The each TomoeCandidate should be also freed with g_object_unref.
+ */
 GList *
 tomoe_recognizer_search (TomoeRecognizer *recognizer,
                          TomoeDict *dict, TomoeWriting *input)
