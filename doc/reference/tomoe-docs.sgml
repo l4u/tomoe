@@ -35,6 +35,7 @@
     &tomoe-Dict;
     &tomoe-Query;
     &tomoe-Reading;
+    &tomoe-Recognizer;
     &tomoe-Shelf;
     &tomoe-Writing;
   </chapter>
