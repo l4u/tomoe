@@ -2,7 +2,7 @@
 TomoeRecognizer
 
 <!-- ##### SECTION Short_Description ##### -->
-
+An abstract recognizer object
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
@@ -19,7 +19,8 @@ TomoeRecognizer
 
 <!-- ##### STRUCT TomoeRecognizer ##### -->
 <para>
-
+The #TomoeRecognizer struct contains only
+private fields and should not be directly accessed.
 </para>
 
 
