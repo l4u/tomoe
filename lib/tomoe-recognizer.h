@@ -69,13 +69,6 @@ TomoeRecognizer *tomoe_recognizer_new         (const gchar *name,
                                                const gchar *first_property,
                                                ...);
 
-/**
- * @brief Match strokes of tomoe_char with input.
- * @param recognizer   - Pointer to the TomoeRecognizer object.
- * @param dict   - Pointer to the TomoeDict object.
- * @param input  - Pointer to tomoe_glyph matchkey.
- * @return The array of TomoeCandidate.
- */
 GList           *tomoe_recognizer_search   (TomoeRecognizer *recognizer,
                                             TomoeDict       *dict,
                                             TomoeWriting    *input);
