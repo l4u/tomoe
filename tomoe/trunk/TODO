@@ -3,9 +3,7 @@
   should be language independent.
 * Add "register_char" function into TomoeContext.
 * Implement advanced searching.
-* Modulized dictionary types.
-  - XML
-  - Hyper Estraier
+* Add modulized dictionary types.
   - QDBM?
   - MySQL?
   - CHISE?
