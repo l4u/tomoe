@@ -25,7 +25,9 @@ AM_CPPFLAGS =							\
 	-DSYSCONFDIR=\""$(sysconfdir)"\"			\
 	-DDATADIR=\""$(datadir)"\"				\
 	-DTOMOESYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\"	\
-	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"
+	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"		\
+	-DRUBY_EXTDIR=\""$(RUBY_EXTDIR)"\"			\
+	-DRUBY_LIBDIR=\""$(RUBY_LIBDIR)"\"
 
 INCLUDES = -I$(top_srcdir)/lib $(GLIB_CFLAGS) $(EST_CFLAGS)
 LIBADD = $(GLIB_LIBS)
