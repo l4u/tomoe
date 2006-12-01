@@ -64,6 +64,13 @@ tomoe_context_init (TomoeContext *context)
     priv->recognizer = NULL;
 }
 
+/**
+ * tomoe_context_new:
+ * 
+ * Create a new #TomoeContext.
+ *
+ * Return value: a new #TomoeContext.
+ */
 TomoeContext*
 tomoe_context_new(void)
 {
@@ -98,6 +105,13 @@ tomoe_context_dispose (GObject *object)
     G_OBJECT_CLASS (tomoe_context_parent_class)->dispose (object);
 }
 
+/**
+ * tomoe_context_load_config:
+ * @ctx: a #TomoeContext.
+ * @config_file: the filename of configuration file to load.
+ * 
+ * Load dictionaries into configuration file.
+ */
 void
 tomoe_context_load_config (TomoeContext *ctx, const char *config_file)
 {
