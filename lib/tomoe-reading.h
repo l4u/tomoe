@@ -56,10 +56,6 @@ typedef enum {
 
 GType             tomoe_reading_get_type (void) G_GNUC_CONST;
 
-/**
- * @brief Create a TomoeReading.
- * @return Pointer to newly allocated TomoeReading struct.
- */
 TomoeReading     *tomoe_reading_new              (TomoeReadingType type,
                                                   const gchar      *reading);
 
