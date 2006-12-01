@@ -1,3 +1,51 @@
+<!-- ##### SECTION ./tmpl/tomoe-dict-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/tomoe-dict-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/tomoe-dict-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/tomoe-dict-impl.sgml:Stability_Level ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/tomoe-dict-impl.sgml:Title ##### -->
+tomoe-dict-impl
+
+
+<!-- ##### SECTION ./tmpl/tomoe-module.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/tomoe-module.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/tomoe-module.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/tomoe-module.sgml:Stability_Level ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/tomoe-module.sgml:Title ##### -->
+TomoeModule
+
+
 <!-- ##### FUNCTION TOMOE_DICT_IMPL_FREE ##### -->
 <para>
 
@@ -164,6 +212,13 @@
 @utf8: 
 @Returns: 
 
+<!-- ##### STRUCT TomoeModule ##### -->
+<para>
+
+</para>
+
+@object: 
+
 <!-- ##### ARG TomoeModule:default-base-dir ##### -->
 <para>
 
@@ -229,6 +284,15 @@
 @base_dir: 
 @name: 
 
+<!-- ##### FUNCTION tomoe_dict_search ##### -->
+<para>
+
+</para>
+
+@dict: 
+@query: 
+@Returns: 
+
 <!-- ##### FUNCTION tomoe_module_find_module ##### -->
 <para>
 
@@ -263,4 +327,60 @@
 </para>
 
 @module: 
+
+<!-- ##### FUNCTION tomoe_query_get_max_n_strokes ##### -->
+<para>
+
+</para>
+
+@query: 
+@Returns: 
+
+<!-- ##### FUNCTION tomoe_query_get_min_n_strokes ##### -->
+<para>
+
+</para>
+
+@query: 
+@Returns: 
+
+<!-- ##### FUNCTION tomoe_query_get_radicals ##### -->
+<para>
+
+</para>
+
+@query: 
+@Returns: 
+
+<!-- ##### FUNCTION tomoe_query_get_variant ##### -->
+<para>
+
+</para>
+
+@query: 
+@Returns: 
+
+<!-- ##### FUNCTION tomoe_query_set_max_n_strokes ##### -->
+<para>
+
+</para>
+
+@query: 
+@n_strokes: 
+
+<!-- ##### FUNCTION tomoe_query_set_min_n_strokes ##### -->
+<para>
+
+</para>
+
+@query: 
+@n_strokes: 
+
+<!-- ##### FUNCTION tomoe_query_set_variant ##### -->
+<para>
+
+</para>
+
+@query: 
+@chr: 
 

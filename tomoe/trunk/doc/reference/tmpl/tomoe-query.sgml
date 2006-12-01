@@ -59,69 +59,6 @@ private fields and should not be directly accessed.
 @chr: 
 
 
-<!-- ##### FUNCTION tomoe_query_get_radicals ##### -->
-<para>
-
-</para>
-
-@query: 
-@Returns: 
-
-
-<!-- ##### FUNCTION tomoe_query_set_variant ##### -->
-<para>
-
-</para>
-
-@query: 
-@chr: 
-
-
-<!-- ##### FUNCTION tomoe_query_get_variant ##### -->
-<para>
-
-</para>
-
-@query: 
-@Returns: 
-
-
-<!-- ##### FUNCTION tomoe_query_set_min_n_strokes ##### -->
-<para>
-
-</para>
-
-@query: 
-@n_strokes: 
-
-
-<!-- ##### FUNCTION tomoe_query_get_min_n_strokes ##### -->
-<para>
-
-</para>
-
-@query: 
-@Returns: 
-
-
-<!-- ##### FUNCTION tomoe_query_set_max_n_strokes ##### -->
-<para>
-
-</para>
-
-@query: 
-@n_strokes: 
-
-
-<!-- ##### FUNCTION tomoe_query_get_max_n_strokes ##### -->
-<para>
-
-</para>
-
-@query: 
-@Returns: 
-
-
 <!-- ##### FUNCTION tomoe_query_set_writing ##### -->
 <para>
 

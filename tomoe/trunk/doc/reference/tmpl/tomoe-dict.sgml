@@ -74,13 +74,3 @@ private fields and should not be directly accessed.
 @Returns: 
 
 
-<!-- ##### FUNCTION tomoe_dict_search ##### -->
-<para>
-
-</para>
-
-@dict: 
-@query: 
-@Returns: 
-
-
