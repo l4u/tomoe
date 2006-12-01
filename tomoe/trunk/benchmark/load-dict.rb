@@ -9,7 +9,7 @@ $LOAD_PATH.unshift(File.join(test_dir))
 
 require "tomoe-spec-utils"
 
-n = 10
+n = 3
 Benchmark.bmbm do |x|
   TomoeSpecUtils::Config.dictionaries.sort.each do |dictionary|
     x.report(File.basename(dictionary)) do
