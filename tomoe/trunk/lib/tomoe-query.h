@@ -55,6 +55,10 @@ GType            tomoe_query_get_type (void) G_GNUC_CONST;
 
 TomoeQuery      *tomoe_query_new      (void);
 
+const gchar     *tomoe_query_get_utf8              (TomoeQuery   *query);
+void             tomoe_query_set_utf8              (TomoeQuery   *query,
+                                                    const gchar  *utf8);
+
 void             tomoe_query_add_reading           (TomoeQuery   *query,
                                                     TomoeReading *reading);
 const GList     *tomoe_query_get_readings          (TomoeQuery   *query);

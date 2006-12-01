@@ -1,5 +1,11 @@
 2006-12-01  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-query.c: supported properties.
+	* lib/tomoe-query.[ch]: added tomoe_query_(set|get)_utf8().
+
+	* benchmark/search-by-dict.rb, benchmark/Makefile.am: added a
+	benchmark for searching by dictionary.
+
 	* benchmark/load-dict.rb: decremented number of loading from 10 to
 	3.
 
