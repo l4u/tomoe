@@ -20,11 +20,6 @@
  *  $Id$
  */
 
-/**
- *  @file tomoe-context.h
- *  @brief Provides access to the tomoe context.
- */
-
 #ifndef __TOMOE_CONTEXT_H__
 #define __TOMOE_CONTEXT_H__
 

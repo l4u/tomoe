@@ -20,11 +20,6 @@
  *  $Id$
  */
 
-/**
- *  @file tomoe-xml-parser.h
- *  @brief Provide a set of API to parse XML data.
- */
-
 #ifndef __TOMOE_XML_PARSER_H__
 #define __TOMOE_XML_PARSER_H__
 

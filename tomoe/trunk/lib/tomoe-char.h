@@ -21,10 +21,6 @@
  *  $Id$
  */
 
-/** @file tomoe-char.h
- *  @brief 
- */
-
 #ifndef __TOMOE_CHAR_H__
 #define __TOMOE_CHAR_H__
 

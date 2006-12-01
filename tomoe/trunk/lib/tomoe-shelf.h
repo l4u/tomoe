@@ -20,11 +20,6 @@
  *  $Id$
  */
 
-/**
- *  @file tomoe-shelf.h
- *  @brief Provides access to the tomoe shelf.
- */
-
 #ifndef __TOMOE_SHELF_H__
 #define __TOMOE_SHELF_H__
 

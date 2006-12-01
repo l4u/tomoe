@@ -23,10 +23,6 @@
  *  $Id$
  */
 
-/** @file tomoe.h
- *  @brief Provide a set of API for handwriting recognition.
- */
-
 #ifndef __TOMOE_H__
 #define __TOMOE_H__
 

@@ -20,11 +20,6 @@
  *  $Id$
  */
 
-/**
- *  @file tomoe-config.h
- *  @brief Manages tomoe configuration.
- */
-
 #ifndef __TOMOE_CONFIG_H__
 #define __TOMOE_CONFIG_H__
 
