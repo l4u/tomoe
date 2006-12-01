@@ -9,13 +9,22 @@ $LOAD_PATH.unshift(File.join(test_dir))
 
 require "tomoe-spec-utils"
 
-n = 3
+n = 10
 Benchmark.bmbm do |x|
   TomoeSpecUtils::Config.dictionaries.sort.each do |dictionary|
-    x.report(File.basename(dictionary)) do
-      n.times {Tomoe::Dict.new("xml",
-                               "filename" => dictionary,
-                               "editable" => false)}
+    dict = Tomoe::Dict.new("xml",
+                           "filename" => dictionary,
+                           "editable" => false)
+
+    x.report("#{File.basename(dictionary)}: all") do
+      query = Tomoe::Query.new
+      n.times {dict.search(query)}
+    end
+
+    x.report("#{File.basename(dictionary)}: >= 5") do
+      query = Tomoe::Query.new
+      query.min_n_strokes = 10
+      n.times {dict.search(query)}
     end
   end
 end

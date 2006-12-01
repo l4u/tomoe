@@ -26,8 +26,6 @@ Init_tomoe_query(VALUE mTomoe)
     cTomoeQuery = G_DEF_CLASS(TOMOE_TYPE_QUERY, "Query", mTomoe);
 
     rb_define_method(cTomoeQuery, "add_reading", tq_add_reading, 1);
-/*     rb_define_method(cTomoeQuery, "set_number_of_stroke", */
-/*                      tq_set_number_of_stroke, 1); */
 /*     rb_define_method(cTomoeQuery, "add_radical", tq_add_radical, 1); */
 /*     rb_define_method(cTomoeQuery, "add_variant", tq_add_variant, 1); */
     rb_define_method(cTomoeQuery, "set_writing", tq_set_writing, 1);

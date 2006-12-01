@@ -72,12 +72,43 @@ static void
 tomoe_query_class_init (TomoeQueryClass *klass)
 {
     GObjectClass *gobject_class;
+    GParamSpec *spec;
 
     gobject_class = G_OBJECT_CLASS (klass);
 
     gobject_class->dispose  = tomoe_query_dispose;
     gobject_class->set_property = tomoe_query_set_property;
     gobject_class->get_property = tomoe_query_get_property;
+
+    spec = g_param_spec_string ("utf8",
+                                N_("UTF8"),
+                                N_("UTF8 encoding of searched character."),
+                                NULL,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property (gobject_class, PROP_UTF8, spec);
+
+    spec = g_param_spec_int ("min_n_strokes",
+                             N_("Minimum number of strokes"),
+                             N_("Minimum number of strokes of searched "
+                                "character."),
+                             -1, G_MAXINT32, -1,
+                             G_PARAM_READWRITE);
+    g_object_class_install_property (gobject_class, PROP_MIN_N_STROKES, spec);
+
+    spec = g_param_spec_int ("max_n_strokes",
+                             N_("Maximum number of strokes"),
+                             N_("Maximum number of strokes of searched "
+                                "character."),
+                             -1, G_MAXINT32, -1,
+                             G_PARAM_READWRITE);
+    g_object_class_install_property (gobject_class, PROP_MAX_N_STROKES, spec);
+
+    spec = g_param_spec_object ("writing",
+                                N_("Writing"),
+                                N_("Writing of searched character."),
+                                TOMOE_TYPE_WRITING,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property (gobject_class, PROP_WRITING, spec);
 
     g_type_class_add_private (gobject_class, sizeof (TomoeQueryPrivate));
 }
@@ -145,6 +176,18 @@ tomoe_query_set_property (GObject      *object,
     priv = TOMOE_QUERY_GET_PRIVATE (query);
 
     switch (prop_id) {
+      case PROP_UTF8:
+        tomoe_query_set_utf8 (query, g_value_get_string (value));
+        break;
+      case PROP_MIN_N_STROKES:
+        tomoe_query_set_min_n_strokes (query, g_value_get_int (value));
+        break;
+      case PROP_MAX_N_STROKES:
+        tomoe_query_set_max_n_strokes (query, g_value_get_int (value));
+        break;
+      case PROP_WRITING:
+        tomoe_query_set_writing (query, g_value_get_object (value));
+        break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -164,21 +207,47 @@ tomoe_query_get_property (GObject    *object,
     priv = TOMOE_QUERY_GET_PRIVATE (query);
 
     switch (prop_id) {
+      case PROP_UTF8:
+        g_value_set_string (value, priv->utf8);
+        break;
+      case PROP_MIN_N_STROKES:
+        g_value_set_int (value, priv->min_n_strokes);
+        break;
+      case PROP_MAX_N_STROKES:
+        g_value_set_int (value, priv->max_n_strokes);
+        break;
+      case PROP_WRITING:
+        g_value_set_object (value, priv->writing);
+        break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
     }
 }
 
+const gchar *
+tomoe_query_get_utf8 (TomoeQuery* query)
+{
+    TomoeQueryPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_QUERY (query), NULL);
+
+    priv = TOMOE_QUERY_GET_PRIVATE (query);
+    return priv->utf8;
+}
+
 void
-tomoe_query_add_reading (TomoeQuery* query, TomoeReading *reading)
+tomoe_query_set_utf8 (TomoeQuery* query, const gchar *utf8)
 {
     TomoeQueryPrivate *priv;
 
     g_return_if_fail (TOMOE_IS_QUERY (query));
 
     priv = TOMOE_QUERY_GET_PRIVATE (query);
-    priv->readings = g_list_append (priv->readings, g_object_ref (reading));
+    if (priv->utf8)
+        g_free (priv->utf8);
+
+    priv->utf8 = utf8 ? g_strdup (utf8) : NULL;
 }
 
 const GList *
@@ -190,6 +259,17 @@ tomoe_query_get_readings (TomoeQuery* query)
 
     priv = TOMOE_QUERY_GET_PRIVATE (query);
     return priv->readings;
+}
+
+void
+tomoe_query_add_reading (TomoeQuery* query, TomoeReading *reading)
+{
+    TomoeQueryPrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_QUERY (query));
+
+    priv = TOMOE_QUERY_GET_PRIVATE (query);
+    priv->readings = g_list_append (priv->readings, g_object_ref (reading));
 }
 
 const GList *
