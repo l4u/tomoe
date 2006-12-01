@@ -58,18 +58,8 @@ struct _TomoeContextClass
 
 GType            tomoe_context_get_type (void) G_GNUC_CONST;
 
-/**
- * @brief Create a database.
- * @return Pointer to newly allocated TomoeContext struct.
- */
 TomoeContext    *tomoe_context_new      (void);
 
-/**
- * @brief Load dictionary into database.
- * @param ctx - Pointer to the TomoeContext struct to increase reference count.
- * @param filename - Name of dictionary file to load.
- * @return The TomoeContext.
- */
 void            tomoe_context_load_config     (TomoeContext       *ctx,
                                                const gchar        *config_file);
 
