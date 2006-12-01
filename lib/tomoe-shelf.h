@@ -51,18 +51,8 @@ struct _TomoeShelfClass
 
 GType            tomoe_shelf_get_type (void) G_GNUC_CONST;
 
-/**
- * @brief Create a database.
- * @return Pointer to newly allocated TomoeShelf struct.
- */
 TomoeShelf      *tomoe_shelf_new      (void);
 
-/**
- * @brief Load dictionary into database.
- * @param shelf - Pointer to the TomoeShelf struct to increase reference count.
- * @param filename - Name of dictionary file to load.
- * @return The TomoeShelf.
- */
 void             tomoe_shelf_add_dict       (TomoeShelf  *shelf,
                                              TomoeDict   *dict);
 TomoeDict       *tomoe_shelf_get_dict       (TomoeShelf  *shelf,

@@ -31,8 +31,11 @@
 
 static gboolean initialized = FALSE;
 
-/*
- * Initialize tomoe
+/**
+ * tomoe_init:
+ *
+ * Initialize tomoe library.
+ *
  */
 void
 tomoe_init (void)
@@ -46,7 +49,12 @@ tomoe_init (void)
     }
 }
 
-/* finalize tomoe */
+/**
+ * tomoe_quit:
+ *
+ * Terminate tomoe library.
+ *
+ */
 void
 tomoe_quit (void)
 {
