@@ -22,6 +22,8 @@
  */
 
 #include <stdio.h>
+#include <errno.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
@@ -389,6 +391,10 @@ _tomoe_xml_parser_parse_dictionary_file (const gchar *filename,
     gboolean retval = TRUE;
 
     f = fopen (filename, "rb");
+    if (!f) {
+        g_warning ("failed to open dictionary file %s: %s", filename,
+                   sys_errlist[errno]);
+    }
     g_return_val_if_fail (f, FALSE);
 
     init_parse_data (&data, result, filename);
