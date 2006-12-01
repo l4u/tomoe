@@ -1,5 +1,8 @@
 2006-12-01  Kouhei Sutou  <kou@cozmixng.org>
 
+	* benchmark/load-dict.rb: decremented number of loading from 10 to
+	3.
+
 	* benchmark/convert-char.rb, benchmark/Makefile.am: added
 	a benchmark for converting TomoeChar to/from XML.
 
