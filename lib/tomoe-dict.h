@@ -74,37 +74,16 @@ TomoeDict      *tomoe_dict_new         (const gchar *name,
                                         const gchar *first_property,
                                         ...);
 
-/**
- * @brief Get the dictionary name.
- * @param dict - Pointer to the TomoeDict object.
- * @return Name of the dictionary.
- */
 const gchar    *tomoe_dict_get_name             (TomoeDict     *dict);
 
 /* Editable methods */
 
-/**
- * @brief Register a character
- * @param dict - Pointer to the TomoeDict object.
- * @param chr  - Pointer to the TomoeChar object.
- */
 gboolean        tomoe_dict_register_char        (TomoeDict     *dict,
                                                  TomoeChar     *chr);
 
-/**
- * @brief Unregister a character by code point
- * @param dict   - Pointer to the TomoeDict object.
- * @param utf8   - UTF-8 encoded value of the character.
- */
 gboolean        tomoe_dict_unregister_char      (TomoeDict     *dict,
                                                  const gchar   *utf8);
 
-/**
- * @brief Get a character by code point
- * @param dict  - Pointer to the TomoeDict object.
- * @param utf8  - UTF-8 encoded value of the character.
- * @return TomoeChar object.
- */
 TomoeChar      *tomoe_dict_get_char             (TomoeDict     *dict,
                                                  const gchar   *utf8);
 
