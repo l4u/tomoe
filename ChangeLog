@@ -1,5 +1,7 @@
 2006-12-01  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-xml-parser.c: added warning message.
+
 	* NEWS, TODO: updated.
 
 	* module/dict/tomoe-dict-est.c: added cache mechanism but still
