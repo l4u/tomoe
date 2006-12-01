@@ -2,6 +2,7 @@
 TomoeQuery
 
 <!-- ##### SECTION Short_Description ##### -->
+An object for representing search conditions.
 
 
 <!-- ##### SECTION Long_Description ##### -->
