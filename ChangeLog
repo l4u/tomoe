@@ -1,5 +1,11 @@
 2006-12-01  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/tomoe-dict-est.c: editable can be set when
+	constructing.
+	* ext/ruby/tomoe-rb-dict.c: supported name.
+	* benchmark/search-by-dict.rb: added est support. Hyper Estraier's
+	attribute search is too slow...
+
 	* lib/tomoe-query.c: supported properties.
 	* lib/tomoe-query.[ch]: added tomoe_query_(set|get)_utf8().
 
