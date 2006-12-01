@@ -36,14 +36,8 @@ G_BEGIN_DECLS
 #include "tomoe-recognizer.h"
 #include "tomoe-writing.h"
 
-/**
- * @brief Initialize tomoe library.
- */
 void       tomoe_init          (void);
 
-/**
- * @brief Finalize tomoe library.
- */
 void       tomoe_quit          (void);
 
 G_END_DECLS
