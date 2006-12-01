@@ -60,6 +60,8 @@ struct _TomoeDictEst
     gboolean             editable;
 
     ESTDB               *db;
+
+    GHashTable          *cache;
 };
 
 struct _TomoeDictEstClass
@@ -158,6 +160,8 @@ init (TomoeDictEst *dict)
     dict->name          = NULL;
     dict->database_name = NULL;
     dict->db            = NULL;
+    dict->cache         = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                                g_free, g_object_unref);
 }
 
 static void
@@ -277,9 +281,12 @@ dispose (GObject *object)
         g_free (dict->name);
     if (dict->database_name)
         g_free (dict->database_name);
+    if (dict->cache)
+        g_hash_table_destroy (dict->cache);
 
     dict->name          = NULL;
     dict->database_name = NULL;
+    dict->cache         = NULL;
 
     G_OBJECT_CLASS (parent_class)->dispose (object);
 }
@@ -382,6 +389,34 @@ unregister_char (TomoeDict *_dict, const gchar *utf8)
 }
 
 static TomoeChar *
+retrieve_char_by_id (TomoeDictEst *dict, int id)
+{
+    TomoeChar *chr = NULL;
+    ESTDOC *doc;
+    const gchar *utf8;
+
+    utf8 = est_db_get_doc_attr (dict->db, id, "utf8");
+    if (!utf8)
+        return NULL;
+
+    chr = g_hash_table_lookup (dict->cache, utf8);
+    if (chr)
+        return chr;
+
+    doc = est_db_get_doc (dict->db, id, 0);
+    if (!doc)
+        return NULL;
+
+    chr = tomoe_char_new_from_xml_data (est_doc_hidden_texts (doc), -1);
+    if (chr)
+        g_hash_table_insert (dict->cache, g_strdup (utf8), chr);
+
+    est_doc_delete (doc);
+
+    return chr;
+}
+
+static TomoeChar *
 get_char (TomoeDict *_dict, const gchar *utf8)
 {
     TomoeDictEst *dict = TOMOE_DICT_EST (_dict);
@@ -401,18 +436,7 @@ get_char (TomoeDict *_dict, const gchar *utf8)
     results = est_db_search (dict->db, cond, &n_results, NULL);
 
     for (i = 0; i < n_results; i++) {
-        ESTDOC *doc;
-        const gchar *xml;
-
-        doc = est_db_get_doc (dict->db, results[i], 0);
-        if (!doc) continue;
-
-        xml = est_doc_hidden_texts (doc);
-        if (xml)
-            chr = tomoe_char_new_from_xml_data (xml, -1);
-
-        est_doc_delete (doc);
-
+        chr = retrieve_char_by_id (dict, results[i]);
         if (chr) break;
     }
     g_free (results);
@@ -459,21 +483,12 @@ search (TomoeDict *_dict, TomoeQuery *query)
 
     results = est_db_search (dict->db, cond, &n_results, NULL);
     for (i = 0; i < n_results; i++) {
-        ESTDOC *doc;
-        const gchar *xml;
+        TomoeChar *chr;
 
-        doc = est_db_get_doc (dict->db, results[i], 0);
-        if (!doc) continue;
-
-        xml = est_doc_hidden_texts (doc);
-        if (xml) {
-            TomoeChar *chr;
-            chr = tomoe_char_new_from_xml_data (xml, -1);
-            candidates = g_list_prepend (candidates, tomoe_candidate_new (chr));
-            g_object_unref (chr);
-        }
-
-        est_doc_delete (doc);
+        chr = retrieve_char_by_id (dict, results[i]);
+        if (chr)
+            candidates = g_list_prepend (candidates,
+                                         tomoe_candidate_new (chr));
     }
     g_free (results);
 
@@ -492,10 +507,10 @@ static gboolean
 tomoe_dict_est_open (TomoeDictEst *dict)
 {
     gboolean success = TRUE;
-    int ecode;
+    int option, ecode;
 
-    dict->db = est_db_open (dict->database_name, ESTDBWRITER | ESTDBCREAT,
-                            &ecode);
+    option = dict->editable ? ESTDBWRITER | ESTDBCREAT : ESTDBREADER;
+    dict->db = est_db_open (dict->database_name, option, &ecode);
 
     if (!dict->db) {
         g_warning ("open error: %s\n", est_err_msg (ecode));
