@@ -150,8 +150,8 @@ class_init (TomoeDictEstClass *klass)
             "editable",
             "Editable",
             "Editable flag",
-            TRUE,
-            G_PARAM_READWRITE));
+            FALSE,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -160,6 +160,7 @@ init (TomoeDictEst *dict)
     dict->name          = NULL;
     dict->database_name = NULL;
     dict->db            = NULL;
+    dict->editable      = FALSE;
     dict->cache         = g_hash_table_new_full(g_str_hash, g_str_equal,
                                                 g_free, g_object_unref);
 }

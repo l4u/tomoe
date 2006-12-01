@@ -32,10 +32,16 @@ td_s_new(VALUE self, VALUE rb_name, VALUE props)
                               "editable", RVAL2CBOOL(editable),
                               NULL);
     } else if (strcmp(name, "est") == 0) {
-        VALUE database_name, editable;
+        VALUE rb_dict_name, database_name, editable;
+        gchar *dict_name;
+
+        rb_dict_name = rb_hash_aref(props, CSTR2RVAL("name"));
+        dict_name = NIL_P(rb_dict_name) ? NULL : RVAL2CSTR(rb_dict_name);
         database_name = rb_hash_aref(props, CSTR2RVAL("database_name"));
         editable = rb_hash_aref(props, CSTR2RVAL("editable"));
+
         dict = tomoe_dict_new(name,
+                              "name", dict_name,
                               "database_name", RVAL2CSTR(database_name),
                               "editable", RVAL2CBOOL(editable),
                               NULL);
