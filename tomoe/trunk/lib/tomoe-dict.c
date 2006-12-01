@@ -59,6 +59,16 @@ tomoe_dict_init (TomoeDict *dict)
 {
 }
 
+/**
+ * tomoe_dict_new:
+ * @name: The name of dictionary type.
+ * @first_property: the name of the first property.
+ *  ... :   the value of the first property, followed optionally by more name/value pairs, followed by NULL
+ *
+ * Create a new #TomoeDict.
+ *
+ * Return value: a new #TomoeDict.
+ */
 TomoeDict *
 tomoe_dict_new (const gchar *name, const gchar *first_property, ...)
 {
@@ -72,6 +82,14 @@ tomoe_dict_new (const gchar *name, const gchar *first_property, ...)
     return TOMOE_DICT (dict);
 }
 
+/**
+ * tomoe_dict_get_name:
+ * @dict: a #TomoeDict.
+ *
+ * Get the dictionary name.
+ *
+ * Return value: the name of the dictionary.
+ */
 const gchar *
 tomoe_dict_get_name (TomoeDict *dict)
 {
@@ -86,6 +104,15 @@ tomoe_dict_get_name (TomoeDict *dict)
         return NULL;
 }
 
+/**
+ * tomoe_dict_register_char:
+ * @dict: a TomoeDict object.
+ * @chr: a TomoeChar object to register.
+ *
+ * Register a TomoeChar object.
+ *
+ * Return value: TRUE if success.
+ */
 gboolean
 tomoe_dict_register_char (TomoeDict *dict, TomoeChar *chr)
 {
@@ -100,6 +127,15 @@ tomoe_dict_register_char (TomoeDict *dict, TomoeChar *chr)
         return FALSE;
 }
 
+/**
+ * tomoe_dict_unregister_char:
+ * @dict: a TomoeDict object.
+ * @utf8: UTF-8 encoded value of the character.
+ *
+ * Unregister a TomoeChar object which has utf8 code point.
+ *
+ * Return value: TRUE if success.
+ */
 gboolean
 tomoe_dict_unregister_char (TomoeDict *dict, const gchar *utf8)
 {
@@ -114,6 +150,15 @@ tomoe_dict_unregister_char (TomoeDict *dict, const gchar *utf8)
         return FALSE;
 }
 
+/**
+ * tomoe_dict_get_char:
+ * @dict: a TomoeDict object.
+ * @utf8: UTF-8 encoded value of the character.
+ *
+ * Get a TomoeChar object which has utf8 code point
+ *
+ * Return value: a TomoeChar object.
+ */
 TomoeChar *
 tomoe_dict_get_char (TomoeDict *dict, const gchar *utf8)
 {
