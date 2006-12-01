@@ -59,6 +59,16 @@ tomoe_recognizer_init (TomoeRecognizer *recognizer)
 {
 }
 
+/**
+ * tomoe_recognizer_new:
+ * @name: The name of recognizer type.
+ * @first_property: the name of the first property.
+ * @... :  the value of the first property, followed optionally by more name/value pairs, followed by NULL
+ *
+ * Create a new #TomoeRecognizer.
+ *
+ * Return value: a new #TomoeRecognizer.
+ */
 TomoeRecognizer *
 tomoe_recognizer_new (const gchar *name, const gchar *first_property, ...)
 {
