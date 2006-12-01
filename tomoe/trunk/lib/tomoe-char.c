@@ -123,6 +123,13 @@ tomoe_char_init (TomoeChar *chr)
                                              g_free, g_free);
 }
 
+/**
+ * tomoe_char_new:
+ * 
+ * Create a new #TomoeChar.
+ *
+ * Return value: a new #TomoeChar
+ */
 TomoeChar*
 tomoe_char_new (void)
 {
@@ -415,6 +422,15 @@ tomoe_char_meta_data_foreach (TomoeChar* chr, GHFunc func, gpointer user_data)
     g_hash_table_foreach (priv->meta_data, func, user_data);
 }
 
+/**
+ * tomoe_char_compare:
+ * @a: a TomoeChar object.
+ * @b: a TomoeChar object to compare with.
+ *
+ * Compare to TomoeChar objects with its own utf8 character.
+ *
+ * Return value: -1 a < b, 0 a= b, 1 a > b
+ */
 gint
 tomoe_char_compare (const TomoeChar *a, const TomoeChar *b)
 {

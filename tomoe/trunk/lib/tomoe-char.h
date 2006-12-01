@@ -57,10 +57,6 @@ struct _TomoeCharClass
 
 GType           tomoe_char_get_type (void) G_GNUC_CONST;
 
-/**
- * @brief Create a TomoeChar.
- * @return Pointer to newly allocated TomoeChar struct.
- */
 TomoeChar      *tomoe_char_new                  (void);
 TomoeChar      *tomoe_char_new_from_xml_data    (const gchar   *data,
                                                  gssize         len);
@@ -93,12 +89,6 @@ void            tomoe_char_meta_data_foreach    (TomoeChar* chr,
                                                  GHFunc func,
                                                  gpointer user_data);
 
-/**
- * @brief Compare two tomoe_letter.
- * @param a - Pointer to the tomoe_letter 1 pointer.
- * @param b - Pointer to the tomoe_letter 2 pointer.
- * @return -1 a < b, 0 a= b, 1 a > b
- */
 gint            tomoe_char_compare              (const TomoeChar *a,
                                                  const TomoeChar *b);
 
