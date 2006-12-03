@@ -150,8 +150,16 @@ AC_SUBST(recognizerdir)
 dnl **************************************************************
 dnl Configure for dictionaries.
 dnl **************************************************************
+
 dictdir="${libdir}/\$(PACKAGE)/dict"
 AC_SUBST(dictdir)
+
+AC_ARG_ENABLE(unihan,
+              [  --enable-unihan         use Unihan detabase
+                          (You may not be able to compile)],
+              [use_unihan=$enableval],
+	      [use_unihan=$enableval])
+AM_CONDITIONAL([WITH_UNIHAN], [test "$use_unihan" = "yes"])
 
 dnl **************************************************************
 dnl Bindings: Check for Ruby.

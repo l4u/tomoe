@@ -45,6 +45,14 @@ td_s_new(VALUE self, VALUE rb_name, VALUE props)
                               "database_name", RVAL2CSTR(database_name),
                               "editable", RVAL2CBOOL(editable),
                               NULL);
+    } else if (strcmp(name, "unihan") == 0) {
+        VALUE rb_dict_name;
+        gchar *dict_name;
+
+        rb_dict_name = rb_hash_aref(props, CSTR2RVAL("name"));
+        dict_name = NIL_P(rb_dict_name) ? NULL : RVAL2CSTR(rb_dict_name);
+
+        dict = tomoe_dict_new(name, "name", dict_name, NULL);
     } else {
         rb_raise(rb_eArgError, "unknown dictionary type: %s", name);
         dict = NULL;

@@ -45,3 +45,39 @@ dict_LTLIBRARIES += libest.la
 libest_la_SOURCES = tomoe-dict-est.c
 libest_la_LIBADD = $(EST_LIBS)
 endif
+
+if WITH_UNIHAN
+dict_LTLIBRARIES += libunihan.la
+
+unihan_built_sources =		\
+	tomoe-unihan.h		\
+	tomoe-unihan0.c		\
+	tomoe-unihan1.c		\
+	tomoe-unihan2.c		\
+	tomoe-unihan3.c		\
+	tomoe-unihan4.c		\
+	tomoe-unihan5.c		\
+	tomoe-unihan6.c		\
+	tomoe-unihan7.c		\
+	tomoe-unihan8.c		\
+	tomoe-unihan9.c
+
+CLEANFILES += $(unihan_built_sources) Unihan.zip Unihan.txt Unihan.txt.cache
+BUILT_SOUCES = $(unihan_built_sources)
+
+libunihan_la_SOURCES =		\
+	tomoe-dict-unihan.c	\
+	tomoe-unihan.c		\
+	$(unihan_built_sources)
+
+tomoe-unihan.h: unihan-compiler.rb Unihan.txt
+	$(RUBY) unihan-compiler.rb Unihan.txt tomoe-unihan 10
+
+Unihan.txt: Unihan.zip
+	unzip Unihan.zip
+	touch Unihan.txt
+
+Unihan_URL = ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip
+Unihan.zip:
+	$(RUBY) -r open-uri -e "print open('$(Unihan_URL)').read" > $@
+endif
