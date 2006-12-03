@@ -161,6 +161,8 @@ AC_ARG_ENABLE(unihan,
 	      [use_unihan=$enableval])
 AM_CONDITIONAL([WITH_UNIHAN], [test "$use_unihan" = "yes"])
 
+AC_PATH_PROG(UNZIP, unzip, unzip-not-found)
+
 dnl **************************************************************
 dnl Bindings: Check for Ruby.
 dnl **************************************************************

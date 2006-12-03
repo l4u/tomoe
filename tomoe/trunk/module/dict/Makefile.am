@@ -63,8 +63,8 @@ unihan_built_sources =		\
 	tomoe-unihan8.c		\
 	tomoe-unihan9.c
 
-CLEANFILES += $(unihan_built_sources) Unihan.zip Unihan.txt Unihan.txt.cache
-BUILT_SOUCES = $(unihan_built_sources)
+CLEANFILES += Unihan.txt Unihan.txt.cache
+BUILT_SOURCES = $(unihan_built_sources) Unihan.zip
 
 libunihan_la_SOURCES =		\
 	$(unihan_built_sources)	\
@@ -74,8 +74,8 @@ tomoe-unihan.c: unihan-compiler.rb Unihan.txt
 	$(RUBY) unihan-compiler.rb Unihan.txt tomoe-unihan 10
 
 Unihan.txt: Unihan.zip
-	unzip Unihan.zip
-	touch Unihan.txt
+	$(UNZIP) Unihan.zip
+	touch $@
 
 Unihan_URL = ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip
 Unihan.zip:
