@@ -1,3 +1,11 @@
+2006-12-04  Kouhei Sutou  <kou@cozmixng.org>
+
+	* module/dict/unihan-compiler.rb, module/dict/tomoe-dict-unihan.c,
+	module/dict/Makefile.am, configure.in: supported Unihan database.
+	* lib/tomoe-config.c, benchmark/load-dict.rb,
+	ext/ruby/tomoe-rb-dict.c, test/dict_spec.rb, tomoe-spec-utils.rb:
+	followed the changes.
+
 2006-12-01  Kouhei Sutou  <kou@cozmixng.org>
 
 	* data/kanjidic2-original.xsl: supported number-of-strokes.

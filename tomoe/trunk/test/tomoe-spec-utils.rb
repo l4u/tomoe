@@ -109,7 +109,7 @@ module TomoeSpecUtils
       Dir.glob(File.join(test_data_dir, "*.data"))
     end
 
-    def make_config_file(name=nil, use_est=false)
+    def make_config_file(name=nil, dict_type=:xml)
       name ||= "tomoe"
       config_file = Tempfile.new(name)
       config_file.open
@@ -117,24 +117,41 @@ module TomoeSpecUtils
 [config]
 use_system_dictionaries = false
 EOC
-      dictionaries.each_with_index do |dictionary, i|
-        if use_est
-          config_file.puts(<<-EOC)
+
+      case dict_type
+      when :unihan
+        config_file.puts(<<-EOC)
+[unihan-dictionary]
+type = unihan
+name = Unihan
+
+[all-dictionary]
+type = xml
+name = all
+file = #{File.join(data_dir, "all.xml")}
+EOC
+      else
+        dictionaries.each_with_index do |dictionary, i|
+          case dict_type
+          when :est
+            config_file.puts(<<-EOC)
 [#{File.basename(dictionary)}-dictionary]
 type = est
 name = #{File.basename(dictionary)}
 database = #{dictionary.sub(/\.xml$/, '')}
 #{(i % 2).zero? ? 'use = true' : ''}
 EOC
-        else
-          config_file.puts(<<-EOC)
+          else
+            config_file.puts(<<-EOC)
 [#{File.basename(dictionary)}-dictionary]
 type = xml
 file = #{dictionary}
 #{(i % 2).zero? ? 'use = true' : ''}
 EOC
+          end
         end
       end
+
       config_file.close
       config_file
     end

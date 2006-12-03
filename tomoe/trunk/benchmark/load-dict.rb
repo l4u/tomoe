@@ -18,4 +18,8 @@ Benchmark.bmbm do |x|
                                "editable" => false)}
     end
   end
+
+  x.report("Unihan") do
+    n.times {Tomoe::Dict.new("unihan", {})}
+  end
 end

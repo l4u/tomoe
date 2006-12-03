@@ -427,6 +427,28 @@ load_est_dictionary (GKeyFile *key_file, const gchar *dict_name)
 }
 
 static TomoeDict *
+load_unihan_dictionary (GKeyFile *key_file, const gchar *dict_name)
+{
+    TomoeDict *dict;
+    GError *error = NULL;
+    gchar *name;
+
+    name = g_key_file_get_string (key_file, dict_name, "name", &error);
+    if (error) {
+        TOMOE_HANDLE_ERROR (error);
+        return NULL;
+    }
+
+    dict = tomoe_dict_new ("unihan",
+                           "name", name,
+                           NULL);
+
+    g_free (name);
+
+    return dict;
+}
+
+static TomoeDict *
 _tomoe_config_load_dictionary (GKeyFile *key_file,
                                const gchar *dict_name,
                                const gchar *type)
@@ -435,6 +457,8 @@ _tomoe_config_load_dictionary (GKeyFile *key_file,
         return load_xml_dictionary (key_file, dict_name);
     } else if (strcmp (type, "est") == 0) {
         return load_est_dictionary (key_file, dict_name);
+    } else if (strcmp (type, "unihan") == 0) {
+        return load_unihan_dictionary (key_file, dict_name);
     } else {
         return NULL;
     }
