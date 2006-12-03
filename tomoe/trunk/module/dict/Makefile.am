@@ -50,6 +50,7 @@ if WITH_UNIHAN
 dict_LTLIBRARIES += libunihan.la
 
 unihan_built_sources =		\
+	tomoe-unihan.c		\
 	tomoe-unihan.h		\
 	tomoe-unihan0.c		\
 	tomoe-unihan1.c		\
@@ -66,11 +67,10 @@ CLEANFILES += $(unihan_built_sources) Unihan.zip Unihan.txt Unihan.txt.cache
 BUILT_SOUCES = $(unihan_built_sources)
 
 libunihan_la_SOURCES =		\
-	tomoe-dict-unihan.c	\
-	tomoe-unihan.c		\
-	$(unihan_built_sources)
+	$(unihan_built_sources)	\
+	tomoe-dict-unihan.c
 
-tomoe-unihan.h: unihan-compiler.rb Unihan.txt
+tomoe-unihan.c: unihan-compiler.rb Unihan.txt
 	$(RUBY) unihan-compiler.rb Unihan.txt tomoe-unihan 10
 
 Unihan.txt: Unihan.zip

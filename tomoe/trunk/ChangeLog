@@ -1,5 +1,7 @@
 2006-12-04  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/Makefile.am: fixed dependencies.
+
 	* module/dict/unihan-compiler.rb, module/dict/tomoe-dict-unihan.c,
 	module/dict/Makefile.am, configure.in: supported Unihan database.
 	* lib/tomoe-config.c, benchmark/load-dict.rb,
