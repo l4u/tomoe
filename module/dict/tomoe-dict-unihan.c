@@ -124,7 +124,7 @@ class_init (TomoeDictUnihanClass *klass)
             "name",
             "Name",
             "The name of the dictionary",
-            DEFAULT_NAME,
+            NULL,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
 

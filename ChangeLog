@@ -1,5 +1,7 @@
 2006-12-04  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/tomoe-dict-unihan.c: set default name is NULL.
+
 	* module/dict/Makefile.am, module/dict/unihan-compiler.rb:
 	improved strange Unihan compiling.
 
