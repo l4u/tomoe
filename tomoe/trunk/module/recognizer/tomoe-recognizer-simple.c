@@ -34,13 +34,18 @@
 #define TOMOE_IS_RECOGNIZER_SIMPLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_RECOGNIZER_SIMPLE))
 #define TOMOE_RECOGNIZER_SIMPLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_RECOGNIZER_SIMPLE, TomoeRecognizerSimpleClass))
 
+enum {
+    PROP_0,
+    PROP_DICTIONARY
+};
 
 typedef struct _TomoeRecognizerSimple TomoeRecognizerSimple;
 typedef struct _TomoeRecognizerSimpleClass TomoeRecognizerSimpleClass;
 
 struct _TomoeRecognizerSimple
 {
-    TomoeRecognizer object;
+    TomoeRecognizer  object;
+    TomoeDict       *dict;
 };
 
 struct _TomoeRecognizerSimpleClass
@@ -49,19 +54,49 @@ struct _TomoeRecognizerSimpleClass
 };
 
 static GType tomoe_type_recognizer_simple = 0;
+static GObjectClass *parent_class;
 
-static GList *search (TomoeRecognizer *recognizer,
-                      TomoeDict       *dict,
-                      TomoeWriting    *input);
+static GObject     *constructor               (GType                  type,
+                                               guint                  n_props,
+                                               GObjectConstructParam *props);
+static void         dispose                   (GObject       *object);
+static void         set_property              (GObject       *object,
+                                               guint         prop_id,
+                                               const GValue  *value,
+                                               GParamSpec    *pspec);
+static void         get_property              (GObject       *object,
+                                               guint          prop_id,
+                                               GValue        *value,
+                                               GParamSpec    *pspec);
+static GList       *search                    (TomoeRecognizer *recognizer,
+                                               TomoeWriting    *input);
 
 static void
 class_init (TomoeRecognizerSimpleClass *klass)
 {
+    GObjectClass *gobject_class;
     TomoeRecognizerClass *recognizer_class;
 
-    recognizer_class = TOMOE_RECOGNIZER_CLASS (klass);
+    parent_class = g_type_class_peek_parent (klass);
 
+    gobject_class = G_OBJECT_CLASS (klass);
+    gobject_class->constructor  = constructor;
+    gobject_class->dispose      = dispose;
+    gobject_class->set_property = set_property;
+    gobject_class->get_property = get_property;
+
+    recognizer_class = TOMOE_RECOGNIZER_CLASS (klass);
     recognizer_class->search = search;
+
+    g_object_class_install_property (
+        gobject_class,
+        PROP_DICTIONARY,
+        g_param_spec_object (
+            "dictionary",
+            "Dictionary",
+            "The dictionary of the recognizer",
+            TOMOE_TYPE_DICT,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
@@ -110,10 +145,91 @@ TOMOE_MODULE_IMPL_INSTANTIATE (const gchar *first_property, va_list var_args)
                                 first_property, var_args);
 }
 
-static GList *
-search (TomoeRecognizer *recognizer, TomoeDict *dict, TomoeWriting *input)
+static GObject *
+constructor (GType type, guint n_props,
+             GObjectConstructParam *props)
 {
-    return _tomoe_recognizer_simple_get_candidates (recognizer, dict, input);
+    GObject *object;
+    GObjectClass *klass = G_OBJECT_CLASS (parent_class);
+    TomoeRecognizerSimple *recognizer;
+
+    object = klass->constructor (type, n_props, props);
+    recognizer = TOMOE_RECOGNIZER_SIMPLE (object);
+
+    if (!recognizer->dict) {
+        g_warning ("dictionary isn't set for TomoeRecognizerSimple.");
+        g_object_unref (object);
+        object = NULL;
+    }
+
+    return object;
+}
+
+static void
+set_property (GObject *object,
+              guint prop_id,
+              const GValue *value,
+              GParamSpec *pspec)
+{
+    TomoeRecognizerSimple *recognizer = TOMOE_RECOGNIZER_SIMPLE (object);
+
+    switch (prop_id) {
+      case PROP_DICTIONARY:
+        if (recognizer->dict)
+            g_object_unref (recognizer->dict);
+        recognizer->dict = g_value_get_object (value);
+        if (recognizer->dict)
+            g_object_ref (recognizer->dict);
+        break;
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
+    }
+}
+
+
+static void
+get_property (GObject *object,
+              guint prop_id,
+              GValue *value,
+              GParamSpec *pspec)
+{
+    TomoeRecognizerSimple *recognizer = TOMOE_RECOGNIZER_SIMPLE (object);
+
+    switch (prop_id) {
+      case PROP_DICTIONARY:
+        g_value_set_object (value, recognizer->dict);
+        break;
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
+    }
+}
+
+static void
+dispose (GObject *object)
+{
+    TomoeRecognizerSimple *recognizer;
+
+    recognizer = TOMOE_RECOGNIZER_SIMPLE (object);
+
+    if (recognizer->dict)
+        g_object_unref (recognizer->dict);
+
+    recognizer->dict = NULL;
+
+    G_OBJECT_CLASS (parent_class)->dispose (object);
+}
+
+static GList *
+search (TomoeRecognizer *_recognizer, TomoeWriting *input)
+{
+    TomoeRecognizerSimple *recognizer;
+
+    recognizer = TOMOE_RECOGNIZER_SIMPLE (_recognizer);
+    return _tomoe_recognizer_simple_get_candidates (_recognizer,
+                                                    recognizer->dict,
+                                                    input);
 }
 
 /*

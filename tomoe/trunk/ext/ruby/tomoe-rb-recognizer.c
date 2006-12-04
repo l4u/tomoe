@@ -15,9 +15,17 @@ tr_s_unload(VALUE self)
 }
 
 static VALUE
-tr_s_new(VALUE self, VALUE name)
+tr_s_new(int argc, VALUE *argv, VALUE self)
 {
-    return GOBJ2RVAL(tomoe_recognizer_new(RVAL2CSTR(name), NULL));
+    TomoeRecognizer *recognizer;
+    VALUE name, dict;
+
+    rb_scan_args(argc, argv, "11", &name, &dict);
+
+    recognizer = tomoe_recognizer_new(RVAL2CSTR(name),
+                                      "dictionary", RVAL2TDIC(dict),
+                                      NULL);
+    return GOBJ2RVAL(recognizer);
 }
 
 void
@@ -30,5 +38,5 @@ Init_tomoe_recognizer(VALUE mTomoe)
     rb_define_singleton_method(cTomoeRecognizer, "load", tr_s_load, 1);
     rb_define_singleton_method(cTomoeRecognizer, "unload", tr_s_unload, 0);
 
-    rb_define_singleton_method(cTomoeRecognizer, "new", tr_s_new, 1);
+    rb_define_singleton_method(cTomoeRecognizer, "new", tr_s_new, -1);
 }

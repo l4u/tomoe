@@ -51,9 +51,9 @@ struct _TomoeContextClass
     GObjectClass parent_class;
 };
 
-GType            tomoe_context_get_type (void) G_GNUC_CONST;
+GType           tomoe_context_get_type (void) G_GNUC_CONST;
 
-TomoeContext    *tomoe_context_new      (void);
+TomoeContext   *tomoe_context_new      (void);
 
 void            tomoe_context_load_config     (TomoeContext       *ctx,
                                                const gchar        *config_file);
