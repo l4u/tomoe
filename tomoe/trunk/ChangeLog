@@ -1,5 +1,9 @@
 2006-12-04  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/Makefile.am, module/dict/tomoe-dict-ruby.c: added
+	Ruby backend. (not worked)
+	* ext/ruby/rbtomoe.h (RVAL2TCND): added.
+
 	* configure.in: search unzip.
 	* module/dict/Makefile.am: fixed typo and clean-upped.
 

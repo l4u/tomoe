@@ -29,7 +29,13 @@ AM_CPPFLAGS =							\
 	-DRUBY_EXTDIR=\""$(RUBY_EXTDIR)"\"			\
 	-DRUBY_LIBDIR=\""$(RUBY_LIBDIR)"\"
 
-INCLUDES = -I$(top_srcdir)/lib $(GLIB_CFLAGS) $(EST_CFLAGS)
+INCLUDES =				\
+	-I$(top_srcdir)/lib		\
+	-I$(top_srcdir)/ext/ruby	\
+	$(GLIB_CFLAGS)			\
+	$(EST_CFLAGS)			\
+	$(RUBY_CFLAGS)
+
 LIBADD = $(GLIB_LIBS)
 LDFLAGS =							\
   -version-info $(LT_VERSION_INFO)				\
@@ -44,6 +50,13 @@ dict_LTLIBRARIES += libest.la
 
 libest_la_SOURCES = tomoe-dict-est.c
 libest_la_LIBADD = $(EST_LIBS)
+endif
+
+if WITH_RUBY
+dict_LTLIBRARIES += libruby.la
+
+libruby_la_SOURCES = tomoe-dict-ruby.c
+libruby_la_LIBADD = $(RUBY_LIBS)
 endif
 
 if WITH_UNIHAN
