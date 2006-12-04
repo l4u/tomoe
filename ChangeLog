@@ -2,14 +2,11 @@
 
 	* module/recognizer/tomoe-recognizer-simple.c: had stroke list
 	dictionary.
-
 	* lib/tomoe-recognizer.[ch] (tomoe_recognizer_search): removed
 	TomoeDict argument.
 
 	* lib/tomoe-context.c: supported recognizer parameter.
-
 	* ext/ruby/tomoe-rb-recognizer.c: supported dictionary parameter.
-
 	* ext/ruby/tomoe-rb-dict.c: removed unused parameter for making
 	Unihan dictionary.
 
