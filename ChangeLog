@@ -1,6 +1,11 @@
+2006-12-04  Kouhei Sutou  <kou@cozmixng.org>
+
+	* module/dict/Makefile.am, module/dict/unihan-compiler.rb:
+	improved strange Unihan compiling.
+
 2006-12-04  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
-	* configure.in, module/dict/Makefile.am: Add --with-ruby-dict option.
+	* configure.in, module/dict/Makefile.am: Add --enable-ruby-dict option.
 
 2006-12-04  Kouhei Sutou  <kou@cozmixng.org>
 
