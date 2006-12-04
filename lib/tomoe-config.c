@@ -321,10 +321,16 @@ _tomoe_config_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
 {
     const gchar *filename;
     GDir *gdir;
+    TomoeDict *dict;
+
+    dict = tomoe_dict_new ("unihan", NULL);
+    if (dict) {
+        tomoe_shelf_add_dict (shelf, dict);
+        g_object_unref (dict);
+    }
 
     gdir = g_dir_open (TOMOEDATADIR, 0, NULL);
     while ((filename = g_dir_read_name (gdir))) {
-        TomoeDict *dict;
         gchar *path;
 
         if (!g_str_has_suffix (filename, ".xml"))
