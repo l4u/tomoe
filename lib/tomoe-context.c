@@ -30,6 +30,11 @@
 
 #define TOMOE_CONTEXT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_CONTEXT, TomoeContextPrivate))
 
+enum {
+    PROP_0,
+    PROP_RECOGNIZER
+};
+
 typedef struct _TomoeContextPrivate	TomoeContextPrivate;
 struct _TomoeContextPrivate
 {
@@ -40,7 +45,15 @@ struct _TomoeContextPrivate
 
 G_DEFINE_TYPE (TomoeContext, tomoe_context, G_TYPE_OBJECT)
 
-static void tomoe_context_dispose      (GObject *object);
+static void         dispose                   (GObject       *object);
+static void         set_property              (GObject       *object,
+                                               guint         prop_id,
+                                               const GValue  *value,
+                                               GParamSpec    *pspec);
+static void         get_property              (GObject       *object,
+                                               guint          prop_id,
+                                               GValue        *value,
+                                               GParamSpec    *pspec);
 
 static void
 tomoe_context_class_init (TomoeContextClass *klass)
@@ -49,7 +62,19 @@ tomoe_context_class_init (TomoeContextClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->dispose  = tomoe_context_dispose;
+    gobject_class->dispose      = dispose;
+    gobject_class->set_property = set_property;
+    gobject_class->get_property = get_property;
+
+    g_object_class_install_property (
+        gobject_class,
+        PROP_RECOGNIZER,
+        g_param_spec_object (
+            "recognizer",
+            "Recognizer",
+            "The recognizer of the context",
+            TOMOE_TYPE_RECOGNIZER,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
     g_type_class_add_private (gobject_class, sizeof (TomoeContextPrivate));
 }
@@ -82,21 +107,57 @@ tomoe_context_new(void)
 }
 
 static void
-tomoe_context_dispose (GObject *object)
+set_property (GObject *object,
+              guint prop_id,
+              const GValue *value,
+              GParamSpec *pspec)
 {
     TomoeContextPrivate *priv = TOMOE_CONTEXT_GET_PRIVATE (object);
 
-    if (priv->shelf) {
+    switch (prop_id) {
+      case PROP_RECOGNIZER:
+        if (priv->recognizer)
+            g_object_unref (priv->recognizer);
+        priv->recognizer = g_value_get_object (value);
+        if (priv->recognizer)
+            g_object_ref (priv->recognizer);
+        break;
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
+    }
+}
+
+
+static void
+get_property (GObject *object,
+              guint prop_id,
+              GValue *value,
+              GParamSpec *pspec)
+{
+    TomoeContextPrivate *priv = TOMOE_CONTEXT_GET_PRIVATE (object);
+
+    switch (prop_id) {
+      case PROP_RECOGNIZER:
+        g_value_set_object (value, priv->recognizer);
+        break;
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
+    }
+}
+
+static void
+dispose (GObject *object)
+{
+    TomoeContextPrivate *priv = TOMOE_CONTEXT_GET_PRIVATE (object);
+
+    if (priv->shelf)
         g_object_unref (priv->shelf);
-    }
-
-    if (priv->config) {
+    if (priv->config)
         g_object_unref (priv->config);
-    }
-
-    if (priv->recognizer) {
+    if (priv->recognizer)
         g_object_unref (priv->recognizer);
-    }
 
     priv->shelf      = NULL;
     priv->config     = NULL;
@@ -141,32 +202,29 @@ static GList *
 tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
 {
     TomoeContextPrivate *priv;
-    TomoeShelf *shelf;
-    GList *names, *name;
     GList *matched = NULL;
 
-    if (!context) return matched;
+    g_return_val_if_fail (context, matched);
     if (!input) return matched;
 
     priv = TOMOE_CONTEXT_GET_PRIVATE (context);
-    shelf = priv->shelf;
-    if (!shelf) return matched;
-
-    names = tomoe_shelf_get_dict_names(shelf);
-    if (!names) return matched;
-
-    if (!priv->recognizer)
-        priv->recognizer = tomoe_recognizer_new ("simple", NULL);
-
-    for (name = names; name; name = name->next) {
+    if (!priv->recognizer) {
+        TomoeShelf *shelf;
         TomoeDict *dict;
 
-        dict = tomoe_shelf_get_dict(shelf, name->data);
-        matched = g_list_concat (tomoe_recognizer_search (priv->recognizer,
-                                                          dict, input),
-                                 matched);
+        shelf = priv->shelf;
+        g_return_val_if_fail (shelf, matched);
+
+        dict = tomoe_shelf_get_dict (shelf, "TOMOE Strokelist Dictionary");
+        g_return_val_if_fail (dict, matched);
+
+        priv->recognizer = tomoe_recognizer_new ("simple",
+                                                 "dictionary", dict,
+                                                 NULL);
     }
-    matched = g_list_sort (matched, _candidate_compare_func);
+
+    matched = g_list_sort (tomoe_recognizer_search (priv->recognizer, input),
+                           _candidate_compare_func);
 
     return matched;
 }

@@ -10,7 +10,12 @@ $LOAD_PATH.unshift(File.join(test_dir))
 
 require 'tomoe-spec-utils'
 
-context = Tomoe::Context.new
+dict = Tomoe::Dict.new("xml",
+                       "filename" => File.join(TomoeSpecUtils::Config.data_dir,
+                                               "all.xml"),
+                       "editable" => false)
+recognizer = Tomoe::Recognizer.new("simple", dict)
+context = Tomoe::Context.new("recognizer" => recognizer)
 config_file = TomoeSpecUtils::Config.make_config_file
 context.load_config(config_file.path)
 

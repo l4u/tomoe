@@ -86,16 +86,16 @@ tomoe_recognizer_new (const gchar *name, const gchar *first_property, ...)
 /**
  * tomoe_recognizer_search:
  * @recognizer: a TomoeRecognizer object.
- * @dict: a #TomoeDict object.
  * @input: a #TomoeWriting object for matching.
  *
  * Match strokes of TomoeChar with TomoeWriting.
  *
- * Return value: A newly-allocated list of #TomoeCandidate. The each #TomoeCandidate should be also freed with g_object_unref.
- */
+ * Return value: A newly-allocated list of
+ * #TomoeCandidate. The each #TomoeCandidate should be also
+ * freed with g_object_unref.
+  */
 GList *
-tomoe_recognizer_search (TomoeRecognizer *recognizer,
-                         TomoeDict *dict, TomoeWriting *input)
+tomoe_recognizer_search (TomoeRecognizer *recognizer, TomoeWriting *input)
 {
     TomoeRecognizerClass *klass;
 
@@ -103,7 +103,7 @@ tomoe_recognizer_search (TomoeRecognizer *recognizer,
 
     klass = TOMOE_RECOGNIZER_GET_CLASS (recognizer);
     if (klass->search)
-        return klass->search (recognizer, dict, input);
+        return klass->search (recognizer, input);
     else
         return NULL;
 }

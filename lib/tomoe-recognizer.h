@@ -50,7 +50,6 @@ struct _TomoeRecognizerClass
     GObjectClass parent_class;
 
     GList  *(*search) (TomoeRecognizer *recognizer,
-                       TomoeDict       *dict,
                        TomoeWriting    *input);
 };
 
@@ -65,7 +64,6 @@ TomoeRecognizer *tomoe_recognizer_new         (const gchar *name,
                                                ...);
 
 GList           *tomoe_recognizer_search   (TomoeRecognizer *recognizer,
-                                            TomoeDict       *dict,
                                             TomoeWriting    *input);
 
 G_END_DECLS

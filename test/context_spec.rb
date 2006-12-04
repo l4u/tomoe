@@ -4,7 +4,11 @@ context "Tomoe::Context" do
   @@context = nil
   def context
     return @@context if @@context
-    @@context = Tomoe::Context.new
+    dict = Tomoe::Dict.new("xml",
+                           "filename" => File.join(data_dir, "all.xml"),
+                           "editable" => false)
+    recognizer = Tomoe::Recognizer.new("simple", dict)
+    @@context = Tomoe::Context.new("recognizer" => recognizer)
     @@context.load_config(@config_file.path)
     @@context
   end
