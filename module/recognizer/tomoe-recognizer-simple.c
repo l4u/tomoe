@@ -157,6 +157,13 @@ constructor (GType type, guint n_props,
     recognizer = TOMOE_RECOGNIZER_SIMPLE (object);
 
     if (!recognizer->dict) {
+        recognizer->dict =
+            tomoe_dict_new ("xml",
+                            "filename", DATADIR "/handwriting.xml",
+                            NULL);
+    }
+
+    if (!recognizer->dict) {
         g_warning ("dictionary isn't set for TomoeRecognizerSimple.");
         g_object_unref (object);
         object = NULL;
