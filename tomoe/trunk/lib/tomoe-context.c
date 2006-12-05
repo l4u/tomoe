@@ -20,6 +20,10 @@
  *  $Id$
  */
 
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+
 #include "tomoe-dict.h"
 #include "tomoe-recognizer.h"
 #include "tomoe-context.h"
@@ -27,6 +31,14 @@
 #include "tomoe-shelf.h"
 #include "tomoe-candidate.h"
 #include "glib-utils.h"
+
+#include <glib/gstdio.h>
+
+#define DEFAULT_USER_DICT_CONTENT									\
+"<?xml version =\"1.0\" encoding=\"UTF-8\"?>\n"						\
+"<!DOCTYPE dictionary SYSTEM \"" DATADIR "/tomoe-dict.dtd\">\n"		\
+"<dictionary name=\"User dictionary\">\n"							\
+"</dictionary>\n"
 
 #define TOMOE_CONTEXT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_CONTEXT, TomoeContextPrivate))
 
@@ -40,6 +52,7 @@ struct _TomoeContextPrivate
 {
     TomoeShelf *shelf;
     TomoeRecognizer *recognizer;
+    TomoeDict *user_dict;
 };
 
 G_DEFINE_TYPE (TomoeContext, tomoe_context, G_TYPE_OBJECT)
@@ -85,6 +98,7 @@ tomoe_context_init (TomoeContext *context)
 
     priv->shelf      = NULL;
     priv->recognizer = NULL;
+    priv->user_dict  = NULL;
 }
 
 /**
@@ -154,11 +168,83 @@ dispose (GObject *object)
         g_object_unref (priv->shelf);
     if (priv->recognizer)
         g_object_unref (priv->recognizer);
+    if (priv->user_dict)
+        g_object_unref (priv->user_dict);
 
     priv->shelf      = NULL;
     priv->recognizer = NULL;
+    priv->user_dict  = NULL;
 
     G_OBJECT_CLASS (tomoe_context_parent_class)->dispose (object);
+}
+
+static gchar *
+ensure_user_dict_file (void)
+{
+    FILE *f;
+    gchar *tomoe_dir_name, *user_dict_filename;
+    const gchar *content;
+
+    tomoe_dir_name = g_build_filename (g_get_home_dir (), ".tomoe", NULL);
+
+    if (!g_file_test (tomoe_dir_name, G_FILE_TEST_EXISTS)) {
+        if (!g_mkdir (tomoe_dir_name, 0x700)) {
+            g_warning ("can't create %s: %s", tomoe_dir_name, strerror (errno));
+        }
+    }
+
+    if (!g_file_test (tomoe_dir_name, G_FILE_TEST_IS_DIR)) {
+        g_warning ("%s isn't directory: %s", tomoe_dir_name, strerror (errno));
+    }
+
+    user_dict_filename = g_build_filename (tomoe_dir_name, "dict.xml", NULL);
+    g_free (tomoe_dir_name);
+
+    f = fopen (user_dict_filename, "wb");
+    if (!f) {
+        g_warning ("failed to open %s: %s",
+                   user_dict_filename, strerror (errno));
+        g_free (user_dict_filename);
+        return NULL;
+    }
+
+    content = DEFAULT_USER_DICT_CONTENT;
+    if (fwrite (content, strlen (content), 1, f) < 1) {
+        g_warning ("failed to write to %s: %s",
+                   user_dict_filename, strerror (errno));
+        g_free (user_dict_filename);
+        return NULL;
+    }
+
+    fclose (f);
+
+    return user_dict_filename;
+}
+
+static TomoeDict *
+ensure_user_dict (TomoeShelf *shelf, const gchar *name)
+{
+    TomoeDict *user_dict;
+
+    g_return_val_if_fail (TOMOE_IS_SHELF (shelf), NULL);
+
+    user_dict = tomoe_shelf_get_dict (shelf, name);
+    if (user_dict) {
+        g_object_ref (user_dict);
+    } else {
+        gchar *user_dict_filename;
+
+        user_dict_filename = ensure_user_dict_file ();
+        if (user_dict_filename) {
+            user_dict = tomoe_dict_new ("xml",
+                                        "filename", user_dict_filename,
+                                        "editable", TRUE,
+                                        NULL);
+            g_free (user_dict_filename);
+        }
+    }
+
+    return user_dict;
 }
 
 /**
@@ -169,7 +255,7 @@ dispose (GObject *object)
  * Load dictionaries into configuration file.
  */
 void
-tomoe_context_load_config (TomoeContext *ctx, const char *config_file)
+tomoe_context_load_config (TomoeContext *ctx, const gchar *config_file)
 {
     TomoeContextPrivate *priv;
     TomoeConfig* cfg;
@@ -178,7 +264,13 @@ tomoe_context_load_config (TomoeContext *ctx, const char *config_file)
 
     priv = TOMOE_CONTEXT_GET_PRIVATE(ctx);
     cfg = tomoe_config_new (config_file);
+
+    if (priv->shelf)
+        g_object_unref (priv->shelf);
     priv->shelf = tomoe_config_make_shelf (cfg);
+    priv->user_dict = ensure_user_dict (priv->shelf,
+                                        tomoe_config_get_user_dict_name (cfg));
+
     g_object_unref (cfg);
 }
 

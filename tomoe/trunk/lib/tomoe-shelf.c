@@ -82,20 +82,6 @@ tomoe_shelf_dispose (GObject *object)
     G_OBJECT_CLASS (tomoe_shelf_parent_class)->dispose (object);
 }
 
-void
-tomoe_shelf_add_dict (TomoeShelf *shelf, TomoeDict *dict)
-{
-    TomoeShelfPrivate *priv;
-    g_return_if_fail (shelf);
-    g_return_if_fail (dict);
-    g_return_if_fail (tomoe_dict_get_name(dict));
-
-    priv = TOMOE_SHELF_GET_PRIVATE (shelf);
-    g_hash_table_insert (priv->dicts,
-                         g_strdup (tomoe_dict_get_name (dict)),
-                         g_object_ref (dict));
-}
-
 TomoeDict *
 tomoe_shelf_get_dict (TomoeShelf *shelf, const gchar *name)
 {
@@ -108,8 +94,24 @@ tomoe_shelf_get_dict (TomoeShelf *shelf, const gchar *name)
     return g_hash_table_lookup(priv->dicts, name);
 }
 
+void
+tomoe_shelf_register_dict (TomoeShelf *shelf, const gchar *name,
+                           TomoeDict *dict)
+{
+    TomoeShelfPrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_SHELF (shelf));
+    g_return_if_fail (name);
+    g_return_if_fail (dict);
+
+    priv = TOMOE_SHELF_GET_PRIVATE (shelf);
+    g_hash_table_insert (priv->dicts,
+                         g_strdup (name),
+                         g_object_ref (dict));
+}
+
 gboolean
-tomoe_shelf_remove_dict (TomoeShelf *shelf, const gchar *name)
+tomoe_shelf_unregister_dict (TomoeShelf *shelf, const gchar *name)
 {
     TomoeShelfPrivate *priv;
 

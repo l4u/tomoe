@@ -35,6 +35,8 @@
 #include "tomoe-config.h"
 #include "glib-utils.h"
 
+#define DEFAULT_USER_DICT_NAME "user"
+
 #define TOMOE_CONFIG_GET_PRIVATE(obj) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_CONFIG, TomoeConfigPrivate))
 
@@ -42,6 +44,7 @@ typedef struct _TomoeConfigPrivate  TomoeConfigPrivate;
 struct _TomoeConfigPrivate
 {
     gchar       *filename;
+    gchar       *user_dict_name;
     GKeyFile    *key_file;
 };
 
@@ -69,10 +72,14 @@ static void     tomoe_config_get_property (GObject       *object,
 static void     tomoe_config_load         (TomoeConfig  *config);
 static void     tomoe_config_save         (TomoeConfig *config);
 
-static gboolean _tomoe_config_key_file_get_boolean_value (GKeyFile *key_file,
-                                                          const gchar *group,
-                                                          const gchar *key,
-                                                          gboolean default_value);
+static gboolean _tomoe_config_key_file_get_boolean (GKeyFile *key_file,
+                                                    const gchar *group,
+                                                    const gchar *key,
+                                                    gboolean default_value);
+static gchar   *_tomoe_config_key_file_get_string  (GKeyFile *key_file,
+                                                    const gchar *group,
+                                                    const gchar *key,
+                                                    const gchar *default_value);
 static void     _tomoe_config_load_system_dictionaries   (TomoeConfig *config,
                                                           TomoeShelf *shelf);
 static TomoeDict *_tomoe_config_load_dictionary (GKeyFile    *key_file,
@@ -107,6 +114,7 @@ tomoe_config_init (TomoeConfig *config)
     TomoeConfigPrivate *priv = TOMOE_CONFIG_GET_PRIVATE (config);
 
     priv->filename   = NULL;
+    priv->user_dict_name = NULL;
     priv->key_file   = NULL;
 }
 
@@ -135,14 +143,15 @@ tomoe_config_dispose (GObject *object)
 
     tomoe_config_save (config);
 
-    if (priv->filename) {
+    if (priv->filename)
         g_free (priv->filename);
-    }
-    if (priv->key_file) {
+    if (priv->user_dict_name)
+        g_free (priv->user_dict_name);
+    if (priv->key_file)
         g_key_file_free (priv->key_file);
-    }
 
     priv->filename  = NULL;
+    priv->user_dict_name = NULL;
     priv->key_file = NULL;
 
     if (G_OBJECT_CLASS (tomoe_config_parent_class)->dispose)
@@ -215,6 +224,11 @@ tomoe_config_load (TomoeConfig *config)
     }
 
     priv->key_file = key_file;
+
+    priv->user_dict_name =
+        _tomoe_config_key_file_get_string (key_file,
+                                           "config", "user_dictionary",
+                                           DEFAULT_USER_DICT_NAME);
 }
 
 static void
@@ -243,6 +257,28 @@ tomoe_config_save (TomoeConfig *config)
     }
 }
 
+const gchar *
+tomoe_config_get_filename (TomoeConfig *config)
+{
+    TomoeConfigPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_CONFIG (config), NULL);
+
+    priv = TOMOE_CONFIG_GET_PRIVATE(config);
+    return priv->filename;
+}
+
+const gchar *
+tomoe_config_get_user_dict_name (TomoeConfig *config)
+{
+    TomoeConfigPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_CONFIG (config), NULL);
+
+    priv = TOMOE_CONFIG_GET_PRIVATE(config);
+    return priv->user_dict_name;
+}
+
 TomoeShelf *
 tomoe_config_make_shelf (TomoeConfig *config)
 {
@@ -269,36 +305,40 @@ tomoe_config_make_shelf (TomoeConfig *config)
         if (!g_str_has_suffix (dict_name, "-dictionary"))
             continue;
 
-        if (!_tomoe_config_key_file_get_boolean_value (key_file, dict_name,
-                                                     "use", TRUE))
+        if (!_tomoe_config_key_file_get_boolean (key_file, dict_name,
+                                                 "use", TRUE))
             continue;
 
-        type = g_key_file_get_string (key_file, dict_name, "type", NULL);
-        dict = _tomoe_config_load_dictionary (key_file, dict_name,
-                                              type ? type : "xml");
+        type = _tomoe_config_key_file_get_string (key_file, dict_name,
+                                                  "type", "xml");
+        dict = _tomoe_config_load_dictionary (key_file, dict_name, type);
         if (dict) {
-            tomoe_shelf_add_dict (shelf, dict);
+            gchar tmp, *dictionary_suffix;
+            dictionary_suffix = g_strrstr (dict_name, "-dictionary");
+            tmp = dict_name[dictionary_suffix - dict_name];
+            dict_name[dictionary_suffix - dict_name] = '\0';
+            tomoe_shelf_register_dict (shelf, dict_name, dict);
+            dict_name[dictionary_suffix - dict_name] = tmp;
             g_object_unref (dict);
         }
         g_free (type);
     }
+    g_strfreev(dicts);
 
-    if (_tomoe_config_key_file_get_boolean_value (key_file,
-                                                "config",
-                                                "use_system_dictionaries",
-                                                TRUE)) {
+    if (_tomoe_config_key_file_get_boolean (key_file,
+                                            "config", "use_system_dictionaries",
+                                            TRUE)) {
         _tomoe_config_load_system_dictionaries (config, shelf);
     }
 
-    g_strfreev(dicts);
     return shelf;
 }
 
 static gboolean
-_tomoe_config_key_file_get_boolean_value (GKeyFile *key_file,
-                                        const gchar *group,
-                                        const gchar *key,
-                                        gboolean default_value)
+_tomoe_config_key_file_get_boolean (GKeyFile *key_file,
+                                    const gchar *group,
+                                    const gchar *key,
+                                    gboolean default_value)
 {
     gboolean result;
     GError *error = NULL;
@@ -319,6 +359,32 @@ _tomoe_config_key_file_get_boolean_value (GKeyFile *key_file,
     return result;
 }
 
+static gchar *
+_tomoe_config_key_file_get_string (GKeyFile *key_file,
+                                   const gchar *group,
+                                   const gchar *key,
+                                   const gchar *default_value)
+{
+    gchar *result = NULL;
+    GError *error = NULL;
+
+    result = g_key_file_get_string (key_file, group, key, &error);
+    if (error) {
+        switch (error->code) {
+          case G_KEY_FILE_ERROR_NOT_FOUND:
+            g_error_free (error);
+            break;
+          case G_KEY_FILE_ERROR_INVALID_VALUE:
+            TOMOE_HANDLE_ERROR (error);
+            break;
+        }
+        if (default_value)
+            result = g_strdup (default_value);
+    }
+
+    return result;
+}
+
 static void
 _tomoe_config_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
 {
@@ -328,7 +394,7 @@ _tomoe_config_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
 
     dict = tomoe_dict_new ("unihan", NULL);
     if (dict) {
-        tomoe_shelf_add_dict (shelf, dict);
+        tomoe_shelf_register_dict (shelf, "Unihan", dict);
         g_object_unref (dict);
     }
 
@@ -347,7 +413,7 @@ _tomoe_config_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
         dict = tomoe_dict_new ("xml", "filename", path, "editable", FALSE,
                                NULL);
         if (dict) {
-            tomoe_shelf_add_dict (shelf, dict);
+            tomoe_shelf_register_dict (shelf, tomoe_dict_get_name (dict), dict);
             g_object_unref (dict);
         }
 
@@ -370,9 +436,9 @@ load_xml_dictionary (GKeyFile *key_file, const gchar *dict_name)
         return NULL;
     }
 
-    editable = _tomoe_config_key_file_get_boolean_value (key_file, dict_name,
+    editable = _tomoe_config_key_file_get_boolean (key_file, dict_name,
                                                          "editable", TRUE);
-    user_dict = _tomoe_config_key_file_get_boolean_value (key_file, dict_name,
+    user_dict = _tomoe_config_key_file_get_boolean (key_file, dict_name,
                                                           "user", TRUE);
     if (!user_dict) {
         gchar *tmp;
@@ -412,9 +478,9 @@ load_est_dictionary (GKeyFile *key_file, const gchar *dict_name)
         return NULL;
     }
 
-    editable = _tomoe_config_key_file_get_boolean_value (key_file, dict_name,
+    editable = _tomoe_config_key_file_get_boolean (key_file, dict_name,
                                                          "editable", TRUE);
-    user_dict = _tomoe_config_key_file_get_boolean_value (key_file, dict_name,
+    user_dict = _tomoe_config_key_file_get_boolean (key_file, dict_name,
                                                           "user", TRUE);
     if (!user_dict) {
         gchar *tmp;

@@ -53,11 +53,12 @@ GType            tomoe_shelf_get_type (void) G_GNUC_CONST;
 
 TomoeShelf      *tomoe_shelf_new      (void);
 
-void             tomoe_shelf_add_dict       (TomoeShelf  *shelf,
-                                             TomoeDict   *dict);
 TomoeDict       *tomoe_shelf_get_dict       (TomoeShelf  *shelf,
                                              const gchar *name);
-gboolean         tomoe_shelf_remove_dict    (TomoeShelf  *shelf,
+void             tomoe_shelf_register_dict  (TomoeShelf  *shelf,
+                                             const gchar *name,
+                                             TomoeDict   *dict);
+gboolean         tomoe_shelf_unregister_dict(TomoeShelf  *shelf,
                                              const gchar *name);
 GList           *tomoe_shelf_get_dict_names (TomoeShelf  *shelf);
 gboolean         tomoe_shelf_has_dict       (TomoeShelf  *shelf,

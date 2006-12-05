@@ -308,6 +308,7 @@ dnl **************************************************************
 TOMOE_CFLAGS='							\
 	$(GLIB_CFLAGS)						\
 	-DCONFDIR=\""$(confdir)"\"				\
+	-DDATADIR=\""$(datadir)"\"				\
 	-DDICT_DATADIR=\""$(dict_datadir)"\"				\
 	-DRECOGNIZER_DATADIR=\""$(recognizer_datadir)"\"	\
 	-DDICT_MODULEDIR=\""$(dict_moduledir)"\"		\
