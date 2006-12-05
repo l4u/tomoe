@@ -34,6 +34,7 @@
 #include <glib-utils.h>
 
 #include "tomoe-unihan.h"
+#include "tomoe-dict-ptr-array.h"
 
 #define TOMOE_TYPE_DICT_UNIHAN            tomoe_type_dict_unihan
 #define TOMOE_DICT_UNIHAN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_DICT_UNIHAN, TomoeDictUnihan))
@@ -61,11 +62,6 @@ struct _TomoeDictUnihanClass
 {
     TomoeDictClass parent_class;
 };
-
-typedef struct _TomoeDictSearchContext {
-    TomoeQuery *query;
-    GList *results;
-} TomoeDictSearchContext;
 
 static GType tomoe_type_dict_unihan = 0;
 static GObjectClass *parent_class;
@@ -281,105 +277,20 @@ static TomoeChar *
 get_char (TomoeDict *_dict, const gchar *utf8)
 {
     TomoeDictUnihan *dict = TOMOE_DICT_UNIHAN (_dict);
-    guint i;
 
     g_return_val_if_fail (TOMOE_IS_DICT_UNIHAN (dict), NULL);
-    g_return_val_if_fail (utf8 && *utf8 != '\0', NULL);
 
-    for (i = 0; i < chars->len; i++) {
-        TomoeChar *chr = g_ptr_array_index (chars, i);
-        if (0 == strcmp(tomoe_char_get_utf8(chr), utf8)) {
-            return chr;
-        }
-    }
-
-    return NULL;
-}
-
-static gboolean
-tomoe_dict_unihan_does_match_char_with_n_strokes (TomoeChar *chr,
-                                                  gint min, gint max)
-{
-    TomoeWriting *writing;
-    gint n_strokes;
-
-    if (min < 0 && max < 0)
-        return TRUE;
-
-    writing = tomoe_char_get_writing (chr);
-    if (!writing)
-        return FALSE;
-
-    n_strokes = tomoe_writing_get_n_strokes (writing);
-    return ((min < 0 || min <= n_strokes) &&
-            (max < 0 || max >= n_strokes));
-}
-
-static gint
-tomoe_dict_unihan_compare_reading (gconstpointer a, gconstpointer b)
-{
-    TomoeReading *reading, *searched_reading;
-
-    reading = TOMOE_READING(a);
-    searched_reading = TOMOE_READING(b);
-    return strcmp(tomoe_reading_get_reading(reading),
-                  tomoe_reading_get_reading(searched_reading));
-}
-
-static gboolean
-tomoe_dict_unihan_does_match_char_with_readings (TomoeChar *chr,
-                                                 TomoeReading *reading)
-{
-    if (!reading)
-        return TRUE;
-
-    if (g_list_find_custom ((GList *)tomoe_char_get_readings (chr),
-                            reading, tomoe_dict_unihan_compare_reading))
-        return TRUE;
-    else
-        return FALSE;
-}
-
-static void
-tomoe_dict_unihan_collect_chars_by_query (gpointer data, gpointer user_data)
-{
-    TomoeChar *chr = data;
-    TomoeDictSearchContext *context = user_data;
-    TomoeQuery *query;
-    TomoeReading *reading;
-    gint min_n_strokes, max_n_strokes;
-
-    query = context->query;
-
-    min_n_strokes = tomoe_query_get_min_n_strokes (query);
-    max_n_strokes = tomoe_query_get_max_n_strokes (query);
-    if (!tomoe_dict_unihan_does_match_char_with_n_strokes (chr,
-                                                        min_n_strokes,
-                                                        max_n_strokes))
-        return;
-
-    reading = g_list_nth_data ((GList *)tomoe_query_get_readings (query), 0);
-    if (!tomoe_dict_unihan_does_match_char_with_readings (chr, reading))
-        return;
-
-    context->results = g_list_prepend (context->results,
-                                       tomoe_candidate_new (chr));
+    return _tomoe_dict_ptr_array_get_char (chars, utf8);
 }
 
 static GList *
 search (TomoeDict *_dict, TomoeQuery *query)
 {
-    TomoeDictSearchContext search_context;
+    TomoeDictUnihan *dict = TOMOE_DICT_UNIHAN (_dict);
 
-    search_context.query = g_object_ref (query);
-    search_context.results = NULL;
+    g_return_val_if_fail (TOMOE_IS_DICT_UNIHAN (dict), FALSE);
 
-    g_ptr_array_foreach_reverse (chars,
-                                 tomoe_dict_unihan_collect_chars_by_query,
-                                 &search_context);
-    g_object_unref (search_context.query);
-
-    return search_context.results;
+ return _tomoe_dict_ptr_array_search (chars, query);
 }
 
 static gboolean

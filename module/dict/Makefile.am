@@ -36,9 +36,13 @@ LDFLAGS =							\
   -version-info $(LT_VERSION_INFO)				\
   -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)
 
+ptr_array_based_dict_sources =		\
+	tomoe-dict-ptr-array.c		\
+	tomoe-dict-ptr-array.h
+
 dict_module_LTLIBRARIES = libxml.la
 
-libxml_la_SOURCES = tomoe-dict-xml.c
+libxml_la_SOURCES = tomoe-dict-xml.c $(ptr_array_based_dict_sources)
 
 if WITH_EST
 dict_module_LTLIBRARIES += libest.la
@@ -66,7 +70,8 @@ libunihan_la_SOURCES =		\
 	tomoe-dict-unihan.c	\
 	tomoe-unihan.c		\
 	tomoe-unihan.h		\
-	$(unihan_built_sources)
+	$(unihan_built_sources)	\
+	$(ptr_array_based_dict_sources)
 
 tomoe-unihan-data.h: unihan-compiler.rb Unihan.txt
 	$(RUBY) unihan-compiler.rb Unihan.txt > $@
