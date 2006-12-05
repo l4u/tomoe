@@ -305,7 +305,14 @@ dnl **************************************************************
 dnl Configure for TOMOE.
 dnl **************************************************************
 
-TOMOE_CFLAGS='$(GLIB_CFLAGS) -DCONFDIR=\""$(confdir)"\" -DDATADIR=\""$(datadir)"\" -DDICT_DATADIR=\""$(dict_datadir)"\" -DRECOGNIZER_DATADIR=\""$(recognizer_datadir)"\" -DDICT_MODULEDIR=\""$(dict_moduledir)"\" -DRECOGNIZER_MODULEDIR=\""$(recognizer_moduledir)"\" -I$(top_srcdir)/lib'
+TOMOE_CFLAGS="$TOMOE_CFLAGS \$(GLIB_CFLAGS)"
+TOMOE_CFLAGS="$TOMOE_CFLAGS -DCONFDIR=\\\"\"\$(confdir)\"\\\""
+TOMOE_CFLAGS="$TOMOE_CFLAGS -DDATADIR=\\\"\"\$(datadir)\"\\\""
+TOMOE_CFLAGS="$TOMOE_CFLAGS -DDICT_DATADIR=\\\"\"\$(dict_datadir)\"\\\""
+TOMOE_CFLAGS="$TOMOE_CFLAGS -DRECOGNIZER_DATADIR=\\\"\"\$(recognizer_datadir)\"\\\""
+TOMOE_CFLAGS="$TOMOE_CFLAGS -DDICT_MODULEDIR=\\\"\"\$(dict_moduledir)\"\\\""
+TOMOE_CFLAGS="$TOMOE_CFLAGS -DRECOGNIZER_MODULEDIR=\\\"\"\$(recognizer_moduledir)\"\\\""
+TOMOE_CFLAGS="$TOMOE_CFLAGS -I\$(top_srcdir)/lib"
 AC_SUBST(TOMOE_CFLAGS)
 
 TOMOE_LIBS='$(GLIB_LIBS)'
