@@ -202,18 +202,8 @@ tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
 
     priv = TOMOE_CONTEXT_GET_PRIVATE (context);
     if (!priv->recognizer) {
-        TomoeShelf *shelf;
-        TomoeDict *dict;
-
-        shelf = priv->shelf;
-        g_return_val_if_fail (shelf, matched);
-
-        dict = tomoe_shelf_get_dict (shelf, "TOMOE Strokelist Dictionary");
-        g_return_val_if_fail (dict, matched);
-
-        priv->recognizer = tomoe_recognizer_new ("simple",
-                                                 "dictionary", dict,
-                                                 NULL);
+        priv->recognizer = tomoe_recognizer_new ("simple", NULL);
+        g_return_val_if_fail (TOMOE_IS_RECOGNIZER (priv->recognizer), matched);
     }
 
     matched = g_list_sort (tomoe_recognizer_search (priv->recognizer, input),
