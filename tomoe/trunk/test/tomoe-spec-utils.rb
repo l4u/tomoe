@@ -100,7 +100,7 @@ module TomoeSpecUtils
     end
 
     def dictionaries
-      %w(kanjidic2.xml all.xml).collect do |xml|
+      %w(kanjidic2.xml).collect do |xml|
         File.join(data_dir, xml)
       end
     end
@@ -125,10 +125,9 @@ EOC
 type = unihan
 name = Unihan
 
-[all-dictionary]
+[handwriting-dictionary]
 type = xml
-name = all
-file = #{File.join(data_dir, "all.xml")}
+file = #{File.join(data_dir, "handwriting.xml")}
 EOC
       else
         dictionaries.each_with_index do |dictionary, i|

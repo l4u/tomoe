@@ -12,7 +12,7 @@ require 'tomoe-spec-utils'
 
 dict = Tomoe::Dict.new("xml",
                        "filename" => File.join(TomoeSpecUtils::Config.data_dir,
-                                               "all.xml"),
+                                               "handwriting.xml"),
                        "editable" => false)
 recognizer = Tomoe::Recognizer.new("simple", dict)
 context = Tomoe::Context.new("recognizer" => recognizer)

@@ -5,7 +5,7 @@ context "Tomoe::Context" do
   def context
     return @@context if @@context
     dict = Tomoe::Dict.new("xml",
-                           "filename" => File.join(data_dir, "all.xml"),
+                           "filename" => File.join(data_dir, "handwriting.xml"),
                            "editable" => false)
     recognizer = Tomoe::Recognizer.new("simple", dict)
     @@context = Tomoe::Context.new("recognizer" => recognizer)
