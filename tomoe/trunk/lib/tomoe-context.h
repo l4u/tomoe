@@ -63,6 +63,11 @@ GList          *tomoe_context_search          (TomoeContext       *ctx,
 GList          *tomoe_context_multi_search    (TomoeContext       *ctx,
                                                GList              *queries);
 
+gboolean        tomoe_context_register        (TomoeContext       *ctx,
+                                               TomoeChar          *chr);
+gboolean        tomoe_context_unregister      (TomoeContext       *ctx,
+                                               const gchar        *utf8);
+
 G_END_DECLS
 
 #endif /* __TOMOE_CONTEXT_H__ */

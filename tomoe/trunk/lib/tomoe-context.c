@@ -343,6 +343,38 @@ tomoe_context_search (TomoeContext *context, TomoeQuery *query)
         return tomoe_context_search_by_dict (context, query);
 }
 
+gboolean
+tomoe_context_register (TomoeContext *context, TomoeChar *chr)
+{
+    TomoeContextPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_CONTEXT (context), FALSE);
+
+    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+    if (!priv->user_dict) {
+        g_warning ("user dictionary doesn't exist");
+        return FALSE;
+    }
+
+    return tomoe_dict_register_char (priv->user_dict, chr);
+}
+
+gboolean
+tomoe_context_unregister (TomoeContext *context, const gchar *utf8)
+{
+    TomoeContextPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_CONTEXT (context), FALSE);
+
+    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+    if (!priv->user_dict) {
+        g_warning ("user dictionary doesn't exist");
+        return FALSE;
+    }
+
+    return tomoe_dict_unregister_char (priv->user_dict, utf8);
+}
+
 /*
 vi:ts=4:nowrap:ai:expandtab
 */

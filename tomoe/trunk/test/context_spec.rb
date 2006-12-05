@@ -32,4 +32,44 @@ context "Tomoe::Context" do
     cands = context.search(query)
     cands.collect {|cand| cand.char.utf8}.sort.should == ["汐", "背", "脊"].sort
   end
+
+  specify "User dictionary" do
+    user_dict_file = Tempfile.new("tomoe-user-dict")
+    user_dict_file.open
+    user_dict_file.puts(<<-EOD)
+<?xml version ="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "#{File.join(data_dir, 'tomoe-dict.dtd')}">
+<dictionary name="User dictionary">
+</dictionary>
+EOD
+    user_dict_file.close
+
+    config_file = Tempfile.new("tomoe-context")
+    config_file.open
+    config_file.puts(<<-EOC)
+[config]
+use_system_dictionaries = false
+user_dictionary = user
+
+[user-dictionary]
+type = xml
+file = #{user_dict_file.path}
+EOC
+    config_file.close
+
+    context = Tomoe::Context.new()
+    context.load_config(config_file.path)
+
+    context.search(Tomoe::Query.new).should_be_empty
+
+    char = Tomoe::Char.new
+    char.utf8 = "あ"
+    context.register(char).should
+    context.search(Tomoe::Query.new).collect do |cand|
+      cand.char.utf8
+    end.should == [char.utf8]
+
+    context.unregister(char.utf8).should
+    context.search(Tomoe::Query.new).should_be_empty
+  end
 end

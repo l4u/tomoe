@@ -29,6 +29,17 @@ tc_search(VALUE self, VALUE query)
 /*                                                  RVAL2GLIST(queries))); */
 /* } */
 
+static VALUE
+tc_register(VALUE self, VALUE chr)
+{
+    return CBOOL2RVAL(tomoe_context_register(_SELF(self), RVAL2TCHR(chr)));
+}
+
+static VALUE
+tc_unregister(VALUE self, VALUE utf8)
+{
+    return CBOOL2RVAL(tomoe_context_unregister(_SELF(self), RVAL2CSTR(utf8)));
+}
 
 void
 Init_tomoe_context(VALUE mTomoe)
@@ -40,4 +51,7 @@ Init_tomoe_context(VALUE mTomoe)
     rb_define_method(cTomoeContext, "load_config", tc_load_config, -1);
     rb_define_method(cTomoeContext, "search", tc_search, 1);
 /*     rb_define_method(cTomoeContext, "multi_search", tc_multi_search, 1); */
+
+    rb_define_method(cTomoeContext, "register", tc_register, 1);
+    rb_define_method(cTomoeContext, "unregister", tc_unregister, 1);
 }
