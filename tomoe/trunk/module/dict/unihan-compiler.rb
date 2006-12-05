@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'uconv'
+require 'suikyo/suikyo'
 
 unihan_txt = ARGV.shift
 
@@ -11,6 +12,22 @@ DO_NOT_EDIT_HEADER = <<-EOH
     ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip
 */
 EOH
+
+@romaji_to_hiragana = Suikyo.new("romaji-kana")
+@hiragana_to_katakana = Suikyo.new("hiragana-katakana")
+
+def euc_to_utf8(euc)
+  Uconv.euctou8(euc)
+end
+
+def romaji_to_hiragana(romaji)
+  euc_to_utf8(@romaji_to_hiragana.convert("#{romaji} "))
+end
+
+def romaji_to_katakana(romaji)
+  hiragana = @romaji_to_hiragana.convert("#{romaji} ")
+  euc_to_utf8(@hiragana_to_katakana.convert("#{hiragana} "))
+end
 
 def ucs4_to_utf8(ucs4)
   Uconv.u4tou8([Integer("0x#{ucs4}")].pack("I*"))
@@ -96,10 +113,14 @@ EOH
     kuns = info["kJapaneseKun"]
     ons = info["kJapaneseOn"]
     if kuns
-      readings.concat(kuns.split.collect {|x| ["TOMOE_READING_JA_KUN", x]})
+      readings.concat(kuns.split.collect do |x|
+                        ["TOMOE_READING_JA_KUN", romaji_to_hiragana(x)]
+                      end)
     end
     if ons
-      readings.concat(ons.split.collect {|x| ["TOMOE_READING_JA_ON", x]})
+      readings.concat(ons.split.collect do |x|
+                        ["TOMOE_READING_JA_ON", romaji_to_katakana(x)]
+                      end)
     end
 
     unless readings.empty?
