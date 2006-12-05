@@ -52,7 +52,6 @@ struct _TomoeConfigClass
 GType            tomoe_config_get_type (void) G_GNUC_CONST;
 
 TomoeConfig     *tomoe_config_new                 (const char   *config_file);
-void             tomoe_config_load                (TomoeConfig  *config);
 const gchar     *tomoe_config_get_filename        (TomoeConfig  *config);
 TomoeShelf      *tomoe_config_make_shelf          (TomoeConfig  *config);
 

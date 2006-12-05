@@ -39,7 +39,6 @@ typedef struct _TomoeContextPrivate	TomoeContextPrivate;
 struct _TomoeContextPrivate
 {
     TomoeShelf *shelf;
-    TomoeConfig *config;
     TomoeRecognizer *recognizer;
 };
 
@@ -85,7 +84,6 @@ tomoe_context_init (TomoeContext *context)
     TomoeContextPrivate *priv = TOMOE_CONTEXT_GET_PRIVATE (context);
 
     priv->shelf      = NULL;
-    priv->config     = NULL;
     priv->recognizer = NULL;
 }
 
@@ -154,13 +152,10 @@ dispose (GObject *object)
 
     if (priv->shelf)
         g_object_unref (priv->shelf);
-    if (priv->config)
-        g_object_unref (priv->config);
     if (priv->recognizer)
         g_object_unref (priv->recognizer);
 
     priv->shelf      = NULL;
-    priv->config     = NULL;
     priv->recognizer = NULL;
 
     G_OBJECT_CLASS (tomoe_context_parent_class)->dispose (object);
@@ -182,11 +177,9 @@ tomoe_context_load_config (TomoeContext *ctx, const char *config_file)
     g_return_if_fail (ctx);
 
     priv = TOMOE_CONTEXT_GET_PRIVATE(ctx);
-    priv->config = NULL;
     cfg = tomoe_config_new (config_file);
-    tomoe_config_load (cfg);
     priv->shelf = tomoe_config_make_shelf (cfg);
-    priv->config = cfg;
+    g_object_unref (cfg);
 }
 
 static gint
