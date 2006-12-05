@@ -332,13 +332,13 @@ _tomoe_config_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
         g_object_unref (dict);
     }
 
-    gdir = g_dir_open (DICTDIR, 0, NULL);
+    gdir = g_dir_open (DICT_DATADIR, 0, NULL);
     while ((filename = g_dir_read_name (gdir))) {
         gchar *path;
 
         if (!g_str_has_suffix (filename, ".xml"))
             continue;
-        path = g_build_filename(DICTDIR, filename, NULL);
+        path = g_build_filename(DICT_DATADIR, filename, NULL);
         if (tomoe_shelf_has_dict (shelf, path)) {
             g_free (path);
             continue;
@@ -376,7 +376,7 @@ load_xml_dictionary (GKeyFile *key_file, const gchar *dict_name)
                                                           "user", TRUE);
     if (!user_dict) {
         gchar *tmp;
-        tmp = g_build_filename (DICTDIR, filename, NULL);
+        tmp = g_build_filename (DICT_DATADIR, filename, NULL);
         g_free (filename);
         filename = tmp;
     }
@@ -418,7 +418,7 @@ load_est_dictionary (GKeyFile *key_file, const gchar *dict_name)
                                                           "user", TRUE);
     if (!user_dict) {
         gchar *tmp;
-        tmp = g_build_filename (DICTDIR, database_name, NULL);
+        tmp = g_build_filename (DICT_DATADIR, database_name, NULL);
         g_free (database_name);
         database_name = tmp;
     }

@@ -159,7 +159,7 @@ constructor (GType type, guint n_props,
     if (!recognizer->dict) {
         recognizer->dict =
             tomoe_dict_new ("xml",
-                            "filename", DICTDIR "/handwriting.xml",
+                            "filename", RECOGNIZER_DATADIR "/handwriting.xml",
                             NULL);
     }
 
