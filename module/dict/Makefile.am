@@ -24,8 +24,7 @@ AM_CPPFLAGS =							\
 	-DG_LOG_DOMAIN=\"TOMOE-DICT\"				\
 	-DSYSCONFDIR=\""$(sysconfdir)"\"			\
 	-DDATADIR=\""$(datadir)"\"				\
-	-DTOMOESYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\"	\
-	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"		\
+	-DDICTDIR=\""$(dictdir)"\"				\
 	-DRUBY_EXTDIR=\""$(RUBY_EXTDIR)"\"			\
 	-DRUBY_LIBDIR=\""$(RUBY_LIBDIR)"\"
 
@@ -41,26 +40,26 @@ LDFLAGS =							\
   -version-info $(LT_VERSION_INFO)				\
   -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)
 
-dict_LTLIBRARIES = libxml.la
+dict_module_LTLIBRARIES = libxml.la
 
 libxml_la_SOURCES = tomoe-dict-xml.c
 
 if WITH_EST
-dict_LTLIBRARIES += libest.la
+dict_module_LTLIBRARIES += libest.la
 
 libest_la_SOURCES = tomoe-dict-est.c
 libest_la_LIBADD = $(EST_LIBS)
 endif
 
 if ENABLE_RUBY_DICT
-dict_LTLIBRARIES += libruby.la
+dict_module_LTLIBRARIES += libruby.la
 
 libruby_la_SOURCES = tomoe-dict-ruby.c
 libruby_la_LIBADD = $(RUBY_LIBS)
 endif
 
 if WITH_UNIHAN
-dict_LTLIBRARIES += libunihan.la
+dict_module_LTLIBRARIES += libunihan.la
 
 unihan_built_sources = tomoe-unihan-data.h
 

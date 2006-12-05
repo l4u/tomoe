@@ -24,13 +24,12 @@ AM_CPPFLAGS =							\
 	-DG_LOG_DOMAIN=\"TOMOE-RECOGNIZER\"			\
 	-DSYSCONFDIR=\""$(sysconfdir)"\"			\
 	-DDATADIR=\""$(datadir)"\"				\
-	-DTOMOESYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\"	\
-	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"		\
+	-DDICTDIR=\""$(dictdir)"\"				\
 	-I$(top_srcdir)/lib
 
 INCLUDES = $(GLIB_CFLAGS)
 
-recognizer_LTLIBRARIES = libsimple.la
+recognizer_module_LTLIBRARIES = libsimple.la
 
 libsimple_la_SOURCES = \
 	tomoe-recognizer-simple.c				\

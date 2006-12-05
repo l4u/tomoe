@@ -150,16 +150,27 @@ PKG_CHECK_MODULES(NEON, neon, [neon_exists=yes], [neon_exists=no])
 AM_CONDITIONAL([WITH_NEON], [test "$neon_exists" = "yes"])
 
 dnl **************************************************************
+dnl Configure for modules.
+dnl **************************************************************
+
+moduledir="${libdir}/\$(PACKAGE)/module"
+AC_SUBST(moduledir)
+
+dnl **************************************************************
 dnl Configure for recognizers.
 dnl **************************************************************
-recognizerdir="${libdir}/\$(PACKAGE)/recognizer"
-AC_SUBST(recognizerdir)
+
+recognizer_moduledir="${moduledir}/recognizer"
+AC_SUBST(recognizer_moduledir)
 
 dnl **************************************************************
 dnl Configure for dictionaries.
 dnl **************************************************************
 
-dictdir="${libdir}/\$(PACKAGE)/dict"
+dict_moduledir="${moduledir}/dict"
+AC_SUBST(dict_moduledir)
+
+dictdir="${datadir}/\$(PACKAGE)"
 AC_SUBST(dictdir)
 
 use_unihan=yes
@@ -267,7 +278,7 @@ fi
 AM_CONDITIONAL([WITH_RUBY], [test "$ruby_available" = "yes"])
 
 dnl **************************************************************
-dnl Check for Ruby dictionary module 
+dnl Check for Ruby dictionary module
 dnl **************************************************************
 AC_ARG_ENABLE(ruby_dict, [  --enable-ruby-dict
 			  Enable Ruby-dict module])
