@@ -21,7 +21,7 @@
 CLEANFILES = *~ *.bak *.valid
 
 dicdir = $(datadir)/$(PACKAGE)
-dic_DATA = tomoe-dict.dtd all.xml kanjidic2.xml
+dic_DATA = tomoe-dict.dtd handwriting.xml kanjidic2.xml
 
 confdir = $(sysconfdir)/$(PACKAGE)
 conf_DATA = config
@@ -42,4 +42,4 @@ SUFFIXES: .xml .valid
 
 .PHONY: validate
 
-validate: all.valid kanjidic2.valid
+validate: handwriting.valid kanjidic2.valid
