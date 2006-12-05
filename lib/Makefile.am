@@ -20,16 +20,8 @@
 
 CLEANFILES = *~ *.bak
 
-AM_CPPFLAGS =							\
-	-DG_LOG_DOMAIN=\"TOMOE\"				\
-	-DSYSCONFDIR=\""$(sysconfdir)"\"			\
-	-DDATADIR=\""$(datadir)"\"				\
-	-DTOMOESYSCONFDIR=\""$(sysconfdir)/$(PACKAGE)"\"	\
-	-DTOMOEDATADIR=\""$(datadir)"/$(PACKAGE)\"		\
-	-DRECOGNIZERDIR=\""$(recognizerdir)"\"			\
-	-DDICTDIR=\""$(dictdir)"\"
-
-INCLUDES = $(GLIB_CFLAGS)
+AM_CPPFLAGS = -DG_LOG_DOMAIN=\"TOMOE\"
+INCLUDES = $(TOMOE_CFLAGS)
 
 tomoe_public_h_sources =		\
 	tomoe.h				\
@@ -90,7 +82,7 @@ libtomoe_la_LDFLAGS =						\
 libtomoe_la_LD_ADD = \
 	-lm
 
-libtomoe_la_LIBADD = $(GLIB_LIBS)
+libtomoe_la_LIBADD = $(TOMOE_LIBS)
 
 
 

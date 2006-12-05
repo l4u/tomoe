@@ -32,7 +32,7 @@ void
 tomoe_recognizer_load (const gchar *base_dir)
 {
     if (!base_dir)
-        base_dir = RECOGNIZERDIR;
+        base_dir = RECOGNIZER_MODULEDIR;
 
     recognizers = g_list_concat (tomoe_module_load_modules (base_dir),
                                  recognizers);

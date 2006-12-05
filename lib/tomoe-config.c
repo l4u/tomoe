@@ -54,7 +54,7 @@ enum
 
 G_DEFINE_TYPE (TomoeConfig, tomoe_config, G_TYPE_OBJECT)
 
-static const gchar *system_config_file = TOMOESYSCONFDIR "/config";
+static const gchar *system_config_file = CONFDIR "/config";
 
 static void     tomoe_config_dispose      (GObject       *object);
 static void     tomoe_config_set_property (GObject       *object,
@@ -332,13 +332,13 @@ _tomoe_config_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
         g_object_unref (dict);
     }
 
-    gdir = g_dir_open (TOMOEDATADIR, 0, NULL);
+    gdir = g_dir_open (DICTDIR, 0, NULL);
     while ((filename = g_dir_read_name (gdir))) {
         gchar *path;
 
         if (!g_str_has_suffix (filename, ".xml"))
             continue;
-        path = g_build_filename(TOMOEDATADIR, filename, NULL);
+        path = g_build_filename(DICTDIR, filename, NULL);
         if (tomoe_shelf_has_dict (shelf, path)) {
             g_free (path);
             continue;
@@ -376,7 +376,7 @@ load_xml_dictionary (GKeyFile *key_file, const gchar *dict_name)
                                                           "user", TRUE);
     if (!user_dict) {
         gchar *tmp;
-        tmp = g_build_filename (TOMOEDATADIR, filename, NULL);
+        tmp = g_build_filename (DICTDIR, filename, NULL);
         g_free (filename);
         filename = tmp;
     }
@@ -418,7 +418,7 @@ load_est_dictionary (GKeyFile *key_file, const gchar *dict_name)
                                                           "user", TRUE);
     if (!user_dict) {
         gchar *tmp;
-        tmp = g_build_filename (TOMOEDATADIR, database_name, NULL);
+        tmp = g_build_filename (DICTDIR, database_name, NULL);
         g_free (database_name);
         database_name = tmp;
     }
