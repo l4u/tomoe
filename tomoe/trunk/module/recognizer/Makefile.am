@@ -20,14 +20,8 @@
 
 CLEANFILES = *~ *.bak
 
-AM_CPPFLAGS =							\
-	-DG_LOG_DOMAIN=\"TOMOE-RECOGNIZER\"			\
-	-DSYSCONFDIR=\""$(sysconfdir)"\"			\
-	-DDATADIR=\""$(datadir)"\"				\
-	-DDICTDIR=\""$(dictdir)"\"				\
-	-I$(top_srcdir)/lib
-
-INCLUDES = $(GLIB_CFLAGS)
+AM_CPPFLAGS = -DG_LOG_DOMAIN=\"TOMOE-RECOGNIZER\"
+INCLUDES = $(TOMOE_CFLAGS)
 
 recognizer_module_LTLIBRARIES = libsimple.la
 
@@ -43,4 +37,4 @@ libsimple_la_LDFLAGS =						\
 libsimple_la_LD_ADD = \
 	-lm
 
-libsimple_la_LIBADD = $(GLIB_LIBS)
+libsimple_la_LIBADD = $(TOMOE_LIBS)

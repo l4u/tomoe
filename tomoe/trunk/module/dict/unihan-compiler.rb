@@ -47,7 +47,7 @@ def parse_unihan_txt(unihan_txt)
     case line
     when /^#/ #
       next
-    when /^U\+([\da-fA-F]+)\s+([a-zA-Z_]+)\s*(.*)\s*$/
+    when /^U\+([\da-fA-F]+)\s+([a-zA-Z_]+)\s*(.*)\s*$/u
       ucs4 = $1
       key = $2
       value = $3

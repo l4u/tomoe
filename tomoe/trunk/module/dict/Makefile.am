@@ -22,20 +22,16 @@ CLEANFILES = *~ *.bak
 
 AM_CPPFLAGS =							\
 	-DG_LOG_DOMAIN=\"TOMOE-DICT\"				\
-	-DSYSCONFDIR=\""$(sysconfdir)"\"			\
-	-DDATADIR=\""$(datadir)"\"				\
-	-DDICTDIR=\""$(dictdir)"\"				\
-	-DRUBY_EXTDIR=\""$(RUBY_EXTDIR)"\"			\
-	-DRUBY_LIBDIR=\""$(RUBY_LIBDIR)"\"
+	-DRUBY_EXTDIR=\""$(ruby_extdir)"\"			\
+	-DRUBY_LIBDIR=\""$(ruby_libdir)"\"
 
 INCLUDES =				\
-	-I$(top_srcdir)/lib		\
 	-I$(top_srcdir)/ext/ruby	\
-	$(GLIB_CFLAGS)			\
+	$(TOMOE_CFLAGS)			\
 	$(EST_CFLAGS)			\
 	$(RUBY_CFLAGS)
 
-LIBADD = $(GLIB_LIBS)
+LIBADD = $(TOMOE_LIBS)
 LDFLAGS =							\
   -version-info $(LT_VERSION_INFO)				\
   -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)

@@ -21,8 +21,6 @@
 CLEANFILES = *~ *.bak *.valid
 
 dict_DATA = tomoe-dict.dtd handwriting.xml kanjidic2.xml
-
-confdir = $(sysconfdir)/$(PACKAGE)
 conf_DATA = config
 
 EXTRA_DIST = \

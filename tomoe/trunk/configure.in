@@ -150,6 +150,13 @@ PKG_CHECK_MODULES(NEON, neon, [neon_exists=yes], [neon_exists=no])
 AM_CONDITIONAL([WITH_NEON], [test "$neon_exists" = "yes"])
 
 dnl **************************************************************
+dnl Configure for configuration.
+dnl **************************************************************
+
+confdir="${sysconfdir}/\$(PACKAGE)"
+AC_SUBST(confdir)
+
+dnl **************************************************************
 dnl Configure for modules.
 dnl **************************************************************
 
@@ -256,8 +263,8 @@ if test "$ruby_available" = "yes"; then
                                 (default is same as ruby's one)]),
                 [tomoe_ruby_extdir="$withval"],
                 [tomoe_ruby_extdir="$tomoe_cv_ruby_archdir"])
-  RUBY_EXTDIR="$tomoe_ruby_extdir"
-  AC_MSG_RESULT([$RUBY_EXTDIR])
+  ruby_extdir="$tomoe_ruby_extdir"
+  AC_MSG_RESULT([$ruby_extdir])
 
   AC_MSG_CHECKING([where to install Ruby scripts])
   AC_CACHE_VAL([tomoe_cv_ruby_sitedir],
@@ -268,11 +275,11 @@ if test "$ruby_available" = "yes"; then
                                 (default is same as ruby's one)]),
                 [tomoe_ruby_libdir="$withval"],
                 [tomoe_ruby_libdir="$tomoe_cv_ruby_sitedir"])
-  RUBY_LIBDIR="$tomoe_ruby_libdir"
-  AC_MSG_RESULT([$RUBY_LIBDIR])
+  ruby_libdir="$tomoe_ruby_libdir"
+  AC_MSG_RESULT([$ruby_libdir])
 
-  AC_SUBST(RUBY_EXTDIR)
-  AC_SUBST(RUBY_LIBDIR)
+  AC_SUBST(ruby_extdir)
+  AC_SUBST(ruby_libdir)
 fi
 
 AM_CONDITIONAL([WITH_RUBY], [test "$ruby_available" = "yes"])
@@ -283,6 +290,23 @@ dnl **************************************************************
 AC_ARG_ENABLE(ruby_dict, [  --enable-ruby-dict
 			  Enable Ruby-dict module])
 AM_CONDITIONAL(ENABLE_RUBY_DICT, test x"$enable_ruby" = "xyes")
+
+
+dnl **************************************************************
+dnl Configure for TOMOE.
+dnl **************************************************************
+
+TOMOE_CFLAGS='							\
+	$(GLIB_CFLAGS)						\
+	-DCONFDIR=\""$(confdir)"\"				\
+	-DDICTDIR=\""$(dictdir)"\"				\
+	-DDICT_MODULEDIR=\""$(dict_moduledir)"\"		\
+	-DRECOGNIZER_MODULEDIR=\""$(recognizer_moduledir)"\"	\
+	-I$(top_srcdir)/lib'
+AC_SUBST(TOMOE_CFLAGS)
+
+TOMOE_LIBS='$(GLIB_LIBS)'
+AC_SUBST(TOMOE_LIBS)
 
 AC_CONFIG_FILES([
 Makefile
