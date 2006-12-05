@@ -123,11 +123,6 @@ EOC
         config_file.puts(<<-EOC)
 [unihan-dictionary]
 type = unihan
-name = Unihan
-
-[handwriting-dictionary]
-type = xml
-file = #{File.join(data_dir, "handwriting.xml")}
 EOC
       else
         dictionaries.each_with_index do |dictionary, i|

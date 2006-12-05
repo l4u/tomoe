@@ -28,10 +28,11 @@ g_ptr_array_foreach_reverse (GPtrArray *array,
                              GFunc      func,
                              gpointer   user_data)
 {
-    guint i;
+    gint i;
 
-    for (i = array->len - 1; i; i--) {
-        func (g_ptr_array_index (array, i), user_data);
+    i = array->len - 1;
+    while (i >= 0) {
+        func (g_ptr_array_index (array, i--), user_data);
     }
 }
 

@@ -286,13 +286,14 @@ get_name (TomoeDict *_dict)
 }
 
 static gboolean
-register_char (TomoeDict *_dict, TomoeChar *add)
+register_char (TomoeDict *_dict, TomoeChar *chr)
 {
     TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
-    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
-    g_return_val_if_fail (add, FALSE);
 
-    g_ptr_array_add (dict->chars, g_object_ref (G_OBJECT (add)));
+    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
+    g_return_val_if_fail (TOMOE_IS_CHAR (chr), FALSE);
+
+    g_ptr_array_add (dict->chars, g_object_ref (G_OBJECT (chr)));
     g_ptr_array_sort (dict->chars, letter_compare_func);
     dict->modified = TRUE;
 
