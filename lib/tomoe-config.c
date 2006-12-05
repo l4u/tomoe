@@ -66,6 +66,7 @@ static void     tomoe_config_get_property (GObject       *object,
                                            GValue        *value,
                                            GParamSpec    *pspec);
 
+static void     tomoe_config_load         (TomoeConfig  *config);
 static void     tomoe_config_save         (TomoeConfig *config);
 
 static gboolean _tomoe_config_key_file_get_boolean_value (GKeyFile *key_file,
@@ -117,6 +118,8 @@ tomoe_config_new (const gchar *config_file)
     config = g_object_new(TOMOE_TYPE_CONFIG,
                           "filename", config_file,
                           NULL);
+
+    tomoe_config_load (config);
 
     return config;
 }
@@ -184,7 +187,7 @@ tomoe_config_get_property (GObject    *object,
     }
 }
 
-void
+static void
 tomoe_config_load (TomoeConfig *config)
 {
     GKeyFile *key_file;
