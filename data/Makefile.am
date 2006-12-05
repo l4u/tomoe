@@ -20,12 +20,16 @@
 
 CLEANFILES = *~ *.bak *.valid
 
-dict_DATA = tomoe-dict.dtd handwriting.xml kanjidic2.xml
+data_DATA = tomoe-dict.dtd
+dict_data_DATA = kanjidic2.xml
+recognizer_data_DATA = handwriting.xml
 conf_DATA = config
 
-EXTRA_DIST = \
-	kanjidic2-original.xml kanjidic2-original.xsl \
-	$(dict_DATA) \
+EXTRA_DIST =						\
+	kanjidic2-original.xml kanjidic2-original.xsl	\
+	$(data_DATA)					\
+	$(dict_data_DATA)				\
+	$(recognizer_data_DATA)				\
 	$(conf_DATA)
 
 kanjidic2.xml: kanjidic2-original.xsl kanjidic2-original.xml

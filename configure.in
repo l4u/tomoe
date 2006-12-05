@@ -157,6 +157,18 @@ confdir="${sysconfdir}/\$(PACKAGE)"
 AC_SUBST(confdir)
 
 dnl **************************************************************
+dnl Configure for data.
+dnl **************************************************************
+
+datadir="${datadir}/\$(PACKAGE)"
+
+dict_datadir="${datadir}/dict"
+AC_SUBST(dict_datadir)
+
+recognizer_datadir="${datadir}/recognizer"
+AC_SUBST(recognizer_datadir)
+
+dnl **************************************************************
 dnl Configure for modules.
 dnl **************************************************************
 
@@ -164,21 +176,18 @@ moduledir="${libdir}/\$(PACKAGE)/module"
 AC_SUBST(moduledir)
 
 dnl **************************************************************
-dnl Configure for recognizers.
+dnl Configure for modules for recognizer.
 dnl **************************************************************
 
 recognizer_moduledir="${moduledir}/recognizer"
 AC_SUBST(recognizer_moduledir)
 
 dnl **************************************************************
-dnl Configure for dictionaries.
+dnl Configure for modules for dictionarie.
 dnl **************************************************************
 
 dict_moduledir="${moduledir}/dict"
 AC_SUBST(dict_moduledir)
-
-dictdir="${datadir}/\$(PACKAGE)"
-AC_SUBST(dictdir)
 
 use_unihan=yes
 AC_ARG_ENABLE(unihan,
@@ -299,7 +308,8 @@ dnl **************************************************************
 TOMOE_CFLAGS='							\
 	$(GLIB_CFLAGS)						\
 	-DCONFDIR=\""$(confdir)"\"				\
-	-DDICTDIR=\""$(dictdir)"\"				\
+	-DDICT_DATADIR=\""$(dict_datadir)"\"				\
+	-DRECOGNIZER_DATADIR=\""$(recognizer_datadir)"\"	\
 	-DDICT_MODULEDIR=\""$(dict_moduledir)"\"		\
 	-DRECOGNIZER_MODULEDIR=\""$(recognizer_moduledir)"\"	\
 	-I$(top_srcdir)/lib'
