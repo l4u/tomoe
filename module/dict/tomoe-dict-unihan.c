@@ -264,7 +264,7 @@ search (TomoeDict *_dict, TomoeQuery *query)
 
     g_return_val_if_fail (TOMOE_IS_DICT_UNIHAN (dict), FALSE);
 
- return _tomoe_dict_ptr_array_search (chars, query);
+    return _tomoe_dict_ptr_array_search (chars, query);
 }
 
 static gboolean
