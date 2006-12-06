@@ -52,13 +52,13 @@ td_s_new(VALUE self, VALUE rb_name, VALUE props)
         dict = NULL;
     }
 
-    return GOBJ2RVAL(dict);
+    return GOBJ2RVALU(dict);
 }
 
 static VALUE
 td_get_char(VALUE self, VALUE utf8)
 {
-    return GOBJ2RVAL(tomoe_dict_get_char(_SELF(self), RVAL2CSTR(utf8)));
+    return GOBJ2RVALU(tomoe_dict_get_char(_SELF(self), RVAL2CSTR(utf8)));
 }
 
 static VALUE

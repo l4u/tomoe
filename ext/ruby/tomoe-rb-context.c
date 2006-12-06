@@ -41,6 +41,12 @@ tc_unregister(VALUE self, VALUE utf8)
     return CBOOL2RVAL(tomoe_context_unregister(_SELF(self), RVAL2CSTR(utf8)));
 }
 
+static VALUE
+tc_get_char(VALUE self, VALUE utf8)
+{
+    return GOBJ2RVALU(tomoe_context_get_char(_SELF(self), RVAL2CSTR(utf8)));
+}
+
 void
 Init_tomoe_context(VALUE mTomoe)
 {
@@ -54,4 +60,6 @@ Init_tomoe_context(VALUE mTomoe)
 
     rb_define_method(cTomoeContext, "register", tc_register, 1);
     rb_define_method(cTomoeContext, "unregister", tc_unregister, 1);
+
+    rb_define_method(cTomoeContext, "[]", tc_get_char, 1);
 }

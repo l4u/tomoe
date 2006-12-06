@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2006 Juernjakob Harder <juernjakob.harder@gmail.com>
  *
@@ -387,6 +387,37 @@ tomoe_context_unregister (TomoeContext *context, const gchar *utf8)
     }
 
     return tomoe_dict_unregister_char (priv->user_dict, utf8);
+}
+
+TomoeChar *
+tomoe_context_get_char (TomoeContext *context, const gchar *utf8)
+{
+    TomoeContextPrivate *priv;
+    TomoeShelf *shelf;
+    TomoeChar *chr = NULL;
+    GList *names, *node;
+
+    g_return_val_if_fail (TOMOE_IS_CONTEXT (context), chr);
+
+    priv = TOMOE_CONTEXT_GET_PRIVATE (context);
+
+    shelf = priv->shelf;
+    if (!shelf) return chr;
+
+    names = tomoe_shelf_get_dict_names (shelf);
+    if (!names) return chr;
+
+    for (node = names; node; node = g_list_next (node)) {
+        const gchar *name = node->data;
+        TomoeDict *dict;
+
+        dict = tomoe_shelf_get_dict (shelf, name);
+        chr = tomoe_dict_get_char (dict, utf8);
+        if (chr)
+            break;
+    }
+
+    return chr;
 }
 
 /*

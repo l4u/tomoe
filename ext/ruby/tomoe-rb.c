@@ -2,6 +2,17 @@
 
 #include "tomoe-rb.h"
 
+#ifndef HAVE_GOBJ2RVALU
+VALUE
+_tomoe_ruby_object_from_instance_with_unref(gpointer instance)
+{
+    VALUE result = rbgobj_ruby_object_from_instance(instance);
+    if (!NIL_P(result))
+        g_object_unref(instance);
+    return result;
+}
+#endif
+
 void
 Init_tomoe(void)
 {

@@ -1,5 +1,11 @@
 2006-12-06  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-context.[ch] (tomoe_context_get_char): added.
+	* ext/ruby/tomoe-rb-context.c: added Tomoe::Context#[].
+	* test/context_spec.rb: added tests for tomoe_context_get_char().
+
+	* ext/ruby/: fixed memory leaks.
+
 	* lib/tomoe-context.c (ensure_user_dict): added user dictionary to
 	shelf.
 
