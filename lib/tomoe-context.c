@@ -178,12 +178,37 @@ dispose (GObject *object)
     G_OBJECT_CLASS (tomoe_context_parent_class)->dispose (object);
 }
 
+static gboolean
+ensure_user_dict_file_content (const gchar *user_dict_filename)
+{
+    if (!g_file_test (user_dict_filename, G_FILE_TEST_EXISTS)) {
+        FILE *f;
+        const gchar *content;
+
+        f = fopen (user_dict_filename, "wb");
+        if (!f) {
+            g_warning ("failed to open %s: %s",
+                       user_dict_filename, strerror (errno));
+            return FALSE;
+        }
+
+        content = DEFAULT_USER_DICT_CONTENT;
+        if (fwrite (content, strlen (content), 1, f) < 1) {
+            g_warning ("failed to write to %s: %s",
+                       user_dict_filename, strerror (errno));
+            return FALSE;
+        }
+
+        fclose (f);
+    }
+
+    return TRUE;
+}
+
 static gchar *
 ensure_user_dict_file (void)
 {
-    FILE *f;
     gchar *tomoe_dir_name, *user_dict_filename;
-    const gchar *content;
 
     tomoe_dir_name = g_build_filename (g_get_home_dir (), ".tomoe", NULL);
 
@@ -200,23 +225,10 @@ ensure_user_dict_file (void)
     user_dict_filename = g_build_filename (tomoe_dir_name, "dict.xml", NULL);
     g_free (tomoe_dir_name);
 
-    f = fopen (user_dict_filename, "wb");
-    if (!f) {
-        g_warning ("failed to open %s: %s",
-                   user_dict_filename, strerror (errno));
+    if (!ensure_user_dict_file_content (user_dict_filename)) {
         g_free (user_dict_filename);
         return NULL;
     }
-
-    content = DEFAULT_USER_DICT_CONTENT;
-    if (fwrite (content, strlen (content), 1, f) < 1) {
-        g_warning ("failed to write to %s: %s",
-                   user_dict_filename, strerror (errno));
-        g_free (user_dict_filename);
-        return NULL;
-    }
-
-    fclose (f);
 
     return user_dict_filename;
 }

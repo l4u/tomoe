@@ -1,3 +1,7 @@
+2006-12-06  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-context.c: fixed a bug related user dictionary.
+
 2006-12-06  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* module/recognizer/tomoe-recognizer-simple.c: Use g_build_filename()
