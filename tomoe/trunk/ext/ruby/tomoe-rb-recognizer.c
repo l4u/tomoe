@@ -25,7 +25,7 @@ tr_s_new(int argc, VALUE *argv, VALUE self)
     recognizer = tomoe_recognizer_new(RVAL2CSTR(name),
                                       "dictionary", RVAL2TDIC(dict),
                                       NULL);
-    return GOBJ2RVAL(recognizer);
+    return GOBJ2RVALU(recognizer);
 }
 
 void

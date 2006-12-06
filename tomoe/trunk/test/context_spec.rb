@@ -110,4 +110,19 @@ EOC
       cand.char.utf8
     end.sort.should == [char.utf8, char2.utf8].sort
   end
+
+  specify "should get character by UTF8" do
+    context = Tomoe::Context.new()
+    context.load_config(@user_dict_config_file.path)
+
+    context[ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)].should_nil
+
+    char = Tomoe::Char.new
+    char.n_strokes = 8
+    context.register(char).should
+    char.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)
+
+    retrieved_char = context[ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)]
+    retrieved_char.n_strokes.should == char.n_strokes
+  end
 end

@@ -93,7 +93,7 @@ _tomoe_dict_ptr_array_get_char (GPtrArray *chars, const gchar *utf8)
     for (i = 0; i < len; i++) {
         TomoeChar *chr = g_ptr_array_index (chars, i);
         if (g_str_equal (tomoe_char_get_utf8(chr), utf8)) {
-            return chr;
+            return g_object_ref (chr);
         }
     }
 

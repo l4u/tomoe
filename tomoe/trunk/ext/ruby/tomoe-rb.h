@@ -27,6 +27,15 @@
 
 G_BEGIN_DECLS
 
+#if GOBJ2RVALU
+#  define HAVE_GOBJ2RVALU
+#endif
+
+#ifndef HAVE_GOBJ2RVALU
+#  define GOBJ2RVALU(gobj) (_tomoe_ruby_object_from_instance_with_unref(gobj))
+VALUE _tomoe_ruby_object_from_instance_with_unref(gpointer instance);
+#endif
+
 void Init_tomoe(void);
 void Init_tomoe_candidate(VALUE mTomoe);
 void Init_tomoe_char(VALUE mTomoe);
