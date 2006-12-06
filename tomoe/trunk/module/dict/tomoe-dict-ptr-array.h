@@ -29,15 +29,16 @@ G_BEGIN_DECLS
 
 #include <tomoe-dict.h>
 
-void         _tomoe_dict_ptr_array_sort            (GPtrArray   *chars);
-gboolean     _tomoe_dict_ptr_array_register_char   (GPtrArray   *chars,
-                                                    TomoeChar   *chr);
-gboolean     _tomoe_dict_ptr_array_unregister_char (GPtrArray   *chars,
-                                                    const gchar *utf8);
-TomoeChar   *_tomoe_dict_ptr_array_get_char        (GPtrArray   *chars,
-                                                    const gchar *utf8);
-GList       *_tomoe_dict_ptr_array_search          (GPtrArray   *chars,
-                                                    TomoeQuery  *query);
+void      _tomoe_dict_ptr_array_sort            (GPtrArray   *chars);
+gboolean  _tomoe_dict_ptr_array_register_char   (GPtrArray   *chars,
+                                                 TomoeChar   *chr);
+gboolean  _tomoe_dict_ptr_array_unregister_char (GPtrArray   *chars,
+                                                 const gchar *utf8);
+TomoeChar *_tomoe_dict_ptr_array_get_char        (GPtrArray   *chars,
+                                                  const gchar *utf8);
+GList     *_tomoe_dict_ptr_array_search          (GPtrArray   *chars,
+                                                  TomoeQuery  *query);
+gchar     *_tomoe_dict_ptr_array_get_available_private_utf8 (GPtrArray *chars);
 
 G_END_DECLS
 

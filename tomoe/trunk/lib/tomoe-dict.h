@@ -63,6 +63,8 @@ struct _TomoeDictClass
     GList          *(*search)              (TomoeDict     *dict,
                                             TomoeQuery    *query);
     gboolean        (*flush)               (TomoeDict     *dict);
+    gboolean        (*is_editable)         (TomoeDict     *dict);
+    gchar          *(*get_available_private_utf8) (TomoeDict *dict);
 };
 
 GType           tomoe_dict_get_type (void) G_GNUC_CONST;
@@ -77,7 +79,6 @@ TomoeDict      *tomoe_dict_new         (const gchar *name,
 const gchar    *tomoe_dict_get_name             (TomoeDict     *dict);
 
 /* Editable methods */
-
 gboolean        tomoe_dict_register_char        (TomoeDict     *dict,
                                                  TomoeChar     *chr);
 
@@ -92,6 +93,11 @@ GList          *tomoe_dict_search               (TomoeDict     *dict,
                                                  TomoeQuery    *query);
 
 gboolean        tomoe_dict_flush                (TomoeDict     *dict);
+
+
+gboolean        tomoe_dict_is_editable          (TomoeDict *dict);
+
+gchar          *tomoe_dict_get_available_private_utf8 (TomoeDict *dict);
 
 G_END_DECLS
 

@@ -33,7 +33,7 @@ typedef struct _TomoeDictSearchContext {
 } TomoeDictSearchContext;
 
 static gint
-letter_compare_func (gconstpointer a, gconstpointer b)
+char_compare_func (gconstpointer a, gconstpointer b)
 {
     TomoeChar *ca = *(TomoeChar **) a;
     TomoeChar *cb = *(TomoeChar **) b;
@@ -43,7 +43,7 @@ letter_compare_func (gconstpointer a, gconstpointer b)
 void
 _tomoe_dict_ptr_array_sort (GPtrArray *chars)
 {
-    g_ptr_array_sort (chars, letter_compare_func);
+    g_ptr_array_sort (chars, char_compare_func);
 }
 
 gboolean
@@ -109,11 +109,14 @@ does_match_char_with_n_strokes (TomoeChar *chr, gint min, gint max)
     if (min < 0 && max < 0)
         return TRUE;
 
-    writing = tomoe_char_get_writing (chr);
-    if (!writing)
-        return FALSE;
+    n_strokes = tomoe_char_get_n_strokes (chr);
+    if (n_strokes < 0) {
+        writing = tomoe_char_get_writing (chr);
+        if (!writing)
+            return FALSE;
+        n_strokes = tomoe_writing_get_n_strokes (writing);
+    }
 
-    n_strokes = tomoe_writing_get_n_strokes (writing);
     return ((min < 0 || min <= n_strokes) &&
             (max < 0 || max >= n_strokes));
 }
@@ -179,6 +182,36 @@ _tomoe_dict_ptr_array_search (GPtrArray *chars, TomoeQuery *query)
     g_object_unref (search_context.query);
 
     return search_context.results;
+}
+
+gchar *
+_tomoe_dict_ptr_array_get_available_private_utf8 (GPtrArray *chars)
+{
+    gint i, len, result_len;
+    gchar *result;
+    gunichar result_ucs = TOMOE_CHAR_PRIVATE_USE_AREA_START;
+
+    len = chars->len;
+    for (i = 0; i < len; i++) {
+        TomoeChar *chr;
+        gunichar ucs;
+
+        chr = chars->pdata[i];
+        ucs = g_utf8_get_char (tomoe_char_get_utf8 (chr));
+        if (ucs >= TOMOE_CHAR_PRIVATE_USE_AREA_START) {
+            if (ucs >= TOMOE_CHAR_PRIVATE_USE_AREA_END) {
+                return NULL;
+            } else {
+                result_ucs = ucs + 1;
+            }
+        }
+    }
+
+    result_len = g_unichar_to_utf8 (result_ucs, NULL);
+    result = g_new (gchar, result_len + 1);
+    g_unichar_to_utf8 (result_ucs, result);
+    result[result_len] = '\0';
+    return result;
 }
 
 /*

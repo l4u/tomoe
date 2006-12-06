@@ -80,15 +80,13 @@ static void         get_property              (GObject       *object,
                                                GValue        *value,
                                                GParamSpec    *pspec);
 static const gchar *get_name                  (TomoeDict     *dict);
-static gboolean     register_char             (TomoeDict     *dict,
-                                               TomoeChar     *chr);
-static gboolean     unregister_char           (TomoeDict     *dict,
+static TomoeChar   *get_char                  (TomoeDict     *dict,
                                                const gchar   *utf8);
-static TomoeChar    *get_char                 (TomoeDict     *dict,
-                                               const gchar   *utf8);
-static GList        *search                   (TomoeDict     *dict,
+static GList       *search                    (TomoeDict     *dict,
                                                TomoeQuery    *query);
-static gboolean      flush                    (TomoeDict     *dict);
+static gboolean     flush                     (TomoeDict     *dict);
+static gboolean     is_editable               (TomoeDict     *dict);
+static gchar       *get_available_private_utf8 (TomoeDict    *dict);
 
 static void
 class_init (TomoeDictUnihanClass *klass)
@@ -107,11 +105,11 @@ class_init (TomoeDictUnihanClass *klass)
 
     dict_class = TOMOE_DICT_CLASS (klass);
     dict_class->get_name        = get_name;
-    dict_class->register_char   = register_char;
-    dict_class->unregister_char = unregister_char;
     dict_class->get_char        = get_char;
     dict_class->search          = search;
     dict_class->flush           = flush;
+    dict_class->is_editable     = is_editable;
+    dict_class->get_available_private_utf8 = get_available_private_utf8;
 
     g_object_class_install_property (
         gobject_class,
@@ -249,30 +247,6 @@ get_name (TomoeDict *_dict)
     return dict->name ? dict->name : DEFAULT_NAME;
 }
 
-static gboolean
-register_char (TomoeDict *_dict, TomoeChar *chr)
-{
-    TomoeDictUnihan *dict = TOMOE_DICT_UNIHAN (_dict);
-
-    g_return_val_if_fail (TOMOE_IS_DICT_UNIHAN (dict), FALSE);
-    g_return_val_if_fail (chr, FALSE);
-
-    g_warning ("TomoeDictUnihan doesn't support register_char()");
-    return FALSE;
-}
-
-static gboolean
-unregister_char (TomoeDict *_dict, const gchar *utf8)
-{
-    TomoeDictUnihan *dict = TOMOE_DICT_UNIHAN (_dict);
-
-    g_return_val_if_fail (TOMOE_IS_DICT_UNIHAN (dict), FALSE);
-    g_return_val_if_fail (utf8 && *utf8 != '\0', FALSE);
-
-    g_warning ("TomoeDictUnihan doesn't support register_char()");
-    return FALSE;
-}
-
 static TomoeChar *
 get_char (TomoeDict *_dict, const gchar *utf8)
 {
@@ -297,6 +271,18 @@ static gboolean
 flush (TomoeDict *_dict)
 {
     return TRUE;
+}
+
+static gboolean
+is_editable (TomoeDict *_dict)
+{
+    return FALSE;
+}
+
+static gchar *
+get_available_private_utf8 (TomoeDict *_dict)
+{
+    return NULL;
 }
 
 /*

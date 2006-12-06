@@ -1,5 +1,6 @@
 require 'tempfile'
 require 'fileutils'
+require 'uconv'
 
 require 'tomoe'
 
@@ -43,6 +44,7 @@ module TomoeSpecUtils
     base.class_eval do
       include Base
       include Config
+      include Unicode
     end
   end
 
@@ -179,6 +181,12 @@ EOC
       point = str.split.collect {|x| Integer(x)}
       raise ArgumentError if point.size != 2
       point
+    end
+  end
+
+  module Unicode
+    def ucs4_to_utf8(ucs4)
+      Uconv.u4tou8([ucs4].pack("I*"))
     end
   end
 end

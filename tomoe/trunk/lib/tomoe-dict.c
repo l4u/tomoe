@@ -52,6 +52,9 @@ tomoe_dict_class_init (TomoeDictClass *klass)
     klass->unregister_char = NULL;
     klass->get_char        = NULL;
     klass->search          = NULL;
+    klass->flush           = NULL;
+    klass->is_editable     = NULL;
+    klass->get_available_private_utf8 = NULL;
 }
 
 static void
@@ -120,11 +123,33 @@ tomoe_dict_register_char (TomoeDict *dict, TomoeChar *chr)
 
     g_return_val_if_fail (TOMOE_IS_DICT (dict), FALSE);
 
-    klass = TOMOE_DICT_GET_CLASS (dict);
-    if (klass->register_char)
-        return klass->register_char (dict, chr);
-    else
+    if (!tomoe_dict_is_editable (dict)) {
+        g_warning ("the dictionary isn't editable.");
         return FALSE;
+    }
+
+    klass = TOMOE_DICT_GET_CLASS (dict);
+    if (klass->register_char) {
+        gboolean need_to_set_utf8, success;
+
+        need_to_set_utf8 = !tomoe_char_get_utf8 (chr);
+        if (need_to_set_utf8) {
+            gchar *utf8;
+            utf8 = tomoe_dict_get_available_private_utf8 (dict);
+            if (!utf8) {
+                g_warning ("there is no available PUA(Private Use Area)");
+                return FALSE;
+            }
+            tomoe_char_set_utf8 (chr, utf8);
+            g_free (utf8);
+        }
+        success = klass->register_char (dict, chr);
+        if (!success && need_to_set_utf8)
+            tomoe_char_set_utf8 (chr, NULL);
+        return success;
+    } else {
+        return FALSE;
+    }
 }
 
 /**
@@ -142,6 +167,11 @@ tomoe_dict_unregister_char (TomoeDict *dict, const gchar *utf8)
     TomoeDictClass *klass;
 
     g_return_val_if_fail (TOMOE_IS_DICT (dict), FALSE);
+
+    if (!tomoe_dict_is_editable (dict)) {
+        g_warning ("the dictionary isn't editable.");
+        return FALSE;
+    }
 
     klass = TOMOE_DICT_GET_CLASS (dict);
     if (klass->unregister_char)
@@ -199,6 +229,34 @@ tomoe_dict_flush (TomoeDict *dict)
         return klass->flush (dict);
     else
         return FALSE;
+}
+
+gboolean
+tomoe_dict_is_editable (TomoeDict *dict)
+{
+    TomoeDictClass *klass;
+
+    g_return_val_if_fail (TOMOE_IS_DICT (dict), FALSE);
+
+    klass = TOMOE_DICT_GET_CLASS (dict);
+    if (klass->is_editable)
+        return klass->is_editable (dict);
+    else
+        return FALSE;
+}
+
+gchar *
+tomoe_dict_get_available_private_utf8 (TomoeDict *dict)
+{
+    TomoeDictClass *klass;
+
+    g_return_val_if_fail (TOMOE_IS_DICT (dict), NULL);
+
+    klass = TOMOE_DICT_GET_CLASS (dict);
+    if (klass->get_available_private_utf8)
+        return klass->get_available_private_utf8 (dict);
+    else
+        return NULL;
 }
 
 /*

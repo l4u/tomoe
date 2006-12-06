@@ -84,6 +84,12 @@ Init_tomoe_char(VALUE mTomoe)
     VALUE cTomoeChar;
 
     cTomoeChar = G_DEF_CLASS(TOMOE_TYPE_CHAR, "Char", mTomoe);
+
+    rb_define_const(cTomoeChar, "PRIVATE_USE_AREA_START",
+                    INT2NUM(TOMOE_CHAR_PRIVATE_USE_AREA_START));
+    rb_define_const(cTomoeChar, "PRIVATE_USE_AREA_END",
+                    INT2NUM(TOMOE_CHAR_PRIVATE_USE_AREA_END));
+
     rb_include_module(cTomoeChar, rb_mComparable);
 
     rb_define_method(cTomoeChar, "initialize", tc_initialize, -1);
