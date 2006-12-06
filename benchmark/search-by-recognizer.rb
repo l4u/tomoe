@@ -10,10 +10,17 @@ $LOAD_PATH.unshift(File.join(test_dir))
 
 require 'tomoe-spec-utils'
 
-dict = Tomoe::Dict.new("xml",
-                       "filename" => File.join(TomoeSpecUtils::Config.data_dir,
-                                               "handwriting.xml"),
-                       "editable" => false)
+data_dir = TomoeSpecUtils::Config.data_dir
+use_est = false
+if use_est
+  dict = Tomoe::Dict.new("est",
+                         "database_name" => File.join(data_dir, "handwriting"),
+                         "editable" => false)
+else
+  dict = Tomoe::Dict.new("xml",
+                         "filename" => File.join(data_dir, "handwriting.xml"),
+                         "editable" => false)
+end
 recognizer = Tomoe::Recognizer.new("simple", dict)
 context = Tomoe::Context.new("recognizer" => recognizer)
 config_file = TomoeSpecUtils::Config.make_config_file
