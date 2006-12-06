@@ -1,5 +1,8 @@
 2006-12-06  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/tomoe-unihan.c, module/dict/unihan-compiler.rb:
+	fixed a bug that readings and variants aren't set.
+
 	* lib/tomoe-dict.c (tomoe_dict_load): fixed a typo.
 
 	* lib/tomoe-context.c: fixed a bug related user dictionary.

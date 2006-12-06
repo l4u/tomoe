@@ -92,7 +92,9 @@ struct _TomoeUnihanInfo {
     gchar               *utf8;
     gint                 n_strokes;
     gchar              **variants;
+    gint                 variants_size;
     TomoeUnihanReading  *readings;
+    gint                 readings_size;
 };
 
 EOH
@@ -137,10 +139,19 @@ EOH
   infos.each_with_index do |(ucs4, info), i|
     info["utf8"] = utf8 = Uconv.u4tou8([Integer("0x#{ucs4}")].pack("I*"))
     n_strokes = info["kTotalStrokes"] || -1
-    variants = info["have_variants"] ? "#{prefix}variant_#{ucs4}" : "NULL"
-    readings = info["have_readings"] ? "#{prefix}reading_#{ucs4}" : "NULL"
+    variants = readings = "NULL"
+    variants_size = readings_size = "0"
+    if info["have_variants"]
+      variants =  "#{prefix}variant_#{ucs4}"
+      variants_size = "G_N_ELEMENTS(#{variants})"
+    end
+    if info["have_readings"]
+      readings = "#{prefix}reading_#{ucs4}"
+      readings_size = "G_N_ELEMENTS(#{readings})"
+    end
 
-    puts("    {\"#{utf8}\", #{n_strokes}, #{variants}, #{readings}},")
+    puts("    {\"#{utf8}\", #{n_strokes}, #{variants}, #{variants_size}, " \
+         "#{readings}, #{readings_size}},")
   end
   puts("};")
 end
