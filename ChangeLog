@@ -38,6 +38,7 @@
 
 	* module/recognizer/tomoe-recognizer-simple.c: Use g_build_filename()
 	for constructing the path name of dictionary.
+	* module/dict/tomoe-dict-est.c: Plugged memory leaks.
 
 2006-12-06  Kouhei Sutou  <kou@cozmixng.org>
 
