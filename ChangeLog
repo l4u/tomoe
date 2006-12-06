@@ -1,5 +1,7 @@
 2006-12-06  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/tomoe-dict-est.c: supported is_editable.
+
 	* benchmark/search-by-recognizer.rb: supported est backend.
 
 	* lib/tomoe-context.[ch] (tomoe_context_get_char): added.

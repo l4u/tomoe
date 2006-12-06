@@ -99,6 +99,7 @@ static TomoeChar   *get_char                  (TomoeDict     *dict,
 static GList       *search                    (TomoeDict     *dict,
                                                TomoeQuery    *query);
 static gboolean     flush                     (TomoeDict     *dict);
+static gboolean     is_editable               (TomoeDict     *dict);
 static gboolean     tomoe_dict_est_open       (TomoeDictEst  *dict);
 static gboolean     tomoe_dict_est_close      (TomoeDictEst  *dict);
 
@@ -124,6 +125,7 @@ class_init (TomoeDictEstClass *klass)
     dict_class->get_char        = get_char;
     dict_class->search          = search;
     dict_class->flush           = flush;
+    dict_class->is_editable     = is_editable;
 
     g_object_class_install_property (
         gobject_class,
@@ -502,6 +504,16 @@ flush (TomoeDict *_dict)
     TomoeDictEst *dict = TOMOE_DICT_EST (_dict);
 
     return est_db_sync (dict->db);
+}
+
+static gboolean
+is_editable (TomoeDict *_dict)
+{
+    TomoeDictEst *dict = TOMOE_DICT_EST (_dict);
+
+    g_return_val_if_fail (TOMOE_IS_DICT_EST (dict), FALSE);
+
+    return dict->editable;
 }
 
 static gboolean
