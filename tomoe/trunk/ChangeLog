@@ -1,5 +1,7 @@
 2006-12-06  Kouhei Sutou  <kou@cozmixng.org>
 
+	* TODO: updated.
+
 	* lib/tomoe-config.c: made name parameter optional for Unihan
 	backend.
 	* test/tomoe-spec-utils.rb: used Unihan backend by default.
