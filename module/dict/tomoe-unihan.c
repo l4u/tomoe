@@ -32,11 +32,6 @@ _tomoe_unihan_create (void)
         if (info.n_strokes)
             tomoe_char_set_n_strokes (chr, info.n_strokes);
 
-        len = info.variants_size;
-        for (j = 0; j < len; j++) {
-            tomoe_char_set_variant (chr, info.variants[j]);
-        }
-
         len = info.readings_size;
         for (j = 0; j < len; j++) {
             TomoeReading *reading;
@@ -47,6 +42,24 @@ _tomoe_unihan_create (void)
                                          reading_info.reading);
             tomoe_char_add_reading (chr, reading);
             g_object_unref (reading);
+        }
+
+        len = info.radicals_size;
+        for (j = 0; j < len; j++) {
+            tomoe_char_add_radical (chr, info.radicals[j]);
+        }
+
+        len = info.variants_size;
+        for (j = 0; j < len; j++) {
+            tomoe_char_set_variant (chr, info.variants[j]);
+        }
+
+        len = info.meta_data_size;
+        for (j = 0; j < len; j++) {
+            TomoeUnihanMetaData meta_data;
+
+            meta_data = info.meta_data[j];
+            tomoe_char_register_meta_data (chr, meta_data.key, meta_data.value);
         }
 
         array->pdata[i] = chr;

@@ -55,6 +55,22 @@ tc_add_radical(VALUE self, VALUE radical)
     return Qnil;
 }
 
+static void
+yield_meta_data(gpointer _key, gpointer _value, gpointer user_data)
+{
+    gchar *key = _key;
+    gchar *value = _value;
+
+    rb_yield_values(2, CSTR2RVAL(key), CSTR2RVAL(value));
+}
+
+static VALUE
+tc_meta_data_foreach(VALUE self)
+{
+    tomoe_char_meta_data_foreach(_SELF(self), yield_meta_data, NULL);
+    return Qnil;
+}
+
 static VALUE
 tc_to_xml(VALUE self)
 {
@@ -91,6 +107,7 @@ Init_tomoe_char(VALUE mTomoe)
                     INT2NUM(TOMOE_CHAR_PRIVATE_USE_AREA_END));
 
     rb_include_module(cTomoeChar, rb_mComparable);
+    rb_include_module(cTomoeChar, rb_mEnumerable);
 
     rb_define_method(cTomoeChar, "initialize", tc_initialize, -1);
 
@@ -100,6 +117,8 @@ Init_tomoe_char(VALUE mTomoe)
     rb_define_method(cTomoeChar, "add_reading", tc_add_reading, 1);
     rb_define_method(cTomoeChar, "radicals", tc_get_radicals, 0);
     rb_define_method(cTomoeChar, "add_radical", tc_add_radical, 1);
+
+    rb_define_method(cTomoeChar, "each", tc_meta_data_foreach, 0);
 
     rb_define_method(cTomoeChar, "to_xml", tc_to_xml, 0);
 }
