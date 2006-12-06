@@ -90,13 +90,15 @@ static gboolean     register_char             (TomoeDict     *dict,
                                                TomoeChar     *chr);
 static gboolean     unregister_char           (TomoeDict     *dict,
                                                const gchar   *utf8);
-static TomoeChar    *get_char                 (TomoeDict     *dict,
+static TomoeChar   *get_char                  (TomoeDict     *dict,
                                                const gchar   *utf8);
-static GList        *search                   (TomoeDict     *dict,
+static GList       *search                    (TomoeDict     *dict,
                                                TomoeQuery    *query);
-static gboolean      flush                    (TomoeDict     *dict);
-static gboolean      tomoe_dict_xml_load      (TomoeDictXML  *dict);
-static gboolean      tomoe_dict_xml_save      (TomoeDictXML  *dict);
+static gboolean     flush                     (TomoeDict     *dict);
+static gboolean     is_editable               (TomoeDict     *dict);
+static gchar       *get_available_private_utf8 (TomoeDict    *dict);
+static gboolean     tomoe_dict_xml_load       (TomoeDictXML  *dict);
+static gboolean     tomoe_dict_xml_save       (TomoeDictXML  *dict);
 
 static void
 class_init (TomoeDictXMLClass *klass)
@@ -120,6 +122,9 @@ class_init (TomoeDictXMLClass *klass)
     dict_class->get_char        = get_char;
     dict_class->search          = search;
     dict_class->flush           = flush;
+    dict_class->is_editable     = is_editable;
+    dict_class->get_available_private_utf8 = get_available_private_utf8;
+
 
     g_object_class_install_property (
         gobject_class,
@@ -336,12 +341,34 @@ flush (TomoeDict *_dict)
 {
     TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
 
+    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
+
     if (dict->editable && dict->modified) {
         dict->modified = FALSE;
         return tomoe_dict_xml_save (dict);
     } else {
         return TRUE;
     }
+}
+
+static gboolean
+is_editable (TomoeDict *_dict)
+{
+    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
+
+    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
+
+    return dict->editable;
+}
+
+static gchar *
+get_available_private_utf8 (TomoeDict *_dict)
+{
+    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
+
+    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), NULL);
+
+    return _tomoe_dict_ptr_array_get_available_private_utf8 (dict->chars);
 }
 
 static gboolean

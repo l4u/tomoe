@@ -13,6 +13,35 @@ context "Tomoe::Context" do
     @@context
   end
 
+  setup do
+    setup_user_dict
+  end
+
+  def setup_user_dict
+    @user_dict_file = Tempfile.new("tomoe-user-dict")
+    @user_dict_file.open
+    @user_dict_file.puts(<<-EOD)
+<?xml version ="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "#{File.join(data_dir, 'tomoe-dict.dtd')}">
+<dictionary name="User dictionary">
+</dictionary>
+EOD
+    @user_dict_file.close
+
+    @user_dict_config_file = Tempfile.new("tomoe-context")
+    @user_dict_config_file.open
+    @user_dict_config_file.puts(<<-EOC)
+[config]
+use_system_dictionaries = false
+user_dictionary = user
+
+[user-dictionary]
+type = xml
+file = #{@user_dict_file.path}
+EOC
+    @user_dict_config_file.close
+  end
+
   TomoeSpecUtils::Config.test_data_files.each do |file|
     base = File.basename(file)
     specify "Search by strokes for #{base}" do
@@ -34,31 +63,8 @@ context "Tomoe::Context" do
   end
 
   specify "User dictionary" do
-    user_dict_file = Tempfile.new("tomoe-user-dict")
-    user_dict_file.open
-    user_dict_file.puts(<<-EOD)
-<?xml version ="1.0" encoding="UTF-8"?>
-<!DOCTYPE dictionary SYSTEM "#{File.join(data_dir, 'tomoe-dict.dtd')}">
-<dictionary name="User dictionary">
-</dictionary>
-EOD
-    user_dict_file.close
-
-    config_file = Tempfile.new("tomoe-context")
-    config_file.open
-    config_file.puts(<<-EOC)
-[config]
-use_system_dictionaries = false
-user_dictionary = user
-
-[user-dictionary]
-type = xml
-file = #{user_dict_file.path}
-EOC
-    config_file.close
-
     context = Tomoe::Context.new()
-    context.load_config(config_file.path)
+    context.load_config(@user_dict_config_file.path)
 
     context.search(Tomoe::Query.new).should_be_empty
 
@@ -71,5 +77,37 @@ EOC
 
     context.unregister(char.utf8).should
     context.search(Tomoe::Query.new).should_be_empty
+  end
+
+  specify "should assign available UTF8 encoded code point " \
+          "when a character is registered without UTF8 value" do
+    context = Tomoe::Context.new()
+    context.load_config(@user_dict_config_file.path)
+
+    n_strokes = 8
+    query = Tomoe::Query.new
+    query.min_n_strokes = n_strokes
+    query.max_n_strokes = n_strokes
+
+    context.search(query).should_be_empty
+
+    char = Tomoe::Char.new
+    char.n_strokes = n_strokes
+    context.register(char).should
+    char.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)
+
+    context.search(query).collect do |cand|
+      cand.char.utf8
+    end.should == [char.utf8]
+
+
+    char2 = Tomoe::Char.new
+    char2.n_strokes = n_strokes
+    context.register(char2).should
+    char2.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START + 1)
+
+    context.search(query).collect do |cand|
+      cand.char.utf8
+    end.sort.should == [char.utf8, char2.utf8].sort
   end
 end

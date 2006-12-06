@@ -31,6 +31,9 @@ G_BEGIN_DECLS
 #include "tomoe-reading.h"
 #include "tomoe-writing.h"
 
+#define TOMOE_CHAR_PRIVATE_USE_AREA_START 0xE000
+#define TOMOE_CHAR_PRIVATE_USE_AREA_END   0xF8FF
+
 #define TOMOE_TYPE_CHAR            (tomoe_char_get_type ())
 #define TOMOE_CHAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_CHAR, TomoeChar))
 #define TOMOE_CHAR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_CHAR, TomoeCharClass))
@@ -80,10 +83,10 @@ const gchar    *tomoe_char_get_meta_data        (TomoeChar     *chr,
 void            tomoe_char_register_meta_data   (TomoeChar     *chr,
                                                  const gchar   *key,
                                                  const gchar   *value);
-gboolean        tomoe_char_has_meta_data        (TomoeChar* chr);
-void            tomoe_char_meta_data_foreach    (TomoeChar* chr,
-                                                 GHFunc func,
-                                                 gpointer user_data);
+gboolean        tomoe_char_has_meta_data        (TomoeChar     *chr);
+void            tomoe_char_meta_data_foreach    (TomoeChar     *chr,
+                                                 GHFunc         func,
+                                                 gpointer       user_data);
 
 gint            tomoe_char_compare              (const TomoeChar *a,
                                                  const TomoeChar *b);
