@@ -1,7 +1,6 @@
 * Merge same characters of different dictionaries in search output.
 * Transformation of reading search pattern, e.g. ka > か, か > カ, か > ka
   should be language independent.
-* Add "register_char" function into TomoeContext.
 * Implement advanced searching.
 * Add modulized dictionary types.
   - QDBM?
@@ -13,3 +12,4 @@
 * Prepare character data base.
 * HMM! HMM!
 * Write document.
+* Implement partial mutch searching.
