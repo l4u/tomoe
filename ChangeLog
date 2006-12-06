@@ -1,5 +1,9 @@
 2006-12-06  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-config.c: made name parameter optional for Unihan
+	backend.
+	* test/tomoe-spec-utils.rb: used Unihan backend by default.
+
 	* module/dict/unihan-compiler.rb, module/dict/tomoe-unihan.c,
 	module/dict/Makefile.am: supported merging kanjidic2.xml to
 	Unihan.txt.
