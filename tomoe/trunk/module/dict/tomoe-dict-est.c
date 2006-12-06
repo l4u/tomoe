@@ -387,6 +387,7 @@ unregister_char (TomoeDict *_dict, const gchar *utf8)
         }
     }
     g_free (results);
+    est_cond_delete (cond);
 
     return success;
 }
@@ -443,6 +444,7 @@ get_char (TomoeDict *_dict, const gchar *utf8)
         if (chr) break;
     }
     g_free (results);
+    est_cond_delete (cond);
 
     return chr;
 }
@@ -494,6 +496,7 @@ search (TomoeDict *_dict, TomoeQuery *query)
                                          tomoe_candidate_new (chr));
     }
     g_free (results);
+    est_cond_delete (cond);
 
     return candidates;
 }
