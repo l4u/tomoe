@@ -254,6 +254,8 @@ ensure_user_dict (TomoeShelf *shelf, const gchar *name)
                                         NULL);
             g_free (user_dict_filename);
         }
+
+        tomoe_shelf_register_dict (shelf, name, user_dict);
     }
 
     return user_dict;
