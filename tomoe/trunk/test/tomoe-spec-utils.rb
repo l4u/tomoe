@@ -111,7 +111,7 @@ module TomoeSpecUtils
       Dir.glob(File.join(test_data_dir, "*.data"))
     end
 
-    def make_config_file(name=nil, dict_type=:xml)
+    def make_config_file(name=nil, dict_type=:unihan)
       name ||= "tomoe"
       config_file = Tempfile.new(name)
       config_file.open

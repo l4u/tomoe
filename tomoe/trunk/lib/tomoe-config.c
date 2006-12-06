@@ -505,19 +505,13 @@ static TomoeDict *
 load_unihan_dictionary (GKeyFile *key_file, const gchar *dict_name)
 {
     TomoeDict *dict;
-    GError *error = NULL;
     gchar *name;
 
-    name = g_key_file_get_string (key_file, dict_name, "name", &error);
-    if (error) {
-        TOMOE_HANDLE_ERROR (error);
-        return NULL;
-    }
-
+    name = _tomoe_config_key_file_get_string (key_file, dict_name,
+                                              "name", NULL);
     dict = tomoe_dict_new ("unihan",
                            "name", name,
                            NULL);
-
     g_free (name);
 
     return dict;
