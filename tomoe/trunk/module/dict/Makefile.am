@@ -66,6 +66,8 @@ unihan_built_sources = tomoe-unihan-data.h
 CLEANFILES += Unihan.txt Unihan.txt.cache
 BUILT_SOURCES = $(unihan_built_sources) Unihan.zip
 
+EXTRA_DIST = unihan-schemer.rb
+
 libunihan_la_SOURCES =		\
 	tomoe-dict-unihan.c	\
 	tomoe-unihan.c		\
@@ -73,9 +75,9 @@ libunihan_la_SOURCES =		\
 	$(unihan_built_sources)	\
 	$(ptr_array_based_dict_sources)
 
-tomoe-unihan-data.h: unihan-compiler.rb Unihan.txt $(top_srcdir)/data/kanjidic2.xml
+tomoe-unihan-data.h: unihan-schemer.rb Unihan.txt $(top_srcdir)/data/kanjidic2.xml
 	$(RUBY) -I$(top_srcdir)/ext/ruby -I$(top_builddir)/ext/ruby/.libs \
-	  -I$(top_srcdir)/test unihan-compiler.rb \
+	  -I$(top_srcdir)/test unihan-schemer.rb \
 	  Unihan.txt $(top_srcdir)/data/kanjidic2.xml > $@
 
 Unihan.txt: Unihan.zip
