@@ -32,25 +32,21 @@ _tomoe_unihan_create (void)
         if (info.n_strokes)
             tomoe_char_set_n_strokes (chr, info.n_strokes);
 
-        if (info.variants) {
-            len = G_N_ELEMENTS (info.variants);
-            for (j = 0; j < len; j++) {
-                tomoe_char_set_variant (chr, info.variants[j]);
-            }
+        len = info.variants_size;
+        for (j = 0; j < len; j++) {
+            tomoe_char_set_variant (chr, info.variants[j]);
         }
 
-        if (info.readings) {
-            len = G_N_ELEMENTS (info.readings);
-            for (j = 0; j < len; j++) {
-                TomoeReading *reading;
-                TomoeUnihanReading reading_info;
+        len = info.readings_size;
+        for (j = 0; j < len; j++) {
+            TomoeReading *reading;
+            TomoeUnihanReading reading_info;
 
-                reading_info = info.readings[j];
-                reading = tomoe_reading_new (reading_info.type,
-                                             reading_info.reading);
-                tomoe_char_add_reading (chr, reading);
-                g_object_unref (reading);
-            }
+            reading_info = info.readings[j];
+            reading = tomoe_reading_new (reading_info.type,
+                                         reading_info.reading);
+            tomoe_char_add_reading (chr, reading);
+            g_object_unref (reading);
         }
 
         array->pdata[i] = chr;
