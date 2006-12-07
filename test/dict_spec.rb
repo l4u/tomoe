@@ -31,6 +31,43 @@ context "Tomoe::Dict" do
     end
   end
 
+  specify "should load Subverion dictionary" do
+    begin
+      repos = File.join(tmp_dir, "svn.repos")
+      repos_url = "file://#{repos}"
+      wc = File.join(tmp_dir, "svn.wc")
+      dict_file = File.join(wc, "dict.xml")
+
+      `svnadmin create #{repos.dump}`
+      `svn co #{repos_url.dump} #{wc.dump}`
+      FileUtils.cp(@dict_file.path, dict_file)
+      `svn add #{dict_file.dump}`
+
+      `svnlook youngest #{repos.dump}`.chomp.should == "0"
+      `svn ci -m '' #{wc.dump}`
+      `svnlook youngest #{repos.dump}`.chomp.should == "1"
+
+      xml_dict = Tomoe::Dict.new("xml",
+                                 "filename" => dict_file,
+                                 "editable" => true)
+      dict = Tomoe::Dict.new("svn",
+                             "dictionary" => xml_dict,
+                             "repository" => repos_url,
+                             "working_copy" => wc)
+      a = dict[@utf8]
+      a.writing.strokes.should == @strokes
+
+      `svnlook youngest #{repos.dump}`.chomp.should == "1"
+      dict.register(Tomoe::Char.new)
+      `svnlook youngest #{repos.dump}`.chomp.should == "1"
+      dict.flush
+      `svnlook youngest #{repos.dump}`.chomp.should == "2"
+    ensure
+      FileUtils.rm_rf(repos)
+      FileUtils.rm_rf(wc)
+    end
+  end
+
   def setup_strokes
     @strokes = [
                 [

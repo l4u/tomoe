@@ -95,6 +95,6 @@ endif
 if WITH_SVN
 dict_module_LTLIBRARIES += libsvn.la
 
-libsvn_la_SOURCES = tomoe-dict-svn.c tomoe-dict-xml.h
-libsvn_la_LIBADD = $(SVN_LIBS) libxml.la
+libsvn_la_SOURCES = tomoe-dict-svn.c
+libsvn_la_LIBADD = $(SVN_LIBS)
 endif
