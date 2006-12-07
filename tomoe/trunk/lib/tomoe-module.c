@@ -54,7 +54,7 @@ static void     _tomoe_module_close        (GModule     *module);
 static gboolean _tomoe_module_load_func    (GModule     *module,
                                             const gchar *func_name,
                                             gpointer    *symbol);
-static gboolean _tomoe_module_match_name   (GModule     *module,
+static gboolean _tomoe_module_match_name   (const gchar *mod_path,
                                             const gchar *name);
 
 static void
@@ -167,11 +167,10 @@ tomoe_module_instantiate (GList *modules, const gchar *name,
         TomoeModulePrivate *priv;
 
         priv = TOMOE_MODULE_GET_PRIVATE (module);
-        if (g_type_module_use (G_TYPE_MODULE (module))) {
+        if (_tomoe_module_match_name (priv->mod_path, name) &&
+            g_type_module_use (G_TYPE_MODULE (module))) {
             GObject *object = NULL;
-            if (_tomoe_module_match_name (priv->library, name)) {
-                object = priv->instantiate (first_property, var_args);
-            }
+            object = priv->instantiate (first_property, var_args);
             g_type_module_unuse (G_TYPE_MODULE (module));
             if (object)
                 return object;
@@ -260,12 +259,12 @@ tomoe_module_load_modules (const gchar *base_dir)
 }
 
 static gboolean
-_tomoe_module_match_name (GModule *module, const gchar *name)
+_tomoe_module_match_name (const gchar *mod_path, const gchar *name)
 {
     gboolean matched;
     gchar *module_base_name, *normalized_matched_name;
 
-    module_base_name = g_path_get_basename (g_module_name (module));
+    module_base_name = g_path_get_basename (mod_path);
     normalized_matched_name = g_module_build_path (NULL, name);
 
     matched = (0 == strcmp (module_base_name, normalized_matched_name));

@@ -47,6 +47,18 @@ td_s_new(VALUE self, VALUE rb_name, VALUE props)
                               NULL);
     } else if (strcmp(name, "unihan") == 0) {
         dict = tomoe_dict_new(name, NULL);
+    } else if (strcmp(name, "svn") == 0) {
+        VALUE filename, editable, repository, working_copy;
+        filename = rb_hash_aref(props, CSTR2RVAL("filename"));
+        editable = rb_hash_aref(props, CSTR2RVAL("editable"));
+        repository = rb_hash_aref(props, CSTR2RVAL("repository"));
+        working_copy = rb_hash_aref(props, CSTR2RVAL("working_copy"));
+        dict = tomoe_dict_new(name,
+                              "filename", RVAL2CSTR(filename),
+                              "editable", RVAL2CBOOL(editable),
+                              "repository", RVAL2CSTR(repository),
+                              "working_copy", RVAL2CSTR(working_copy),
+                              NULL);
     } else {
         rb_raise(rb_eArgError, "unknown dictionary type: %s", name);
         dict = NULL;
