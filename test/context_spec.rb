@@ -70,12 +70,12 @@ EOC
 
     char = Tomoe::Char.new
     char.utf8 = "あ"
-    context.register(char).should
+    context.register(char).should == true
     context.search(Tomoe::Query.new).collect do |cand|
       cand.char.utf8
     end.should == [char.utf8]
 
-    context.unregister(char.utf8).should
+    context.unregister(char.utf8).should == true
     context.search(Tomoe::Query.new).should_be_empty
   end
 
@@ -93,7 +93,7 @@ EOC
 
     char = Tomoe::Char.new
     char.n_strokes = n_strokes
-    context.register(char).should
+    context.register(char).should == true
     char.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)
 
     context.search(query).collect do |cand|
@@ -103,7 +103,7 @@ EOC
 
     char2 = Tomoe::Char.new
     char2.n_strokes = n_strokes
-    context.register(char2).should
+    context.register(char2).should == true
     char2.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START + 1)
 
     context.search(query).collect do |cand|
@@ -119,7 +119,7 @@ EOC
 
     char = Tomoe::Char.new
     char.n_strokes = 8
-    context.register(char).should
+    context.register(char).should == true
     char.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)
 
     retrieved_char = context[ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)]
