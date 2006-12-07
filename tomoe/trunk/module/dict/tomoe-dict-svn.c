@@ -34,6 +34,8 @@
 
 #include "tomoe-dict-ptr-array.h"
 
+#define DIRTY_BORDER 10
+
 #define TOMOE_TYPE_DICT_SVN            tomoe_type_dict_svn
 #define TOMOE_DICT_SVN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_DICT_SVN, TomoeDictSvn))
 #define TOMOE_DICT_SVN_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_DICT_SVN, TomoeDictSvnClass))
@@ -53,6 +55,8 @@ struct _TomoeDictSvn
 {
     TomoeDict         object;
     gchar            *working_copy;
+
+    gint              dirty;
 
     TomoeDict        *sub_dict;
 
@@ -95,7 +99,8 @@ static gboolean     flush                     (TomoeDict     *dict);
 static gboolean     is_editable               (TomoeDict     *dict);
 static gchar       *get_available_private_utf8 (TomoeDict    *dict);
 
-static gboolean     tomoe_dict_svn_update      (TomoeDictSvn *dict);
+static gboolean     tomoe_dict_svn_update      (TomoeDictSvn *dict,
+                                                gboolean      force);
 static gboolean     tomoe_dict_svn_commit      (TomoeDictSvn *dict);
 
 static void
@@ -149,6 +154,7 @@ init (TomoeDictSvn *dict)
     svn_error_t *err;
 
     dict->working_copy  = NULL;
+    dict->dirty         = 0;
     dict->sub_dict      = NULL;
     dict->pool          = svn_pool_create (NULL);
     err = svn_client_create_context (&dict->ctx, dict->pool);
@@ -292,6 +298,7 @@ dispose (GObject *object)
         apr_pool_destroy (dict->pool);
 
     dict->working_copy  = NULL;
+    dict->dirty         = 0;
     dict->sub_dict      = NULL;
     dict->pool          = NULL;
     dict->ctx           = NULL;
@@ -318,7 +325,7 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), FALSE);
     g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), FALSE);
 
-    return (tomoe_dict_svn_update (dict) &&
+    return (tomoe_dict_svn_update (dict, TRUE) &&
             tomoe_dict_register_char (dict->sub_dict, chr) &&
             tomoe_dict_svn_commit (dict));
 }
@@ -331,7 +338,7 @@ unregister_char (TomoeDict *_dict, const gchar *utf8)
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), FALSE);
     g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), FALSE);
 
-    return (tomoe_dict_svn_update (dict) &&
+    return (tomoe_dict_svn_update (dict, TRUE) &&
             tomoe_dict_unregister_char (dict->sub_dict, utf8) &&
             tomoe_dict_svn_commit (dict));
 }
@@ -344,7 +351,7 @@ get_char (TomoeDict *_dict, const gchar *utf8)
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), NULL);
     g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), NULL);
 
-    if (tomoe_dict_svn_update (dict))
+    if (tomoe_dict_svn_update (dict, FALSE))
         return tomoe_dict_get_char (dict->sub_dict, utf8);
     else
         return NULL;
@@ -358,7 +365,7 @@ search (TomoeDict *_dict, TomoeQuery *query)
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), NULL);
     g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), NULL);
 
-    if (tomoe_dict_svn_update (dict))
+    if (tomoe_dict_svn_update (dict, FALSE))
         return tomoe_dict_search (dict->sub_dict, query);
     else
         return NULL;
@@ -372,7 +379,7 @@ flush (TomoeDict *_dict)
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), FALSE);
     g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), FALSE);
 
-    return (tomoe_dict_svn_update (dict) &&
+    return (tomoe_dict_svn_update (dict, TRUE) &&
             tomoe_dict_flush (dict->sub_dict) &&
             tomoe_dict_svn_commit (dict));
 }
@@ -396,7 +403,7 @@ get_available_private_utf8 (TomoeDict *_dict)
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), NULL);
     g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), FALSE);
 
-    if (tomoe_dict_svn_update (dict))
+    if (tomoe_dict_svn_update (dict, FALSE))
         return tomoe_dict_get_available_private_utf8 (dict->sub_dict);
     else
         return NULL;
@@ -404,7 +411,7 @@ get_available_private_utf8 (TomoeDict *_dict)
 
 
 static gboolean
-tomoe_dict_svn_update (TomoeDictSvn *dict)
+tomoe_dict_svn_update (TomoeDictSvn *dict, gboolean force)
 {
     svn_error_t *err;
     svn_opt_revision_t revision;
@@ -415,6 +422,9 @@ tomoe_dict_svn_update (TomoeDictSvn *dict)
                           FALSE);
 
     g_return_val_if_fail (dict->ctx, FALSE);
+
+    if (!force && dict->dirty++ < DIRTY_BORDER)
+        return TRUE;
 
     sub_pool = svn_pool_create (dict->pool);
     revision.kind = svn_opt_revision_head;
@@ -427,6 +437,7 @@ tomoe_dict_svn_update (TomoeDictSvn *dict)
         svn_error_clear (err);
         return FALSE;
     } else {
+        dict->dirty = 0;
         return TRUE;
     }
 }
