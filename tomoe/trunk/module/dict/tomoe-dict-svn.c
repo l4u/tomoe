@@ -33,7 +33,6 @@
 #include <glib-utils.h>
 
 #include "tomoe-dict-ptr-array.h"
-#include "tomoe-dict-xml.h"
 
 #define TOMOE_TYPE_DICT_SVN            tomoe_type_dict_svn
 #define TOMOE_DICT_SVN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_DICT_SVN, TomoeDictSvn))
@@ -44,6 +43,7 @@
 
 enum {
     PROP_0,
+    PROP_DICTIONARY,
     PROP_REPOSITORY,
     PROP_WORKING_COPY
 };
@@ -52,9 +52,11 @@ typedef struct _TomoeDictSvn TomoeDictSvn;
 typedef struct _TomoeDictSvnClass TomoeDictSvnClass;
 struct _TomoeDictSvn
 {
-    TomoeDictXML      object;
+    TomoeDict         object;
     gchar            *repository;
     gchar            *working_copy;
+
+    TomoeDict        *sub_dict;
 
     apr_pool_t       *pool;
     svn_client_ctx_t *ctx;
@@ -62,7 +64,7 @@ struct _TomoeDictSvn
 
 struct _TomoeDictSvnClass
 {
-    TomoeDictXMLClass parent_class;
+    TomoeDictClass parent_class;
 };
 
 static GType tomoe_type_dict_svn = 0;
@@ -126,6 +128,15 @@ class_init (TomoeDictSvnClass *klass)
 
     g_object_class_install_property (
         gobject_class,
+        PROP_DICTIONARY,
+        g_param_spec_object (
+            "dictionary",
+            "Dictionary",
+            "The dictionary to delegate of the dictionary",
+            TOMOE_TYPE_DICT,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+    g_object_class_install_property (
+        gobject_class,
         PROP_REPOSITORY,
         g_param_spec_string (
             "repository",
@@ -151,6 +162,7 @@ init (TomoeDictSvn *dict)
 
     dict->repository    = NULL;
     dict->working_copy  = NULL;
+    dict->sub_dict      = NULL;
     dict->pool          = svn_pool_create (NULL);
     err = svn_client_create_context (&dict->ctx, dict->pool);
 
@@ -177,7 +189,7 @@ register_type (GTypeModule *type_module)
         };
 
     tomoe_type_dict_svn = g_type_module_register_type (type_module,
-                                                       TOMOE_TYPE_DICT_XML,
+                                                       TOMOE_TYPE_DICT,
                                                        "TomoeDictSvn",
                                                        &info, 0);
 }
@@ -214,8 +226,7 @@ TOMOE_MODULE_IMPL_INSTANTIATE (const gchar *first_property, va_list var_args)
 }
 
 static GObject *
-constructor (GType type, guint n_props,
-             GObjectConstructParam *props)
+constructor (GType type, guint n_props, GObjectConstructParam *props)
 {
     GObject *object;
     GObjectClass *klass = G_OBJECT_CLASS (parent_class);
@@ -238,6 +249,13 @@ set_property (GObject *object,
     TomoeDictSvn *dict = TOMOE_DICT_SVN (object);
 
     switch (prop_id) {
+      case PROP_DICTIONARY:
+        if (dict->sub_dict)
+            g_object_unref (dict->sub_dict);
+        dict->sub_dict = g_value_get_object (value);
+        if (dict->sub_dict)
+            g_object_ref (dict->sub_dict);
+        break;
       case PROP_REPOSITORY:
         g_free (dict->repository);
         dict->repository = g_value_dup_string (value);
@@ -262,6 +280,9 @@ get_property (GObject *object,
     TomoeDictSvn *dict = TOMOE_DICT_SVN (object);
 
     switch (prop_id) {
+      case PROP_DICTIONARY:
+        g_value_set_object (value, dict->sub_dict);
+        break;
       case PROP_REPOSITORY:
         g_value_set_string (value, dict->repository);
         break;
@@ -281,17 +302,20 @@ dispose (GObject *object)
 
     dict = TOMOE_DICT_SVN (object);
 
-    tomoe_dict_svn_commit (dict);
+    /* tomoe_dict_svn_commit (dict); */
 
     if (dict->repository)
         g_free (dict->repository);
     if (dict->working_copy)
         g_free (dict->working_copy);
+    if (dict->sub_dict)
+        g_object_unref (dict->sub_dict);
     if (dict->pool)
         apr_pool_destroy (dict->pool);
 
     dict->repository    = NULL;
     dict->working_copy  = NULL;
+    dict->sub_dict      = NULL;
     dict->pool          = NULL;
     dict->ctx           = NULL;
 
@@ -301,7 +325,12 @@ dispose (GObject *object)
 static const gchar*
 get_name (TomoeDict *_dict)
 {
-    return TOMOE_DICT_CLASS (parent_class)->get_name (_dict);
+    TomoeDictSvn *dict = TOMOE_DICT_SVN (_dict);
+
+    g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), FALSE);
+    g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), NULL);
+
+    return tomoe_dict_get_name (dict->sub_dict);
 }
 
 static gboolean
@@ -310,9 +339,10 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
     TomoeDictSvn *dict = TOMOE_DICT_SVN (_dict);
 
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), FALSE);
+    g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), FALSE);
 
     return (tomoe_dict_svn_update (dict) &&
-            TOMOE_DICT_CLASS (parent_class)->register_char (_dict, chr) &&
+            tomoe_dict_register_char (dict->sub_dict, chr) &&
             tomoe_dict_svn_commit (dict));
 }
 
@@ -322,9 +352,10 @@ unregister_char (TomoeDict *_dict, const gchar *utf8)
     TomoeDictSvn *dict = TOMOE_DICT_SVN (_dict);
 
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), FALSE);
+    g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), FALSE);
 
     return (tomoe_dict_svn_update (dict) &&
-            TOMOE_DICT_CLASS (parent_class)->unregister_char (_dict, utf8) &&
+            tomoe_dict_unregister_char (dict->sub_dict, utf8) &&
             tomoe_dict_svn_commit (dict));
 }
 
@@ -334,9 +365,10 @@ get_char (TomoeDict *_dict, const gchar *utf8)
     TomoeDictSvn *dict = TOMOE_DICT_SVN (_dict);
 
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), NULL);
+    g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), NULL);
 
     if (tomoe_dict_svn_update (dict))
-        return TOMOE_DICT_CLASS (parent_class)->get_char (_dict, utf8);
+        return tomoe_dict_get_char (dict->sub_dict, utf8);
     else
         return NULL;
 }
@@ -347,9 +379,10 @@ search (TomoeDict *_dict, TomoeQuery *query)
     TomoeDictSvn *dict = TOMOE_DICT_SVN (_dict);
 
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), NULL);
+    g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), NULL);
 
     if (tomoe_dict_svn_update (dict))
-        return TOMOE_DICT_CLASS (parent_class)->search (_dict, query);
+        return tomoe_dict_search (dict->sub_dict, query);
     else
         return NULL;
 }
@@ -360,16 +393,22 @@ flush (TomoeDict *_dict)
     TomoeDictSvn *dict = TOMOE_DICT_SVN (_dict);
 
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), FALSE);
+    g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), FALSE);
 
     return (tomoe_dict_svn_update (dict) &&
-            TOMOE_DICT_CLASS (parent_class)->flush (_dict) &&
+            tomoe_dict_flush (dict->sub_dict) &&
             tomoe_dict_svn_commit (dict));
 }
 
 static gboolean
 is_editable (TomoeDict *_dict)
 {
-    return TOMOE_DICT_CLASS (parent_class)->is_editable (_dict);
+    TomoeDictSvn *dict = TOMOE_DICT_SVN (_dict);
+
+    g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), FALSE);
+    g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), FALSE);
+
+    return tomoe_dict_is_editable (dict->sub_dict);
 }
 
 static gchar *
@@ -378,9 +417,10 @@ get_available_private_utf8 (TomoeDict *_dict)
     TomoeDictSvn *dict = TOMOE_DICT_SVN (_dict);
 
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), NULL);
+    g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), FALSE);
 
     if (tomoe_dict_svn_update (dict))
-        return TOMOE_DICT_CLASS (parent_class)->get_available_private_utf8 (_dict);
+        return tomoe_dict_get_available_private_utf8 (dict->sub_dict);
     else
         return NULL;
 }
@@ -445,6 +485,7 @@ static gboolean
 tomoe_dict_svn_commit (TomoeDictSvn *dict)
 {
     svn_error_t *err;
+    svn_client_commit_info_t *info;
     apr_array_header_t *targets;
     apr_pool_t *sub_pool;
 
@@ -455,9 +496,9 @@ tomoe_dict_svn_commit (TomoeDictSvn *dict)
     g_return_val_if_fail (dict->ctx, FALSE);
 
     sub_pool = svn_pool_create (dict->pool);
-    targets = apr_array_make (sub_pool, 1, sizeof(gchar *));
-    APR_ARRAY_IDX(targets, 0, gchar *) = dict->working_copy;
-    err = svn_client_commit (NULL, targets, FALSE, dict->ctx, sub_pool);
+    targets = apr_array_make (sub_pool, 1, sizeof(gchar));
+    APR_ARRAY_PUSH(targets, gchar *) = dict->working_copy;
+    err = svn_client_commit (&info, targets, FALSE, dict->ctx, sub_pool);
     apr_pool_destroy (sub_pool);
 
     if (err) {

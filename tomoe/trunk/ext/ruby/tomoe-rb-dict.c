@@ -48,14 +48,12 @@ td_s_new(VALUE self, VALUE rb_name, VALUE props)
     } else if (strcmp(name, "unihan") == 0) {
         dict = tomoe_dict_new(name, NULL);
     } else if (strcmp(name, "svn") == 0) {
-        VALUE filename, editable, repository, working_copy;
-        filename = rb_hash_aref(props, CSTR2RVAL("filename"));
-        editable = rb_hash_aref(props, CSTR2RVAL("editable"));
+        VALUE dictionary, repository, working_copy;
+        dictionary = rb_hash_aref(props, CSTR2RVAL("dictionary"));
         repository = rb_hash_aref(props, CSTR2RVAL("repository"));
         working_copy = rb_hash_aref(props, CSTR2RVAL("working_copy"));
         dict = tomoe_dict_new(name,
-                              "filename", RVAL2CSTR(filename),
-                              "editable", RVAL2CBOOL(editable),
+                              "dictionary", RVAL2TDIC(dictionary),
                               "repository", RVAL2CSTR(repository),
                               "working_copy", RVAL2CSTR(working_copy),
                               NULL);
