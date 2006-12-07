@@ -413,7 +413,7 @@ retrieve_char_by_id (TomoeDictEst *dict, int id)
 
     chr = tomoe_char_new_from_xml_data (est_doc_hidden_texts (doc), -1);
     if (chr)
-        g_hash_table_insert (dict->cache, g_strdup (utf8), chr);
+        g_hash_table_insert (dict->cache, g_strdup (utf8), g_object_ref (chr));
 
     est_doc_delete (doc);
 

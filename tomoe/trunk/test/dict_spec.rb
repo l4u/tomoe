@@ -24,7 +24,6 @@ context "Tomoe::Dict" do
       dict = Tomoe::Dict.new("est",
                              "database_name" => est_db,
                              "editable" => true)
-      return if dict.nil?
       a = dict[@utf8]
       a.writing.strokes.should == @strokes
     ensure
