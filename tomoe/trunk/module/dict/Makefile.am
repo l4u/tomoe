@@ -42,7 +42,9 @@ ptr_array_based_dict_sources =		\
 
 dict_module_LTLIBRARIES = libxml.la
 
-libxml_la_SOURCES = tomoe-dict-xml.c $(ptr_array_based_dict_sources)
+libxml_la_SOURCES =				\
+	tomoe-dict-xml.c tomoe-dict-xml.h	\
+	$(ptr_array_based_dict_sources)
 
 if WITH_EST
 dict_module_LTLIBRARIES += libest.la
