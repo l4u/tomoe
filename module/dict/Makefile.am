@@ -29,6 +29,7 @@ INCLUDES =				\
 	-I$(top_srcdir)/ext/ruby	\
 	$(TOMOE_CFLAGS)			\
 	$(EST_CFLAGS)			\
+	$(SVN_CFLAGS)			\
 	$(RUBY_CFLAGS)
 
 LIBADD = $(TOMOE_LIBS)
@@ -89,4 +90,11 @@ Unihan.txt: Unihan.zip
 Unihan_URL = ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip
 Unihan.zip:
 	$(RUBY) -r open-uri -e "print open('$(Unihan_URL)').read" > $@
+endif
+
+if WITH_SVN
+dict_module_LTLIBRARIES += libsvn.la
+
+libsvn_la_SOURCES = tomoe-dict-svn.c tomoe-dict-xml.h
+libsvn_la_LIBADD = $(SVN_LIBS) libxml.la
 endif

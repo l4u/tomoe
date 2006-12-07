@@ -220,7 +220,7 @@ set_property (GObject *object,
     TomoeDictXML *dict = TOMOE_DICT_XML (object);
     TomoeDictXMLPrivate *priv;
 
-    priv =  TOMOE_DICT_XML_GET_PRIVATE (dict);
+    priv = TOMOE_DICT_XML_GET_PRIVATE (dict);
     switch (prop_id) {
       case PROP_FILENAME:
         priv->filename = g_value_dup_string (value);
@@ -244,7 +244,7 @@ get_property (GObject *object,
     TomoeDictXML *dict = TOMOE_DICT_XML (object);
     TomoeDictXMLPrivate *priv;
 
-    priv =  TOMOE_DICT_XML_GET_PRIVATE (dict);
+    priv = TOMOE_DICT_XML_GET_PRIVATE (dict);
     switch (prop_id) {
       case PROP_FILENAME:
         g_value_set_string (value, priv->filename);
