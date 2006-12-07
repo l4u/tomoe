@@ -30,7 +30,7 @@ G_BEGIN_DECLS
 #include "tomoe-char.h"
 #include "tomoe-query.h"
 
-#define TOMOE_TYPE_DICT_XML            tomoe_type_dict_xml
+#define TOMOE_TYPE_DICT_XML            (tomoe_dict_xml_get_type ())
 #define TOMOE_DICT_XML(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_DICT_XML, TomoeDictXML))
 #define TOMOE_DICT_XML_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_DICT_XML, TomoeDictXMLClass))
 #define TOMOE_IS_DICT_XML(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TOMOE_TYPE_DICT_XML))
