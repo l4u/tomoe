@@ -44,7 +44,6 @@
 enum {
     PROP_0,
     PROP_DICTIONARY,
-    PROP_REPOSITORY,
     PROP_WORKING_COPY
 };
 
@@ -53,7 +52,6 @@ typedef struct _TomoeDictSvnClass TomoeDictSvnClass;
 struct _TomoeDictSvn
 {
     TomoeDict         object;
-    gchar            *repository;
     gchar            *working_copy;
 
     TomoeDict        *sub_dict;
@@ -97,7 +95,6 @@ static gboolean     flush                     (TomoeDict     *dict);
 static gboolean     is_editable               (TomoeDict     *dict);
 static gchar       *get_available_private_utf8 (TomoeDict    *dict);
 
-static void         tomoe_dict_svn_init_wc     (TomoeDictSvn *dict);
 static gboolean     tomoe_dict_svn_update      (TomoeDictSvn *dict);
 static gboolean     tomoe_dict_svn_commit      (TomoeDictSvn *dict);
 
@@ -137,15 +134,6 @@ class_init (TomoeDictSvnClass *klass)
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
     g_object_class_install_property (
         gobject_class,
-        PROP_REPOSITORY,
-        g_param_spec_string (
-            "repository",
-            "Repository",
-            "The repository name of the dictionary",
-            NULL,
-            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
-    g_object_class_install_property (
-        gobject_class,
         PROP_WORKING_COPY,
         g_param_spec_string (
             "working-copy",
@@ -160,7 +148,6 @@ init (TomoeDictSvn *dict)
 {
     svn_error_t *err;
 
-    dict->repository    = NULL;
     dict->working_copy  = NULL;
     dict->sub_dict      = NULL;
     dict->pool          = svn_pool_create (NULL);
@@ -235,8 +222,6 @@ constructor (GType type, guint n_props, GObjectConstructParam *props)
     object = klass->constructor (type, n_props, props);
     dict = TOMOE_DICT_SVN (object);
 
-    tomoe_dict_svn_init_wc (dict);
-
     return object;
 }
 
@@ -255,10 +240,6 @@ set_property (GObject *object,
         dict->sub_dict = g_value_get_object (value);
         if (dict->sub_dict)
             g_object_ref (dict->sub_dict);
-        break;
-      case PROP_REPOSITORY:
-        g_free (dict->repository);
-        dict->repository = g_value_dup_string (value);
         break;
       case PROP_WORKING_COPY:
         g_free (dict->working_copy);
@@ -283,9 +264,6 @@ get_property (GObject *object,
       case PROP_DICTIONARY:
         g_value_set_object (value, dict->sub_dict);
         break;
-      case PROP_REPOSITORY:
-        g_value_set_string (value, dict->repository);
-        break;
       case PROP_WORKING_COPY:
         g_value_set_string (value, dict->working_copy);
         break;
@@ -304,8 +282,6 @@ dispose (GObject *object)
 
     /* tomoe_dict_svn_commit (dict); */
 
-    if (dict->repository)
-        g_free (dict->repository);
     if (dict->working_copy)
         g_free (dict->working_copy);
     if (dict->sub_dict)
@@ -313,7 +289,6 @@ dispose (GObject *object)
     if (dict->pool)
         apr_pool_destroy (dict->pool);
 
-    dict->repository    = NULL;
     dict->working_copy  = NULL;
     dict->sub_dict      = NULL;
     dict->pool          = NULL;
@@ -425,33 +400,6 @@ get_available_private_utf8 (TomoeDict *_dict)
         return NULL;
 }
 
-
-static void
-tomoe_dict_svn_init_wc (TomoeDictSvn *dict)
-{
-    svn_error_t *err;
-    svn_opt_revision_t revision;
-    apr_pool_t *sub_pool;
-
-    g_return_if_fail (dict->working_copy);
-
-    if (g_file_test (dict->working_copy, G_FILE_TEST_EXISTS))
-        return;
-
-    g_return_if_fail (dict->ctx);
-    g_return_if_fail (dict->repository);
-
-    sub_pool = svn_pool_create (dict->pool);
-    revision.kind = svn_opt_revision_head;
-    err = svn_client_checkout (NULL, dict->repository, dict->working_copy,
-                               &revision, TRUE, dict->ctx, sub_pool);
-    apr_pool_destroy (sub_pool);
-
-    if (err) {
-        g_warning ("failed to checkout: %s", err->message);
-        svn_error_clear (err);
-    }
-}
 
 static gboolean
 tomoe_dict_svn_update (TomoeDictSvn *dict)

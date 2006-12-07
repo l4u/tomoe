@@ -48,13 +48,11 @@ td_s_new(VALUE self, VALUE rb_name, VALUE props)
     } else if (strcmp(name, "unihan") == 0) {
         dict = tomoe_dict_new(name, NULL);
     } else if (strcmp(name, "svn") == 0) {
-        VALUE dictionary, repository, working_copy;
+        VALUE dictionary, working_copy;
         dictionary = rb_hash_aref(props, CSTR2RVAL("dictionary"));
-        repository = rb_hash_aref(props, CSTR2RVAL("repository"));
         working_copy = rb_hash_aref(props, CSTR2RVAL("working_copy"));
         dict = tomoe_dict_new(name,
                               "dictionary", RVAL2TDIC(dictionary),
-                              "repository", RVAL2CSTR(repository),
                               "working_copy", RVAL2CSTR(working_copy),
                               NULL);
     } else {
