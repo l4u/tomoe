@@ -280,7 +280,9 @@ dispose (GObject *object)
 
     dict = TOMOE_DICT_SVN (object);
 
-    /* tomoe_dict_svn_commit (dict); */
+    if (dict->working_copy &&
+        g_file_test (dict->working_copy, G_FILE_TEST_EXISTS))
+        flush (TOMOE_DICT (object));
 
     if (dict->working_copy)
         g_free (dict->working_copy);
