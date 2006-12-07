@@ -2,6 +2,7 @@ Overview of Changes from libtomoe-0.4.0 to libtomoe-0.4.1
 ==============================================================
 * New modulized dictionarys:
   - Hyper Estraier
+  - Unihan database
 
 Overview of Changes from libtomoe-0.3.0 to libtomoe-0.4.0
 ==============================================================
