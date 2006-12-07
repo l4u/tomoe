@@ -11,6 +11,8 @@ require "tomoe-spec-utils"
 
 n = 10
 use_est = false
+use_svn = true
+tmp_dir = TomoeSpecUtils::Config.tmp_dir
 Benchmark.bmbm do |x|
   TomoeSpecUtils::Config.dictionaries.sort.each do |dictionary|
     if use_est
@@ -18,6 +20,25 @@ Benchmark.bmbm do |x|
                              "name" => File.basename(dictionary),
                              "database_name" => dictionary.sub(/\.xml$/, ''),
                              "editable" => false)
+    elsif use_svn
+      repos = File.join(tmp_dir, "svn.repos", File.basename(dictionary))
+      FileUtils.mkdir_p(repos)
+      repos_url = "file://#{repos}"
+      wc = File.join(tmp_dir, "svn.wc", File.basename(dictionary))
+      dict_file = File.join(wc, "dict.xml")
+
+      `svnadmin create #{repos.dump}`
+      `svn co #{repos_url.dump} #{wc.dump}`
+      FileUtils.cp(dictionary, dict_file)
+      `svn add #{dict_file.dump}`
+      `svn ci -m '' #{wc.dump}`
+
+      xml_dict = Tomoe::Dict.new("xml",
+                                 "filename" => dict_file,
+                                 "editable" => true)
+      dict = Tomoe::Dict.new("svn",
+                             "dictionary" => xml_dict,
+                             "working_copy" => wc)
     else
       dict = Tomoe::Dict.new("xml",
                              "filename" => dictionary,
@@ -36,3 +57,5 @@ Benchmark.bmbm do |x|
     end
   end
 end
+
+FileUtils.rm_rf(tmp_dir)
