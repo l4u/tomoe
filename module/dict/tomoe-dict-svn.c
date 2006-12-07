@@ -403,7 +403,7 @@ get_available_private_utf8 (TomoeDict *_dict)
     g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), NULL);
     g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), FALSE);
 
-    if (tomoe_dict_svn_update (dict, FALSE))
+    if (tomoe_dict_svn_update (dict, TRUE))
         return tomoe_dict_get_available_private_utf8 (dict->sub_dict);
     else
         return NULL;
