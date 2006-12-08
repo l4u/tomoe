@@ -45,11 +45,11 @@ def romaji_to_katakana(romaji)
 end
 
 def ucs4_to_utf8(ucs4)
-  Uconv.u4tou8([Integer("0x#{ucs4}")].pack("I*"))
+  TomoeSpecUtils::Unicode.ucs4_to_utf8(Integer("0x#{ucs4}"))
 end
 
 def utf8_to_ucs4(utf8)
-  "%X" % Uconv.u8tou4(utf8).unpack("I*")[0]
+  "%X" % TomoeSpecUtils::Unicode.utf8_to_ucs4(utf8)
 end
 
 def cache(filename)

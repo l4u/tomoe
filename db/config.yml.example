@@ -1,0 +1,6 @@
+adapter: mysql
+database: tomoe
+username: root
+password:
+host: localhost
+socket: /var/run/mysqld/mysqld.sock
