@@ -55,6 +55,8 @@ td_s_new(VALUE self, VALUE rb_name, VALUE props)
                               "dictionary", RVAL2TDIC(dictionary),
                               "working_copy", RVAL2CSTR(working_copy),
                               NULL);
+    } else if (strcmp(name, "ruby") == 0) {
+        dict = tomoe_dict_new(name, NULL);
     } else {
         rb_raise(rb_eArgError, "unknown dictionary type: %s", name);
         dict = NULL;

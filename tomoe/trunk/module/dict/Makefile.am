@@ -52,7 +52,7 @@ libest_la_SOURCES = tomoe-dict-est.c
 libest_la_LIBADD = $(EST_LIBS)
 endif
 
-if ENABLE_RUBY_DICT
+if ENABLE_DICT_RUBY
 dict_module_LTLIBRARIES += libruby.la
 
 libruby_la_SOURCES = tomoe-dict-ruby.c
