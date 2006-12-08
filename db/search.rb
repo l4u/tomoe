@@ -57,9 +57,9 @@ puts Reading.count
 puts Radical.count
 
 chars.each do |char|
-  p [char.code_point, char.readings] unless char.readings.empty?
-  p [char.code_point, char.radicals] unless char.radicals.empty?
+  p [utf8_to_ucs4(char.utf8), char.readings] unless char.readings.empty?
+  p [utf8_to_ucs4(char.utf8), char.radicals] unless char.radicals.empty?
   unless char.meta_data.empty?
-    p [char.code_point, char.meta_data.collect {|x| [x.key, x.value]}]
+    p [utf8_to_ucs4(char.utf8), char.meta_data.collect {|x| [x.key, x.value]}]
   end
 end

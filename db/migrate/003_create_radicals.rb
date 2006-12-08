@@ -1,10 +1,10 @@
 class CreateRadicals < ActiveRecord::Migration
   def self.up
     create_table(:radicals) do |t|
-      t.column :code_point, :integer
-      t.column :radical_code_point, :integer
+      t.column :utf8, :string, :null => false
+      t.column :radical_utf8, :string, :null => false
     end
-    add_index :radicals, :code_point
+    add_index :radicals, :utf8
   end
 
   def self.down
