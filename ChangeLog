@@ -1,3 +1,11 @@
+2006-12-08  Kouhei Sutou  <kou@cozmixng.org>
+
+	* configure.in, module/dict/Makefile.am: --enable-ruby-dict ->
+	--enable-dict-ruby.
+
+	* module/dict/tomoe-dict-ruby.c: fixed a bug for Ruby
+	cleanup. Now, Ruby based dictionary is work at least.
+
 2006-12-07  Kouhei Sutou  <kou@cozmixng.org>
 
 	* test/context_spec.rb: added missing == true.

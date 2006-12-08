@@ -184,29 +184,40 @@ register_type (GTypeModule *type_module)
                                                        &info, 0);
 }
 
+static void
+tomoe_dict_ruby_atexit(void)
+{
+    ruby_cleanup (0);
+}
+
 G_MODULE_EXPORT void
 TOMOE_MODULE_IMPL_INIT (GTypeModule *type_module)
 {
     static gchar *argv[] = {G_STRINGIFY (PACKAGE)};
+    static gboolean ruby_initialized = FALSE;
 
     register_type (type_module);
 
-    ruby_init ();
-    ruby_script (PACKAGE);
-    ruby_set_argv (1, argv);
+    if (!ruby_initialized) {
+        ruby_initialized = TRUE;
 
-    if (RARRAY(rb_load_path)->len == 0) {
-        ruby_init_loadpath ();
+        ruby_init ();
+        atexit(tomoe_dict_ruby_atexit);
+        ruby_script (PACKAGE);
+        ruby_set_argv (1, argv);
+
+        if (RARRAY(rb_load_path)->len == 0) {
+            ruby_init_loadpath ();
+        }
+
+        rb_ary_unshift (rb_load_path, rb_str_new2 (RUBY_EXTDIR));
+        rb_ary_unshift (rb_load_path, rb_str_new2 (RUBY_LIBDIR));
     }
-
-    rb_ary_unshift (rb_load_path, rb_str_new2 (RUBY_EXTDIR));
-    rb_ary_unshift (rb_load_path, rb_str_new2 (RUBY_LIBDIR));
 }
 
 G_MODULE_EXPORT void
 TOMOE_MODULE_IMPL_EXIT (void)
 {
-    ruby_cleanup (0);
 }
 
 G_MODULE_EXPORT GObject *
