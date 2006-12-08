@@ -185,8 +185,13 @@ EOC
   end
 
   module Unicode
+    module_function
     def ucs4_to_utf8(ucs4)
       Uconv.u4tou8([ucs4].pack("I*"))
+    end
+
+    def utf8_to_ucs4(utf8)
+      Uconv.u8tou4(utf8).unpack("I*")[0]
     end
   end
 end

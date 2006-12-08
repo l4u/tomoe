@@ -32,6 +32,8 @@ Init_tomoe_reading(VALUE mTomoe)
     VALUE cTomoeReading;
 
     cTomoeReading = G_DEF_CLASS(TOMOE_TYPE_READING, "Reading", mTomoe);
+    G_DEF_CLASS(TOMOE_TYPE_READING_TYPE, "ReadingType", mTomoe);
+
     G_DEF_CONSTANTS(mTomoe, TOMOE_TYPE_READING_TYPE, "TOMOE_");
     G_DEF_CONSTANTS(cTomoeReading, TOMOE_TYPE_READING_TYPE, "TOMOE_READING_");
 
