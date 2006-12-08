@@ -38,22 +38,21 @@ print "converting..."
 $stdout.flush
 cands.each_with_index do |cand, i|
   char = cand.char
-  code_point = utf8_to_ucs4(char.utf8)
   new_char = Char.new(:n_strokes => char.n_strokes < 0 ? nil : char.n_strokes,
-                      :variant => utf8_to_ucs4(char.variant))
-  new_char.id = code_point
+                      :variant => char.variant)
+  new_char.id = char.utf8
   new_char.save!
   char.readings.each do |reading|
-    Reading.new(:code_point => code_point,
+    Reading.new(:utf8 => char.utf8,
                 :reading_type => reading.type.to_i,
                 :reading => reading.reading).save!
   end
   char.radicals.each do |radical|
-    Radical.new(:code_point => code_point,
-                :radical_code_point => utf8_to_ucs4(radical)).save!
+    Radical.new(:utf8 => char.utf8,
+                :radical_utf8 => radical).save!
   end
   char.each do |key, value|
-    MetaDatum.new(:code_point => code_point,
+    MetaDatum.new(:utf8 => char.utf8,
                   :key => key,
                   :value => value).save!
   end

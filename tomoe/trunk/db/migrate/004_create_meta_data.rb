@@ -1,11 +1,11 @@
 class CreateMetaData < ActiveRecord::Migration
   def self.up
     create_table(:meta_data) do |t|
-      t.column :code_point, :integer
-      t.column :key, :string
-      t.column :value, :string
+      t.column :utf8, :string, :null => false
+      t.column :key, :string, :null => false
+      t.column :value, :string, :null => false
     end
-    add_index :meta_data, :code_point
+    add_index :meta_data, :utf8
   end
 
   def self.down
