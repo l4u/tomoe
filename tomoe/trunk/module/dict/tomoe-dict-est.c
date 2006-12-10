@@ -463,6 +463,7 @@ search (TomoeDict *_dict, TomoeQuery *query)
     g_return_val_if_fail (TOMOE_IS_DICT_EST (dict), candidates);
 
     cond = est_cond_new ();
+    est_cond_set_phrase (cond, "</character>");
     est_cond_set_order (cond, "utf8 STRA");
 
     min_n_strokes = tomoe_query_get_min_n_strokes (query);
