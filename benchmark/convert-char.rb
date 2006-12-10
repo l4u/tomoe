@@ -39,8 +39,8 @@ XML
 
 n = 5000
 Benchmark.bmbm do |x|
-  x.report("XML -> TomoeChar") {n.times {Tomoe::Char.new(xml)}}
+  x.report("XML -> TomoeChar (##{n})") {n.times {Tomoe::Char.new(xml)}}
   GC.start
   char = Tomoe::Char.new(xml)
-  x.report("TomoeChar -> XML") {n.times {char.to_xml}}
+  x.report("TomoeChar -> XML (##{n})") {n.times {char.to_xml}}
 end
