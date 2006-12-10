@@ -379,7 +379,16 @@ unregister_char (TomoeDict *_dict, const gchar *utf8)
     results = est_db_search (dict->db, cond, &n_results, NULL);
 
     for (i = 0; i < n_results; i++) {
-        success = est_db_out_doc (dict->db, results[i], ESTODCLEAN);
+        gint id;
+        const gchar *utf8;
+
+        id = results[i];
+
+        utf8 = est_db_get_doc_attr (dict->db, id, "utf8");
+        if (utf8)
+            g_hash_table_remove (dict->cache, utf8);
+
+        success = est_db_out_doc (dict->db, id, ESTODCLEAN);
         if (!success) {
             g_warning ("out error: %s\n",
                        est_err_msg (est_db_error (dict->db)));
