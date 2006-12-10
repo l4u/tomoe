@@ -11,7 +11,7 @@ require "tomoe-spec-utils"
 
 n = 10
 use_est = false
-use_svn = true
+use_svn = false
 tmp_dir = TomoeSpecUtils::Config.tmp_dir
 Benchmark.bmbm do |x|
   TomoeSpecUtils::Config.dictionaries.sort.each do |dictionary|
@@ -47,12 +47,39 @@ Benchmark.bmbm do |x|
 
     x.report("#{File.basename(dictionary)}: all") do
       query = Tomoe::Query.new
+      expected = 13039
+      actual = dict.search(query).size
+      if actual != expected
+        puts "expected: #{expected}"
+        puts " but was: #{actual}"
+      end
       n.times {dict.search(query)}
     end
 
     x.report("#{File.basename(dictionary)}: >= 5") do
       query = Tomoe::Query.new
       query.min_n_strokes = 10
+      expected = 9889
+      actual = dict.search(query).size
+      if actual != expected
+        puts "expected: #{expected}"
+        puts " but was: #{actual}"
+      end
+      n.times {dict.search(query)}
+    end
+
+    x.report("#{File.basename(dictionary)}: readings") do
+      query = Tomoe::Query.new
+      query.add_reading(Tomoe::Reading.new(Tomoe::READING_JA_KUN, "せい"))
+      expected = ["汐", "背", "脊"].sort
+      actual =  dict.search(query).collect do |cand|
+        cand.char.utf8
+      end.sort
+      if actual != expected
+        $KCODE = "u"
+        puts "expected: #{expected.inspect}"
+        puts " but was: #{actual.inspect}"
+      end
       n.times {dict.search(query)}
     end
   end
