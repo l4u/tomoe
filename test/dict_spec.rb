@@ -80,6 +80,16 @@ context "Tomoe::Dict" do
     dict.search(Tomoe::Query.new).should_empty
   end
 
+  specify "should register/unregister PUA character to MySQL database" do
+    dict = Tomoe::Dict.new("mysql", db_config)
+    char = Tomoe::Char.new
+    dict.register(char).should == true
+    dict.search(Tomoe::Query.new).size.should == 1
+    char.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)
+    dict.unregister(char.utf8).should == true
+    dict.search(Tomoe::Query.new).should_empty
+  end
+
   def setup_strokes
     @strokes = [
                 [
