@@ -68,6 +68,18 @@ context "Tomoe::Dict" do
     end
   end
 
+  specify "should register/unregister to MySQL database" do
+    dict = Tomoe::Dict.new("mysql", db_config)
+    char = Tomoe::Char.new
+    char.utf8 = "あ"
+    dict.register(char).should == true
+    dict.search(Tomoe::Query.new).collect do |cand|
+      cand.char.utf8
+    end.should == ["あ"]
+    dict.unregister("あ").should == true
+    dict.search(Tomoe::Query.new).should_empty
+  end
+
   def setup_strokes
     @strokes = [
                 [

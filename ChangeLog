@@ -1,5 +1,13 @@
 2006-12-11  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/tomoe-dict-mysql.c (register_char, unregister_char):
+	clean up.
+	* test/dict_spec.rb: added tests for MySQL backend.
+
+	* test/tomoe-spec-utils.rb, test/config.yaml.example: supported
+	environment.
+	* test/, benchmark/: followed the changes.
+
 	* configure.in, module/dict/tomoe-dict-mysql.c,
 	module/dict/Makefile.am, ext/ruby/tomoe-rb-dict.rb,
 	benchmark/search-by-dict.rb: supported MySQL.

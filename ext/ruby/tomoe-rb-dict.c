@@ -60,18 +60,20 @@ td_s_new(VALUE self, VALUE rb_name, VALUE props)
     } else if (strcmp(name, "ruby") == 0) {
         dict = tomoe_dict_new(name, NULL);
     } else if (strcmp(name, "mysql") == 0) {
-        VALUE database, username, password, host, socket;
+        VALUE database, username, password, host, socket, editable;
         database = rb_hash_aref(props, CSTR2RVAL("database"));
         username = rb_hash_aref(props, CSTR2RVAL("username"));
         password = rb_hash_aref(props, CSTR2RVAL("password"));
         host = rb_hash_aref(props, CSTR2RVAL("host"));
         socket = rb_hash_aref(props, CSTR2RVAL("socket"));
+        editable = rb_hash_aref(props, CSTR2RVAL("editable"));
         dict = tomoe_dict_new(name,
                               "database", RVAL2CSTR2(database),
                               "user", RVAL2CSTR2(username),
                               "password", RVAL2CSTR2(password),
                               "host", RVAL2CSTR2(host),
                               "socket", RVAL2CSTR2(socket),
+                              "editable", RVAL2CBOOL(editable),
                               NULL);
     } else {
         rb_raise(rb_eArgError, "unknown dictionary type: %s", name);

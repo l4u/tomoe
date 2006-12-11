@@ -77,6 +77,15 @@ struct _TomoeDictMySQLClass
     TomoeDictClass parent_class;
 };
 
+typedef struct _RegisterMetaDataContext RegisterMetaDataContext;
+struct _RegisterMetaDataContext
+{
+    TomoeDictMySQL *dict;
+    const gchar    *utf8;
+    gboolean        success;
+};
+
+
 static GType tomoe_type_dict_mysql = 0;
 static GObjectClass *parent_class;
 
@@ -436,22 +445,124 @@ append_string_value (TomoeDictMySQL *dict, GString *sql, const gchar *value)
 }
 
 static gboolean
+register_char_readings (TomoeDictMySQL *dict, const gchar *utf8,
+                        const GList *readings)
+{
+    GString *sql;
+    GList *node;
+    gboolean success = TRUE;
+
+    sql = g_string_new ("");
+    for (node = (GList *)readings; node; node = g_list_next (node)) {
+        TomoeReading *reading = node->data;
+
+        g_string_assign (sql,
+                         "INSERT INTO readings "            \
+                         "(utf8, reading_type, reading) "   \
+                         "VALUES (");
+        append_string_value (dict, sql, utf8);
+        g_string_append_printf (sql, ", %d, ",
+                                tomoe_reading_get_reading_type (reading));
+        append_string_value (dict, sql, tomoe_reading_get_reading (reading));
+        g_string_append (sql, ")");
+
+        success = execute_query (dict, sql->str);
+        if (!success)
+            break;
+    }
+    g_string_free (sql, TRUE);
+
+    return success;
+}
+
+static gboolean
+register_char_radicals (TomoeDictMySQL *dict, const gchar *utf8,
+                        const GList *radicals)
+{
+    GString *sql;
+    GList *node;
+    gboolean success = TRUE;
+
+    sql = g_string_new ("");
+    for (node = (GList *)radicals; node; node = g_list_next (node)) {
+        const gchar *radical = node->data;
+
+        g_string_assign (sql, "INSERT INTO radicals (utf8, radical) VALUES (");
+        append_string_value (dict, sql, utf8);
+        g_string_append (sql, ", ");
+        append_string_value (dict, sql, radical);
+        g_string_append (sql, ")");
+
+        success = execute_query (dict, sql->str);
+        if (!success)
+            break;
+    }
+    g_string_free (sql, TRUE);
+
+    return success;
+}
+
+static void
+register_char_meta_datum (gpointer _key, gpointer _value, gpointer user_data)
+{
+    const gchar *key = _key;
+    const gchar *value = _value;
+    RegisterMetaDataContext *context = user_data;
+
+    if (context->success) {
+        GString *sql;
+
+        sql = g_string_new ("INSERT INTO meta_data "    \
+                            "(utf8, key, value) "       \
+                            "VALUES (");
+        append_string_value (context->dict, sql, context->utf8);
+        g_string_append (sql, ", ");
+        append_string_value (context->dict, sql, key);
+        g_string_append (sql, ", ");
+        append_string_value (context->dict, sql, value);
+        g_string_append (sql, ")");
+
+        context->success = execute_query (context->dict, sql->str);
+        g_string_free (sql, TRUE);
+    }
+}
+
+static gboolean
+register_char_meta_data (TomoeDictMySQL *dict, const gchar *utf8,
+                         TomoeChar *chr)
+{
+    RegisterMetaDataContext context;
+
+    context.dict = dict;
+    context.utf8 = utf8;
+    context.success = TRUE;
+
+    tomoe_char_meta_data_foreach (chr, register_char_meta_datum, &context);
+
+    return context.success;
+}
+
+static gboolean
 register_char (TomoeDict *_dict, TomoeChar *chr)
 {
     TomoeDictMySQL *dict = TOMOE_DICT_MYSQL (_dict);
     GString *sql;
     gint n_strokes;
     const gchar *variant;
-    GList *node;
     const gchar *utf8;
+    gboolean success = FALSE;
 
     g_return_val_if_fail (TOMOE_IS_DICT_MYSQL (dict), FALSE);
     g_return_val_if_fail (TOMOE_IS_CHAR (chr), FALSE);
 
     g_return_val_if_fail (dict->mysql, FALSE);
 
-    sql = g_string_new ("INSERT INTO chars (`utf8`, " \
-                        "`n_strokes` `variant`) VALUES (");
+    if (!execute_query (dict, "START TRANSACTION"))
+        return FALSE;
+
+    sql = g_string_new ("INSERT INTO chars "            \
+                        "(utf8, n_strokes, variant) "   \
+                        "VALUES (");
 
     utf8 = tomoe_char_get_utf8 (chr);
     append_string_value (dict, sql, utf8);
@@ -468,52 +579,17 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
     else
         g_string_append (sql, "NULL)");
 
-    if (!execute_query (dict, sql->str)) {
-        g_string_free (sql, TRUE);
+    success = execute_query (dict, sql->str);
+    g_string_free (sql, TRUE);
+
+    if (success &&
+        register_char_readings (dict, utf8, tomoe_char_get_readings (chr)) &&
+        register_char_radicals (dict, utf8, tomoe_char_get_radicals (chr)) &&
+        register_char_meta_data (dict, utf8, chr)) {
+        return execute_query (dict, "COMMIT");
+    } else {
         return FALSE;
     }
-
-    for (node = (GList *)tomoe_char_get_readings (chr);
-         node;
-         node = g_list_next (node)) {
-        TomoeReading *reading = node->data;
-
-        g_string_assign (sql,
-                         "INSERT INTO readings (`utf8`, " \
-                         "`reading_type`, `reading`) VALUES (");
-        append_string_value (dict, sql, utf8);
-        g_string_append_printf (sql, ", %d, ",
-                                tomoe_reading_get_reading_type (reading));
-        append_string_value (dict, sql, tomoe_reading_get_reading (reading));
-        g_string_append (sql, ")");
-
-        if (!execute_query (dict, sql->str)) {
-            g_string_free (sql, TRUE);
-            return FALSE;
-        }
-    }
-
-    for (node = (GList *)tomoe_char_get_radicals (chr);
-         node;
-         node = g_list_next (node)) {
-        const gchar *radical = node->data;
-
-        g_string_assign (sql,
-                         "INSERT INTO radicals (`utf8`, `radical`) VALUES (");
-        append_string_value (dict, sql, utf8);
-        g_string_append (sql, ", ");
-        append_string_value (dict, sql, radical);
-        g_string_append (sql, ")");
-        if (!execute_query (dict, sql->str)) {
-            g_string_free (sql, TRUE);
-            return FALSE;
-        }
-    }
-
-    /* tomoe_char_meta_data_foreach (chr, register_meta_data, dict); */
-
-    g_string_free (sql, TRUE);
-    return TRUE;
 }
 
 static gboolean
@@ -528,29 +604,36 @@ unregister_char (TomoeDict *_dict, const gchar *utf8)
 
     g_return_val_if_fail (dict->mysql, FALSE);
 
-    sql = g_string_new ("DELETE FROM chars WHERE `utf8` = ");
+    if (!execute_query (dict, "START TRANSACTION"))
+        return FALSE;
+
+    sql = g_string_new ("DELETE FROM chars WHERE utf8 = ");
     append_string_value (dict, sql, utf8);
     success = execute_query (dict, sql->str);
     if (!success) goto done;
 
-    g_string_assign (sql, "DELETE FROM readings WHERE `utf8` = ");
+    g_string_assign (sql, "DELETE FROM readings WHERE utf8 = ");
     append_string_value (dict, sql, utf8);
     success = execute_query (dict, sql->str);
     if (!success) goto done;
 
-    g_string_assign (sql, "DELETE FROM radicals WHERE `utf8` = ");
+    g_string_assign (sql, "DELETE FROM radicals WHERE utf8 = ");
     append_string_value (dict, sql, utf8);
     success = execute_query (dict, sql->str);
     if (!success) goto done;
 
-    g_string_assign (sql, "DELETE FROM meta_data WHERE `utf8` = ");
+    g_string_assign (sql, "DELETE FROM meta_data WHERE utf8 = ");
     append_string_value (dict, sql, utf8);
     success = execute_query (dict, sql->str);
     if (!success) goto done;
 
   done:
     g_string_free (sql, TRUE);
-    return success;
+
+    if (success)
+        return execute_query (dict, "COMMIT");
+    else
+        return FALSE;
 }
 
 static gchar *
