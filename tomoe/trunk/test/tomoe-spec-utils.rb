@@ -99,8 +99,8 @@ module TomoeSpecUtils
       File.join(db_dir, "config.yml")
     end
 
-    def db_config
-      YAML.load(File.read(db_config_file))
+    def db_config(type=nil)
+      YAML.load(File.read(db_config_file))[type || "test"]
     end
 
     def setup_context

@@ -1,16 +1,11 @@
 #!/usr/bin/env ruby
 
-top = File.expand_path(File.join(File.dirname(__FILE__), ".."))
-base = File.join(top, File.dirname(__FILE__))
+ENV["TOMOE_ENV"] ||= "benchmark"
+
+base = File.expand_path(File.dirname(__FILE__))
 require File.join(base, "init")
 
 ActiveRecord::Base.logger.level = Logger::INFO
-
-$LOAD_PATH.unshift(File.join(top, "test"))
-$LOAD_PATH.unshift(File.join(top, "ext", "ruby", ".libs"))
-$LOAD_PATH.unshift(File.join(top, "ext", "ruby"))
-
-require 'tomoe-spec-utils'
 
 def utf8_to_ucs4(utf8)
   if utf8
@@ -19,7 +14,6 @@ def utf8_to_ucs4(utf8)
     nil
   end
 end
-
 
 $LOAD_PATH.unshift(File.join(base, "lib"))
 

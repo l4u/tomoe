@@ -16,7 +16,8 @@ Benchmark.bmbm do |x|
   TomoeSpecUtils::Config.dictionaries.sort.each do |dictionary|
     case dict_type
     when "mysql"
-      dict = Tomoe::Dict.new("mysql", TomoeSpecUtils::Config.db_config)
+      dict = Tomoe::Dict.new("mysql",
+                             TomoeSpecUtils::Config.db_config("benchmark"))
     when "est"
       dict = Tomoe::Dict.new("est",
                              "name" => File.basename(dictionary),

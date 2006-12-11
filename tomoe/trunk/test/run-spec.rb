@@ -12,6 +12,7 @@ $LOAD_PATH.unshift(File.join(top_dir, "ext", "ruby"))
 $LOAD_PATH.unshift(File.join(test_dir))
 
 ARGV.unshift("--diff")
+ARGV.unshift("-sshould register/unregister to MySQL database")
 
 Dir.glob(File.join(test_dir, "*_spec.rb")).each do |file|
   require File.basename(file, ".rb")
