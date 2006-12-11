@@ -3,8 +3,6 @@
   should be language independent.
 * Implement advanced searching.
 * Add modulized dictionary types.
-  - QDBM?
-  - MySQL?
   - CHISE?
 * Add radicals and variant element into tomoe-dict.dtd.
 * Asynchronous dictionary loading?
