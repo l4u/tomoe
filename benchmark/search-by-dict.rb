@@ -10,17 +10,19 @@ $LOAD_PATH.unshift(File.join(test_dir))
 require "tomoe-spec-utils"
 
 n = 10
-use_est = false
-use_svn = false
+dict_type = ARGV.shift
 tmp_dir = TomoeSpecUtils::Config.tmp_dir
 Benchmark.bmbm do |x|
   TomoeSpecUtils::Config.dictionaries.sort.each do |dictionary|
-    if use_est
+    case dict_type
+    when "mysql"
+      dict = Tomoe::Dict.new("mysql", TomoeSpecUtils::Config.db_config)
+    when "est"
       dict = Tomoe::Dict.new("est",
                              "name" => File.basename(dictionary),
                              "database_name" => dictionary.sub(/\.xml$/, ''),
                              "editable" => false)
-    elsif use_svn
+    when "svn"
       repos = File.join(tmp_dir, "svn.repos", File.basename(dictionary))
       FileUtils.mkdir_p(repos)
       repos_url = "file://#{repos}"

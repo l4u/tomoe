@@ -1,5 +1,6 @@
 require 'tempfile'
 require 'fileutils'
+require 'yaml'
 require 'uconv'
 
 require 'tomoe'
@@ -88,6 +89,18 @@ module TomoeSpecUtils
 
     def dict_dir
       File.join(module_dir, "dict", ".libs")
+    end
+
+    def db_dir
+      File.join(top_dir, "db")
+    end
+
+    def db_config_file
+      File.join(db_dir, "config.yml")
+    end
+
+    def db_config
+      YAML.load(File.read(db_config_file))
     end
 
     def setup_context

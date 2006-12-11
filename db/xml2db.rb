@@ -30,18 +30,20 @@ $stdout.flush
 `#{migrate}`
 puts "done."
 
-dict = Tomoe::Dict.new("unihan", {})
-cands = dict.search(Tomoe::Query.new)[0...10000]
+dict = Tomoe::Dict.new("xml",
+                       "filename" => TomoeSpecUtils::Config.dictionaries.first,
+                       "editable" => false)
+cands = dict.search(Tomoe::Query.new)
 puts "dict size: #{cands.size}"
 
 print "converting..."
 $stdout.flush
+$KCODE = "u"
 cands.each_with_index do |cand, i|
   char = cand.char
-  new_char = Char.new(:n_strokes => char.n_strokes < 0 ? nil : char.n_strokes,
-                      :variant => char.variant)
-  new_char.id = char.utf8
-  new_char.save!
+  Char.new(:utf8 => char.utf8,
+           :n_strokes => char.n_strokes < 0 ? nil : char.n_strokes,
+           :variant => char.variant).save!
   char.readings.each do |reading|
     Reading.new(:utf8 => char.utf8,
                 :reading_type => reading.type.to_i,

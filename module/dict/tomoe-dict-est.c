@@ -447,7 +447,6 @@ get_char (TomoeDict *_dict, const gchar *utf8)
     g_free (expr);
 
     results = est_db_search (dict->db, cond, &n_results, NULL);
-
     for (i = 0; i < n_results; i++) {
         chr = retrieve_char_by_id (dict, results[i]);
         if (chr) break;

@@ -30,6 +30,7 @@ INCLUDES =				\
 	$(TOMOE_CFLAGS)			\
 	$(EST_CFLAGS)			\
 	$(SVN_CFLAGS)			\
+	$(MYSQL_CFLAGS)			\
 	$(RUBY_CFLAGS)
 
 LIBADD = $(TOMOE_LIBS)
@@ -95,4 +96,11 @@ dict_module_LTLIBRARIES += libsvn.la
 
 libsvn_la_SOURCES = tomoe-dict-svn.c
 libsvn_la_LIBADD = $(SVN_LIBS)
+endif
+
+if WITH_MYSQL
+dict_module_LTLIBRARIES += libmysql.la
+
+libmysql_la_SOURCES = tomoe-dict-mysql.c
+libmysql_la_LIBADD = $(MYSQL_LIBS)
 endif
