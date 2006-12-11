@@ -80,6 +80,10 @@ static gchar   *_tomoe_config_key_file_get_string  (GKeyFile *key_file,
                                                     const gchar *group,
                                                     const gchar *key,
                                                     const gchar *default_value);
+static gint     _tomoe_config_key_file_get_integer (GKeyFile *key_file,
+                                                    const gchar *group,
+                                                    const gchar *key,
+                                                    gint default_value);
 static void     _tomoe_config_load_system_dictionaries   (TomoeConfig *config,
                                                           TomoeShelf *shelf);
 static TomoeDict *_tomoe_config_load_dictionary (GKeyFile    *key_file,
@@ -385,6 +389,31 @@ _tomoe_config_key_file_get_string (GKeyFile *key_file,
     return result;
 }
 
+static gint
+_tomoe_config_key_file_get_integer (GKeyFile *key_file,
+                                    const gchar *group,
+                                    const gchar *key,
+                                    gint default_value)
+{
+    gint result;
+    GError *error = NULL;
+
+    result = g_key_file_get_integer (key_file, group, key, &error);
+    if (error) {
+        switch (error->code) {
+          case G_KEY_FILE_ERROR_NOT_FOUND:
+            g_error_free (error);
+            break;
+          case G_KEY_FILE_ERROR_INVALID_VALUE:
+            TOMOE_HANDLE_ERROR (error);
+            break;
+        }
+        result = default_value;
+    }
+
+    return result;
+}
+
 static void
 _tomoe_config_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
 {
@@ -437,9 +466,9 @@ load_xml_dictionary (GKeyFile *key_file, const gchar *dict_name)
     }
 
     editable = _tomoe_config_key_file_get_boolean (key_file, dict_name,
-                                                         "editable", TRUE);
+                                                   "editable", TRUE);
     user_dict = _tomoe_config_key_file_get_boolean (key_file, dict_name,
-                                                          "user", TRUE);
+                                                    "user", TRUE);
     if (!user_dict) {
         gchar *tmp;
         tmp = g_build_filename (DICT_DATADIR, filename, NULL);
@@ -479,9 +508,9 @@ load_est_dictionary (GKeyFile *key_file, const gchar *dict_name)
     }
 
     editable = _tomoe_config_key_file_get_boolean (key_file, dict_name,
-                                                         "editable", TRUE);
+                                                   "editable", TRUE);
     user_dict = _tomoe_config_key_file_get_boolean (key_file, dict_name,
-                                                          "user", TRUE);
+                                                    "user", TRUE);
     if (!user_dict) {
         gchar *tmp;
         tmp = g_build_filename (DICT_DATADIR, database_name, NULL);
@@ -518,6 +547,46 @@ load_unihan_dictionary (GKeyFile *key_file, const gchar *dict_name)
 }
 
 static TomoeDict *
+load_mysql_dictionary (GKeyFile *key_file, const gchar *dict_name)
+{
+    TomoeDict *dict;
+    gchar *name, *user, *password, *host, *socket, *database;
+    gint port;
+    gboolean editable;
+
+    name = _tomoe_config_key_file_get_string (key_file, dict_name,
+                                              "name", NULL);
+    editable = _tomoe_config_key_file_get_boolean (key_file, dict_name,
+                                                   "editable", TRUE);
+    user = _tomoe_config_key_file_get_string (key_file, dict_name,
+                                              "user", NULL);
+    password = _tomoe_config_key_file_get_string (key_file, dict_name,
+                                                  "password", NULL);
+    host = _tomoe_config_key_file_get_string (key_file, dict_name,
+                                              "host", NULL);
+    port = _tomoe_config_key_file_get_integer (key_file, dict_name,
+                                               "port", 0);
+    socket = _tomoe_config_key_file_get_string (key_file, dict_name,
+                                                "socket", NULL);
+    database = _tomoe_config_key_file_get_string (key_file, dict_name,
+                                                  "database", NULL);
+
+    dict = tomoe_dict_new ("mysql",
+                           "name", name,
+                           "editable", editable,
+                           "user", user,
+                           "password", password,
+                           "host", host,
+                           "port", port,
+                           "socket", socket,
+                           "database", database,
+                           NULL);
+    g_free (name);
+
+    return dict;
+}
+
+static TomoeDict *
 _tomoe_config_load_dictionary (GKeyFile *key_file,
                                const gchar *dict_name,
                                const gchar *type)
@@ -528,6 +597,8 @@ _tomoe_config_load_dictionary (GKeyFile *key_file,
         return load_est_dictionary (key_file, dict_name);
     } else if (strcmp (type, "unihan") == 0) {
         return load_unihan_dictionary (key_file, dict_name);
+    } else if (strcmp (type, "mysql") == 0) {
+        return load_mysql_dictionary (key_file, dict_name);
     } else {
         return NULL;
     }

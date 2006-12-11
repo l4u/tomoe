@@ -60,11 +60,12 @@ td_s_new(VALUE self, VALUE rb_name, VALUE props)
     } else if (strcmp(name, "ruby") == 0) {
         dict = tomoe_dict_new(name, NULL);
     } else if (strcmp(name, "mysql") == 0) {
-        VALUE database, username, password, host, socket, editable;
+        VALUE database, username, password, host, port, socket, editable;
         database = rb_hash_aref(props, CSTR2RVAL("database"));
         username = rb_hash_aref(props, CSTR2RVAL("username"));
         password = rb_hash_aref(props, CSTR2RVAL("password"));
         host = rb_hash_aref(props, CSTR2RVAL("host"));
+        port = rb_hash_aref(props, CSTR2RVAL("port"));
         socket = rb_hash_aref(props, CSTR2RVAL("socket"));
         editable = rb_hash_aref(props, CSTR2RVAL("editable"));
         dict = tomoe_dict_new(name,
@@ -72,6 +73,7 @@ td_s_new(VALUE self, VALUE rb_name, VALUE props)
                               "user", RVAL2CSTR2(username),
                               "password", RVAL2CSTR2(password),
                               "host", RVAL2CSTR2(host),
+                              "port", NIL_P(port) ? 0 : NUM2INT(port),
                               "socket", RVAL2CSTR2(socket),
                               "editable", RVAL2CBOOL(editable),
                               NULL);

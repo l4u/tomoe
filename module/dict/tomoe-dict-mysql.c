@@ -415,7 +415,7 @@ get_name (TomoeDict *_dict)
 {
     TomoeDictMySQL *dict = TOMOE_DICT_MYSQL (_dict);
     g_return_val_if_fail (TOMOE_IS_DICT_MYSQL (dict), NULL);
-    return dict->name;
+    return dict->name || "MySQL";
 }
 
 static gboolean
