@@ -112,6 +112,7 @@ static GList       *search                    (TomoeDict     *dict,
                                                TomoeQuery    *query);
 static gboolean     flush                     (TomoeDict     *dict);
 static gboolean     is_editable               (TomoeDict     *dict);
+static gchar       *get_available_private_utf8 (TomoeDict    *dict);
 static gboolean     tomoe_dict_mysql_connect  (TomoeDictMySQL  *dict);
 static gboolean     tomoe_dict_mysql_close    (TomoeDictMySQL  *dict);
 
@@ -138,6 +139,7 @@ class_init (TomoeDictMySQLClass *klass)
     dict_class->search          = search;
     dict_class->flush           = flush;
     dict_class->is_editable     = is_editable;
+    dict_class->get_available_private_utf8 = get_available_private_utf8;
 
     g_object_class_install_property (
         gobject_class,
@@ -878,6 +880,48 @@ is_editable (TomoeDict *_dict)
     g_return_val_if_fail (TOMOE_IS_DICT_MYSQL (dict), FALSE);
 
     return dict->editable;
+}
+
+static gchar *
+get_available_private_utf8 (TomoeDict *_dict)
+{
+    TomoeDictMySQL *dict = TOMOE_DICT_MYSQL (_dict);
+    GString *sql;
+    gchar *utf8;
+    gchar pua_start_utf8[6];
+    gint len;
+    gboolean success;
+    MYSQL_RES *result;
+
+    g_return_val_if_fail (TOMOE_IS_DICT_MYSQL (dict), NULL);
+
+    len = g_unichar_to_utf8 (TOMOE_CHAR_PRIVATE_USE_AREA_START, pua_start_utf8);
+    pua_start_utf8[len] = '\0';
+
+    sql = g_string_new ("SELECT utf8 FROM chars WHERE utf8 >= ");
+    append_string_value (dict, sql, pua_start_utf8);
+    g_string_append (sql, " ORDER BY utf8 LIMIT 1");
+
+    success = execute_query (dict, sql->str);
+    g_string_free (sql, TRUE);
+
+    if (!success)
+        return NULL;
+
+    utf8 = NULL;
+    result = mysql_store_result (dict->mysql);
+    if (result) {
+        MYSQL_ROW row;
+        row = mysql_fetch_row (result);
+        if (row) {
+            utf8 = g_strdup (g_utf8_next_char (row[0]));
+        } else {
+            utf8 = g_strdup (pua_start_utf8);
+        }
+        mysql_free_result (result);
+    }
+
+    return utf8;
 }
 
 static gboolean
