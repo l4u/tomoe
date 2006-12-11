@@ -1,6 +1,6 @@
 class CreateChars < ActiveRecord::Migration
   def self.up
-    create_table(:chars, :id => false) do |t|
+    create_table(:chars) do |t|
       t.column :utf8, :string
       t.column :n_strokes, :integer
       t.column :variant, :string

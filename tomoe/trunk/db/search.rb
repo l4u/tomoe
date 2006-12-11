@@ -27,7 +27,7 @@ query.min_n_strokes = 0
 query.max_n_strokes = 10
 
 dict = Tomoe::Dict.new("unihan", {})
-cands = dict.search(Tomoe::Query.new)[0...10000].find_all do |cand|
+cands = dict.search(Tomoe::Query.new).find_all do |cand|
   n_strokes = cand.char.n_strokes
   0 <= n_strokes and
     query.min_n_strokes <= n_strokes and

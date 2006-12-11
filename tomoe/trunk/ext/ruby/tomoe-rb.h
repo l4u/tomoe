@@ -36,6 +36,10 @@ G_BEGIN_DECLS
 VALUE _tomoe_ruby_object_from_instance_with_unref(gpointer instance);
 #endif
 
+#ifndef RVAL2CSTR2
+#  define RVAL2CSTR2(v) (NIL_P(v) ? NULL : RVAL2CSTR(v))
+#endif
+
 void Init_tomoe(void);
 void Init_tomoe_candidate(VALUE mTomoe);
 void Init_tomoe_char(VALUE mTomoe);

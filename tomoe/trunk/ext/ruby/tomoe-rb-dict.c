@@ -23,6 +23,8 @@ td_s_new(VALUE self, VALUE rb_name, VALUE props)
     gchar *name;
 
     name = RVAL2CSTR(rb_name);
+    Check_Type(props, T_HASH);
+
     if (strcmp(name, "xml") == 0) {
         VALUE filename, editable;
         filename = rb_hash_aref(props, CSTR2RVAL("filename"));
@@ -57,6 +59,20 @@ td_s_new(VALUE self, VALUE rb_name, VALUE props)
                               NULL);
     } else if (strcmp(name, "ruby") == 0) {
         dict = tomoe_dict_new(name, NULL);
+    } else if (strcmp(name, "mysql") == 0) {
+        VALUE database, username, password, host, socket;
+        database = rb_hash_aref(props, CSTR2RVAL("database"));
+        username = rb_hash_aref(props, CSTR2RVAL("username"));
+        password = rb_hash_aref(props, CSTR2RVAL("password"));
+        host = rb_hash_aref(props, CSTR2RVAL("host"));
+        socket = rb_hash_aref(props, CSTR2RVAL("socket"));
+        dict = tomoe_dict_new(name,
+                              "database", RVAL2CSTR2(database),
+                              "user", RVAL2CSTR2(username),
+                              "password", RVAL2CSTR2(password),
+                              "host", RVAL2CSTR2(host),
+                              "socket", RVAL2CSTR2(socket),
+                              NULL);
     } else {
         rb_raise(rb_eArgError, "unknown dictionary type: %s", name);
         dict = NULL;

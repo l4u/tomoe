@@ -4,3 +4,4 @@ username: root
 password:
 host: localhost
 socket: /var/run/mysqld/mysqld.sock
+encoding: utf8
