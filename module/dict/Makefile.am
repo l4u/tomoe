@@ -82,7 +82,8 @@ unihan-compiler.rb: libxml.la
 tomoe-unihan-data.h: unihan-compiler.rb Unihan.stamp $(top_srcdir)/data/kanjidic2.xml
 	$(RUBY) -I$(top_srcdir)/ext/ruby -I$(top_builddir)/ext/ruby/.libs \
 	  -I$(top_srcdir)/test unihan-compiler.rb \
-	  Unihan.txt $(top_srcdir)/data/kanjidic2.xml > $@
+	  Unihan.txt $(top_srcdir)/data/kanjidic2.xml > $@.tmp || exit 1;
+	mv $@.tmp $@
 
 Unihan_URL = ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip
 Unihan.stamp:
