@@ -79,7 +79,10 @@ libunihan_la_SOURCES =		\
 
 unihan-compiler.rb: libxml.la
 
-tomoe-unihan-data.h: unihan-compiler.rb Unihan.stamp $(top_srcdir)/data/kanjidic2.xml
+$(top_builddir)/data/kanjidic2.xml:
+	cd $(top_builddir)/data && $(MAKE) $(AM_MAKEFLAGS) kanjidic2.xml
+
+tomoe-unihan-data.h: unihan-compiler.rb Unihan.stamp $(top_builddir)/data/kanjidic2.xml
 	$(RUBY) -I$(top_srcdir)/ext/ruby -I$(top_builddir)/ext/ruby/.libs \
 	  -I$(top_srcdir)/test unihan-compiler.rb \
 	  Unihan.txt $(top_srcdir)/data/kanjidic2.xml > $@.tmp || exit 1;
