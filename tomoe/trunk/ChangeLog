@@ -1,5 +1,9 @@
 2006-12-12  Kouhei Sutou  <kou@cozmixng.org>
 
+	* db/migrate/004_create_meta_data.rb: renamed to "name" from "key"
+	because "key" is one of the reserved words in MySQL.
+	* module/dict/tomoe-dict-mysql.c: followed the change.
+
 	* module/dict/Makefile.am: ensure make libxml.la before
 	unihan-compiler.rb is run.
 

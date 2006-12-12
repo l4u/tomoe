@@ -518,7 +518,7 @@ register_char_meta_datum (gpointer _key, gpointer _value, gpointer user_data)
         GString *sql;
 
         sql = g_string_new ("INSERT INTO meta_data "    \
-                            "(utf8, key, value) "       \
+                            "(utf8, name, value) "      \
                             "VALUES (");
         append_string_value (context->dict, sql, context->utf8);
         g_string_append (sql, ", ");
