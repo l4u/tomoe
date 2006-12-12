@@ -105,8 +105,7 @@ def parse_unihan_txt(unihan_txt)
 end
 
 def merge_kanjidic2_xml(kanjidic2_xml, infos)
-  dict = Tomoe::Dict::XML.new("filename" => kanjidic2_xml,
-                              "editable" => false)
+  dict = Tomoe::DictXML.new("filename" => kanjidic2_xml, "editable" => false)
   dict.search(Tomoe::Query.new).each do |cand|
     char = cand.char
     ucs4 = utf8_to_ucs4(char.utf8)

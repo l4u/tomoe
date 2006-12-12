@@ -25,10 +25,10 @@ $stdout.flush
 puts "done."
 
 filename = TomoeSpecUtils::Config.dictionaries.first
-dict = Tomoe::Dict::XML.new("filename" => filename,
-                            "editable" => false)
+dict = Tomoe::DictXML.new("filename" => filename,
+                          "editable" => false)
 config = TomoeSpecUtils::Config.db_config.merge("editable" => true)
-mysql_dict = Tomoe::Dict::MySQL.new(config)
+mysql_dict = Tomoe::DictMySQL.new(config)
 
 cands = dict.search(Tomoe::Query.new)
 puts "dict size: #{cands.size}"

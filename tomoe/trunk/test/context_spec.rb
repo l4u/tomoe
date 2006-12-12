@@ -8,8 +8,8 @@ context "Tomoe::Context" do
       "filename" => File.join(data_dir, "handwriting.xml"),
       "editable" => false,
     }
-    dict = Tomoe::Dict::XML.new(config)
-    recognizer = Tomoe::Recognizer::Simple.new("dictionary" => dict)
+    dict = Tomoe::DictXML.new(config)
+    recognizer = Tomoe::RecognizerSimple.new("dictionary" => dict)
     @@context = Tomoe::Context.new("recognizer" => recognizer)
     @@context.load_config(@config_file.path)
     @@context

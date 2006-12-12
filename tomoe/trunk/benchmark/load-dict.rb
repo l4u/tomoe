@@ -13,12 +13,12 @@ n = 3
 Benchmark.bmbm do |x|
   TomoeSpecUtils::Config.dictionaries.sort.each do |dictionary|
     x.report(File.basename(dictionary)) do
-      n.times {Tomoe::Dict::XML.new("filename" => dictionary,
-                                    "editable" => false)}
+      n.times {Tomoe::DictXML.new("filename" => dictionary,
+                                  "editable" => false)}
     end
   end
 
   x.report("Unihan") do
-    n.times {Tomoe::Dict::Unihan.new}
+    n.times {Tomoe::DictUnihan.new}
   end
 end
