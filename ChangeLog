@@ -1,5 +1,7 @@
 2006-12-12  Kouhei Sutou  <kou@cozmixng.org>
 
+	* db/migrate/001_create_chars.rb: utf8 field must be unique.
+
 	* configure.in: don't enable Ruby dictionary module when Ruby
 	isn't available.
 
