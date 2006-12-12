@@ -100,7 +100,7 @@ module TomoeSpecUtils
     end
 
     def db_config(type=nil)
-      YAML.load(File.read(db_config_file))[type || "test"]
+      YAML.load(File.read(db_config_file))[type || ENV["TOMOE_ENV"] || "test"]
     end
 
     def setup_context
