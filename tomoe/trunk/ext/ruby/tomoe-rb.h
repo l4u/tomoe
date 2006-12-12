@@ -51,6 +51,11 @@ void Init_tomoe_reading(VALUE mTomoe);
 void Init_tomoe_recognizer(VALUE mTomoe);
 void Init_tomoe_writing(VALUE mTomoe);
 
+void _tomoe_rb_module_load   (GList *registered_types, VALUE klass,
+                              const gchar *prefix, gint prefix_len);
+void _tomoe_rb_module_unload (GList *registered_types, VALUE klass,
+                              const gchar *prefix, gint prefix_len);
+
 G_END_DECLS
 
 #endif /* __TOMOE_RB_H__ */

@@ -46,6 +46,12 @@ tomoe_recognizer_unload (void)
     recognizers = NULL;
 }
 
+GList *
+tomoe_recognizer_get_registered_types (void)
+{
+    return tomoe_module_collect_registered_types (recognizers);
+}
+
 G_DEFINE_ABSTRACT_TYPE (TomoeRecognizer, tomoe_recognizer, G_TYPE_OBJECT)
 
 static void
