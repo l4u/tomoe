@@ -12,7 +12,7 @@ $LOAD_PATH.unshift(File.join(top, "ext", "ruby"))
 
 require 'tomoe-spec-utils'
 
-config = TomoeSpecUtils::Config.db_config(ENV["TOMOE_ENV"])
+config = TomoeSpecUtils::Config.db_config_for_active_record(ENV["TOMOE_ENV"])
 ActiveRecord::Base.establish_connection(config)
 
 logger = Logger.new($stdout)

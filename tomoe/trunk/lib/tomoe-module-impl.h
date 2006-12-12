@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 
 #include "tomoe-module.h"
 
-typedef void     (*TomoeModuleInitFunc)         (GTypeModule *module);
+typedef GList   *(*TomoeModuleInitFunc)         (GTypeModule *module);
 typedef void     (*TomoeModuleExitFunc)         (void);
 typedef GObject *(*TomoeModuleInstantiateFunc)  (const gchar *first_property,
                                                  va_list      var_args);
@@ -39,7 +39,7 @@ typedef GObject *(*TomoeModuleInstantiateFunc)  (const gchar *first_property,
 #define TOMOE_MODULE_IMPL_INSTANTIATE tomoe_module_impl_instantiate
 
 
-void     TOMOE_MODULE_IMPL_INIT        (GTypeModule  *module);
+GList   *TOMOE_MODULE_IMPL_INIT        (GTypeModule  *module);
 void     TOMOE_MODULE_IMPL_EXIT        (void);
 GObject *TOMOE_MODULE_IMPL_INSTANTIATE (const gchar *first_property,
                                         va_list      var_args);

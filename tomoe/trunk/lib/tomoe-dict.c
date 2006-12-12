@@ -42,6 +42,12 @@ tomoe_dict_unload (void)
     dicts = NULL;
 }
 
+GList *
+tomoe_dict_get_registered_types (void)
+{
+    return tomoe_module_collect_registered_types (dicts);
+}
+
 G_DEFINE_ABSTRACT_TYPE (TomoeDict, tomoe_dict, G_TYPE_OBJECT)
 
 static void

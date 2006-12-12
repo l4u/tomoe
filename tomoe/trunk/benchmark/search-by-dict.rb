@@ -16,13 +16,13 @@ Benchmark.bmbm do |x|
   TomoeSpecUtils::Config.dictionaries.sort.each do |dictionary|
     case dict_type
     when "mysql"
-      dict = Tomoe::Dict.new("mysql",
-                             TomoeSpecUtils::Config.db_config("benchmark"))
+      config = TomoeSpecUtils::Config.db_config("benchmark")
+      dict = Tomoe::Dict::MySQL.new(config)
     when "est"
-      dict = Tomoe::Dict.new("est",
-                             "name" => File.basename(dictionary),
-                             "database_name" => dictionary.sub(/\.xml$/, ''),
-                             "editable" => false)
+      database_name = dictionary.sub(/\.xml$/, '')
+      dict = Tomoe::Dict::Est.new("name" => File.basename(dictionary),
+                                  "database_name" => database_name,
+                                  "editable" => false)
     when "svn"
       repos = File.join(tmp_dir, "svn.repos", File.basename(dictionary))
       FileUtils.mkdir_p(repos)
@@ -36,16 +36,13 @@ Benchmark.bmbm do |x|
       `svn add #{dict_file.dump}`
       `svn ci -m '' #{wc.dump}`
 
-      xml_dict = Tomoe::Dict.new("xml",
-                                 "filename" => dict_file,
-                                 "editable" => true)
-      dict = Tomoe::Dict.new("svn",
-                             "dictionary" => xml_dict,
-                             "working_copy" => wc)
+      xml_dict = Tomoe::Dict::XML.new("filename" => dict_file,
+                                      "editable" => true)
+      dict = Tomoe::Dict::Svn.new("dictionary" => xml_dict,
+                                  "working_copy" => wc)
     else
-      dict = Tomoe::Dict.new("xml",
-                             "filename" => dictionary,
-                             "editable" => false)
+      dict = Tomoe::Dict::XML.new("filename" => dictionary,
+                                  "editable" => false)
     end
 
     x.report("#{File.basename(dictionary)}: all") do

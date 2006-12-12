@@ -2,87 +2,53 @@
 
 #define _SELF(obj) RVAL2TDIC(obj)
 
+#define TOMOE_DICT_PREFIX "TomoeDict"
+#define TOMOE_DICT_PREFIX_LEN (strlen(TOMOE_DICT_PREFIX))
+
+static VALUE cTomoeDict;
+
 static VALUE
 td_s_load(VALUE self, VALUE base_dir)
 {
+    GList *registered_types, *node;
+
     tomoe_dict_load(NIL_P(base_dir) ? NULL : RVAL2CSTR(base_dir));
+
+    registered_types = tomoe_dict_get_registered_types ();
+    for (node = registered_types; node; node = g_list_next (node)) {
+        const gchar *name = node->data;
+        GType type;
+
+        type = g_type_from_name (name);
+        if (type && g_str_has_prefix (name, TOMOE_DICT_PREFIX)) {
+            G_DEF_CLASS(type, name + TOMOE_DICT_PREFIX_LEN, cTomoeDict);
+        }
+    }
+    g_list_free (registered_types);
+
     return Qnil;
 }
 
 static VALUE
 td_s_unload(VALUE self)
 {
+    GList *registered_types, *node;
+
+    registered_types = tomoe_dict_get_registered_types ();
+    for (node = registered_types; node; node = g_list_next (node)) {
+        const gchar *name = node->data;
+
+        if (g_str_has_prefix(name, TOMOE_DICT_PREFIX)) {
+            const gchar *klass_name = name + TOMOE_DICT_PREFIX_LEN;
+            if (rb_const_defined (cTomoeDict, rb_intern(klass_name))) {
+                rb_mod_remove_const (cTomoeDict, rb_str_new2(klass_name));
+            }
+        }
+    }
+    g_list_free (registered_types);
+
     tomoe_dict_unload();
     return Qnil;
-}
-
-static VALUE
-td_s_new(VALUE self, VALUE rb_name, VALUE props)
-{
-    TomoeDict *dict;
-    gchar *name;
-
-    name = RVAL2CSTR(rb_name);
-    Check_Type(props, T_HASH);
-
-    if (strcmp(name, "xml") == 0) {
-        VALUE filename, editable;
-        filename = rb_hash_aref(props, CSTR2RVAL("filename"));
-        editable = rb_hash_aref(props, CSTR2RVAL("editable"));
-        dict = tomoe_dict_new(name,
-                              "filename", RVAL2CSTR(filename),
-                              "editable", RVAL2CBOOL(editable),
-                              NULL);
-    } else if (strcmp(name, "est") == 0) {
-        VALUE rb_dict_name, database_name, editable;
-        gchar *dict_name;
-
-        rb_dict_name = rb_hash_aref(props, CSTR2RVAL("name"));
-        dict_name = NIL_P(rb_dict_name) ? NULL : RVAL2CSTR(rb_dict_name);
-        database_name = rb_hash_aref(props, CSTR2RVAL("database_name"));
-        editable = rb_hash_aref(props, CSTR2RVAL("editable"));
-
-        dict = tomoe_dict_new(name,
-                              "name", dict_name,
-                              "database_name", RVAL2CSTR(database_name),
-                              "editable", RVAL2CBOOL(editable),
-                              NULL);
-    } else if (strcmp(name, "unihan") == 0) {
-        dict = tomoe_dict_new(name, NULL);
-    } else if (strcmp(name, "svn") == 0) {
-        VALUE dictionary, working_copy;
-        dictionary = rb_hash_aref(props, CSTR2RVAL("dictionary"));
-        working_copy = rb_hash_aref(props, CSTR2RVAL("working_copy"));
-        dict = tomoe_dict_new(name,
-                              "dictionary", RVAL2TDIC(dictionary),
-                              "working_copy", RVAL2CSTR(working_copy),
-                              NULL);
-    } else if (strcmp(name, "ruby") == 0) {
-        dict = tomoe_dict_new(name, NULL);
-    } else if (strcmp(name, "mysql") == 0) {
-        VALUE database, username, password, host, port, socket, editable;
-        database = rb_hash_aref(props, CSTR2RVAL("database"));
-        username = rb_hash_aref(props, CSTR2RVAL("username"));
-        password = rb_hash_aref(props, CSTR2RVAL("password"));
-        host = rb_hash_aref(props, CSTR2RVAL("host"));
-        port = rb_hash_aref(props, CSTR2RVAL("port"));
-        socket = rb_hash_aref(props, CSTR2RVAL("socket"));
-        editable = rb_hash_aref(props, CSTR2RVAL("editable"));
-        dict = tomoe_dict_new(name,
-                              "database", RVAL2CSTR2(database),
-                              "user", RVAL2CSTR2(username),
-                              "password", RVAL2CSTR2(password),
-                              "host", RVAL2CSTR2(host),
-                              "port", NIL_P(port) ? 0 : NUM2INT(port),
-                              "socket", RVAL2CSTR2(socket),
-                              "editable", RVAL2CBOOL(editable),
-                              NULL);
-    } else {
-        rb_raise(rb_eArgError, "unknown dictionary type: %s", name);
-        dict = NULL;
-    }
-
-    return GOBJ2RVALU(dict);
 }
 
 static VALUE
@@ -118,14 +84,10 @@ td_flush(VALUE self)
 void
 Init_tomoe_dict(VALUE mTomoe)
 {
-    VALUE cTomoeDict;
-
     cTomoeDict = G_DEF_CLASS(TOMOE_TYPE_DICT, "Dict", mTomoe);
 
     rb_define_singleton_method(cTomoeDict, "load", td_s_load, 1);
     rb_define_singleton_method(cTomoeDict, "unload", td_s_unload, 0);
-
-    rb_define_singleton_method(cTomoeDict, "new", td_s_new, 2);
 
     rb_define_method(cTomoeDict, "[]", td_get_char, 1);
     rb_define_method(cTomoeDict, "register", td_register_char, 1);

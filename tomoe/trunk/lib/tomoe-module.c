@@ -36,6 +36,7 @@ struct _TomoeModulePrivate
 {
     GModule      *library;
     gchar        *mod_path;
+    GList        *registered_types;
 
     TomoeModuleInitFunc        init;
     TomoeModuleExitFunc        exit;
@@ -80,6 +81,7 @@ tomoe_module_init (TomoeModule *module)
 
     priv->library          = NULL;
     priv->mod_path         = NULL;
+    priv->registered_types = NULL;
 }
 
 static void
@@ -89,6 +91,8 @@ finalize (GObject *object)
 
     g_free (priv->mod_path);
     priv->mod_path = NULL;
+    g_list_free (priv->registered_types);
+    priv->registered_types = NULL;
 
     G_OBJECT_CLASS (tomoe_module_parent_class)->finalize (object);
 }
@@ -116,7 +120,8 @@ load (GTypeModule *module)
         return FALSE;
     }
 
-    priv->init (module);
+    g_list_free (priv->registered_types);
+    priv->registered_types = priv->init (module);
 
     return TRUE;
 }
@@ -134,6 +139,38 @@ unload (GTypeModule *module)
     priv->init = NULL;
     priv->exit = NULL;
     priv->instantiate = NULL;
+
+    g_list_free (priv->registered_types);
+    priv->registered_types = NULL;
+}
+
+GList *
+tomoe_module_collect_registered_types (GList *modules)
+{
+    GList *results = NULL;
+    GList *node;
+
+    for (node = modules; node; node = g_list_next (node)) {
+        TomoeModule *module = node->data;
+        GTypeModule *g_type_module;
+
+        g_type_module = G_TYPE_MODULE (module);
+        if (g_type_module_use (g_type_module)) {
+            TomoeModulePrivate *priv;
+            GList *node;
+
+            priv = TOMOE_MODULE_GET_PRIVATE (module);
+            for (node = priv->registered_types;
+                 node;
+                 node = g_list_next (node)) {
+                results = g_list_prepend (results, node->data);
+            }
+
+            g_type_module_unuse (g_type_module);
+        }
+    }
+
+    return results;
 }
 
 static void

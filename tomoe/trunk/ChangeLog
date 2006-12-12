@@ -1,3 +1,11 @@
+2006-12-12  Kouhei Sutou  <kou@cozmixng.org>
+
+	* lib/tomoe-dict.[ch], lib/tomoe-module.[ch],
+	module/dict/tomoe-dict-*.c,
+	module/recognizer/tomoe-recognizer-*.c, ext/ruby/tomoe-rb-dict.rb:
+	supported dynamic class definition for dictionary module.
+	* db/, test/, benchmark/: followed the changes.
+
 2006-12-12  Takuro Ashie <ashie@homa.ne.jp>
 
 	* module/dict/Makefile.am: Don't replace tomoe-unihan-data.h.

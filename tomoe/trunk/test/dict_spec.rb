@@ -7,9 +7,8 @@ context "Tomoe::Dict" do
   end
 
   specify "should load XML dictionary" do
-    dict = Tomoe::Dict.new("xml",
-                           "filename" => @dict_file.path,
-                           "editable" => true)
+    dict = Tomoe::Dict::XML.new("filename" => @dict_file.path,
+                                "editable" => true)
     a = dict[@utf8]
     a.writing.strokes.should == @strokes
   end
@@ -21,9 +20,8 @@ context "Tomoe::Dict" do
       `estcmd create #{est_db.dump}`
       `estcmd put #{est_db.dump} #{@est_draft_file.path.dump}`
 
-      dict = Tomoe::Dict.new("est",
-                             "database_name" => est_db,
-                             "editable" => true)
+      dict = Tomoe::Dict::Est.new("database_name" => est_db,
+                                  "editable" => true)
       a = dict[@utf8]
       a.writing.strokes.should == @strokes
     ensure
@@ -47,13 +45,10 @@ context "Tomoe::Dict" do
       `svn ci -m '' #{wc.dump}`
       `svnlook youngest #{repos.dump}`.chomp.should == "1"
 
-      xml_dict = Tomoe::Dict.new("xml",
-                                 "filename" => dict_file,
-                                 "editable" => true)
-      dict = Tomoe::Dict.new("svn",
-                             "dictionary" => xml_dict,
-                             "repository" => repos_url,
-                             "working_copy" => wc)
+      xml_dict = Tomoe::Dict::XML.new("filename" => dict_file,
+                                      "editable" => true)
+      dict = Tomoe::Dict::Svn.new("dictionary" => xml_dict,
+                                  "working_copy" => wc)
       a = dict[@utf8]
       a.writing.strokes.should == @strokes
 
@@ -69,7 +64,7 @@ context "Tomoe::Dict" do
   end
 
   specify "should register/unregister to MySQL database" do
-    dict = Tomoe::Dict.new("mysql", db_config)
+    dict = Tomoe::Dict::MySQL.new(db_config)
     char = Tomoe::Char.new
     char.utf8 = "あ"
     dict.register(char).should == true
@@ -81,7 +76,7 @@ context "Tomoe::Dict" do
   end
 
   specify "should register/unregister PUA character to MySQL database" do
-    dict = Tomoe::Dict.new("mysql", db_config)
+    dict = Tomoe::Dict::MySQL.new(db_config)
     char = Tomoe::Char.new
     dict.register(char).should == true
     dict.search(Tomoe::Query.new).size.should == 1
