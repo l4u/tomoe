@@ -4,9 +4,11 @@ context "Tomoe::Context" do
   @@context = nil
   def context
     return @@context if @@context
-    dict = Tomoe::Dict.new("xml",
-                           "filename" => File.join(data_dir, "handwriting.xml"),
-                           "editable" => false)
+    config = {
+      "filename" => File.join(data_dir, "handwriting.xml"),
+      "editable" => false,
+    }
+    dict = Tomoe::Dict::XML.new(config)
     recognizer = Tomoe::Recognizer.new("simple", dict)
     @@context = Tomoe::Context.new("recognizer" => recognizer)
     @@context.load_config(@config_file.path)

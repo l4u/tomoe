@@ -24,11 +24,11 @@ $stdout.flush
 `#{migrate}`
 puts "done."
 
-dict = Tomoe::Dict.new("xml",
-                       "filename" => TomoeSpecUtils::Config.dictionaries.first,
-                       "editable" => false)
+filename = TomoeSpecUtils::Config.dictionaries.first
+dict = Tomoe::Dict::XML.new("filename" => filename,
+                            "editable" => false)
 config = TomoeSpecUtils::Config.db_config.merge("editable" => true)
-mysql_dict = Tomoe::Dict.new("mysql", config)
+mysql_dict = Tomoe::Dict::MySQL.new(config)
 
 cands = dict.search(Tomoe::Query.new)
 puts "dict size: #{cands.size}"

@@ -57,6 +57,8 @@ GObject  *tomoe_module_instantiate  (GList       *modules,
                                      const gchar *first_property,
                                      va_list      var_args);
 
+GList    *tomoe_module_collect_registered_types (GList *modules);
+
 G_END_DECLS
 
 #endif /* __TOMOE_MODULE_H__ */

@@ -187,9 +187,10 @@ register_type (GTypeModule *type_module)
                                                        &info, 0);
 }
 
-G_MODULE_EXPORT void
+G_MODULE_EXPORT GList *
 TOMOE_MODULE_IMPL_INIT (GTypeModule *type_module)
 {
+    GList *registered_types = NULL;
     apr_status_t status;
 
     status = apr_initialize ();
@@ -197,13 +198,19 @@ TOMOE_MODULE_IMPL_INIT (GTypeModule *type_module)
         char buf[1024];
         apr_strerror (status, buf, sizeof(buf) - 1);
         g_warning ("cannot initialize APR: %s", buf);
-        return;
+        return registered_types;
     }
 
     pool = svn_pool_create (NULL);
     svn_utf_initialize (pool);
 
     register_type (type_module);
+    if (tomoe_type_dict_svn)
+        registered_types =
+            g_list_prepend (registered_types,
+                            (gchar *) g_type_name (tomoe_type_dict_svn));
+
+    return registered_types;
 }
 
 G_MODULE_EXPORT void

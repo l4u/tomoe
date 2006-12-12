@@ -190,17 +190,19 @@ tomoe_dict_ruby_atexit(void)
     ruby_cleanup (0);
 }
 
-G_MODULE_EXPORT void
+G_MODULE_EXPORT GList *
 TOMOE_MODULE_IMPL_INIT (GTypeModule *type_module)
 {
+    GList *registered_types = NULL;
     static gchar *argv[] = {G_STRINGIFY (PACKAGE)};
-    static gboolean ruby_initialized = FALSE;
 
     register_type (type_module);
+    if (tomoe_type_dict_ruby)
+        registered_types =
+            g_list_prepend (registered_types,
+                            (gchar *) g_type_name (tomoe_type_dict_ruby));
 
-    if (!ruby_initialized) {
-        ruby_initialized = TRUE;
-
+    if (!rb_load_path) {
         ruby_init ();
         atexit(tomoe_dict_ruby_atexit);
         ruby_script (PACKAGE);
@@ -213,6 +215,8 @@ TOMOE_MODULE_IMPL_INIT (GTypeModule *type_module)
         rb_ary_unshift (rb_load_path, rb_str_new2 (RUBY_EXTDIR));
         rb_ary_unshift (rb_load_path, rb_str_new2 (RUBY_LIBDIR));
     }
+
+    return registered_types;
 }
 
 G_MODULE_EXPORT void

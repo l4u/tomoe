@@ -99,8 +99,16 @@ module TomoeSpecUtils
       File.join(db_dir, "config.yml")
     end
 
-    def db_config(type=nil)
+    def db_config_for_active_record(type=nil)
       YAML.load(File.read(db_config_file))[type || ENV["TOMOE_ENV"] || "test"]
+    end
+
+    def db_config(type=nil)
+      config = db_config_for_active_record(type)
+      config.delete("adapter")
+      config.delete("encoding")
+      config["user"] = config.delete("username") if config["username"]
+      config
     end
 
     def setup_context

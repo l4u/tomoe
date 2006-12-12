@@ -260,10 +260,18 @@ register_type (GTypeModule *type_module)
                                                        &info, 0);
 }
 
-G_MODULE_EXPORT void
+G_MODULE_EXPORT GList *
 TOMOE_MODULE_IMPL_INIT (GTypeModule *type_module)
 {
+    GList *registered_types = NULL;
+
     register_type (type_module);
+    if (tomoe_type_dict_mysql)
+        registered_types =
+            g_list_prepend (registered_types,
+                            (gchar *) g_type_name (tomoe_type_dict_mysql));
+
+    return registered_types;
 }
 
 G_MODULE_EXPORT void

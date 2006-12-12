@@ -71,6 +71,7 @@ GType           tomoe_dict_get_type (void) G_GNUC_CONST;
 
 void            tomoe_dict_load        (const gchar *base_dir);
 void            tomoe_dict_unload      (void);
+GList          *tomoe_dict_get_registered_types (void);
 
 TomoeDict      *tomoe_dict_new         (const gchar *name,
                                         const gchar *first_property,
