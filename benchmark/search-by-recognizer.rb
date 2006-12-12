@@ -13,15 +13,15 @@ require 'tomoe-spec-utils'
 data_dir = TomoeSpecUtils::Config.data_dir
 use_est = false
 if use_est
-  dict = Tomoe::Dict.new("est",
-                         "database_name" => File.join(data_dir, "handwriting"),
-                         "editable" => false)
+  database_name = File.join(data_dir, "handwriting")
+  dict = Tomoe::Dict::Est.new("database_name" => database_name,
+                              "editable" => false)
 else
-  dict = Tomoe::Dict.new("xml",
-                         "filename" => File.join(data_dir, "handwriting.xml"),
-                         "editable" => false)
+  filename = File.join(data_dir, "handwriting.xml")
+  dict = Tomoe::Dict::XML.new("filename" => filename,
+                              "editable" => false)
 end
-recognizer = Tomoe::Recognizer.new("simple", dict)
+recognizer = Tomoe::Recognizer::Simple.new("dictionary" => dict)
 context = Tomoe::Context.new("recognizer" => recognizer)
 config_file = TomoeSpecUtils::Config.make_config_file
 context.load_config(config_file.path)

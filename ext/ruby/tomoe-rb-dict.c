@@ -10,43 +10,17 @@ static VALUE cTomoeDict;
 static VALUE
 td_s_load(VALUE self, VALUE base_dir)
 {
-    GList *registered_types, *node;
-
     tomoe_dict_load(NIL_P(base_dir) ? NULL : RVAL2CSTR(base_dir));
-
-    registered_types = tomoe_dict_get_registered_types ();
-    for (node = registered_types; node; node = g_list_next (node)) {
-        const gchar *name = node->data;
-        GType type;
-
-        type = g_type_from_name (name);
-        if (type && g_str_has_prefix (name, TOMOE_DICT_PREFIX)) {
-            G_DEF_CLASS(type, name + TOMOE_DICT_PREFIX_LEN, cTomoeDict);
-        }
-    }
-    g_list_free (registered_types);
-
+    _tomoe_rb_module_load(tomoe_dict_get_registered_types(), cTomoeDict,
+                          TOMOE_DICT_PREFIX, TOMOE_DICT_PREFIX_LEN);
     return Qnil;
 }
 
 static VALUE
 td_s_unload(VALUE self)
 {
-    GList *registered_types, *node;
-
-    registered_types = tomoe_dict_get_registered_types ();
-    for (node = registered_types; node; node = g_list_next (node)) {
-        const gchar *name = node->data;
-
-        if (g_str_has_prefix(name, TOMOE_DICT_PREFIX)) {
-            const gchar *klass_name = name + TOMOE_DICT_PREFIX_LEN;
-            if (rb_const_defined (cTomoeDict, rb_intern(klass_name))) {
-                rb_mod_remove_const (cTomoeDict, rb_str_new2(klass_name));
-            }
-        }
-    }
-    g_list_free (registered_types);
-
+    _tomoe_rb_module_unload(tomoe_dict_get_registered_types(), cTomoeDict,
+                            TOMOE_DICT_PREFIX, TOMOE_DICT_PREFIX_LEN);
     tomoe_dict_unload();
     return Qnil;
 }

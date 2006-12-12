@@ -1,5 +1,14 @@
 2006-12-12  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-recognizer.[ch],
+	module/recognizer/tomoe-recognizer-*.c,
+	ext/ruby/tomoe-rb-recognizer.c: supported dynamic class
+	definition for recognizer module.
+	* ext/ruby/tomoe-rb-recognizer.c, ext/ruby/tomoe-rb-dict.c,
+	ext/ruby/tomoe-rb-module.c, ext/ruby/tomoe-rb.h,
+	ext/ruby/Makefile.am: unified duplicated codes.
+	* test/, benchmark/: followed the changes.
+
 	* lib/tomoe-dict.[ch], lib/tomoe-module.[ch],
 	module/dict/tomoe-dict-*.c,
 	module/recognizer/tomoe-recognizer-*.c, ext/ruby/tomoe-rb-dict.rb:

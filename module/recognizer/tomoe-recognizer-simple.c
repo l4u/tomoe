@@ -133,9 +133,10 @@ TOMOE_MODULE_IMPL_INIT (GTypeModule *type_module)
     GList *registered_types = NULL;
 
     register_type (type_module);
-    if (tomoe_type_recognizer_simple)
-        registered_types = g_list_prepend (registered_types,
-                                           &tomoe_type_recognizer_simple);
+    if (tomoe_type_recognizer_simple) {
+        gchar *name = (gchar *) g_type_name (tomoe_type_recognizer_simple);
+        registered_types = g_list_prepend (registered_types, name);
+    }
 
     return registered_types;
 }

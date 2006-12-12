@@ -9,7 +9,7 @@ context "Tomoe::Context" do
       "editable" => false,
     }
     dict = Tomoe::Dict::XML.new(config)
-    recognizer = Tomoe::Recognizer.new("simple", dict)
+    recognizer = Tomoe::Recognizer::Simple.new("dictionary" => dict)
     @@context = Tomoe::Context.new("recognizer" => recognizer)
     @@context.load_config(@config_file.path)
     @@context
