@@ -641,13 +641,76 @@ unregister_char (TomoeDict *_dict, const gchar *utf8)
         return FALSE;
 }
 
+static void
+generate_sql_condition_utf8 (TomoeDictMySQL *dict, GString *sql,
+                             TomoeQuery *query)
+{
+    const gchar *utf8;
+
+    utf8 = tomoe_query_get_utf8 (query);
+    if (utf8) {
+        g_string_append (sql, " AND utf8 = ");
+        append_string_value (dict, sql, utf8);
+    }
+}
+
+static void
+generate_sql_condition_min_n_strokes (TomoeDictMySQL *dict, GString *sql,
+                                      TomoeQuery *query)
+{
+    gint min_n_strokes;
+
+    min_n_strokes = tomoe_query_get_min_n_strokes (query);
+    if (min_n_strokes >= 0) {
+        g_string_append_printf (sql, " AND n_strokes >= %d",
+                                min_n_strokes);
+    }
+}
+
+static void
+generate_sql_condition_max_n_strokes (TomoeDictMySQL *dict, GString *sql,
+                                      TomoeQuery *query)
+{
+    gint max_n_strokes;
+
+    max_n_strokes = tomoe_query_get_max_n_strokes (query);
+    if (max_n_strokes >= 0) {
+        g_string_append_printf (sql, " AND n_strokes <= %d",
+                                max_n_strokes);
+    }
+}
+
+static void
+generate_sql_condition_readings (TomoeDictMySQL *dict, GString *sql,
+                                 TomoeQuery *query)
+{
+    GList *node;
+
+    for (node = (GList *)tomoe_query_get_readings (query);
+         node;
+         node = g_list_next (node)) {
+        TomoeReading *tomoe_reading = node->data;
+        TomoeReadingType reading_type;
+        const gchar *reading;
+
+        reading_type = tomoe_reading_get_reading_type (tomoe_reading);
+        if (reading_type != TOMOE_READING_INVALID)
+            g_string_append_printf (sql, " AND reading_type = %d",
+                                    reading_type);
+
+        reading = tomoe_reading_get_reading (tomoe_reading);
+        if (reading) {
+            g_string_append (sql, " AND reading = ");
+            append_string_value (dict, sql, reading);
+        }
+    }
+}
+
+
 static gchar *
 generate_sql (TomoeDictMySQL *dict, TomoeQuery *query)
 {
     GString *sql;
-    const gchar *utf8;
-    gint min_n_strokes, max_n_strokes;
-    GList *node;
 
     sql = g_string_new ("SELECT "                                   \
                         "chars.utf8 AS utf8, "                      \
@@ -665,42 +728,10 @@ generate_sql (TomoeDictMySQL *dict, TomoeQuery *query)
                         "ON chars.utf8 = radicals.utf8 "            \
                         "WHERE TRUE = TRUE");
 
-    utf8 = tomoe_query_get_utf8 (query);
-    if (utf8) {
-        g_string_append (sql, " AND chars.utf8 = ");
-        append_string_value (dict, sql, utf8);
-    }
-
-    min_n_strokes = tomoe_query_get_min_n_strokes (query);
-    if (min_n_strokes >= 0) {
-        g_string_append_printf (sql, " AND chars.n_strokes >= %d",
-                                min_n_strokes);
-    }
-
-    max_n_strokes = tomoe_query_get_max_n_strokes (query);
-    if (max_n_strokes >= 0) {
-        g_string_append_printf (sql, " AND chars.n_strokes <= %d",
-                                max_n_strokes);
-    }
-
-    for (node = (GList *)tomoe_query_get_readings (query);
-         node;
-         node = g_list_next (node)) {
-        TomoeReading *tomoe_reading = node->data;
-        TomoeReadingType reading_type;
-        const gchar *reading;
-
-        reading_type = tomoe_reading_get_reading_type (tomoe_reading);
-        if (reading_type != TOMOE_READING_INVALID)
-            g_string_append_printf (sql, " AND readings.reading_type = %d",
-                                    reading_type);
-
-        reading = tomoe_reading_get_reading (tomoe_reading);
-        if (reading) {
-            g_string_append (sql, " AND readings.reading = ");
-            append_string_value (dict, sql, reading);
-        }
-    }
+    generate_sql_condition_utf8 (dict, sql, query);
+    generate_sql_condition_min_n_strokes (dict, sql, query);
+    generate_sql_condition_max_n_strokes (dict, sql, query);
+    generate_sql_condition_readings (dict, sql, query);
 
     return g_string_free (sql, FALSE);
 }
