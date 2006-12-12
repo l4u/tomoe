@@ -1,5 +1,9 @@
 2006-12-12  Kouhei Sutou  <kou@cozmixng.org>
 
+	* db/xml2db.rb: used Tomoe::DictMySQL#register.
+	* test/tomoe-spec-utils.rb (TomoeSpecUtils::Config::db_config):
+	used ENV["TOMOE_ENV"] as default value.
+
 	* db/migrate/004_create_meta_data.rb: renamed to "name" from "key"
 	because "key" is one of the reserved words in MySQL.
 	* module/dict/tomoe-dict-mysql.c: followed the change.
