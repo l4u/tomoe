@@ -1,3 +1,7 @@
+2006-12-12  Takuro Ashie <ashie@homa.ne.jp>
+
+	* module/dict/Makefile.am: Don't replace tomoe-unihan-data.h.
+
 2006-12-12  Kouhei Sutou  <kou@cozmixng.org>
 
 	* module/dict/tomoe-dict-mysql.c (generate_sql): split into small
