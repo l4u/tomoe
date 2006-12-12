@@ -20,7 +20,7 @@ context "Tomoe::Dict" do
       `estcmd create #{est_db.dump}`
       `estcmd put #{est_db.dump} #{@est_draft_file.path.dump}`
 
-      dict = Tomoe::Dict::Est.new("database_name" => est_db,
+      dict = Tomoe::Dict::Est.new("database" => est_db,
                                   "editable" => true)
       a = dict[@utf8]
       a.writing.strokes.should == @strokes

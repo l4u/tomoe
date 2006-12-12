@@ -491,7 +491,7 @@ load_est_dictionary (GKeyFile *key_file, const gchar *dict_name)
 {
     TomoeDict *dict;
     GError *error = NULL;
-    gchar *name, *database_name;
+    gchar *name, *database;
     gboolean user_dict, editable;
 
     name = g_key_file_get_string (key_file, dict_name, "name", &error);
@@ -500,8 +500,7 @@ load_est_dictionary (GKeyFile *key_file, const gchar *dict_name)
         return NULL;
     }
 
-    database_name = g_key_file_get_string (key_file, dict_name,
-                                           "database", &error);
+    database = g_key_file_get_string (key_file, dict_name, "database", &error);
     if (error) {
         TOMOE_HANDLE_ERROR (error);
         return NULL;
@@ -513,19 +512,19 @@ load_est_dictionary (GKeyFile *key_file, const gchar *dict_name)
                                                     "user", TRUE);
     if (!user_dict) {
         gchar *tmp;
-        tmp = g_build_filename (DICT_DATADIR, database_name, NULL);
-        g_free (database_name);
-        database_name = tmp;
+        tmp = g_build_filename (DICT_DATADIR, database, NULL);
+        g_free (database);
+        database = tmp;
     }
 
     dict = tomoe_dict_new ("est",
                            "name", name,
-                           "database_name", database_name,
+                           "database", database,
                            "editable", editable,
                            NULL);
 
     g_free (name);
-    g_free (database_name);
+    g_free (database);
 
     return dict;
 }
