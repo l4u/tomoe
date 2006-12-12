@@ -1,5 +1,7 @@
 2006-12-12  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/Makefile.am: override Unihan.txt every time.
+
 	* module/dict/tomoe-dict-est.c: changed property name:
 	"database_name" -> "database".
 	* test/, benchmark/, utils/, lib/tomoe-config.c: followed the

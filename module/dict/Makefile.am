@@ -91,7 +91,7 @@ tomoe-unihan-data.h: unihan-compiler.rb Unihan.stamp $(top_builddir)/data/kanjid
 Unihan_URL = ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip
 Unihan.stamp:
 	$(RUBY) -r open-uri -e "print open('$(Unihan_URL)').read" > Unihan.zip || exit 1;
-	$(UNZIP) Unihan.zip || exit 1;
+	$(UNZIP) -o Unihan.zip || exit 1;
 	touch $@
 endif
 
