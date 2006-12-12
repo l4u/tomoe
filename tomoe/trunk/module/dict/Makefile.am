@@ -66,9 +66,9 @@ dict_module_LTLIBRARIES += libunihan.la
 unihan_built_sources = tomoe-unihan-data.h
 
 CLEANFILES += Unihan.txt Unihan.txt.cache
-BUILT_SOURCES = $(unihan_built_sources) Unihan.zip
+BUILT_SOURCES = $(unihan_built_sources)
 
-EXTRA_DIST = unihan-compiler.rb
+EXTRA_DIST = unihan-compiler.rb $(unihan_built_sources) Unihan.stamp
 
 libunihan_la_SOURCES =		\
 	tomoe-dict-unihan.c	\
@@ -79,18 +79,16 @@ libunihan_la_SOURCES =		\
 
 unihan-compiler.rb: libxml.la
 
-tomoe-unihan-data.h: unihan-compiler.rb Unihan.txt $(top_srcdir)/data/kanjidic2.xml
+tomoe-unihan-data.h: unihan-compiler.rb Unihan.stamp $(top_srcdir)/data/kanjidic2.xml
 	$(RUBY) -I$(top_srcdir)/ext/ruby -I$(top_builddir)/ext/ruby/.libs \
 	  -I$(top_srcdir)/test unihan-compiler.rb \
 	  Unihan.txt $(top_srcdir)/data/kanjidic2.xml > $@
 
-Unihan.txt: Unihan.zip
+Unihan_URL = ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip
+Unihan.stamp:
+	$(RUBY) -r open-uri -e "print open('$(Unihan_URL)').read" > Unihan.zip
 	$(UNZIP) Unihan.zip
 	touch $@
-
-Unihan_URL = ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip
-Unihan.zip:
-	$(RUBY) -r open-uri -e "print open('$(Unihan_URL)').read" > $@
 endif
 
 if WITH_SVN
