@@ -45,7 +45,7 @@
 enum {
     PROP_0,
     PROP_NAME,
-    PROP_DATABASE_NAME,
+    PROP_DATABASE,
     PROP_EDITABLE
 };
 
@@ -55,7 +55,7 @@ struct _TomoeDictEst
 {
     TomoeDict            object;
     gchar               *name;
-    gchar               *database_name;
+    gchar               *database;
 
     gboolean             editable;
 
@@ -138,11 +138,11 @@ class_init (TomoeDictEstClass *klass)
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
     g_object_class_install_property (
         gobject_class,
-        PROP_DATABASE_NAME,
+        PROP_DATABASE,
         g_param_spec_string (
-            "database_name",
-            "Database name",
-            "The name of Hyper Estraier database",
+            "database",
+            "Database",
+            "The database name of Hyper Estraier",
             NULL,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
     g_object_class_install_property(
@@ -160,7 +160,7 @@ static void
 init (TomoeDictEst *dict)
 {
     dict->name          = NULL;
-    dict->database_name = NULL;
+    dict->database      = NULL;
     dict->db            = NULL;
     dict->editable      = FALSE;
     dict->cache         = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -242,8 +242,8 @@ set_property (GObject *object,
       case PROP_NAME:
         dict->name = g_value_dup_string (value);
         break;
-      case PROP_DATABASE_NAME:
-        dict->database_name = g_value_dup_string (value);
+      case PROP_DATABASE:
+        dict->database = g_value_dup_string (value);
         break;
       case PROP_EDITABLE:
         dict->editable = g_value_get_boolean (value);
@@ -267,8 +267,8 @@ get_property (GObject *object,
       case PROP_NAME:
         g_value_set_string (value, dict->name);
         break;
-      case PROP_DATABASE_NAME:
-        g_value_set_string (value, dict->database_name);
+      case PROP_DATABASE:
+        g_value_set_string (value, dict->database);
         break;
       case PROP_EDITABLE:
         g_value_set_boolean (value, dict->editable);
@@ -290,13 +290,13 @@ dispose (GObject *object)
 
     if (dict->name)
         g_free (dict->name);
-    if (dict->database_name)
-        g_free (dict->database_name);
+    if (dict->database)
+        g_free (dict->database);
     if (dict->cache)
         g_hash_table_destroy (dict->cache);
 
     dict->name          = NULL;
-    dict->database_name = NULL;
+    dict->database      = NULL;
     dict->cache         = NULL;
 
     G_OBJECT_CLASS (parent_class)->dispose (object);
@@ -543,7 +543,7 @@ tomoe_dict_est_open (TomoeDictEst *dict)
     int option, ecode;
 
     option = dict->editable ? ESTDBWRITER | ESTDBCREAT : ESTDBREADER;
-    dict->db = est_db_open (dict->database_name, option, &ecode);
+    dict->db = est_db_open (dict->database, option, &ecode);
 
     if (!dict->db) {
         g_warning ("open error: %s\n", est_err_msg (ecode));

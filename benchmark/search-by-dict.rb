@@ -19,9 +19,9 @@ Benchmark.bmbm do |x|
       config = TomoeSpecUtils::Config.db_config("benchmark")
       dict = Tomoe::Dict::MySQL.new(config)
     when "est"
-      database_name = dictionary.sub(/\.xml$/, '')
+      database = dictionary.sub(/\.xml$/, '')
       dict = Tomoe::Dict::Est.new("name" => File.basename(dictionary),
-                                  "database_name" => database_name,
+                                  "database" => database,
                                   "editable" => false)
     when "svn"
       repos = File.join(tmp_dir, "svn.repos", File.basename(dictionary))

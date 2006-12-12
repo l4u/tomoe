@@ -11,12 +11,12 @@ require "tomoe-spec-utils"
 
 TomoeSpecUtils::Config.dictionaries.sort.each do |dictionary|
   print "converting #{dictionary}..."
-  est_db_name = dictionary.sub(/\.xml$/, "")
+  est_db = dictionary.sub(/\.xml$/, "")
   xml_dict = Tomoe::Dict.new("xml",
                              "filename" => dictionary,
                              "editable" => false)
   est_dict = Tomoe::Dict.new("est",
-                             "database_name" => est_db_name,
+                             "database" => est_db,
                              "editable" => true)
   xml_dict.search(Tomoe::Query.new).each do |cand|
     est_dict.register(cand.char)

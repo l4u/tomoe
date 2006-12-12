@@ -13,8 +13,8 @@ require 'tomoe-spec-utils'
 data_dir = TomoeSpecUtils::Config.data_dir
 use_est = false
 if use_est
-  database_name = File.join(data_dir, "handwriting")
-  dict = Tomoe::Dict::Est.new("database_name" => database_name,
+  database = File.join(data_dir, "handwriting")
+  dict = Tomoe::Dict::Est.new("database" => database,
                               "editable" => false)
 else
   filename = File.join(data_dir, "handwriting.xml")
