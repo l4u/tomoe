@@ -96,7 +96,7 @@ tw_to_xml(VALUE self)
 }
 
 void
-Init_tomoe_writing(VALUE mTomoe)
+_tomoe_rb_init_tomoe_writing(VALUE mTomoe)
 {
     VALUE cTomoeWriting;
 

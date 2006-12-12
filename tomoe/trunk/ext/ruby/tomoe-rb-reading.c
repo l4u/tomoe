@@ -27,7 +27,7 @@ tr_to_xml(VALUE self)
 }
 
 void
-Init_tomoe_reading(VALUE mTomoe)
+_tomoe_rb_init_tomoe_reading(VALUE mTomoe)
 {
     VALUE cTomoeReading;
 

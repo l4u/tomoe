@@ -55,7 +55,7 @@ td_flush(VALUE self)
 }
 
 void
-Init_tomoe_dict(VALUE _mTomoe)
+_tomoe_rb_init_tomoe_dict(VALUE _mTomoe)
 {
     VALUE cTomoeDict;
 

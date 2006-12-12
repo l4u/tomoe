@@ -1,7 +1,7 @@
 #include "tomoe-rb.h"
 
 void
-Init_tomoe_config(VALUE mTomoe)
+_tomoe_rb_init_tomoe_config(VALUE mTomoe)
 {
     VALUE cTomoeConfig;
 

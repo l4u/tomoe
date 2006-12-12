@@ -48,7 +48,7 @@ tc_get_char(VALUE self, VALUE utf8)
 }
 
 void
-Init_tomoe_context(VALUE mTomoe)
+_tomoe_rb_init_tomoe_context(VALUE mTomoe)
 {
     VALUE cTomoeContext;
 

@@ -23,7 +23,7 @@ tr_s_unload(VALUE self)
 }
 
 void
-Init_tomoe_recognizer(VALUE _mTomoe)
+_tomoe_rb_init_tomoe_recognizer(VALUE _mTomoe)
 {
     VALUE cTomoeRecognizer;
 
