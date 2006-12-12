@@ -213,7 +213,7 @@ ensure_user_dict_file (void)
     tomoe_dir_name = g_build_filename (g_get_home_dir (), ".tomoe", NULL);
 
     if (!g_file_test (tomoe_dir_name, G_FILE_TEST_EXISTS)) {
-        if (!g_mkdir (tomoe_dir_name, 0700)) {
+        if (g_mkdir (tomoe_dir_name, 0700) == -1) {
             g_warning ("can't create %s: %s", tomoe_dir_name, strerror (errno));
         }
     }
