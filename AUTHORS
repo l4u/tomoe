@@ -1,8 +1,13 @@
-Original code:
-  Hiroyuki Komatsu <komatsu@taiyaki.org>
-
-Porting to Ruby and C:
-  Hiroaki Nakamura <hnakamur@good-day.co.jp>
-
 Porting to Xml database:
   Juernjakob Harder <juernjakob.harder@gmail.com>
+
+Authors:
+  Kouhei Sutou  <kou@cozmixng.org>
+  Hiroyuki Ikezoe <poincare@ikezoe.net>
+  Takuro Ashie <ashie@homa.ne.jp>
+
+Porting to Ruby and C (Not in active):
+  Hiroaki Nakamura <hnakamur@good-day.co.jp>
+
+Original code written in perl (Not in active):
+  Hiroyuki Komatsu <komatsu@taiyaki.org>
