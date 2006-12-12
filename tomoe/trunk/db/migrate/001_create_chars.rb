@@ -5,7 +5,7 @@ class CreateChars < ActiveRecord::Migration
       t.column :n_strokes, :integer
       t.column :variant, :string
     end
-    add_index :chars, :utf8
+    add_index :chars, :utf8, :unique => true
   end
 
   def self.down
