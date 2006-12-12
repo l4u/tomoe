@@ -3,7 +3,7 @@
 #define _SELF(obj) (TOMOE_CANDIDATE(RVAL2GOBJ(obj)))
 
 void
-Init_tomoe_candidate(VALUE mTomoe)
+_tomoe_rb_init_tomoe_candidate(VALUE mTomoe)
 {
     VALUE cTomoeCandidate;
 

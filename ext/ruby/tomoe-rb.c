@@ -23,13 +23,13 @@ Init_tomoe(void)
 
     mTomoe = rb_define_module("Tomoe");
 
-    Init_tomoe_candidate(mTomoe);
-    Init_tomoe_char(mTomoe);
-    Init_tomoe_config(mTomoe);
-    Init_tomoe_context(mTomoe);
-    Init_tomoe_dict(mTomoe);
-    Init_tomoe_query(mTomoe);
-    Init_tomoe_reading(mTomoe);
-    Init_tomoe_recognizer(mTomoe);
-    Init_tomoe_writing(mTomoe);
+    _tomoe_rb_init_tomoe_candidate(mTomoe);
+    _tomoe_rb_init_tomoe_char(mTomoe);
+    _tomoe_rb_init_tomoe_config(mTomoe);
+    _tomoe_rb_init_tomoe_context(mTomoe);
+    _tomoe_rb_init_tomoe_dict(mTomoe);
+    _tomoe_rb_init_tomoe_query(mTomoe);
+    _tomoe_rb_init_tomoe_reading(mTomoe);
+    _tomoe_rb_init_tomoe_recognizer(mTomoe);
+    _tomoe_rb_init_tomoe_writing(mTomoe);
 }

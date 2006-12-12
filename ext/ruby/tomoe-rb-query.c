@@ -19,7 +19,7 @@ tq_set_writing(VALUE self, VALUE writing)
 }
 
 void
-Init_tomoe_query(VALUE mTomoe)
+_tomoe_rb_init_tomoe_query(VALUE mTomoe)
 {
     VALUE cTomoeQuery;
 

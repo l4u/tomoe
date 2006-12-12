@@ -95,7 +95,7 @@ tc_compare(VALUE self, VALUE other)
 }
 
 void
-Init_tomoe_char(VALUE mTomoe)
+_tomoe_rb_init_tomoe_char(VALUE mTomoe)
 {
     VALUE cTomoeChar;
 

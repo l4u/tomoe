@@ -1,5 +1,7 @@
 2006-12-12  Kouhei Sutou  <kou@cozmixng.org>
 
+	* ext/ruby/: hid internal Init_* functions.
+
 	* ext/ruby/tomoe-rb-dict.c, ext/ruby/tomoe-rb-recognizer.c,
 	ext/ruby/tomoe-rb-module.c, ext/ruby/tomoe-rb.h: followed
 	Ruby-GNOME2 project's naming rules:

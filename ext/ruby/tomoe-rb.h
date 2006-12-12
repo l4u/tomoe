@@ -41,15 +41,17 @@ VALUE _tomoe_ruby_object_from_instance_with_unref(gpointer instance);
 #endif
 
 void Init_tomoe(void);
-void Init_tomoe_candidate(VALUE mTomoe);
-void Init_tomoe_char(VALUE mTomoe);
-void Init_tomoe_config(VALUE mTomoe);
-void Init_tomoe_context(VALUE mTomoe);
-void Init_tomoe_dict(VALUE mTomoe);
-void Init_tomoe_query(VALUE mTomoe);
-void Init_tomoe_reading(VALUE mTomoe);
-void Init_tomoe_recognizer(VALUE mTomoe);
-void Init_tomoe_writing(VALUE mTomoe);
+
+void _tomoe_rb_init_tomoe_candidate(VALUE mTomoe);
+void _tomoe_rb_init_tomoe_char(VALUE mTomoe);
+void _tomoe_rb_init_tomoe_config(VALUE mTomoe);
+void _tomoe_rb_init_tomoe_context(VALUE mTomoe);
+void _tomoe_rb_init_tomoe_dict(VALUE mTomoe);
+void _tomoe_rb_init_tomoe_query(VALUE mTomoe);
+void _tomoe_rb_init_tomoe_reading(VALUE mTomoe);
+void _tomoe_rb_init_tomoe_recognizer(VALUE mTomoe);
+void _tomoe_rb_init_tomoe_writing(VALUE mTomoe);
+
 
 void _tomoe_rb_module_load   (GList *registered_types, VALUE klass,
                               const gchar *prefix);
