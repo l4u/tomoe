@@ -227,7 +227,7 @@ if test "$ruby_available" = "yes"; then
   if test "x$ruby_available" = "xyes"; then
     CFLAGS="$CFLAGS $GLIB_CFLAGS"
     AC_CHECK_HEADERS(rbgobject.h, [],
-		     [ruby_available="no"
+    		     [ruby_available="no"
 		      AC_MSG_WARN([$ruby_disable_message])],
 		     [$ruby_undef_package_macros])
   fi
@@ -374,7 +374,9 @@ dnl Configure for Ruby dictionary.
 dnl **************************************************************
 AC_ARG_ENABLE(dict_ruby, [  --enable-dict-ruby
 			  Enable Ruby based dictionary module])
-AM_CONDITIONAL(ENABLE_DICT_RUBY, test x"$enable_dict_ruby" = "xyes")
+AM_CONDITIONAL(ENABLE_DICT_RUBY,
+               [test x"$enable_dict_ruby" = "xyes" -a \
+                     x"$ruby_available" = "xyes"])
 
 
 dnl **************************************************************
