@@ -14,14 +14,12 @@ data_dir = TomoeSpecUtils::Config.data_dir
 use_est = false
 if use_est
   database = File.join(data_dir, "handwriting")
-  dict = Tomoe::Dict::Est.new("database" => database,
-                              "editable" => false)
+  dict = Tomoe::DictEst.new("database" => database, "editable" => false)
 else
   filename = File.join(data_dir, "handwriting.xml")
-  dict = Tomoe::Dict::XML.new("filename" => filename,
-                              "editable" => false)
+  dict = Tomoe::DictXML.new("filename" => filename, "editable" => false)
 end
-recognizer = Tomoe::Recognizer::Simple.new("dictionary" => dict)
+recognizer = Tomoe::RecognizerSimple.new("dictionary" => dict)
 context = Tomoe::Context.new("recognizer" => recognizer)
 config_file = TomoeSpecUtils::Config.make_config_file
 context.load_config(config_file.path)

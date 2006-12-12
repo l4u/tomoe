@@ -2,25 +2,24 @@
 
 #define _SELF(obj) RVAL2TDIC(obj)
 
-#define TOMOE_DICT_PREFIX "TomoeDict"
-#define TOMOE_DICT_PREFIX_LEN (strlen(TOMOE_DICT_PREFIX))
+#define DICT_PREFIX "Dict"
 
-static VALUE cTomoeDict;
+static VALUE mTomoe;
 
 static VALUE
 td_s_load(VALUE self, VALUE base_dir)
 {
     tomoe_dict_load(NIL_P(base_dir) ? NULL : RVAL2CSTR(base_dir));
-    _tomoe_rb_module_load(tomoe_dict_get_registered_types(), cTomoeDict,
-                          TOMOE_DICT_PREFIX, TOMOE_DICT_PREFIX_LEN);
+    _tomoe_rb_module_load(tomoe_dict_get_registered_types(), mTomoe,
+                          DICT_PREFIX);
     return Qnil;
 }
 
 static VALUE
 td_s_unload(VALUE self)
 {
-    _tomoe_rb_module_unload(tomoe_dict_get_registered_types(), cTomoeDict,
-                            TOMOE_DICT_PREFIX, TOMOE_DICT_PREFIX_LEN);
+    _tomoe_rb_module_unload(tomoe_dict_get_registered_types(), mTomoe,
+                            DICT_PREFIX);
     tomoe_dict_unload();
     return Qnil;
 }
@@ -56,8 +55,11 @@ td_flush(VALUE self)
 }
 
 void
-Init_tomoe_dict(VALUE mTomoe)
+Init_tomoe_dict(VALUE _mTomoe)
 {
+    VALUE cTomoeDict;
+
+    mTomoe = _mTomoe;
     cTomoeDict = G_DEF_CLASS(TOMOE_TYPE_DICT, "Dict", mTomoe);
 
     rb_define_singleton_method(cTomoeDict, "load", td_s_load, 1);

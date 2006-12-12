@@ -1,5 +1,13 @@
 2006-12-12  Kouhei Sutou  <kou@cozmixng.org>
 
+	* ext/ruby/tomoe-rb-dict.c, ext/ruby/tomoe-rb-recognizer.c,
+	ext/ruby/tomoe-rb-module.c, ext/ruby/tomoe-rb.h: followed
+	Ruby-GNOME2 project's naming rules:
+	- Tomoe::Dict::XXX -> Tomoe::DictXXX.
+	- Tomoe::Recognizer::XXX -> Tomoe::RecognizerXXX.
+	* module/dict/unihan-compiler.rb, benchmark/, db/, test/: followed
+	the changes.
+
 	* lib/tomoe-context.c (ensure_user_dict_file):
 	- fixed typo. We should use octal form not hex form.
 	- g_mkdir() returns 0 if success.

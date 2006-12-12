@@ -52,9 +52,9 @@ void Init_tomoe_recognizer(VALUE mTomoe);
 void Init_tomoe_writing(VALUE mTomoe);
 
 void _tomoe_rb_module_load   (GList *registered_types, VALUE klass,
-                              const gchar *prefix, gint prefix_len);
+                              const gchar *prefix);
 void _tomoe_rb_module_unload (GList *registered_types, VALUE klass,
-                              const gchar *prefix, gint prefix_len);
+                              const gchar *prefix);
 
 G_END_DECLS
 
