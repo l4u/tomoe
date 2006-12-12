@@ -68,7 +68,7 @@ unihan_built_sources = tomoe-unihan-data.h
 CLEANFILES += Unihan.txt Unihan.txt.cache
 BUILT_SOURCES = $(unihan_built_sources)
 
-EXTRA_DIST = unihan-compiler.rb $(unihan_built_sources) Unihan.stamp
+EXTRA_DIST = unihan-compiler.rb $(BUILT_SOURCES) Unihan.stamp
 
 libunihan_la_SOURCES =		\
 	tomoe-dict-unihan.c	\
