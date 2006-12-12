@@ -77,6 +77,8 @@ libunihan_la_SOURCES =		\
 	$(unihan_built_sources)	\
 	$(ptr_array_based_dict_sources)
 
+unihan-compiler.rb: libxml.la
+
 tomoe-unihan-data.h: unihan-compiler.rb Unihan.txt $(top_srcdir)/data/kanjidic2.xml
 	$(RUBY) -I$(top_srcdir)/ext/ruby -I$(top_builddir)/ext/ruby/.libs \
 	  -I$(top_srcdir)/test unihan-compiler.rb \
