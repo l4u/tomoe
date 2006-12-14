@@ -29,6 +29,8 @@ void
 tomoe_dict_load (const gchar *base_dir)
 {
     if (!base_dir)
+        base_dir = g_getenv ("TOMOE_DICT_MODULE_DIR");
+    if (!base_dir)
         base_dir = DICT_MODULEDIR;
 
     dicts = g_list_concat (tomoe_module_load_modules (base_dir), dicts);
