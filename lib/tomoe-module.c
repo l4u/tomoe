@@ -319,7 +319,7 @@ tomoe_module_unload (TomoeModule *module)
 
     g_return_if_fail (TOMOE_IS_MODULE (module));
 
-    type_module = G_TYPE_MODULE (type_module);
+    type_module = G_TYPE_MODULE (module);
 
     if (type_module->type_infos || type_module->interface_infos)
         return;

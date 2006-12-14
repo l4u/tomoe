@@ -60,6 +60,8 @@ tomoe_quit (void)
 {
     if (initialized) {
         initialized = FALSE;
+        tomoe_dict_unload ();
+        tomoe_recognizer_unload ();
     }
 }
 
