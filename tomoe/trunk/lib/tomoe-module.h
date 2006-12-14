@@ -59,6 +59,8 @@ GObject  *tomoe_module_instantiate  (GList       *modules,
 
 GList    *tomoe_module_collect_registered_types (GList *modules);
 
+void      tomoe_module_unload (TomoeModule *module);
+
 G_END_DECLS
 
 #endif /* __TOMOE_MODULE_H__ */

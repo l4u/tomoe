@@ -6,20 +6,32 @@
 
 static VALUE mTomoe;
 
+void
+_tomoe_rb_dict_module_load(void)
+{
+    _tomoe_rb_module_load(tomoe_dict_get_registered_types(), mTomoe,
+                          DICT_PREFIX);
+}
+
+static void
+_tomoe_rb_dict_module_unload(void)
+{
+    _tomoe_rb_module_unload(tomoe_dict_get_registered_types(), mTomoe,
+                            DICT_PREFIX);
+}
+
 static VALUE
 td_s_load(VALUE self, VALUE base_dir)
 {
     tomoe_dict_load(NIL_P(base_dir) ? NULL : RVAL2CSTR(base_dir));
-    _tomoe_rb_module_load(tomoe_dict_get_registered_types(), mTomoe,
-                          DICT_PREFIX);
+    _tomoe_rb_dict_module_load();
     return Qnil;
 }
 
 static VALUE
 td_s_unload(VALUE self)
 {
-    _tomoe_rb_module_unload(tomoe_dict_get_registered_types(), mTomoe,
-                            DICT_PREFIX);
+    _tomoe_rb_dict_module_unload();
     tomoe_dict_unload();
     return Qnil;
 }

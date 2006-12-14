@@ -3,8 +3,6 @@ require 'fileutils'
 require 'yaml'
 require 'uconv'
 
-require 'tomoe'
-
 $KCODE = "u"
 
 module TomoeSpecSetup
@@ -217,7 +215,7 @@ EOC
   end
 end
 
-Tomoe::Dict.unload
-Tomoe::Dict.load(TomoeSpecUtils::Config.dict_dir)
-Tomoe::Recognizer.unload
-Tomoe::Recognizer.load(TomoeSpecUtils::Config.recognizer_dir)
+ENV["TOMOE_DICT_MODULE_DIR"] ||= TomoeSpecUtils::Config.dict_dir
+ENV["TOMOE_RECOGNIZER_MODULE_DIR"] ||= TomoeSpecUtils::Config.recognizer_dir
+
+require 'tomoe'

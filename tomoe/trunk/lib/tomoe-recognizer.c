@@ -43,7 +43,7 @@ tomoe_recognizer_load (const gchar *base_dir)
 void
 tomoe_recognizer_unload (void)
 {
-    g_list_foreach (recognizers, (GFunc) g_object_unref, NULL);
+    g_list_foreach (recognizers, (GFunc) tomoe_module_unload, NULL);
     g_list_free (recognizers);
     recognizers = NULL;
 }
