@@ -4,20 +4,32 @@
 
 static VALUE mTomoe;
 
+void
+_tomoe_rb_recognizer_module_load(void)
+{
+    _tomoe_rb_module_load(tomoe_recognizer_get_registered_types(),
+                          mTomoe, RECOGNIZER_PREFIX);
+}
+
+static void
+_tomoe_rb_recognizer_module_unload(void)
+{
+    _tomoe_rb_module_unload(tomoe_recognizer_get_registered_types(),
+                            mTomoe, RECOGNIZER_PREFIX);
+}
+
 static VALUE
 tr_s_load(VALUE self, VALUE base_dir)
 {
     tomoe_recognizer_load(NIL_P(base_dir) ? NULL : RVAL2CSTR(base_dir));
-    _tomoe_rb_module_load(tomoe_recognizer_get_registered_types(),
-                          mTomoe, RECOGNIZER_PREFIX);
+    _tomoe_rb_recognizer_module_load();
     return Qnil;
 }
 
 static VALUE
 tr_s_unload(VALUE self)
 {
-    _tomoe_rb_module_unload(tomoe_recognizer_get_registered_types(),
-                            mTomoe, RECOGNIZER_PREFIX);
+    _tomoe_rb_recognizer_module_unload();
     tomoe_recognizer_unload();
     return Qnil;
 }

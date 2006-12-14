@@ -18,9 +18,6 @@ Init_tomoe(void)
 {
     VALUE mTomoe;
 
-    tomoe_init();
-    atexit(tomoe_quit);
-
     mTomoe = rb_define_module("Tomoe");
 
     _tomoe_rb_init_tomoe_candidate(mTomoe);
@@ -32,4 +29,11 @@ Init_tomoe(void)
     _tomoe_rb_init_tomoe_reading(mTomoe);
     _tomoe_rb_init_tomoe_recognizer(mTomoe);
     _tomoe_rb_init_tomoe_writing(mTomoe);
+
+
+    tomoe_init();
+    atexit(tomoe_quit);
+
+    _tomoe_rb_dict_module_load();
+    _tomoe_rb_recognizer_module_load();
 }

@@ -1,5 +1,13 @@
 2006-12-14  Kouhei Sutou  <kou@cozmixng.org>
 
+	* ext/ruby/tomoe-rb.c: defined dynamic loaded types in tomoe.so.
+	* ext/ruby/tomoe-rb-dict.c, ext/ruby/tomoe-rb-recognizer.c,
+	ext/ruby/tomoe-rb.h: exported function which defines classes from
+	load types.
+
+	* test/tomoe-spec-utils.rb: used environment variables to specify
+	module directory.
+
 	* lib/tomoe-dict.c: check TOMOE_DICT_MODULE_DIR
 	environemnet variable as default dictionary module directory.
 	* lib/tomoe-recognizer.c: check TOMOE_RECOGNIZER_MODULE_DIR

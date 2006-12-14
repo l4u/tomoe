@@ -312,6 +312,21 @@ _tomoe_module_match_name (const gchar *mod_path, const gchar *name)
     return matched;
 }
 
+void
+tomoe_module_unload (TomoeModule *module)
+{
+    GTypeModule *type_module;
+
+    g_return_if_fail (TOMOE_IS_MODULE (module));
+
+    type_module = G_TYPE_MODULE (type_module);
+
+    if (type_module->type_infos || type_module->interface_infos)
+        return;
+
+    g_object_unref (module);
+}
+
 /*
 vi:ts=4:nowrap:ai:expandtab
 */

@@ -39,7 +39,7 @@ tomoe_dict_load (const gchar *base_dir)
 void
 tomoe_dict_unload (void)
 {
-    g_list_foreach (dicts, (GFunc) g_object_unref, NULL);
+    g_list_foreach (dicts, (GFunc) tomoe_module_unload, NULL);
     g_list_free (dicts);
     dicts = NULL;
 }
