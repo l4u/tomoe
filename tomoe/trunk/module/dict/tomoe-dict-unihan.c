@@ -66,11 +66,13 @@ struct _TomoeDictUnihanClass
 static GType tomoe_type_dict_unihan = 0;
 static GObjectClass *parent_class;
 static GPtrArray *chars = NULL;
+static guint chars_ref_count = 0;
 
 static GObject     *constructor               (GType                  type,
                                                guint                  n_props,
                                                GObjectConstructParam *props);
 static void         dispose                   (GObject       *object);
+static void         finalize                  (GObject       *object);
 static void         set_property              (GObject       *object,
                                                guint         prop_id,
                                                const GValue  *value,
@@ -100,6 +102,7 @@ class_init (TomoeDictUnihanClass *klass)
 
     gobject_class->constructor  = constructor;
     gobject_class->dispose      = dispose;
+    gobject_class->finalize     = finalize;
     gobject_class->set_property = set_property;
     gobject_class->get_property = get_property;
 
@@ -161,19 +164,12 @@ TOMOE_MODULE_IMPL_INIT (GTypeModule *type_module)
             g_list_prepend (registered_types,
                             (gchar *) g_type_name (tomoe_type_dict_unihan));
 
-    if (!chars)
-        chars = _tomoe_unihan_create ();
-
     return registered_types;
 }
 
 G_MODULE_EXPORT void
 TOMOE_MODULE_IMPL_EXIT (void)
 {
-    if (chars) {
-        TOMOE_PTR_ARRAY_FREE_ALL (chars, g_object_unref);
-        chars = NULL;
-    }
 }
 
 G_MODULE_EXPORT GObject *
@@ -190,6 +186,12 @@ constructor (GType type, guint n_props,
     GObjectClass *klass = G_OBJECT_CLASS (parent_class);
 
     object = klass->constructor (type, n_props, props);
+
+    chars_ref_count++;
+    if (chars_ref_count == 1) {
+        g_assert (chars == NULL);
+        chars = _tomoe_unihan_create ();
+    }
 
     return object;
 }
@@ -245,6 +247,19 @@ dispose (GObject *object)
     dict->name     = NULL;
 
     G_OBJECT_CLASS (parent_class)->dispose (object);
+}
+
+static void
+finalize (GObject *object)
+{
+    chars_ref_count--;
+    if (chars_ref_count == 0) {
+        g_assert (chars != NULL);
+        TOMOE_PTR_ARRAY_FREE_ALL (chars, g_object_unref);
+        chars = NULL;
+    }
+
+    G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static const gchar*
