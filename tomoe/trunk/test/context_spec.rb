@@ -44,7 +44,7 @@ EOC
     @user_dict_config_file.close
   end
 
-  TomoeSpecUtils::Config.test_data_files.each do |file|
+  TomoeSpecUtils::Path.test_data_files.each do |file|
     base = File.basename(file)
     specify "Search by strokes for #{base}" do
       expected, writing = TomoeSpecUtils::TestData.parse(file)
