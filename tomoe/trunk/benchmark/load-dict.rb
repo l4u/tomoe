@@ -11,11 +11,10 @@ require "tomoe-spec-utils"
 
 n = 3
 Benchmark.bmbm do |x|
-  TomoeSpecUtils::Config.dictionaries.sort.each do |dictionary|
-    x.report(File.basename(dictionary)) do
-      n.times {Tomoe::DictXML.new("filename" => dictionary,
-                                  "editable" => false)}
-    end
+  dictionary = TomoeSpecUtils::Path.dictionary
+  x.report(File.basename(dictionary)) do
+    n.times {Tomoe::DictXML.new("filename" => dictionary,
+                                "editable" => false)}
   end
 
   x.report("Unihan") do

@@ -109,6 +109,8 @@ module TomoeSpecUtils
   end
 
   module Config
+    extend Path
+
     module_function
     def db_config_for_active_record(type=nil)
       YAML.load(File.read(db_config_file))[type || ENV["TOMOE_ENV"] || "test"]

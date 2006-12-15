@@ -10,7 +10,7 @@ $LOAD_PATH.unshift(File.join(test_dir))
 
 require 'tomoe-spec-utils'
 
-data_dir = TomoeSpecUtils::Config.data_dir
+data_dir = TomoeSpecUtils::Path.data_dir
 use_est = false
 if use_est
   database = File.join(data_dir, "handwriting")
@@ -26,7 +26,7 @@ context.load_config(config_file.path)
 
 n = 10
 Benchmark.bmbm do |x|
-  TomoeSpecUtils::Config.test_data_files.sort.each do |file|
+  TomoeSpecUtils::Path.test_data_files.sort.each do |file|
     expected, writing = TomoeSpecUtils::TestData.parse(file)
     query = Tomoe::Query.new
     query.writing = writing
