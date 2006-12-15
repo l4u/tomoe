@@ -1,3 +1,7 @@
+2006-12-15  Kouhei Sutou  <kou@cozmixng.org>
+
+	* module/dict/tomoe-dict-unihan.c: load chars on demand.
+
 2006-12-14  Kouhei Sutou  <kou@cozmixng.org>
 
 	* lib/tomoe-module.c (tomoe_module_unload): fixed a typo.
