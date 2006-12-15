@@ -1,84 +1,57 @@
 require 'tomoe-spec-utils'
 
-context "Tomoe::Dict" do
+dict_module_type = TomoeSpecUtils::Config.dict_module_type
+context "Tomoe::Dict (#{dict_module_type})" do
+  read_only_dictionaries = %w(unihan)
+  if read_only_dictionaries.include?(dict_module_type)
+    puts "#{dict_module_type} is read-only dictionary. skip tests."
+    break
+  end
+
   setup do
     setup_dict_file
-    setup_est_draft_file
+    @original = Tomoe::DictXML.new("filename" => @dict_file.path)
   end
 
-  specify "should load XML dictionary" do
-    dict = Tomoe::DictXML.new("filename" => @dict_file.path, "editable" => true)
-    a = dict[@utf8]
-    a.writing.strokes.should == @strokes
-  end
-
-  specify "should make Hyper Estraier dictionary" do
-    begin
-      est_db = File.join(tmp_dir, "est")
-
-      `estcmd create #{est_db.dump}`
-      `estcmd put #{est_db.dump} #{@est_draft_file.path.dump}`
-
-      dict = Tomoe::DictEst.new("database" => est_db, "editable" => true)
+  specify "should load" do
+    make_temporary_dict(@original) do |dict|
       a = dict[@utf8]
       a.writing.strokes.should == @strokes
-    ensure
-      FileUtils.rm_rf(est_db)
     end
   end
 
-  specify "should load Subverion dictionary" do
-    begin
-      repos = File.join(tmp_dir, "svn.repos")
-      repos_url = "file://#{repos}"
-      wc = File.join(tmp_dir, "svn.wc")
-      dict_file = File.join(wc, "dict.xml")
+  specify "should register/unregister" do
+    make_temporary_dict(@original) do |dict|
+      prev = dict.search(Tomoe::Query.new).collect do |cand|
+        cand.char.utf8
+      end
 
-      `svnadmin create #{repos.dump}`
-      `svn co #{repos_url.dump} #{wc.dump}`
-      FileUtils.cp(@dict_file.path, dict_file)
-      `svn add #{dict_file.dump}`
+      char = Tomoe::Char.new
+      char.utf8 = "か"
+      dict.register(char).should == true
+      dict["か"].should == char
+      dict.search(Tomoe::Query.new).collect do |cand|
+        cand.char.utf8
+      end.sort.should == ["か", *prev].sort
+      dict.unregister("か").should == true
+      dict["か"].should_nil
 
-      `svnlook youngest #{repos.dump}`.chomp.should == "0"
-      `svn ci -m '' #{wc.dump}`
-      `svnlook youngest #{repos.dump}`.chomp.should == "1"
-
-      xml_dict = Tomoe::DictXML.new("filename" => dict_file, "editable" => true)
-      dict = Tomoe::DictSvn.new("dictionary" => xml_dict, "working_copy" => wc)
-      a = dict[@utf8]
-      a.writing.strokes.should == @strokes
-
-      `svnlook youngest #{repos.dump}`.chomp.should == "1"
-      dict.register(Tomoe::Char.new)
-      `svnlook youngest #{repos.dump}`.chomp.should == "1"
-      dict.flush
-      `svnlook youngest #{repos.dump}`.chomp.should == "2"
-    ensure
-      FileUtils.rm_rf(repos)
-      FileUtils.rm_rf(wc)
+      dict.search(Tomoe::Query.new).collect do |cand|
+        cand.char.utf8
+      end.should == prev
     end
   end
 
-  specify "should register/unregister to MySQL database" do
-    dict = Tomoe::DictMySQL.new(db_config)
-    char = Tomoe::Char.new
-    char.utf8 = "あ"
-    dict.register(char).should == true
-    dict.search(Tomoe::Query.new).collect do |cand|
-      cand.char.utf8
-    end.should == ["あ"]
-    dict.unregister("あ").should == true
-    dict.search(Tomoe::Query.new).should_empty
-  end
+  specify "should register/unregister PUA character" do
+    make_temporary_dict(@original) do |dict|
+      char = Tomoe::Char.new
+      dict.register(char).should == true
+      char.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)
 
-  specify "should register/unregister PUA character to MySQL database" do
-    dict = Tomoe::DictMySQL.new(db_config)
-    char = Tomoe::Char.new
-    dict.register(char).should == true
-    dict.search(Tomoe::Query.new).size.should == 1
-    char.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)
-    dict.unregister(char.utf8).should == true
-    dict.search(Tomoe::Query.new).should_empty
+      dict[ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)].should == char
+      dict.unregister(char.utf8).should == true
+      dict[ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)].should_nil
+    end
   end
 
   def setup_strokes

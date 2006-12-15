@@ -42,7 +42,9 @@ module TomoeSpecUtils
   def self.included(base)
     base.class_eval do
       include Base
+      include Path
       include Config
+      include Dictionary
       include Unicode
     end
   end
@@ -55,7 +57,7 @@ module TomoeSpecUtils
     end
   end
 
-  module Config
+  module Path
     module_function
     def base_dir
       File.expand_path(File.dirname(__FILE__))
@@ -97,6 +99,17 @@ module TomoeSpecUtils
       File.join(db_dir, "config.yml")
     end
 
+    def test_data_files
+      Dir.glob(File.join(test_data_dir, "*.data"))
+    end
+
+    def dictionary
+      File.join(data_dir, "kanjidic2.xml")
+    end
+  end
+
+  module Config
+    module_function
     def db_config_for_active_record(type=nil)
       YAML.load(File.read(db_config_file))[type || ENV["TOMOE_ENV"] || "test"]
     end
@@ -120,18 +133,13 @@ module TomoeSpecUtils
       FileUtils.rm_rf(tmp_dir)
     end
 
-    def dictionaries
-      %w(kanjidic2.xml).collect do |xml|
-        File.join(data_dir, xml)
-      end
+    def dict_module_type
+      ENV["TOMOE_DICT_MODULE"] || "xml"
     end
 
-    def test_data_files
-      Dir.glob(File.join(test_data_dir, "*.data"))
-    end
-
-    def make_config_file(name=nil, dict_type=:unihan)
-      name ||= "tomoe"
+    def make_config_file(dict_type=nil)
+      dict_type ||= dict_module_type
+      name ||= "tomoe-#{dict_type}"
       config_file = Tempfile.new(name)
       config_file.open
       config_file.puts(<<-EOC)
@@ -139,36 +147,148 @@ module TomoeSpecUtils
 use_system_dictionaries = false
 EOC
 
-      case dict_type
-      when :unihan
-        config_file.puts(<<-EOC)
+      config_maker = "make_config_file_for_#{dict_type}"
+      unless respond_to?(config_maker, true)
+        raise "unknown dictionary type: #{dict_type}"
+      end
+      config_file.puts(send(config_maker))
+
+      config_file.close
+      config_file
+    end
+
+    def make_config_file_for_unihan
+      <<-EOC
 [unihan-dictionary]
 type = unihan
 EOC
-      else
-        dictionaries.each_with_index do |dictionary, i|
-          case dict_type
-          when :est
-            config_file.puts(<<-EOC)
+    end
+
+    def make_config_file_for_est
+      <<-EOC
 [#{File.basename(dictionary)}-dictionary]
 type = est
 name = #{File.basename(dictionary)}
 database = #{dictionary.sub(/\.xml$/, '')}
-#{(i % 2).zero? ? 'use = true' : ''}
 EOC
-          else
-            config_file.puts(<<-EOC)
+    end
+
+    def make_config_file_for_xml
+      <<-EOC
 [#{File.basename(dictionary)}-dictionary]
 type = xml
 file = #{dictionary}
-#{(i % 2).zero? ? 'use = true' : ''}
 EOC
-          end
-        end
-      end
+    end
+  end
 
-      config_file.close
-      config_file
+  module Dictionary
+    module_function
+    def make_dict(dict_type=nil, config=nil)
+      dict_type ||= dict_module_type
+      dict_maker = "make_dict_#{dict_type}"
+      unless respond_to?(dict_maker, true)
+        raise "unknown dictionary type: #{dict_type}"
+      end
+      send(dict_maker, config)
+    end
+
+    def make_temporary_dict(original, dict_type=nil, config=nil, &block)
+      dict_type ||= dict_module_type
+      temporary_dict_maker = "make_temporary_dict_#{dict_type}"
+      unless respond_to?(temporary_dict_maker, true)
+        raise "unknown dictionary type: #{dict_type}"
+      end
+      send(temporary_dict_maker, config) do |dict|
+        original.search(Tomoe::Query.new).each do |cand|
+          dict.register(cand.char)
+        end
+        block.call(dict)
+      end
+    end
+
+    def make_dict_unihan(config=nil)
+      check_dict_module_availability("Unihan")
+      Tomoe::DictUnihan.new(config || {})
+    end
+
+    def make_dict_xml(config=nil)
+      check_dict_module_availability("XML")
+      config ||= {}
+      config = config.dup
+      config["filename"] ||= dictionary
+      Tomoe::DictXML.new(config)
+    end
+
+    def make_temporary_dict_xml(config=nil)
+      check_dict_module_availability("XML")
+      dict = nil
+      begin
+        tmp_dict_dir = File.join(tmp_dir, "dict")
+        FileUtils.mkdir_p(tmp_dict_dir)
+        dict_file = File.join(tmp_dict_dir, "dict.xml")
+        dict = Tomoe::DictXML.new("filename" => dict_file, "editable" => true)
+        yield dict
+      ensure
+        dict.flush if dict
+        FileUtils.rm_rf(tmp_dict_dir)
+      end
+    end
+
+    def make_dict_est(config=nil)
+      check_dict_module_availability("Est")
+      config ||= {}
+      config = config.dup
+      config["database"] ||= dictionary.sub(/\.xml/, '')
+      config["editable"] = true unless config.has_key?("editable")
+      Tomoe::DictEst.new(config)
+    end
+
+    def make_temporary_dict_est(config=nil)
+      check_dict_module_availability("Est")
+      begin
+        tmp_dict_dir = File.join(tmp_dir, "est")
+        yield Tomoe::DictEst.new("database" => tmp_dict_dir, "editable" => true)
+      ensure
+        FileUtils.rm_rf(tmp_dict_dir)
+      end
+    end
+
+    def make_dict_mysql(config=nil)
+      check_dict_module_availability("MySQL")
+      config ||= db_config
+      config = config.dup
+      Tomoe::DictMySQL.new(config)
+    end
+
+    def make_temporary_dict_mysql(config=nil)
+      check_dict_module_availability("MySQL")
+      sql_purge("temp")
+      yield Tomoe::DictMySQL.new(db_config("temp"))
+    end
+
+    def check_dict_module_availability(type)
+      unless Tomoe.const_defined?("Dict#{type}")
+        raise "Tomoe doesn't support the dictionary type: #{type}"
+      end
+    end
+
+    def sql_migrate(type=nil, version=nil)
+      migrate = File.join(db_dir, "migrate.rb")
+      tomoe_env = ENV["TOMOE_ENV"]
+      ENV["TOMOE_ENV"] = type if type
+      unless `#{migrate} #{version}`
+        message = "failed to migrate"
+        message << " to #{version}" if version
+        raise message
+      end
+    ensure
+      ENV["TOMOE_ENV"] = tomoe_env
+    end
+
+    def sql_purge(type=nil)
+      sql_migrate(type, 0)
+      sql_migrate(type)
     end
   end
 
@@ -215,7 +335,7 @@ EOC
   end
 end
 
-ENV["TOMOE_DICT_MODULE_DIR"] ||= TomoeSpecUtils::Config.dict_dir
-ENV["TOMOE_RECOGNIZER_MODULE_DIR"] ||= TomoeSpecUtils::Config.recognizer_dir
+ENV["TOMOE_DICT_MODULE_DIR"] ||= TomoeSpecUtils::Path.dict_dir
+ENV["TOMOE_RECOGNIZER_MODULE_DIR"] ||= TomoeSpecUtils::Path.recognizer_dir
 
 require 'tomoe'

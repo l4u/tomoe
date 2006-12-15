@@ -1,5 +1,12 @@
 2006-12-15  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/tomoe-spec-utils.rb:
+	- test target dictionary can be	specified by TOMOE_DICT_MODULE
+	environment variable.
+	- split path related methods to Path from Config.
+	* test/context_spec.rb, test/dict_spec.rb: followed the changes.
+	* db/config.yml.example: supported temporary database.
+
 	* module/dict/tomoe-dict-unihan.c: load chars on demand.
 
 2006-12-14  Kouhei Sutou  <kou@cozmixng.org>
