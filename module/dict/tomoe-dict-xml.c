@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <gmodule.h>
@@ -385,6 +386,9 @@ tomoe_dict_xml_load (TomoeDictXML *dict)
     gboolean success = TRUE;
     TomoeXMLParsedData result;
 
+    if (!g_file_test (dict->filename, G_FILE_TEST_EXISTS))
+        return success;
+
     result.name = NULL;
     result.chars = dict->chars;
     success = _tomoe_xml_parser_parse_dictionary_file (dict->filename, &result);
@@ -410,7 +414,10 @@ tomoe_dict_xml_save (TomoeDictXML *dict)
     if (!dict->editable) return FALSE;
 
     f = fopen (dict->filename, "wb");
-    g_return_val_if_fail (f, FALSE);
+    if (!f) {
+        g_warning ("can't open %s: %s", dict->filename, strerror (errno));
+        return FALSE;
+    }
 
     /* write the header */
     head = g_strdup (
