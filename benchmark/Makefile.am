@@ -2,7 +2,11 @@
 
 .PHONY: benchamrk
 
-benchmark_files = load-dict.rb search-by-recognizer.rb convert-char.rb
+benchmark_files =		\
+	load-dict.rb		\
+	search-by-recognizer.rb	\
+	search-by-dict.rb	\
+	convert-char.rb
 
 benchmark: $(top_builddir)/ext/ruby/tomoe.la
 	for bench in $(benchmark_files);	\

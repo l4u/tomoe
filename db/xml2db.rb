@@ -24,7 +24,7 @@ $stdout.flush
 `#{migrate}`
 puts "done."
 
-filename = TomoeSpecUtils::Config.dictionaries.first
+filename = TomoeSpecUtils::Path.dictionary
 dict = Tomoe::DictXML.new("filename" => filename,
                           "editable" => false)
 config = TomoeSpecUtils::Config.db_config.merge("editable" => true)

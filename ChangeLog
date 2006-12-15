@@ -1,7 +1,10 @@
 2006-12-15  Kouhei Sutou  <kou@cozmixng.org>
 
+	* utils/, db/, test/, benchmark/: followed TomoeSpecUtils changes.
+
 	* module/dict/tomoe-dict-xml.c (tomoe_dict_xml_save): show more
 	useful error message.
+	(tomoe_dict_xml_load): don't load if the filename doesn't exist.
 
 	* test/tomoe-spec-utils.rb:
 	- test target dictionary can be	specified by TOMOE_DICT_MODULE
