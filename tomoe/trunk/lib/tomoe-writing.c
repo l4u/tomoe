@@ -252,7 +252,7 @@ tomoe_point_get_type (void)
 
     if (our_type == 0) {
         const gchar *str;
-#if GLIB_CHECK_VERSION(2, 6, 10)
+#if GLIB_CHECK_VERSION(2, 10, 0)
         str = g_intern_static_string ("TomoePoint");
 #else
         str = "TomoePoint";
