@@ -47,7 +47,7 @@ void g_ptr_array_foreach_reverse (GPtrArray *array,
                                   GFunc      func,
                                   gpointer   user_data);
 
-#if !GLIB_CHECK_VERSION(2, 8, 10)
+#if !GLIB_CHECK_VERSION(2, 8, 0)
 gboolean g_file_set_contents (const gchar *filename,
                               const gchar *contents,
                               gssize	     length,
