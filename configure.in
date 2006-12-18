@@ -383,7 +383,7 @@ dnl **************************************************************
 
 TOMOE_CFLAGS="$TOMOE_CFLAGS \$(GLIB_CFLAGS)"
 TOMOE_CFLAGS="$TOMOE_CFLAGS -DCONFDIR=\\\"\"\$(confdir)\"\\\""
-TOMOE_CFLAGS="$TOMOE_CFLAGS -DDATADIR=\\\"\"\$(datadir)\"\\\""
+TOMOE_CFLAGS="$TOMOE_CFLAGS -DDATADIR=\\\"\"\$(pkgdatadir)\"\\\""
 TOMOE_CFLAGS="$TOMOE_CFLAGS -DDICT_DATADIR=\\\"\"\$(dict_datadir)\"\\\""
 TOMOE_CFLAGS="$TOMOE_CFLAGS -DRECOGNIZER_DATADIR=\\\"\"\$(recognizer_datadir)\"\\\""
 TOMOE_CFLAGS="$TOMOE_CFLAGS -DDICT_MODULEDIR=\\\"\"\$(dict_moduledir)\"\\\""
@@ -410,6 +410,7 @@ doc/Makefile
 doc/reference/Makefile
 doc/reference/version.xml
 tomoe.pc
+tomoe.spec
 ])
 
 AC_OUTPUT
