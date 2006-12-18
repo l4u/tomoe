@@ -12,7 +12,7 @@ AM_INIT_AUTOMAKE(tomoe, [tomoe_version])
 AM_CONFIG_HEADER(config.h)
 
 AC_ENABLE_SHARED(yes)
-AC_ENABLE_STATIC(no)
+AC_ENABLE_STATIC(yes)
 AM_PROG_LIBTOOL
 
 TOMOE_VERSION=tomoe_version
@@ -153,19 +153,17 @@ dnl **************************************************************
 dnl Configure for configuration.
 dnl **************************************************************
 
-confdir="${sysconfdir}/\$(PACKAGE)"
+confdir="\${sysconfdir}/\$(PACKAGE)"
 AC_SUBST(confdir)
 
 dnl **************************************************************
 dnl Configure for data.
 dnl **************************************************************
 
-datadir="${datadir}/\$(PACKAGE)"
-
-dict_datadir="${datadir}/dict"
+dict_datadir="\${pkgdatadir}/dict"
 AC_SUBST(dict_datadir)
 
-recognizer_datadir="${datadir}/recognizer"
+recognizer_datadir="\${pkgdatadir}/recognizer"
 AC_SUBST(recognizer_datadir)
 
 dnl **************************************************************
@@ -267,21 +265,21 @@ dnl **************************************************************
 dnl Configure for modules.
 dnl **************************************************************
 
-moduledir="${libdir}/\$(PACKAGE)/module"
+moduledir="\${libdir}/\$(PACKAGE)/module"
 AC_SUBST(moduledir)
 
 dnl **************************************************************
 dnl Configure for recognizer modules.
 dnl **************************************************************
 
-recognizer_moduledir="${moduledir}/recognizer"
+recognizer_moduledir="\${moduledir}/recognizer"
 AC_SUBST(recognizer_moduledir)
 
 dnl **************************************************************
 dnl Configure for dictionary modules.
 dnl **************************************************************
 
-dict_moduledir="${moduledir}/dict"
+dict_moduledir="\${moduledir}/dict"
 AC_SUBST(dict_moduledir)
 
 dnl **************************************************************
