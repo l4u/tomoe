@@ -21,15 +21,19 @@ Group:     System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 Requires: /sbin/ldconfig
+Requires: mysql-client
 BuildRequires: pkgconfig
 BuildRequires: glib2-devel
 BuildRequires: mysql-devel
 
-%description 
-Tomoe provides a handwriting recognition engine and its user interface on open source desktop environment.
+%description
+Tomoe provides a handwriting recognition engine and its user
+interface on open source desktop environment.
+
 
 %description -l ja_JP.utf8
-Tomoeはオープンソース環境において手書き文字入力を実現するためのソフトウェアです。
+Tomoeはオープンソース環境において手書き文字入力を実現するた
+めのソフトウェアです。
 
 %package devel
 Summary: Tomoe developmental libraries and header files
@@ -52,13 +56,13 @@ Tomoeライブラリにリンクするソフトウェアを開発するための
 %setup -q
 
 %build
-%configure --without-ruby
+%configure --without-ruby --enable-mysql
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%makeinstall 
+%makeinstall
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
 rm $RPM_BUILD_ROOT%{_libdir}/*.a
 
