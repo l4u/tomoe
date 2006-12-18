@@ -1,5 +1,7 @@
 2006-12-18  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/glib-utils.[ch] (g_file_set_contents): copied from GLib.
+
 	* lib/tomoe-writing.c (tomoe_point_get_type): don't use
 	g_intern_static_string() if not available.
 
