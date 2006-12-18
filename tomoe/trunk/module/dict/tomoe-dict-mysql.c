@@ -41,6 +41,8 @@
 #define TOMOE_IS_DICT_MYSQL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TOMOE_TYPE_DICT_MYSQL))
 #define TOMOE_DICT_MYSQL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), TOMOE_TYPE_DICT_MYSQL, TomoeDictMySQLClass))
 
+#define TOMOE_DICT_MYSQL_IS_CONNECTED(dict) (dict->mysql)
+
 enum {
     PROP_0,
     PROP_NAME,
@@ -568,7 +570,7 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
     g_return_val_if_fail (TOMOE_IS_DICT_MYSQL (dict), FALSE);
     g_return_val_if_fail (TOMOE_IS_CHAR (chr), FALSE);
 
-    g_return_val_if_fail (dict->mysql, FALSE);
+    g_return_val_if_fail (TOMOE_DICT_MYSQL_IS_CONNECTED (dict), FALSE);
 
     if (!execute_query (dict, "START TRANSACTION"))
         return FALSE;
@@ -615,7 +617,7 @@ unregister_char (TomoeDict *_dict, const gchar *utf8)
     g_return_val_if_fail (TOMOE_IS_DICT_MYSQL (dict), FALSE);
     g_return_val_if_fail (utf8 && *utf8 != '\0', FALSE);
 
-    g_return_val_if_fail (dict->mysql, FALSE);
+    g_return_val_if_fail (TOMOE_DICT_MYSQL_IS_CONNECTED (dict), FALSE);
 
     if (!execute_query (dict, "START TRANSACTION"))
         return FALSE;
@@ -863,7 +865,7 @@ get_char (TomoeDict *_dict, const gchar *utf8)
     g_return_val_if_fail (TOMOE_IS_DICT_MYSQL (dict), chr);
     g_return_val_if_fail (utf8 && utf8[0] != '\0', chr);
 
-    g_return_val_if_fail (dict->mysql, chr);
+    g_return_val_if_fail (TOMOE_DICT_MYSQL_IS_CONNECTED (dict), chr);
 
     query = tomoe_query_new ();
     tomoe_query_set_utf8 (query, utf8);
@@ -891,7 +893,7 @@ search (TomoeDict *_dict, TomoeQuery *query)
     g_return_val_if_fail (TOMOE_IS_DICT_MYSQL (dict), results);
     g_return_val_if_fail (TOMOE_IS_QUERY (query), results);
 
-    g_return_val_if_fail (dict->mysql, results);
+    g_return_val_if_fail (TOMOE_DICT_MYSQL_IS_CONNECTED (dict), results);
 
     sql = generate_sql (dict, query);
     success = execute_query (dict, sql);
@@ -936,6 +938,7 @@ get_available_private_utf8 (TomoeDict *_dict)
     MYSQL_RES *result;
 
     g_return_val_if_fail (TOMOE_IS_DICT_MYSQL (dict), NULL);
+    g_return_val_if_fail (TOMOE_DICT_MYSQL_IS_CONNECTED (dict), NULL);
 
     len = g_unichar_to_utf8 (TOMOE_CHAR_PRIVATE_USE_AREA_START, pua_start_utf8);
     pua_start_utf8[len] = '\0';
@@ -977,14 +980,15 @@ tomoe_dict_mysql_connect (TomoeDictMySQL *dict)
         return FALSE;
     }
 
-    mysql_options(dict->mysql, MYSQL_READ_DEFAULT_GROUP, "TOMOE");
-    mysql_options(dict->mysql, MYSQL_SET_CHARSET_NAME, "UTF8");
+    mysql_options (dict->mysql, MYSQL_READ_DEFAULT_GROUP, "TOMOE");
+    mysql_options (dict->mysql, MYSQL_SET_CHARSET_NAME, "UTF8");
     if (!mysql_real_connect (dict->mysql, dict->host, dict->user,
                              dict->password, dict->database, dict->port,
                              dict->socket, 0)) {
         g_warning ("cannot connect to %s at %s:%d/%s by %s@XXX: %s",
                    dict->database, dict->host, dict->port,
                    dict->socket, dict->user, mysql_error (dict->mysql));
+        tomoe_dict_mysql_close (dict);
         return FALSE;
     }
 
