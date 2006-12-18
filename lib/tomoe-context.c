@@ -36,7 +36,7 @@
 
 #define DEFAULT_USER_DICT_CONTENT									\
 "<?xml version =\"1.0\" encoding=\"UTF-8\"?>\n"						\
-"<!DOCTYPE dictionary SYSTEM \"" DATADIR "/tomoe-dict.dtd\">\n"		\
+"<!DOCTYPE dictionary SYSTEM \"" DATADIR "/dict.dtd\">\n"			\
 "<dictionary name=\"User dictionary\">\n"							\
 "</dictionary>\n"
 
