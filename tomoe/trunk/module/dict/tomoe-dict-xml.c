@@ -405,62 +405,44 @@ tomoe_dict_xml_load (TomoeDictXML *dict)
 static gboolean
 tomoe_dict_xml_save (TomoeDictXML *dict)
 {
-    FILE *f;
-    gchar *head;
-    const gchar *foot = "</dictionary>\n";
+    GString *xml;
+    GError *error = NULL;
+    gboolean success;
     guint i;
 
     g_return_val_if_fail (TOMOE_IS_DICT (dict), FALSE);
     if (!dict->editable) return FALSE;
 
-    f = fopen (dict->filename, "wb");
-    if (!f) {
-        g_warning ("can't open %s: %s", dict->filename, strerror (errno));
-        return FALSE;
-    }
-
-    /* write the header */
-    head = g_strdup (
+    xml = g_string_new (
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
         "<!DOCTYPE dictionary SYSTEM \"tomoe-dict.dtd\">\n");
-    if (fwrite (head, strlen (head), 1, f) < 1) goto ERROR;
-    g_free (head);
-
     if (dict->name)
-        head = g_markup_printf_escaped ("<dictionary name=\"%s\">\n",
-                                        dict->name);
+        g_string_append_printf (xml,
+                                "<dictionary name=\"%s\">\n", dict->name);
     else
-        head = g_strdup ("<dictionary>\n");
-    if (fwrite (head, strlen (head), 1, f) < 1) goto ERROR;
+        g_string_append (xml, "<dictionary>\n");
 
-    /* write each characters */
     for (i = 0; i < dict->chars->len; i++) {
-        gchar *xml;
-        gboolean failed;
-        TomoeChar* chr = (TomoeChar*)g_ptr_array_index (dict->chars, i);
+        gchar *chr_xml;
+        TomoeChar *chr = g_ptr_array_index (dict->chars, i);
 
-        xml = tomoe_char_to_xml (chr);
-        if (!xml) goto ERROR;
-
-        failed = fwrite (xml, strlen (xml), 1, f) < 1;
-        g_free (xml);
-        if (failed) goto ERROR;
+        chr_xml = tomoe_char_to_xml (chr);
+        if (chr_xml) {
+            g_string_append (xml, chr_xml);
+            g_free (chr_xml);
+        }
     }
 
-    /* close root element */
-    if (fwrite (foot, strlen (foot), 1, f) < 1) goto ERROR;
+    g_string_append (xml, "</dictionary>\n");
 
-    /* clean */
-    g_free (head);
-    fclose (f);
-    dict->modified = FALSE;
-    return TRUE;
+    success = g_file_set_contents (dict->filename, xml->str, xml->len, &error);
+    if (success)
+        dict->modified = FALSE;
+    else
+        TOMOE_HANDLE_ERROR (error);
 
-ERROR:
-    g_free (head);
-    g_warning ("Faild to write %s.", dict->filename);
-    fclose (f);
-    return FALSE;
+    g_string_free (xml, TRUE);
+    return success;
 }
 
 /*

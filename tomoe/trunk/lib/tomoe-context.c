@@ -182,24 +182,15 @@ static gboolean
 ensure_user_dict_file_content (const gchar *user_dict_filename)
 {
     if (!g_file_test (user_dict_filename, G_FILE_TEST_EXISTS)) {
-        FILE *f;
         const gchar *content;
-
-        f = fopen (user_dict_filename, "wb");
-        if (!f) {
-            g_warning ("failed to open %s: %s",
-                       user_dict_filename, strerror (errno));
-            return FALSE;
-        }
+        GError *error = NULL;
 
         content = DEFAULT_USER_DICT_CONTENT;
-        if (fwrite (content, strlen (content), 1, f) < 1) {
-            g_warning ("failed to write to %s: %s",
-                       user_dict_filename, strerror (errno));
+        if (!g_file_set_contents (user_dict_filename,
+                                  content, strlen (content), &error)) {
+            TOMOE_HANDLE_ERROR (error);
             return FALSE;
         }
-
-        fclose (f);
     }
 
     return TRUE;
