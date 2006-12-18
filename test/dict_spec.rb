@@ -1,7 +1,7 @@
 require 'tomoe-spec-utils'
 
 dict_module_type = TomoeSpecUtils::Config.dict_module_type
-context "Tomoe::Dict (#{dict_module_type})" do
+context "Tomoe::Dict(#{dict_module_type})" do
   read_only_dictionaries = %w(unihan)
   if read_only_dictionaries.include?(dict_module_type)
     puts "#{dict_module_type} is read-only dictionary. skip tests."

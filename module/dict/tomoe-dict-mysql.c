@@ -657,7 +657,7 @@ generate_sql_condition_utf8 (TomoeDictMySQL *dict, GString *sql,
 
     utf8 = tomoe_query_get_utf8 (query);
     if (utf8) {
-        g_string_append (sql, " AND utf8 = ");
+        g_string_append (sql, " AND chars.utf8 = ");
         append_string_value (dict, sql, utf8);
     }
 }
@@ -861,7 +861,7 @@ get_char (TomoeDict *_dict, const gchar *utf8)
     GList *cands;
 
     g_return_val_if_fail (TOMOE_IS_DICT_MYSQL (dict), chr);
-    g_return_val_if_fail (TOMOE_IS_CHAR (chr), chr);
+    g_return_val_if_fail (utf8 && utf8[0] != '\0', chr);
 
     g_return_val_if_fail (dict->mysql, chr);
 
@@ -871,7 +871,7 @@ get_char (TomoeDict *_dict, const gchar *utf8)
     g_object_unref (query);
 
     if (cands) {
-        chr = g_object_ref (cands->data);
+        chr = g_object_ref (tomoe_candidate_get_char (cands->data));
         g_list_foreach (cands, (GFunc) g_object_unref, NULL);
         g_list_free (cands);
     }

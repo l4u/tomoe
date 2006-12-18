@@ -28,10 +28,21 @@ module Spec
       include TomoeSpecSetup
     end
 
-    module Formatter
-      class ProgressBarFormatter
-        def format_backtrace(backtrace)
-          super(backtrace.collect {|bt| bt.sub(/\A([^:]+:\d+)$/, '\\1:')})
+    class ContextRunner
+      def run(exit_when_done)
+        @reporter.start(number_of_specs)
+        begin
+          @contexts.each do |context|
+            context.run(@reporter, @dry_run)
+          end
+        rescue Interrupt
+        ensure
+          @reporter.end
+        end
+        failure_count = @reporter.dump
+        if(exit_when_done)
+          exit_code = (failure_count == 0) ? 0 : 1
+          exit(exit_code)
         end
       end
     end
@@ -181,6 +192,17 @@ EOC
 type = xml
 file = #{dictionary}
 EOC
+    end
+
+    def make_config_file_for_mysql
+      config = <<-EOC
+[mysql-dictionary]
+type = mysql
+EOC
+      db_config.each do |key, value|
+        config << "#{key} = #{value}\n"
+      end
+      config
     end
   end
 

@@ -1,5 +1,26 @@
 2006-12-15  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/tomoe-spec-utils.rb:
+	- patched RSpec to show results even if	interrupted.
+	- removed a patch that was merged into RSpec.
+
+	* test/: supported tests for each dictionary module.
+
+	* module/dict/tomoe-dict-ptr-array.c: used tomoe_query_is_empty().
+
+	* lib/tomoe-dict.c (tomoe_dict_get_available_private_utf8): added
+	warning message.
+
+	* module/dict/tomoe-dict-mysql.c (get_char): should return
+	TomoeChar not TomoeCandidate.
+
+	* module/dict/tomoe-dict-est.c (get_available_private_utf8):
+	supported PUA.
+
+	* lib/tomoe-query.[ch] (tomoe_query_is_empty): added.
+	* module/dict/tomoe-dict-ptr-array.c,
+	module/dict/tomoe-dict-est.c: used tomoe_query_is_empty().
+
 	* utils/, db/, test/, benchmark/: followed TomoeSpecUtils changes.
 
 	* module/dict/tomoe-dict-xml.c (tomoe_dict_xml_save): show more

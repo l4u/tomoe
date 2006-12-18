@@ -261,10 +261,13 @@ tomoe_dict_get_available_private_utf8 (TomoeDict *dict)
     g_return_val_if_fail (TOMOE_IS_DICT (dict), NULL);
 
     klass = TOMOE_DICT_GET_CLASS (dict);
-    if (klass->get_available_private_utf8)
+    if (klass->get_available_private_utf8) {
         return klass->get_available_private_utf8 (dict);
-    else
+    } else {
+        g_warning ("%s backend doesn't support PUA(Private Use Area)",
+                   tomoe_dict_get_name (dict));
         return NULL;
+    }
 }
 
 /*

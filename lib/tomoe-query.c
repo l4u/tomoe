@@ -226,7 +226,7 @@ tomoe_query_get_property (GObject    *object,
 }
 
 const gchar *
-tomoe_query_get_utf8 (TomoeQuery* query)
+tomoe_query_get_utf8 (TomoeQuery *query)
 {
     TomoeQueryPrivate *priv;
 
@@ -237,7 +237,7 @@ tomoe_query_get_utf8 (TomoeQuery* query)
 }
 
 void
-tomoe_query_set_utf8 (TomoeQuery* query, const gchar *utf8)
+tomoe_query_set_utf8 (TomoeQuery *query, const gchar *utf8)
 {
     TomoeQueryPrivate *priv;
 
@@ -251,7 +251,7 @@ tomoe_query_set_utf8 (TomoeQuery* query, const gchar *utf8)
 }
 
 const GList *
-tomoe_query_get_readings (TomoeQuery* query)
+tomoe_query_get_readings (TomoeQuery *query)
 {
     TomoeQueryPrivate *priv;
 
@@ -262,7 +262,7 @@ tomoe_query_get_readings (TomoeQuery* query)
 }
 
 void
-tomoe_query_add_reading (TomoeQuery* query, TomoeReading *reading)
+tomoe_query_add_reading (TomoeQuery *query, TomoeReading *reading)
 {
     TomoeQueryPrivate *priv;
 
@@ -366,7 +366,7 @@ tomoe_query_get_max_n_strokes (TomoeQuery *query)
 }
 
 void
-tomoe_query_set_writing (TomoeQuery* query, TomoeWriting *writing)
+tomoe_query_set_writing (TomoeQuery *query, TomoeWriting *writing)
 {
     TomoeQueryPrivate *priv;
 
@@ -380,7 +380,7 @@ tomoe_query_set_writing (TomoeQuery* query, TomoeWriting *writing)
 }
 
 TomoeWriting *
-tomoe_query_get_writing (TomoeQuery* query)
+tomoe_query_get_writing (TomoeQuery *query)
 {
     TomoeQueryPrivate *priv;
 
@@ -390,6 +390,22 @@ tomoe_query_get_writing (TomoeQuery* query)
     return priv->writing;
 }
 
+gboolean
+tomoe_query_is_empty (TomoeQuery *query)
+{
+    TomoeQueryPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_QUERY (query), TRUE);
+
+    priv = TOMOE_QUERY_GET_PRIVATE (query);
+    return !(priv->utf8 ||
+             priv->min_n_strokes > 0 ||
+             priv->max_n_strokes > 0 ||
+             priv->readings ||
+             priv->radicals ||
+             priv->writing ||
+             priv->variant);
+}
 
 /*
 vi:ts=4:nowrap:ai:expandtab
