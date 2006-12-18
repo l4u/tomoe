@@ -1,5 +1,8 @@
 2006-12-18  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-config.c (_tomoe_config_load_system_dictionaries):
+	added error check.
+
 	* data/dict.dtd: renamed from tomoe-dict.dtd.
 	* data/Makefile.am, data/kanjidic2-original.xsl,
 	data/handwriting.xml, lib/tomoe-context.c: followed the changes.
