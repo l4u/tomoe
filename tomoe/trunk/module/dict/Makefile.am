@@ -65,7 +65,7 @@ dict_module_LTLIBRARIES += libunihan.la
 
 unihan_built_sources = tomoe-unihan-data.h
 
-CLEANFILES += Unihan.txt Unihan.txt.cache
+CLEANFILES += Unihan.stamp Unihan.txt Unihan.txt.cache
 BUILT_SOURCES = $(unihan_built_sources)
 
 EXTRA_DIST = unihan-compiler.rb $(BUILT_SOURCES) Unihan.stamp
