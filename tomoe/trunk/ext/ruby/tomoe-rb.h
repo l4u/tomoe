@@ -27,7 +27,7 @@
 
 G_BEGIN_DECLS
 
-#if GOBJ2RVALU
+#ifdef GOBJ2RVALU
 #  define HAVE_GOBJ2RVALU
 #endif
 
