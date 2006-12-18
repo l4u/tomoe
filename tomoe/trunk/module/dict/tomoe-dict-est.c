@@ -100,6 +100,7 @@ static GList       *search                    (TomoeDict     *dict,
                                                TomoeQuery    *query);
 static gboolean     flush                     (TomoeDict     *dict);
 static gboolean     is_editable               (TomoeDict     *dict);
+static gchar       *get_available_private_utf8 (TomoeDict    *dict);
 static gboolean     tomoe_dict_est_open       (TomoeDictEst  *dict);
 static gboolean     tomoe_dict_est_close      (TomoeDictEst  *dict);
 
@@ -126,6 +127,7 @@ class_init (TomoeDictEstClass *klass)
     dict_class->search          = search;
     dict_class->flush           = flush;
     dict_class->is_editable     = is_editable;
+    dict_class->get_available_private_utf8 = get_available_private_utf8;
 
     g_object_class_install_property (
         gobject_class,
@@ -332,6 +334,10 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
         g_free (value);
 
         est_doc_add_attr (doc, "utf8", original_value);
+
+        value = g_strdup_printf ("%d", g_utf8_get_char (original_value));
+        est_doc_add_attr (doc, "code-point", value);
+        g_free (value);
     }
 
     n_strokes = tomoe_char_get_n_strokes (chr);
@@ -344,7 +350,7 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
 
     if (n_strokes >= 0) {
         value = g_strdup_printf ("%d", n_strokes);
-        est_doc_add_attr (doc, "n_strokes", value);
+        est_doc_add_attr (doc, "n-strokes", value);
         g_free (value);
     }
 
@@ -479,28 +485,34 @@ search (TomoeDict *_dict, TomoeQuery *query)
     g_return_val_if_fail (TOMOE_IS_DICT_EST (dict), candidates);
 
     cond = est_cond_new ();
-    est_cond_set_phrase (cond, "</character>");
     est_cond_set_order (cond, "utf8 STRA");
 
-    min_n_strokes = tomoe_query_get_min_n_strokes (query);
-    if (min_n_strokes >= 0) {
-        expr = g_strdup_printf ("n_strokes NUMGE %d", min_n_strokes);
-        est_cond_add_attr (cond, expr);
-        g_free (expr);
-    }
+    if (tomoe_query_is_empty (query)) {
+        est_cond_set_phrase (cond, "[UVSET]");
+    } else {
+        GList *node;
 
-    max_n_strokes = tomoe_query_get_max_n_strokes (query);
-    if (max_n_strokes >= 0) {
-        expr = g_strdup_printf ("n_strokes NUMLE %d", max_n_strokes);
-        est_cond_add_attr (cond, expr);
-        g_free (expr);
-    }
+        min_n_strokes = tomoe_query_get_min_n_strokes (query);
+        if (min_n_strokes >= 0) {
+            expr = g_strdup_printf ("n-strokes NUMGE %d", min_n_strokes);
+            est_cond_add_attr (cond, expr);
+            g_free (expr);
+        }
 
-    reading = g_list_nth_data ((GList *)tomoe_query_get_readings (query), 0);
-    if (reading) {
-        expr = tomoe_reading_to_xml (reading);
-        est_cond_set_phrase (cond, expr);
-        g_free (expr);
+        max_n_strokes = tomoe_query_get_max_n_strokes (query);
+        if (max_n_strokes >= 0) {
+            expr = g_strdup_printf ("n-strokes NUMLE %d", max_n_strokes);
+            est_cond_add_attr (cond, expr);
+            g_free (expr);
+        }
+
+        node = (GList *)tomoe_query_get_readings (query);
+        reading = node ? node->data : NULL;
+        if (reading) {
+            expr = tomoe_reading_to_xml (reading);
+            est_cond_set_phrase (cond, expr);
+            g_free (expr);
+        }
     }
 
     results = est_db_search (dict->db, cond, &n_results, NULL);
@@ -534,6 +546,63 @@ is_editable (TomoeDict *_dict)
     g_return_val_if_fail (TOMOE_IS_DICT_EST (dict), FALSE);
 
     return dict->editable;
+}
+
+static gchar *
+get_available_private_utf8 (TomoeDict *_dict)
+{
+    TomoeDictEst *dict = TOMOE_DICT_EST (_dict);
+    ESTCOND *cond;
+    gchar *expr;
+    int i, *results, n_results;
+    gunichar result_ucs = TOMOE_CHAR_PRIVATE_USE_AREA_START;
+
+    g_return_val_if_fail (TOMOE_IS_DICT_EST (dict), FALSE);
+
+    cond = est_cond_new ();
+    est_cond_set_order (cond, "utf8 STRA");
+    est_cond_set_max (cond, 1);
+
+    expr = g_strdup_printf ("code-point NUMGE %d",
+                            TOMOE_CHAR_PRIVATE_USE_AREA_START);
+    est_cond_add_attr (cond, expr);
+    g_free (expr);
+
+    expr = g_strdup_printf ("code-point NUMLE %d",
+                            TOMOE_CHAR_PRIVATE_USE_AREA_END);
+    est_cond_add_attr (cond, expr);
+    g_free (expr);
+
+    results = est_db_search (dict->db, cond, &n_results, NULL);
+    for (i = 0; i < n_results; i++) {
+        TomoeChar *chr;
+        gunichar ucs;
+
+        chr = retrieve_char_by_id (dict, results[i]);
+        ucs = g_utf8_get_char (tomoe_char_get_utf8 (chr));
+        if (ucs >= TOMOE_CHAR_PRIVATE_USE_AREA_START) {
+            if (ucs >= TOMOE_CHAR_PRIVATE_USE_AREA_END) {
+                result_ucs = 0;
+            } else {
+                result_ucs = ucs + 1;
+            }
+        }
+    }
+    g_free (results);
+    est_cond_delete (cond);
+
+    if (result_ucs >= TOMOE_CHAR_PRIVATE_USE_AREA_START) {
+        gint result_len;
+        gchar *result;
+
+        result_len = g_unichar_to_utf8 (result_ucs, NULL);
+        result = g_new (gchar, result_len + 1);
+        g_unichar_to_utf8 (result_ucs, result);
+        result[result_len] = '\0';
+        return result;
+    } else {
+        return NULL;
+    }
 }
 
 static gboolean

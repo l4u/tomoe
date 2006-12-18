@@ -11,8 +11,8 @@ $LOAD_PATH.unshift(File.join(top_dir, "ext", "ruby", ".libs"))
 $LOAD_PATH.unshift(File.join(top_dir, "ext", "ruby"))
 $LOAD_PATH.unshift(File.join(test_dir))
 
-ARGV.unshift("--diff")
+require 'tomoe-spec-utils'
 
-Dir.glob(File.join(test_dir, "*_spec.rb")).each do |file|
-  require File.basename(file, ".rb")
-end
+ARGV.unshift("--diff=unified")
+ARGV.concat(Dir.glob(File.join(test_dir, "*_spec.rb")))
+Spec::Runner::CommandLine.run(ARGV, STDERR, STDOUT, true, true)

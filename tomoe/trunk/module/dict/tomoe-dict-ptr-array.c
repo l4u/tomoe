@@ -169,6 +169,16 @@ collect_chars_by_query (gpointer data, gpointer user_data)
                                        tomoe_candidate_new (chr));
 }
 
+static void
+collect_all_chars (gpointer data, gpointer user_data)
+{
+    TomoeChar *chr = data;
+    TomoeDictSearchContext *context = user_data;
+
+    context->results = g_list_prepend (context->results,
+                                       tomoe_candidate_new (chr));
+}
+
 GList *
 _tomoe_dict_ptr_array_search (GPtrArray *chars, TomoeQuery *query)
 {
@@ -177,8 +187,13 @@ _tomoe_dict_ptr_array_search (GPtrArray *chars, TomoeQuery *query)
     search_context.query = g_object_ref (query);
     search_context.results = NULL;
 
-    g_ptr_array_foreach_reverse (chars, collect_chars_by_query,
-                                 &search_context);
+    if (tomoe_query_is_empty (query)) {
+        g_ptr_array_foreach_reverse (chars, collect_all_chars,
+                                     &search_context);
+    } else {
+        g_ptr_array_foreach_reverse (chars, collect_chars_by_query,
+                                     &search_context);
+    }
     g_object_unref (search_context.query);
 
     return search_context.results;

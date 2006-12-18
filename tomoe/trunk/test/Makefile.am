@@ -31,4 +31,28 @@ EXTRA_DIST = \
 	dict_spec.rb \
 	writing_spec.rb
 
-TESTS = run-spec.rb
+dict_modules = xml
+if WITH_EST
+dict_modules += est
+endif
+# if ENABLE_DICT_RUBY
+# dict_modules += ruby
+# endif
+if WITH_UNIHAN
+dict_modules += unihan
+endif
+# if WITH_SVN
+# dict_modules += svn
+# endif
+if WITH_MYSQL
+dict_modules += mysql
+endif
+
+TESTS = run-specs.sh
+TESTS_ENVIRONMENT = DICT_MODULES="$(dict_modules)"
+
+output_dict_modules:
+	@echo $(dict_modules)
+
+output_RUBY:
+	@echo $(RUBY)

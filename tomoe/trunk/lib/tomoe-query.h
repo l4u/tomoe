@@ -83,6 +83,8 @@ void             tomoe_query_set_writing           (TomoeQuery   *query,
                                                     TomoeWriting *writing);
 TomoeWriting    *tomoe_query_get_writing           (TomoeQuery   *query);
 
+gboolean         tomoe_query_is_empty              (TomoeQuery   *query);
+
 G_END_DECLS
 
 #endif /* __TOMOE_QUERY_H__ */
