@@ -250,12 +250,20 @@ tomoe_point_get_type (void)
 {
     static GType our_type = 0;
 
-    if (our_type == 0)
+    if (our_type == 0) {
+        const gchar *str;
+#if GLIB_CHECK_VERSION(2, 6, 10)
+        str = g_intern_static_string ("TomoePoint");
+#else
+        str = "TomoePoint";
+#endif
         our_type =
-            g_boxed_type_register_static (g_intern_static_string ("TomoePoint"),
+            g_boxed_type_register_static (str,
                                           (GBoxedCopyFunc)tomoe_point_copy,
                                           (GBoxedFreeFunc)tomoe_point_free);
-  return our_type;
+    }
+
+    return our_type;
 }
 
 static GList *
