@@ -1,5 +1,9 @@
 2006-12-18  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-context.c (ensure_user_dict_file_content),
+	  module/dict/tomoe-dict-xml.c (tomoe_dict_xml_save): used
+	g_file_set_contents().
+
 	* lib/glib-utils.[ch] (g_file_set_contents): copied from GLib.
 
 	* lib/tomoe-writing.c (tomoe_point_get_type): don't use
