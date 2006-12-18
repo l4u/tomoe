@@ -3,6 +3,7 @@
 	* module/dict/tomoe-dict-mysql.c:
 	- cleanup if can't connect to server.
 	- check connection before action.
+	- retry if charset can't be specified.
 
 	* lib/tomoe-context.c (ensure_user_dict_file_content),
 	  module/dict/tomoe-dict-xml.c (tomoe_dict_xml_save): used

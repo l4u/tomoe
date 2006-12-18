@@ -28,6 +28,7 @@
 #include <gmodule.h>
 
 #include <mysql.h>
+#include <mysql/errmsg.h>
 
 #include <tomoe-module-impl.h>
 #include <tomoe-dict.h>
@@ -982,9 +983,17 @@ tomoe_dict_mysql_connect (TomoeDictMySQL *dict)
 
     mysql_options (dict->mysql, MYSQL_READ_DEFAULT_GROUP, "TOMOE");
     mysql_options (dict->mysql, MYSQL_SET_CHARSET_NAME, "UTF8");
-    if (!mysql_real_connect (dict->mysql, dict->host, dict->user,
-                             dict->password, dict->database, dict->port,
-                             dict->socket, 0)) {
+
+    while (!mysql_real_connect (dict->mysql, dict->host, dict->user,
+                                dict->password, dict->database, dict->port,
+                                dict->socket, 0)) {
+        if (mysql_errno (dict->mysql) == CR_CANT_READ_CHARSET) {
+            g_warning ("cannot set charset to UTF8");
+            g_free (dict->mysql->options.charset_name);
+            dict->mysql->options.charset_name = NULL;
+            continue;
+        }
+
         g_warning ("cannot connect to %s at %s:%d/%s by %s@XXX: %s",
                    dict->database, dict->host, dict->port,
                    dict->socket, dict->user, mysql_error (dict->mysql));
