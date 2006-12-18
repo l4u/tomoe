@@ -428,6 +428,9 @@ _tomoe_config_load_system_dictionaries (TomoeConfig *config, TomoeShelf *shelf)
     }
 
     gdir = g_dir_open (DICT_DATADIR, 0, NULL);
+    if (!gdir)
+        return;
+
     while ((filename = g_dir_read_name (gdir))) {
         gchar *path;
 
