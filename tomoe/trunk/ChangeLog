@@ -1,5 +1,7 @@
 2006-12-21  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/tomoe-dict-mysql.c: do ROLLBACK if failed.
+
 	* lib/tomoe-config.c (tomoe_config_load): fixed memory leak.
 	* lib/tomoe-config.c, data/config, test/tomoe-spec-utils.rb,
 	test/context_spec.rb: used "-" instead of "_" for key name to work

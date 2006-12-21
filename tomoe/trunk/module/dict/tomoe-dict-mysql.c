@@ -604,6 +604,7 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
         register_char_meta_data (dict, utf8, chr)) {
         return execute_query (dict, "COMMIT");
     } else {
+        execute_query (dict, "ROLLBACK");
         return FALSE;
     }
 }
@@ -646,10 +647,12 @@ unregister_char (TomoeDict *_dict, const gchar *utf8)
   done:
     g_string_free (sql, TRUE);
 
-    if (success)
+    if (success) {
         return execute_query (dict, "COMMIT");
-    else
+    } else {
+        execute_query (dict, "ROLLBACK");
         return FALSE;
+    }
 }
 
 static void
