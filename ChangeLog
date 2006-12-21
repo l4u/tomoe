@@ -1,6 +1,8 @@
 2006-12-21  Kouhei Sutou  <kou@cozmixng.org>
 
-	* module/dict/tomoe-dict-mysql.c: do ROLLBACK if failed.
+	* module/dict/tomoe-dict-mysql.c:
+	- do ROLLBACK if failed.
+	- fixed a search bug that result set doesn't have all information.
 
 	* lib/tomoe-config.c (tomoe_config_load): fixed memory leak.
 	* lib/tomoe-config.c, data/config, test/tomoe-spec-utils.rb,

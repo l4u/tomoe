@@ -656,96 +656,116 @@ unregister_char (TomoeDict *_dict, const gchar *utf8)
 }
 
 static void
-generate_sql_condition_utf8 (TomoeDictMySQL *dict, GString *sql,
-                             TomoeQuery *query)
+append_sql_condition_utf8 (TomoeDictMySQL *dict, GString *sql,
+                           TomoeQuery *query)
 {
     const gchar *utf8;
 
     utf8 = tomoe_query_get_utf8 (query);
     if (utf8) {
-        g_string_append (sql, " AND chars.utf8 = ");
+        g_string_append (sql, "  AND utf8 = ");
         append_string_value (dict, sql, utf8);
+        g_string_append (sql, "\n");
     }
 }
 
 static void
-generate_sql_condition_min_n_strokes (TomoeDictMySQL *dict, GString *sql,
-                                      TomoeQuery *query)
+append_sql_condition_min_n_strokes (TomoeDictMySQL *dict, GString *sql,
+                                    TomoeQuery *query)
 {
     gint min_n_strokes;
 
     min_n_strokes = tomoe_query_get_min_n_strokes (query);
     if (min_n_strokes >= 0) {
-        g_string_append_printf (sql, " AND n_strokes >= %d",
+        g_string_append_printf (sql, "  AND n_strokes >= %d\n",
                                 min_n_strokes);
     }
 }
 
 static void
-generate_sql_condition_max_n_strokes (TomoeDictMySQL *dict, GString *sql,
-                                      TomoeQuery *query)
+append_sql_condition_max_n_strokes (TomoeDictMySQL *dict, GString *sql,
+                                    TomoeQuery *query)
 {
     gint max_n_strokes;
 
     max_n_strokes = tomoe_query_get_max_n_strokes (query);
     if (max_n_strokes >= 0) {
-        g_string_append_printf (sql, " AND n_strokes <= %d",
+        g_string_append_printf (sql, "  AND n_strokes <= %d\n",
                                 max_n_strokes);
     }
 }
 
 static void
-generate_sql_condition_readings (TomoeDictMySQL *dict, GString *sql,
-                                 TomoeQuery *query)
+append_sql_condition_readings (TomoeDictMySQL *dict, GString *sql,
+                               TomoeQuery *query)
 {
     GList *node;
 
-    for (node = (GList *)tomoe_query_get_readings (query);
-         node;
-         node = g_list_next (node)) {
+    node = (GList *)tomoe_query_get_readings (query);
+    if (!node)
+        return;
+
+    g_string_append (sql,
+                     "  AND utf8 IN\n"
+                     "    (SELECT DISTINCT utf8 FROM readings\n"
+                     "     WHERE TRUE = TRUE\n");
+    for (; node; node = g_list_next (node)) {
         TomoeReading *tomoe_reading = node->data;
         TomoeReadingType reading_type;
         const gchar *reading;
 
         reading_type = tomoe_reading_get_reading_type (tomoe_reading);
         if (reading_type != TOMOE_READING_INVALID)
-            g_string_append_printf (sql, " AND reading_type = %d",
+            g_string_append_printf (sql, "       AND reading_type = %d\n",
                                     reading_type);
 
         reading = tomoe_reading_get_reading (tomoe_reading);
         if (reading) {
-            g_string_append (sql, " AND reading = ");
+            g_string_append (sql, "       AND reading = ");
             append_string_value (dict, sql, reading);
+            g_string_append (sql, "\n");
         }
     }
+    g_string_append (sql, "    )\n");
 }
 
+static void
+append_utf8_search_sql (TomoeDictMySQL *dict, GString *sql, TomoeQuery *query)
+{
+    g_string_append (sql,
+                     "SELECT utf8 FROM chars\n"
+                     "WHERE TRUE = TRUE\n");
+    append_sql_condition_utf8 (dict, sql, query);
+    append_sql_condition_min_n_strokes (dict, sql, query);
+    append_sql_condition_max_n_strokes (dict, sql, query);
+
+    append_sql_condition_readings (dict, sql, query);
+}
 
 static gchar *
 generate_sql (TomoeDictMySQL *dict, TomoeQuery *query)
 {
     GString *sql;
 
-    sql = g_string_new ("SELECT "                                   \
-                        "chars.utf8 AS utf8, "                      \
-                        "chars.n_strokes AS n_strokes, "            \
-                        "chars.variant AS variant, "                \
-                        "readings.id AS reading_id, "               \
-                        "readings.reading_type AS reading_type, "   \
-                        "readings.reading AS reading, "             \
-                        "radicals.id AS radical_id, "               \
-                        "radicals.radical_utf8 AS radical_utf8 "    \
-                        "FROM chars "                               \
-                        "LEFT OUTER JOIN readings "                 \
-                        "ON chars.utf8 = readings.utf8 "            \
-                        "LEFT OUTER JOIN radicals "                 \
-                        "ON chars.utf8 = radicals.utf8 "            \
-                        "WHERE TRUE = TRUE");
-
-    generate_sql_condition_utf8 (dict, sql, query);
-    generate_sql_condition_min_n_strokes (dict, sql, query);
-    generate_sql_condition_max_n_strokes (dict, sql, query);
-    generate_sql_condition_readings (dict, sql, query);
+    sql = g_string_new ("SELECT\n"
+                        "  chars.utf8 AS utf8,\n"
+                        "  chars.n_strokes AS n_strokes,\n"
+                        "  chars.variant AS variant,\n"
+                        "  readings.id AS reading_id,\n"
+                        "  readings.reading_type AS reading_type,\n"
+                        "  readings.reading AS reading,\n"
+                        "  radicals.id AS radical_id,\n"
+                        "  radicals.radical_utf8 AS radical_utf8\n"
+                        "FROM chars\n"
+                        "LEFT OUTER JOIN readings\n"
+                        "  ON chars.utf8 = readings.utf8\n"
+                        "LEFT OUTER JOIN radicals\n"
+                        "  ON chars.utf8 = radicals.utf8\n"
+                        "WHERE chars.utf8 IN (");
+    append_utf8_search_sql (dict, sql, query);
+    g_string_append (sql,
+                     ")\n"
+                     "ORDER BY chars.utf8 DESC\n");
 
     return g_string_free (sql, FALSE);
 }
@@ -905,7 +925,7 @@ search (TomoeDict *_dict, TomoeQuery *query)
     if (!success)
         return NULL;
 
-    result = mysql_use_result (dict->mysql);
+    result = mysql_store_result (dict->mysql);
     if (result) {
         results = retrieve_candidates (dict, result);
         mysql_free_result (result);
