@@ -1,5 +1,7 @@
 2006-12-21  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/dict_spec.rb: MySQL backend doesn't support writing yet.
+
 	* test/dict_spec.rb: added tests for meta data.
 	* module/dict/tomoe-dict-mysql.c: supported meta data.
 	* ext/ruby/tomoe-rb-char.c: supported meta data related methods.

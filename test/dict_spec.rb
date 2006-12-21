@@ -16,7 +16,12 @@ context "Tomoe::Dict(#{dict_module_type})" do
   specify "should load successfully" do
     make_temporary_dict(@original) do |dict|
       a = dict[@utf8]
-      a.writing.strokes.should == @strokes
+      a.should.not.nil
+      if dict_module_type == "mysql"
+        puts "MySQL backend doesn't support writing"
+      else
+        a.writing.strokes.should == @strokes
+      end
     end
   end
 
