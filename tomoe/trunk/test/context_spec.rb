@@ -34,8 +34,8 @@ EOD
     @user_dict_config_file.open
     @user_dict_config_file.puts(<<-EOC)
 [config]
-use_system_dictionaries = false
-user_dictionary = user
+use-system-dictionaries = false
+user-dictionary = user
 
 [user-dictionary]
 type = xml
