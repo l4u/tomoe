@@ -1,5 +1,7 @@
 2006-12-21  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/tomoe-dict-est.c: fixed a reference count bug.
+
 	* test/dict_spec.rb: added more strict tests.
 	* ext/ruby/tomoe-rb-dict.c: added
 	Tomoe::Dict#available_private_utf8.
