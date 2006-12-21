@@ -13,7 +13,7 @@ context "Tomoe::Dict(#{dict_module_type})" do
     @original = Tomoe::DictXML.new("filename" => @dict_file.path)
   end
 
-  specify "should load" do
+  specify "should load successfully" do
     make_temporary_dict(@original) do |dict|
       a = dict[@utf8]
       a.writing.strokes.should == @strokes
@@ -68,6 +68,24 @@ context "Tomoe::Dict(#{dict_module_type})" do
       dict.register(char3).should == true
       char3.utf8.should == ucs4_to_utf8(pua_start + 2)
       utf8_to_ucs4(dict.available_private_utf8).should == pua_start + 3
+    end
+  end
+
+  specify "should save/restore meta data" do
+    make_temporary_dict(@original) do |dict|
+      char = Tomoe::Char.new
+      char.utf8 = "か"
+      char.should.not.have_meta_data
+
+      char["meta1"] = "value1"
+      char["meta2"] = "value2"
+
+      dict.register(char).should == true
+
+      registered_char = dict["か"]
+      char.should.have_meta_data
+      registered_char["meta1"].should == "value1"
+      registered_char["meta2"].should == "value2"
     end
   end
 
