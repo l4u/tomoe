@@ -223,6 +223,7 @@ tomoe_config_load (TomoeConfig *config)
                                     G_KEY_FILE_KEEP_COMMENTS |
                                     G_KEY_FILE_KEEP_TRANSLATIONS,
                                     &error)) {
+        g_key_file_free (key_file);
         TOMOE_HANDLE_ERROR (error);
         return;
     }
@@ -231,7 +232,7 @@ tomoe_config_load (TomoeConfig *config)
 
     priv->user_dict_name =
         _tomoe_config_key_file_get_string (key_file,
-                                           "config", "user_dictionary",
+                                           "config", "user-dictionary",
                                            DEFAULT_USER_DICT_NAME);
 }
 
@@ -330,7 +331,7 @@ tomoe_config_make_shelf (TomoeConfig *config)
     g_strfreev(dicts);
 
     if (_tomoe_config_key_file_get_boolean (key_file,
-                                            "config", "use_system_dictionaries",
+                                            "config", "use-system-dictionaries",
                                             TRUE)) {
         _tomoe_config_load_system_dictionaries (config, shelf);
     }

@@ -157,7 +157,7 @@ module TomoeSpecUtils
       config_file.open
       config_file.puts(<<-EOC)
 [config]
-use_system_dictionaries = false
+use-system-dictionaries = false
 EOC
 
       config_maker = "make_config_file_for_#{dict_type}"
