@@ -1,5 +1,10 @@
 2006-12-21  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/dict_spec.rb: added tests for reading search.
+
+	* ext/ruby/tomoe-rb-reading.c: removed Tomoe::READING_*.
+	* test/context_spec.rb: followed the change.
+
 	* test/dict_spec.rb: MySQL backend doesn't support writing yet.
 
 	* test/dict_spec.rb: added tests for meta data.
