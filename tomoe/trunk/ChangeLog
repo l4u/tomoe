@@ -4,6 +4,7 @@
 	- do ROLLBACK if failed.
 	- fixed a search bug that result set doesn't have all information.
 	- 30%~50% speed up.
+	- used chars.id to check duplication.
 
 	* lib/tomoe-config.c (tomoe_config_load): fixed memory leak.
 	* lib/tomoe-config.c, data/config, test/tomoe-spec-utils.rb,
