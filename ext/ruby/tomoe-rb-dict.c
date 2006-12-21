@@ -61,6 +61,12 @@ td_search(VALUE self, VALUE query)
 }
 
 static VALUE
+td_get_available_private_utf8(VALUE self)
+{
+    return CSTR2RVAL2(tomoe_dict_get_available_private_utf8(_SELF(self)));
+}
+
+static VALUE
 td_flush(VALUE self)
 {
     return CBOOL2RVAL(tomoe_dict_flush(_SELF(self)));
@@ -83,5 +89,7 @@ _tomoe_rb_init_tomoe_dict(VALUE _mTomoe)
 
     rb_define_method(cTomoeDict, "search", td_search, 1);
 
+    rb_define_method(cTomoeDict, "available_private_utf8",
+                     td_get_available_private_utf8, 0);
     rb_define_method(cTomoeDict, "flush", td_flush, 0);
 }

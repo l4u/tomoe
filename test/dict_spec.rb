@@ -44,13 +44,30 @@ context "Tomoe::Dict(#{dict_module_type})" do
 
   specify "should register/unregister PUA character" do
     make_temporary_dict(@original) do |dict|
-      char = Tomoe::Char.new
-      dict.register(char).should == true
-      char.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)
+      pua_start = Tomoe::Char::PRIVATE_USE_AREA_START
 
-      dict[ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)].should == char
-      dict.unregister(char.utf8).should == true
-      dict[ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)].should_nil
+      utf8_to_ucs4(dict.available_private_utf8).should == pua_start
+
+      char1 = Tomoe::Char.new
+      dict.register(char1).should == true
+      char1.utf8.should == ucs4_to_utf8(pua_start)
+      utf8_to_ucs4(dict.available_private_utf8).should == pua_start + 1
+
+      char2 = Tomoe::Char.new
+      dict.register(char2).should == true
+      char2.utf8.should == ucs4_to_utf8(pua_start + 1)
+      utf8_to_ucs4(dict.available_private_utf8).should == pua_start + 2
+
+      dict[ucs4_to_utf8(pua_start)].should == char1
+      dict[ucs4_to_utf8(pua_start + 1)].should == char2
+      dict.unregister(char1.utf8).should == true
+      dict[ucs4_to_utf8(pua_start)].should_nil
+      dict[ucs4_to_utf8(pua_start + 1)].should == char2
+
+      char3 = Tomoe::Char.new
+      dict.register(char3).should == true
+      char3.utf8.should == ucs4_to_utf8(pua_start + 2)
+      utf8_to_ucs4(dict.available_private_utf8).should == pua_start + 3
     end
   end
 
