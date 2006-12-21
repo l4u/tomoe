@@ -775,10 +775,12 @@ retrieve_candidates (TomoeDictMySQL *dict, MYSQL_RES *result)
 {
     GList *results = NULL;
     TomoeChar *chr = NULL;
-    GArray *reading_ids = NULL, *radical_ids = NULL;
+    GArray *reading_ids, *radical_ids;
     gchar *prev_utf8 = NULL;
     MYSQL_ROW row;
 
+    reading_ids = g_array_new (FALSE, TRUE, sizeof (gboolean));
+    radical_ids = g_array_new (FALSE, TRUE, sizeof (gboolean));
     while ((row = mysql_fetch_row (result))) {
         gchar *utf8;
         gint n_strokes = -1;
@@ -811,21 +813,14 @@ retrieve_candidates (TomoeDictMySQL *dict, MYSQL_RES *result)
             chr = NULL;
             g_free (prev_utf8);
             prev_utf8 = NULL;
-            if (reading_ids)
-                g_array_free (reading_ids, TRUE);
-            if (radical_ids)
-                g_array_free (radical_ids, TRUE);
-            reading_ids = NULL;
-            radical_ids = NULL;
+            memset(reading_ids->data, 0,
+                   sizeof(reading_ids->data[0]) * reading_ids->len);
+            memset(radical_ids->data, 0,
+                   sizeof(radical_ids->data[0]) * radical_ids->len);
         }
 
         if (!prev_utf8)
             prev_utf8 = g_strdup (utf8);
-
-        if (!reading_ids)
-            reading_ids = g_array_new (FALSE, TRUE, sizeof (gboolean));
-        if (!radical_ids)
-            radical_ids = g_array_new (FALSE, TRUE, sizeof (gboolean));
 
         if (!chr) {
             chr = tomoe_char_new ();
@@ -834,29 +829,29 @@ retrieve_candidates (TomoeDictMySQL *dict, MYSQL_RES *result)
             tomoe_char_set_variant (chr, variant);
         }
 
-        if (chr && reading_id >= 0 &&
-            (reading_ids->len <= reading_id ||
-             !reading_ids->data[reading_id])) {
-            TomoeReading *tomoe_reading;
-
-            if (reading_ids->len <= reading_id) {
+        if (reading_id >= 0) {
+            if (reading_ids->len <= reading_id)
                 g_array_set_size (reading_ids, reading_id);
-            }
-            reading_ids->data[reading_id] = TRUE;
 
-            tomoe_reading = tomoe_reading_new (reading_type, reading);
-            tomoe_char_add_reading (chr, tomoe_reading);
-            g_object_unref (tomoe_reading);
+            if (!reading_ids->data[reading_id]) {
+                TomoeReading *tomoe_reading;
+
+                reading_ids->data[reading_id] = TRUE;
+
+                tomoe_reading = tomoe_reading_new (reading_type, reading);
+                tomoe_char_add_reading (chr, tomoe_reading);
+                g_object_unref (tomoe_reading);
+            }
         }
 
-        if (chr && radical_id >= 0 &&
-            (radical_ids->len <= radical_id ||
-             !radical_ids->data[radical_id])) {
-            if (radical_ids->len <= radical_id) {
+        if (radical_id >= 0) {
+            if (radical_ids->len <= radical_id)
                 g_array_set_size (radical_ids, radical_id);
+
+            if (!radical_ids->data[radical_id]) {
+                radical_ids->data[radical_id] = TRUE;
+                tomoe_char_add_radical (chr, radical);
             }
-            radical_ids->data[radical_id] = TRUE;
-            tomoe_char_add_radical (chr, radical);
         }
     }
 
@@ -868,12 +863,9 @@ retrieve_candidates (TomoeDictMySQL *dict, MYSQL_RES *result)
         g_object_unref (chr);
     }
 
-    if (prev_utf8)
-        g_free (prev_utf8);
-    if (reading_ids)
-        g_array_free (reading_ids, TRUE);
-    if (radical_ids)
-        g_array_free (radical_ids, TRUE);
+    g_free (prev_utf8);
+    g_array_free (reading_ids, TRUE);
+    g_array_free (radical_ids, TRUE);
 
     return results;
 }
