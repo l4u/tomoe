@@ -771,7 +771,7 @@ generate_sql (TomoeDictMySQL *dict, TomoeQuery *query)
     append_utf8_search_sql (dict, sql, query);
     g_string_append (sql,
                      ")\n"
-                     "ORDER BY chars.utf8 DESC\n");
+                     "ORDER BY chars.utf8 ASC\n");
 
     return g_string_free (sql, FALSE);
 }
