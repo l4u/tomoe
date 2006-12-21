@@ -145,7 +145,7 @@ tomoe_query_dispose (GObject *object)
         g_list_free (priv->readings);
     }
     if (priv->radicals) {
-        g_list_foreach (priv->radicals, (GFunc)g_object_unref, NULL);
+        g_list_foreach (priv->radicals, (GFunc)g_free, NULL);
         g_list_free (priv->radicals);
     }
     if (priv->variant)
@@ -284,15 +284,16 @@ tomoe_query_get_radicals (TomoeQuery *query)
 }
 
 void
-tomoe_query_add_radical (TomoeQuery *query, TomoeChar *radical)
+tomoe_query_add_radical (TomoeQuery *query, const gchar *radical)
 {
     TomoeQueryPrivate *priv;
 
     g_return_if_fail (TOMOE_IS_QUERY (query));
+    g_return_if_fail (radical && radical[0] != '\0');
 
     priv = TOMOE_QUERY_GET_PRIVATE (query);
 
-    priv->radicals = g_list_prepend (priv->radicals, g_object_ref (radical));
+    priv->radicals = g_list_prepend (priv->radicals, g_strdup (radical));
 }
 
 TomoeChar *

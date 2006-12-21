@@ -98,12 +98,12 @@ context "Tomoe::Dict(#{dict_module_type})" do
     make_temporary_dict(@original) do |dict|
       char = Tomoe::Char.new
       char.utf8 = "池"
-      char.add_reading(Tomoe::Reading.new(Tomoe::Reading::JA_ON, "イケ"))
+      char.add_reading(Tomoe::Reading.new(Tomoe::Reading::JA_KUN, "いけ"))
 
       dict.register(char).should == true
 
       query = Tomoe::Query.new
-      query.add_reading(Tomoe::Reading.new(Tomoe::Reading::JA_ON, "イケ"))
+      query.add_reading(Tomoe::Reading.new(Tomoe::Reading::JA_KUN, "いけ"))
       dict.search(query).collect do |cand|
         cand.char.utf8
       end.should == ["池"]
@@ -147,6 +147,22 @@ context "Tomoe::Dict(#{dict_module_type})" do
 
       query = Tomoe::Query.new
       query.max_n_strokes = 6
+      dict.search(query).collect do |cand|
+        cand.char.utf8
+      end.should == ["池"]
+    end
+  end
+
+  specify "should support radical search" do
+    make_temporary_dict(@original) do |dict|
+      char = Tomoe::Char.new
+      char.utf8 = "池"
+      char.add_radical("氵")
+
+      dict.register(char).should == true
+
+      query = Tomoe::Query.new
+      query.add_radical("氵")
       dict.search(query).collect do |cand|
         cand.char.utf8
       end.should == ["池"]

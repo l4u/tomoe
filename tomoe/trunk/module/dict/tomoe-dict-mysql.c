@@ -503,7 +503,9 @@ register_char_radicals (TomoeDictMySQL *dict, const gchar *utf8,
     for (node = (GList *)radicals; node; node = g_list_next (node)) {
         const gchar *radical = node->data;
 
-        g_string_assign (sql, "INSERT INTO radicals (utf8, radical) VALUES (");
+        g_string_assign (sql,
+                         "INSERT INTO radicals (utf8, radical_utf8)\n"
+                         "VALUES (");
         append_string_value (dict, sql, utf8);
         g_string_append (sql, ", ");
         append_string_value (dict, sql, radical);
