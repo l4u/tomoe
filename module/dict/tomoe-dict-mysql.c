@@ -761,12 +761,17 @@ generate_sql (TomoeDictMySQL *dict, TomoeQuery *query)
                         "  readings.reading_type AS reading_type,\n"
                         "  readings.reading AS reading,\n"
                         "  radicals.id AS radical_id,\n"
-                        "  radicals.radical_utf8 AS radical_utf8\n"
+                        "  radicals.radical_utf8 AS radical_utf8,\n"
+                        "  meta_data.id AS meta_datum_id,\n"
+                        "  meta_data.name AS meta_datum_name,\n"
+                        "  meta_data.value AS meta_datum_value\n"
                         "FROM chars\n"
                         "LEFT OUTER JOIN readings\n"
                         "  ON chars.utf8 = readings.utf8\n"
                         "LEFT OUTER JOIN radicals\n"
                         "  ON chars.utf8 = radicals.utf8\n"
+                        "LEFT OUTER JOIN meta_data"
+                        "  ON chars.utf8 = meta_data.utf8\n"
                         "WHERE chars.utf8 IN (");
     append_utf8_search_sql (dict, sql, query);
     g_string_append (sql,
@@ -781,12 +786,13 @@ retrieve_candidates (TomoeDictMySQL *dict, MYSQL_RES *result)
 {
     GList *results = NULL;
     TomoeChar *chr = NULL;
-    GArray *reading_ids, *radical_ids;
+    GArray *reading_ids, *radical_ids, *meta_datum_ids;
     gint prev_char_id = -1;
     MYSQL_ROW row;
 
     reading_ids = g_array_new (FALSE, TRUE, sizeof (gboolean));
     radical_ids = g_array_new (FALSE, TRUE, sizeof (gboolean));
+    meta_datum_ids = g_array_new (FALSE, TRUE, sizeof (gboolean));
     while ((row = mysql_fetch_row (result))) {
         gint char_id;
         gchar *utf8;
@@ -797,6 +803,8 @@ retrieve_candidates (TomoeDictMySQL *dict, MYSQL_RES *result)
         gchar *reading;
         gint radical_id = -1;
         gchar *radical;
+        gint meta_datum_id = -1;
+        gchar *meta_datum_name, *meta_datum_value;
 
         char_id = atoi (row[0]);
         utf8 = row[1];
@@ -811,6 +819,10 @@ retrieve_candidates (TomoeDictMySQL *dict, MYSQL_RES *result)
         if (row[7])
             radical_id = atoi (row[7]);
         radical = row[8];
+        if (row[9])
+            meta_datum_id = atoi (row[9]);
+        meta_datum_name = row[10];
+        meta_datum_value = row[11];
 
         if (chr && char_id != prev_char_id) {
             TomoeCandidate *cand;
@@ -824,6 +836,8 @@ retrieve_candidates (TomoeDictMySQL *dict, MYSQL_RES *result)
                    sizeof(reading_ids->data[0]) * reading_ids->len);
             memset(radical_ids->data, 0,
                    sizeof(radical_ids->data[0]) * radical_ids->len);
+            memset(meta_datum_ids->data, 0,
+                   sizeof(meta_datum_ids->data[0]) * meta_datum_ids->len);
         }
 
         if (prev_char_id < 0)
@@ -860,6 +874,19 @@ retrieve_candidates (TomoeDictMySQL *dict, MYSQL_RES *result)
                 tomoe_char_add_radical (chr, radical);
             }
         }
+
+        if (meta_datum_id >= 0) {
+            if (meta_datum_ids->len <= meta_datum_id)
+                g_array_set_size (meta_datum_ids, meta_datum_id);
+
+            if (!meta_datum_ids->data[meta_datum_id]) {
+                meta_datum_ids->data[meta_datum_id] = TRUE;
+                if (meta_datum_name && meta_datum_value)
+                    tomoe_char_register_meta_data (chr,
+                                                   meta_datum_name,
+                                                   meta_datum_value);
+            }
+        }
     }
 
     if (chr) {
@@ -872,6 +899,7 @@ retrieve_candidates (TomoeDictMySQL *dict, MYSQL_RES *result)
 
     g_array_free (reading_ids, TRUE);
     g_array_free (radical_ids, TRUE);
+    g_array_free (meta_datum_ids, TRUE);
 
     return results;
 }
