@@ -64,7 +64,7 @@ void             tomoe_query_add_reading           (TomoeQuery   *query,
 const GList     *tomoe_query_get_readings          (TomoeQuery   *query);
 
 void             tomoe_query_add_radical           (TomoeQuery   *query,
-                                                    TomoeChar    *chr);
+                                                    const gchar  *radical);
 const GList     *tomoe_query_get_radicals          (TomoeQuery   *query);
 
 void             tomoe_query_set_variant           (TomoeQuery   *query,

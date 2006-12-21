@@ -1,8 +1,14 @@
 2006-12-21  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-query.[ch]: made radical as utf8 strings instead of
+	TomoeChar.
+	* ext/ruby/tomoe-query.c: supported add_radical.
+	* module/dict/tomoe-dict-mysql.c: fixed typo.
+
 	* test/dict_spec.rb:
 	- added tests for reading search.
 	- added tests for n_strokes search.
+	- added tests for radical search. But not implemented yet.
 
 	* ext/ruby/tomoe-rb-reading.c: removed Tomoe::READING_*.
 	* test/context_spec.rb: followed the change.
