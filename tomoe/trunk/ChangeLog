@@ -1,5 +1,9 @@
 2006-12-21  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/tomoe-dict-mysql.c: sorted alphabetical order.
+
+	* utils/xml2est.rb: followed the current API.
+
 	* module/dict/tomoe-dict-est.c: fixed a reference count bug.
 
 	* test/dict_spec.rb: added more strict tests.
