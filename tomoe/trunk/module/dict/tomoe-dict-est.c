@@ -560,7 +560,7 @@ get_available_private_utf8 (TomoeDict *_dict)
     g_return_val_if_fail (TOMOE_IS_DICT_EST (dict), FALSE);
 
     cond = est_cond_new ();
-    est_cond_set_order (cond, "utf8 STRA");
+    est_cond_set_order (cond, "utf8 STRD");
     est_cond_set_max (cond, 1);
 
     expr = g_strdup_printf ("code-point NUMGE %d",
