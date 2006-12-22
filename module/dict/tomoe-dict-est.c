@@ -496,12 +496,25 @@ search (TomoeDict *_dict, TomoeQuery *query)
     } else {
         GList *node;
         gint min_n_strokes, max_n_strokes;
-        const gchar *variant;
+        const gchar *utf8, *variant;
+
+        utf8 = tomoe_query_get_utf8 (query);
+        if (utf8) {
+            gchar *escaped_utf8;
+
+            escaped_utf8 = g_markup_escape_text (utf8, -1);
+            g_string_append_printf (phrase, " <utf8>%s</utf8>", escaped_utf8);
+            g_free (escaped_utf8);
+        }
 
         variant = tomoe_query_get_variant (query);
         if (variant) {
-            g_string_printf (attr, "variant STREQ %s", variant);
-            est_cond_add_attr (cond, attr->str);
+            gchar *escaped_variant;
+
+            escaped_variant = g_markup_escape_text (variant, -1);
+            g_string_append_printf (phrase, " <variant>%s</variant>",
+                                    escaped_variant);
+            g_free (escaped_variant);
         }
 
         min_n_strokes = tomoe_query_get_min_n_strokes (query);
