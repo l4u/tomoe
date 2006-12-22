@@ -3,7 +3,7 @@
           name CDATA #IMPLIED
  >
 <!ELEMENT character (utf8, number-of-strokes?, strokes?,
-                     readings?, meta?)*>
+                     readings?, radicals?, meta?)*>
 <!ELEMENT utf8 (#PCDATA)>
 <!ELEMENT number-of-strokes (#PCDATA)>
 <!ELEMENT strokes (stroke*)>
@@ -18,4 +18,6 @@
 <!ATTLIST reading
           type CDATA #IMPLIED
  >
+<!ELEMENT radicals (radical*)>
+<!ELEMENT radical (#PCDATA)>
 <!ELEMENT meta ANY>

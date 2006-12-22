@@ -479,9 +479,8 @@ search (TomoeDict *_dict, TomoeQuery *query)
 {
     TomoeDictEst *dict = TOMOE_DICT_EST (_dict);
     GList *candidates = NULL;
-    TomoeReading *reading;
     ESTCOND *cond;
-    gchar *expr;
+    GString *attr, *phrase;
     int i, *results, n_results;
     gint min_n_strokes, max_n_strokes;
 
@@ -490,33 +489,56 @@ search (TomoeDict *_dict, TomoeQuery *query)
     cond = est_cond_new ();
     est_cond_set_order (cond, "utf8 STRA");
 
+    attr = g_string_new ("");
+    phrase = g_string_new ("");
+
     if (tomoe_query_is_empty (query)) {
-        est_cond_set_phrase (cond, "[UVSET]");
+        g_string_assign (phrase, "[UVSET]");
     } else {
         GList *node;
 
         min_n_strokes = tomoe_query_get_min_n_strokes (query);
         if (min_n_strokes >= 0) {
-            expr = g_strdup_printf ("n-strokes NUMGE %d", min_n_strokes);
-            est_cond_add_attr (cond, expr);
-            g_free (expr);
+            g_string_printf (attr, "n-strokes NUMGE %d", min_n_strokes);
+            est_cond_add_attr (cond, attr->str);
         }
 
         max_n_strokes = tomoe_query_get_max_n_strokes (query);
         if (max_n_strokes >= 0) {
-            expr = g_strdup_printf ("n-strokes NUMLE %d", max_n_strokes);
-            est_cond_add_attr (cond, expr);
-            g_free (expr);
+            g_string_printf (attr, "n-strokes NUMLE %d", max_n_strokes);
+            est_cond_add_attr (cond, attr->str);
         }
 
-        node = (GList *)tomoe_query_get_readings (query);
-        reading = node ? node->data : NULL;
-        if (reading) {
-            expr = tomoe_reading_to_xml (reading);
-            est_cond_set_phrase (cond, expr);
-            g_free (expr);
+        for (node = (GList *)tomoe_query_get_readings (query);
+             node;
+             node = g_list_next (node)) {
+            TomoeReading *reading = node->data;
+            gchar *xml;
+
+            xml = tomoe_reading_to_xml (reading);
+            g_string_append_printf (phrase, " %s", xml);
+            g_free (xml);
+        }
+
+        for (node = (GList *)tomoe_query_get_radicals (query);
+             node;
+             node = g_list_next (node)) {
+            const gchar *radical = node->data;
+            gchar *escaped_radical;
+
+            escaped_radical = g_markup_escape_text (radical, -1);
+            g_string_append_printf (phrase,
+                                    " <radical>%s</radical>",
+                                    escaped_radical);
+            g_free (escaped_radical);
         }
     }
+
+    if (phrase->len > 0)
+        est_cond_set_phrase (cond, phrase->str);
+
+    g_string_free (attr, TRUE);
+    g_string_free (phrase, TRUE);
 
     results = est_db_search (dict->db, cond, &n_results, NULL);
     for (i = 0; i < n_results; i++) {

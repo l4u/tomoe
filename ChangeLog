@@ -1,5 +1,14 @@
 2006-12-22  Kouhei Sutou  <kou@cozmixng.org>
 
+	* data/dict.dtd: added radicals.
+	* test/char_spec.rb: added tests for load/dump XML with radicals.
+	* lib/tomoe-xml-parser.c: supported parsing radicals.
+	* lib/tomoe-char.c: supported outputting radicals to XML.
+	* module/dict/tomoe-dict-est.c: supported radical search.
+
+	* test/tomoe-spec-utils.rb: removed patch for interrupt because
+	the patch was applied to RSpec.
+
 	* test/dict_spec.rb: used numeric reference to sanzui.
 
 	* module/dict/tomoe-dict-ptr-array.c: supported radical search.
