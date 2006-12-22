@@ -15,11 +15,36 @@ context "Tomoe::Char" do
     char.to_xml.should == xml
   end
 
+  specify "should dump XML with radicals" do
+    sanzui = ucs4_to_utf8(27701) # さんずい
+    char = Tomoe::Char.new
+    char.utf8 = "池"
+    char.add_radical(sanzui)
+    xml = "  <character>\n"
+    xml << "    <utf8>池</utf8>\n"
+    xml << "    <radicals>\n"
+    xml << "      <radical>#{sanzui}</radical>\n"
+    xml << "    </radicals>\n"
+    xml << "  </character>\n"
+    char.to_xml.should == xml
+  end
+
   specify "should load from dumped XML" do
     char = Tomoe::Char.new
     char.utf8 = "あ"
     new_char = Tomoe::Char.new(char.to_xml)
     new_char.utf8.should == char.utf8
+  end
+
+  specify "should load from dumped XML with radicals" do
+    sanzui = ucs4_to_utf8(27701) # さんずい
+    char = Tomoe::Char.new
+    char.utf8 = "池"
+    char.add_radical(sanzui)
+
+    new_char = Tomoe::Char.new(char.to_xml)
+    new_char.utf8.should == char.utf8
+    new_char.radicals.should == [sanzui]
   end
 
   specify "should set/get n_strokes" do

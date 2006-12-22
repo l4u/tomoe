@@ -38,6 +38,8 @@ typedef enum {
     STATE_STROKES,
     STATE_READINGS,
     STATE_READING,
+    STATE_RADICALS,
+    STATE_RADICAL,
     STATE_WRITING,
     STATE_STROKE,
     STATE_POINT,
@@ -206,6 +208,21 @@ start_element_handler (GMarkupParseContext *context,
         return;
     }
 
+    if (!strcmp ("radicals", element_name)) {
+        data->state = STATE_RADICALS;
+        return;
+    }
+
+    if (!strcmp ("radical", element_name)) {
+        if (data->state != STATE_RADICALS) {
+            set_parse_error (context, error, data);
+            return;
+        }
+
+        data->state = STATE_RADICAL;
+        return;
+    }
+
     if (!strcmp ("meta", element_name)) {
         data->state = STATE_META;
         return;
@@ -283,6 +300,16 @@ end_element_handler (GMarkupParseContext *context,
         return;
     }
 
+    if (!strcmp ("radicals", element_name)) {
+        data->state = STATE_NONE;
+        return;
+    }
+
+    if (!strcmp ("radical", element_name)) {
+        data->state = STATE_RADICALS;
+        return;
+    }
+
     if (!strcmp ("meta", element_name)) {
         data->state = STATE_NONE;
         return;
@@ -325,6 +352,11 @@ text_handler (GMarkupParseContext *context,
         reading = tomoe_reading_new (data->reading_type, text);
         tomoe_char_add_reading (data->chr, reading);
         g_object_unref (reading);
+        return;
+    }
+    case STATE_RADICAL:
+    {
+        tomoe_char_add_radical (data->chr, text);
         return;
     }
     case STATE_META:

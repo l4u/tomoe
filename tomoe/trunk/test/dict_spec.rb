@@ -17,6 +17,7 @@ context "Tomoe::Dict(#{dict_module_type})" do
     make_temporary_dict(@original) do |dict|
       a = dict[@utf8]
       a.should.not.nil
+      a.utf8.should == @utf8
       if dict_module_type == "mysql"
         puts "MySQL backend doesn't support writing"
       else
@@ -213,6 +214,7 @@ context "Tomoe::Dict(#{dict_module_type})" do
     @character_xml = <<-EOC
   <character>
     <utf8>#{@utf8}</utf8>
+    <number-of-strokes>#{@strokes.size}</number-of-strokes>
 #{strokes_xml}
   </character>
 EOC
@@ -232,6 +234,7 @@ EOX
     @est_draft_content = <<-EOC
 @uri=font:#{@utf8}
 utf8=#{@utf8}
+n_strokes=#{@strokes.size}
 
 #{@character_xml.collect {|line| "\t#{line}"}}
 EOC

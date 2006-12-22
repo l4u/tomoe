@@ -483,6 +483,26 @@ tomoe_char_to_xml_readings (TomoeChar *chr, TomoeCharPrivate *priv,
 }
 
 static void
+tomoe_char_to_xml_radicals (TomoeChar *chr, TomoeCharPrivate *priv,
+                            GString *output)
+{
+    GList *node;
+
+    if (!priv->radicals) return;
+
+    g_string_append (output, "    <radicals>\n");
+    for (node = priv->radicals; node; node = g_list_next (node)) {
+        const gchar *radical = node->data;
+        gchar *xml;
+
+        xml = g_markup_printf_escaped (radical, -1);
+        g_string_append_printf (output, "      <radical>%s</radical>\n", xml);
+        g_free (xml);
+    }
+    g_string_append (output, "    </radicals>\n");
+}
+
+static void
 tomoe_char_to_xml_writing (TomoeChar *chr, TomoeCharPrivate *priv,
                            GString *output)
 {
@@ -536,6 +556,7 @@ tomoe_char_to_xml (TomoeChar* chr)
 
     tomoe_char_to_xml_utf8 (chr, priv, output);
     tomoe_char_to_xml_readings (chr, priv, output);
+    tomoe_char_to_xml_radicals (chr, priv, output);
     tomoe_char_to_xml_writing (chr, priv, output);
     tomoe_char_to_xml_meta (chr, priv, output);
 
