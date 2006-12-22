@@ -482,7 +482,6 @@ search (TomoeDict *_dict, TomoeQuery *query)
     ESTCOND *cond;
     GString *attr, *phrase;
     int i, *results, n_results;
-    gint min_n_strokes, max_n_strokes;
 
     g_return_val_if_fail (TOMOE_IS_DICT_EST (dict), candidates);
 
@@ -496,6 +495,14 @@ search (TomoeDict *_dict, TomoeQuery *query)
         g_string_assign (phrase, "[UVSET]");
     } else {
         GList *node;
+        gint min_n_strokes, max_n_strokes;
+        const gchar *variant;
+
+        variant = tomoe_query_get_variant (query);
+        if (variant) {
+            g_string_printf (attr, "variant STREQ %s", variant);
+            est_cond_add_attr (cond, attr->str);
+        }
 
         min_n_strokes = tomoe_query_get_min_n_strokes (query);
         if (min_n_strokes >= 0) {
