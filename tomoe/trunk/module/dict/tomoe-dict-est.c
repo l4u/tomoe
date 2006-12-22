@@ -474,13 +474,94 @@ get_char (TomoeDict *_dict, const gchar *utf8)
     return chr;
 }
 
+static void
+append_search_cond_utf8 (TomoeDictEst *dict, ESTCOND *cond, GString *phrase,
+                         const gchar *utf8)
+{
+    if (utf8) {
+        gchar *escaped_utf8;
+
+        escaped_utf8 = g_markup_escape_text (utf8, -1);
+        g_string_append_printf (phrase, " <utf8>%s</utf8>", escaped_utf8);
+        g_free (escaped_utf8);
+    }
+}
+
+static void
+append_search_cond_variant (TomoeDictEst *dict, ESTCOND *cond, GString *phrase,
+                            const gchar *variant)
+{
+    if (variant) {
+        gchar *escaped_variant;
+
+        escaped_variant = g_markup_escape_text (variant, -1);
+        g_string_append_printf (phrase,
+                                " <variant>%s</variant>", escaped_variant);
+        g_free (escaped_variant);
+    }
+}
+
+static void
+append_search_cond_n_strokes (TomoeDictEst *dict, ESTCOND *cond,
+                              GString *phrase,
+                              gint min_n_strokes,
+                              gint max_n_strokes)
+{
+    gchar *attr;
+
+    if (min_n_strokes >= 0) {
+        attr = g_strdup_printf ("n-strokes NUMGE %d", min_n_strokes);
+        est_cond_add_attr (cond, attr);
+        g_free (attr);
+    }
+
+    if (max_n_strokes >= 0) {
+        attr = g_strdup_printf ("n-strokes NUMLE %d", max_n_strokes);
+        est_cond_add_attr (cond, attr);
+        g_free (attr);
+    }
+}
+
+static void
+append_search_cond_readings (TomoeDictEst *dict, ESTCOND *cond, GString *phrase,
+                             const GList *readings)
+{
+    GList *node;
+    for (node = (GList *)readings; node; node = g_list_next (node)) {
+        TomoeReading *reading = node->data;
+        gchar *xml;
+
+        xml = tomoe_reading_to_xml (reading);
+        g_string_append_printf (phrase, " %s", xml);
+        g_free (xml);
+    }
+}
+
+static void
+append_search_cond_radicals (TomoeDictEst *dict, ESTCOND *cond, GString *phrase,
+                             const GList *radicals)
+{
+    GList *node;
+    for (node = (GList *)radicals; node; node = g_list_next (node)) {
+        const gchar *radical = node->data;
+        gchar *escaped_radical;
+
+        escaped_radical = g_markup_escape_text (radical, -1);
+        g_string_append_printf (phrase,
+                                " <radical>%s</radical>",
+                                escaped_radical);
+        g_free (escaped_radical);
+    }
+}
+
+
 static GList *
 search (TomoeDict *_dict, TomoeQuery *query)
 {
     TomoeDictEst *dict = TOMOE_DICT_EST (_dict);
     GList *candidates = NULL;
     ESTCOND *cond;
-    GString *attr, *phrase;
+    GString *phrase;
     int i, *results, n_results;
 
     g_return_val_if_fail (TOMOE_IS_DICT_EST (dict), candidates);
@@ -488,76 +569,26 @@ search (TomoeDict *_dict, TomoeQuery *query)
     cond = est_cond_new ();
     est_cond_set_order (cond, "utf8 STRA");
 
-    attr = g_string_new ("");
     phrase = g_string_new ("");
 
     if (tomoe_query_is_empty (query)) {
         g_string_assign (phrase, "[UVSET]");
     } else {
-        GList *node;
-        gint min_n_strokes, max_n_strokes;
-        const gchar *utf8, *variant;
-
-        utf8 = tomoe_query_get_utf8 (query);
-        if (utf8) {
-            gchar *escaped_utf8;
-
-            escaped_utf8 = g_markup_escape_text (utf8, -1);
-            g_string_append_printf (phrase, " <utf8>%s</utf8>", escaped_utf8);
-            g_free (escaped_utf8);
-        }
-
-        variant = tomoe_query_get_variant (query);
-        if (variant) {
-            gchar *escaped_variant;
-
-            escaped_variant = g_markup_escape_text (variant, -1);
-            g_string_append_printf (phrase, " <variant>%s</variant>",
-                                    escaped_variant);
-            g_free (escaped_variant);
-        }
-
-        min_n_strokes = tomoe_query_get_min_n_strokes (query);
-        if (min_n_strokes >= 0) {
-            g_string_printf (attr, "n-strokes NUMGE %d", min_n_strokes);
-            est_cond_add_attr (cond, attr->str);
-        }
-
-        max_n_strokes = tomoe_query_get_max_n_strokes (query);
-        if (max_n_strokes >= 0) {
-            g_string_printf (attr, "n-strokes NUMLE %d", max_n_strokes);
-            est_cond_add_attr (cond, attr->str);
-        }
-
-        for (node = (GList *)tomoe_query_get_readings (query);
-             node;
-             node = g_list_next (node)) {
-            TomoeReading *reading = node->data;
-            gchar *xml;
-
-            xml = tomoe_reading_to_xml (reading);
-            g_string_append_printf (phrase, " %s", xml);
-            g_free (xml);
-        }
-
-        for (node = (GList *)tomoe_query_get_radicals (query);
-             node;
-             node = g_list_next (node)) {
-            const gchar *radical = node->data;
-            gchar *escaped_radical;
-
-            escaped_radical = g_markup_escape_text (radical, -1);
-            g_string_append_printf (phrase,
-                                    " <radical>%s</radical>",
-                                    escaped_radical);
-            g_free (escaped_radical);
-        }
+        append_search_cond_utf8 (dict, cond, phrase,
+                                 tomoe_query_get_utf8 (query));
+        append_search_cond_variant (dict, cond, phrase,
+                                    tomoe_query_get_variant (query));
+        append_search_cond_n_strokes (dict, cond, phrase,
+                                      tomoe_query_get_min_n_strokes (query),
+                                      tomoe_query_get_max_n_strokes (query));
+        append_search_cond_readings (dict, cond, phrase,
+                                     tomoe_query_get_readings (query));
+        append_search_cond_radicals (dict, cond, phrase,
+                                     tomoe_query_get_radicals (query));
     }
 
     if (phrase->len > 0)
         est_cond_set_phrase (cond, phrase->str);
-
-    g_string_free (attr, TRUE);
     g_string_free (phrase, TRUE);
 
     results = est_db_search (dict->db, cond, &n_results, NULL);
