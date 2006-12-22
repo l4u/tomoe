@@ -188,6 +188,21 @@ context "Tomoe::Dict(#{dict_module_type})" do
     end
   end
 
+  specify "should support UTF8 search" do
+    make_temporary_dict(@original) do |dict|
+      char = Tomoe::Char.new
+      char.utf8 = "か"
+
+      dict.register(char).should == true
+
+      query = Tomoe::Query.new
+      query.utf8 = "か"
+      dict.search(query).collect do |cand|
+        cand.char.utf8
+      end.should == ["か"]
+    end
+  end
+
   def setup_strokes
     @strokes = [
                 [
