@@ -4,7 +4,6 @@
 * Implement advanced searching.
 * Add modulized dictionary types.
   - CHISE?
-* Add radicals and variant element into tomoe-dict.dtd.
 * Asynchronous dictionary loading?
 * Asynchronous searching?
 * Prepare character data base.
