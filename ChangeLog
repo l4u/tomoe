@@ -1,5 +1,10 @@
 2006-12-22  Kouhei Sutou  <kou@cozmixng.org>
 
+	* data/dict.dtd: added variant.
+	* test/char_spec.rb: added tests for load/dump XML with variant.
+	* lib/tomoe-xml-parser.c: supported parsing variant.
+	* lib/tomoe-char.c: supported outputting variant to XML.
+
 	* module/dict/tomoe-dict-mysql.c: supported variant search.
 
 	* test/dict_spec.rb: added tests for variant search.

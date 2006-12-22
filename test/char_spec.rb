@@ -6,11 +6,23 @@ context "Tomoe::Char" do
     char.to_xml.should_empty
   end
 
-  specify "should dump XML with code-point" do
+  specify "should dump XML with UTF8" do
     char = Tomoe::Char.new
     char.utf8 = "あ"
     xml = "  <character>\n"
     xml << "    <utf8>あ</utf8>\n"
+    xml << "  </character>\n"
+    char.to_xml.should == xml
+  end
+
+  specify "should dump XML with variant" do
+    hashigo_daka = ucs4_to_utf8(39641) # はしご高
+    char = Tomoe::Char.new
+    char.utf8 = "高"
+    char.variant = hashigo_daka
+    xml = "  <character>\n"
+    xml << "    <utf8>高</utf8>\n"
+    xml << "    <variant>#{hashigo_daka}</variant>\n"
     xml << "  </character>\n"
     char.to_xml.should == xml
   end
@@ -34,6 +46,17 @@ context "Tomoe::Char" do
     char.utf8 = "あ"
     new_char = Tomoe::Char.new(char.to_xml)
     new_char.utf8.should == char.utf8
+  end
+
+  specify "should load from dumped XML with variant" do
+    hashigo_daka = ucs4_to_utf8(39641) # はしご高
+    char = Tomoe::Char.new
+    char.utf8 = "高"
+    char.variant = hashigo_daka
+
+    new_char = Tomoe::Char.new(char.to_xml)
+    new_char.utf8.should == char.utf8
+    new_char.variant.should == hashigo_daka
   end
 
   specify "should load from dumped XML with radicals" do

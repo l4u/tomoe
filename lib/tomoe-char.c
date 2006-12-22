@@ -461,6 +461,20 @@ tomoe_char_to_xml_utf8 (TomoeChar *chr, TomoeCharPrivate *priv,
 }
 
 static void
+tomoe_char_to_xml_variant (TomoeChar *chr, TomoeCharPrivate *priv,
+                           GString *output)
+{
+    gchar *xml;
+
+    if (!priv->variant) return;
+
+    xml = g_markup_printf_escaped ("    <variant>%s</variant>\n",
+                                   priv->variant);
+    g_string_append (output, xml);
+    g_free (xml);
+}
+
+static void
 tomoe_char_to_xml_readings (TomoeChar *chr, TomoeCharPrivate *priv,
                             GString *output)
 {
@@ -555,6 +569,7 @@ tomoe_char_to_xml (TomoeChar* chr)
     output = g_string_new ("");
 
     tomoe_char_to_xml_utf8 (chr, priv, output);
+    tomoe_char_to_xml_variant (chr, priv, output);
     tomoe_char_to_xml_readings (chr, priv, output);
     tomoe_char_to_xml_radicals (chr, priv, output);
     tomoe_char_to_xml_writing (chr, priv, output);
