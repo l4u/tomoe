@@ -737,6 +737,32 @@ append_sql_condition_readings (TomoeDictMySQL *dict, GString *sql,
 }
 
 static void
+append_sql_condition_radicals (TomoeDictMySQL *dict, GString *sql,
+                               TomoeQuery *query)
+{
+    GList *node;
+
+    node = (GList *)tomoe_query_get_radicals (query);
+    if (!node)
+        return;
+
+    g_string_append (sql,
+                     "  AND utf8 IN\n"
+                     "    (SELECT DISTINCT utf8 FROM radicals\n"
+                     "     WHERE TRUE = TRUE\n");
+    for (; node; node = g_list_next (node)) {
+        const gchar *radical = node->data;
+
+        if (radical) {
+            g_string_append (sql, "       AND radical_utf8 =");
+            append_string_value (dict, sql, radical);
+            g_string_append (sql, "\n");
+        }
+    }
+    g_string_append (sql, "    )\n");
+}
+
+static void
 append_utf8_search_sql (TomoeDictMySQL *dict, GString *sql, TomoeQuery *query)
 {
     g_string_append (sql,
@@ -747,6 +773,8 @@ append_utf8_search_sql (TomoeDictMySQL *dict, GString *sql, TomoeQuery *query)
     append_sql_condition_max_n_strokes (dict, sql, query);
 
     append_sql_condition_readings (dict, sql, query);
+
+    append_sql_condition_radicals (dict, sql, query);
 }
 
 static gchar *
