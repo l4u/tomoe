@@ -34,6 +34,7 @@
 typedef enum {
     STATE_NONE,
     STATE_UTF8,
+    STATE_VARIANT,
     STATE_N_STROKES,
     STATE_STROKES,
     STATE_READINGS,
@@ -124,6 +125,11 @@ start_element_handler (GMarkupParseContext *context,
 
     if (!strcmp ("utf8", element_name)) {
         data->state = STATE_UTF8;
+        return;
+    }
+
+    if (!strcmp ("variant", element_name)) {
+        data->state = STATE_VARIANT;
         return;
     }
 
@@ -265,6 +271,11 @@ end_element_handler (GMarkupParseContext *context,
         return;
     }
 
+    if (!strcmp("variant", element_name)) {
+        data->state = STATE_NONE;
+        return;
+    }
+
     if (!strcmp ("number-of-strokes", element_name)) {
         data->state = STATE_NONE;
         return;
@@ -338,6 +349,11 @@ text_handler (GMarkupParseContext *context,
     case STATE_UTF8:
     {
         tomoe_char_set_utf8 (data->chr, text);
+        return;
+    }
+    case STATE_VARIANT:
+    {
+        tomoe_char_set_variant (data->chr, text);
         return;
     }
     case STATE_N_STROKES:
