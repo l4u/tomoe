@@ -149,20 +149,21 @@ context "Tomoe::Dict(#{dict_module_type})" do
       query.max_n_strokes = 6
       dict.search(query).collect do |cand|
         cand.char.utf8
-      end.should == ["池"]
+      end.sort.should == ["あ", "池"].sort
     end
   end
 
   specify "should support radical search" do
     make_temporary_dict(@original) do |dict|
+      sanzui = ucs4_to_utf8(27701) # さんずい
       char = Tomoe::Char.new
       char.utf8 = "池"
-      char.add_radical("氵")
+      char.add_radical(sanzui)
 
       dict.register(char).should == true
 
       query = Tomoe::Query.new
-      query.add_radical("氵")
+      query.add_radical(sanzui)
       dict.search(query).collect do |cand|
         cand.char.utf8
       end.should == ["池"]

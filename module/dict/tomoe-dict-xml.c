@@ -415,7 +415,7 @@ tomoe_dict_xml_save (TomoeDictXML *dict)
 
     xml = g_string_new (
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-        "<!DOCTYPE dictionary SYSTEM \"tomoe-dict.dtd\">\n");
+        "<!DOCTYPE dictionary SYSTEM \"" DATADIR "/dict.dtd\">\n");
     if (dict->name)
         g_string_append_printf (xml,
                                 "<dictionary name=\"%s\">\n", dict->name);

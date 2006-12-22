@@ -133,7 +133,7 @@ compare_reading (gconstpointer a, gconstpointer b)
 }
 
 static gboolean
-does_match_char_with_readings (TomoeChar *chr, TomoeReading *reading)
+does_match_char_with_reading (TomoeChar *chr, TomoeReading *reading)
 {
     if (!reading)
         return TRUE;
@@ -145,24 +145,65 @@ does_match_char_with_readings (TomoeChar *chr, TomoeReading *reading)
         return FALSE;
 }
 
+static gboolean
+does_match_char_with_readings (TomoeChar *chr, const GList *readings)
+{
+    GList *node;
+
+    for (node = (GList *)readings; node; node = g_list_next (node)) {
+        TomoeReading *reading = node->data;
+        if (!does_match_char_with_reading (chr, reading))
+            return FALSE;
+    }
+
+    return TRUE;
+}
+
+static gboolean
+does_match_char_with_radical (TomoeChar *chr, const gchar *radical)
+{
+    if (!radical)
+        return TRUE;
+
+    if (g_list_find_custom ((GList *)tomoe_char_get_radicals (chr),
+                            radical, (GCompareFunc)g_utf8_collate))
+        return TRUE;
+    else
+        return FALSE;
+}
+
+static gboolean
+does_match_char_with_radicals (TomoeChar *chr, const GList *radicals)
+{
+    GList *node;
+
+    for (node = (GList *)radicals; node; node = g_list_next (node)) {
+        const gchar *radical = node->data;
+        if (!does_match_char_with_radical (chr, radical))
+            return FALSE;
+    }
+
+    return TRUE;
+}
+
 static void
 collect_chars_by_query (gpointer data, gpointer user_data)
 {
     TomoeChar *chr = data;
     TomoeDictSearchContext *context = user_data;
     TomoeQuery *query;
-    TomoeReading *reading;
-    gint min_n_strokes, max_n_strokes;
 
     query = context->query;
 
-    min_n_strokes = tomoe_query_get_min_n_strokes (query);
-    max_n_strokes = tomoe_query_get_max_n_strokes (query);
-    if (!does_match_char_with_n_strokes (chr, min_n_strokes, max_n_strokes))
+    if (!does_match_char_with_n_strokes (chr,
+                                         tomoe_query_get_min_n_strokes (query),
+                                         tomoe_query_get_max_n_strokes (query)))
         return;
 
-    reading = g_list_nth_data ((GList *)tomoe_query_get_readings (query), 0);
-    if (!does_match_char_with_readings (chr, reading))
+    if (!does_match_char_with_readings (chr, tomoe_query_get_readings (query)))
+        return;
+
+    if (!does_match_char_with_radicals (chr, tomoe_query_get_radicals (query)))
         return;
 
     context->results = g_list_prepend (context->results,
