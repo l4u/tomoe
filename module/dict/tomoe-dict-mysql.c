@@ -598,9 +598,10 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
 
     variant = tomoe_char_get_variant (chr);
     if (variant)
-        g_string_append_printf (sql, "%d)", g_utf8_get_char (variant));
+        append_string_value (dict, sql, variant);
     else
-        g_string_append (sql, "NULL)");
+        g_string_append (sql, "NULL");
+    g_string_append_printf (sql, ")");
 
     success = execute_query (dict, sql->str);
     g_string_free (sql, TRUE);
@@ -672,6 +673,20 @@ append_sql_condition_utf8 (TomoeDictMySQL *dict, GString *sql,
     if (utf8) {
         g_string_append (sql, "  AND utf8 = ");
         append_string_value (dict, sql, utf8);
+        g_string_append (sql, "\n");
+    }
+}
+
+static void
+append_sql_condition_variant (TomoeDictMySQL *dict, GString *sql,
+                              TomoeQuery *query)
+{
+    const gchar *variant;
+
+    variant = tomoe_query_get_variant (query);
+    if (variant) {
+        g_string_append (sql, "  AND variant = ");
+        append_string_value (dict, sql, variant);
         g_string_append (sql, "\n");
     }
 }
@@ -769,6 +784,7 @@ append_utf8_search_sql (TomoeDictMySQL *dict, GString *sql, TomoeQuery *query)
                      "SELECT utf8 FROM chars\n"
                      "WHERE TRUE = TRUE\n");
     append_sql_condition_utf8 (dict, sql, query);
+    append_sql_condition_variant (dict, sql, query);
     append_sql_condition_min_n_strokes (dict, sql, query);
     append_sql_condition_max_n_strokes (dict, sql, query);
 
