@@ -4,6 +4,7 @@ Overview of Changes from libtomoe-0.4.0 to libtomoe-0.5.0
   - Hyper Estraier
   - Unihan database
   - MySQL
+* Add radicals and variant element into dict.dtd.
 
 Overview of Changes from libtomoe-0.3.0 to libtomoe-0.4.0
 ==============================================================
