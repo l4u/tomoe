@@ -171,6 +171,23 @@ context "Tomoe::Dict(#{dict_module_type})" do
     end
   end
 
+  specify "should support variant search" do
+    make_temporary_dict(@original) do |dict|
+      hashigo_daka = ucs4_to_utf8(39641) # はしご高
+      char = Tomoe::Char.new
+      char.utf8 = "高"
+      char.variant = hashigo_daka
+
+      dict.register(char).should == true
+
+      query = Tomoe::Query.new
+      query.variant = hashigo_daka
+      dict.search(query).collect do |cand|
+        cand.char.utf8
+      end.should == ["高"]
+    end
+  end
+
   def setup_strokes
     @strokes = [
                 [
