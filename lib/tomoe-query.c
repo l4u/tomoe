@@ -41,7 +41,7 @@ struct _TomoeQueryPrivate
     GList        *readings;
     GList        *radicals;
     TomoeWriting *writing;
-    TomoeChar    *variant;
+    gchar        *variant;
 };
 
 enum
@@ -149,7 +149,7 @@ tomoe_query_dispose (GObject *object)
         g_list_free (priv->radicals);
     }
     if (priv->variant)
-        g_object_unref (priv->variant);
+        g_free (priv->variant);
     if (priv->writing)
         g_object_unref (priv->writing);
 
@@ -296,7 +296,7 @@ tomoe_query_add_radical (TomoeQuery *query, const gchar *radical)
     priv->radicals = g_list_prepend (priv->radicals, g_strdup (radical));
 }
 
-TomoeChar *
+const gchar *
 tomoe_query_get_variant (TomoeQuery *query)
 {
     TomoeQueryPrivate *priv;
@@ -309,7 +309,7 @@ tomoe_query_get_variant (TomoeQuery *query)
 }
 
 void
-tomoe_query_set_variant (TomoeQuery *query, TomoeChar *variant)
+tomoe_query_set_variant (TomoeQuery *query, const gchar *variant)
 {
     TomoeQueryPrivate *priv;
 
@@ -318,8 +318,8 @@ tomoe_query_set_variant (TomoeQuery *query, TomoeChar *variant)
     priv = TOMOE_QUERY_GET_PRIVATE (query);
 
     if (priv->variant)
-        g_object_unref (G_OBJECT (priv->variant));
-    priv->variant = g_object_ref (variant);
+        g_free (priv->variant);
+    priv->variant = variant ? g_strdup (variant) : NULL;
 }
 
 void

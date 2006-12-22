@@ -19,6 +19,13 @@ tq_add_radical(VALUE self, VALUE radical)
 }
 
 static VALUE
+tq_set_variant(VALUE self, VALUE variant)
+{
+    tomoe_query_set_variant(_SELF(self), RVAL2CSTR(variant));
+    return Qnil;
+}
+
+static VALUE
 tq_set_writing(VALUE self, VALUE writing)
 {
     tomoe_query_set_writing(_SELF(self), RVAL2TWTG(writing));
@@ -34,7 +41,7 @@ _tomoe_rb_init_tomoe_query(VALUE mTomoe)
 
     rb_define_method(cTomoeQuery, "add_reading", tq_add_reading, 1);
     rb_define_method(cTomoeQuery, "add_radical", tq_add_radical, 1);
-/*     rb_define_method(cTomoeQuery, "add_variant", tq_add_variant, 1); */
+    rb_define_method(cTomoeQuery, "set_variant", tq_set_variant, 1);
     rb_define_method(cTomoeQuery, "set_writing", tq_set_writing, 1);
 
     G_DEF_SETTERS(cTomoeQuery);
