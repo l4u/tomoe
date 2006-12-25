@@ -27,6 +27,7 @@
 #include <glib/garray.h>
 #include <glib/gi18n.h>
 #include "glib-compat-file-utilities.h"
+#include "glib-compat-key-file.h"
 
 G_BEGIN_DECLS
 
