@@ -1,5 +1,7 @@
 2006-12-25  Kouhei Sutou  <kou@cozmixng.org>
 
+	* configure.in: removed needless code.
+
 	* lib/Makefile.am, lib/glib-compat-file-utilities.[ch]: split from
 	lib/glib-utils.[ch].
 

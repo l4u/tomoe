@@ -130,7 +130,6 @@ dnl **************************************************************
 dnl Check for GLib.
 dnl **************************************************************
 AM_PATH_GLIB_2_0(2.4.0, [], [], [gmodule gobject])
-AC_PATH_PROG(GLIB_MKENUMS, glib-mkenums)
 
 dnl **************************************************************
 dnl Check for Hyper Estraier.
