@@ -1,5 +1,9 @@
 2006-12-25  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/Makefile.am, lib/glib-utils.h,
+	lib/glib-compat-key-file.[ch]: added GKeyFile implementation to
+	work on GLib 2.4.x environment.
+
 	* lib/glib-compat-file-utilities.h: included headers for mkdir().
 
 	* lib/Makefile.am: removed needless dependencies.
