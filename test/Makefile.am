@@ -22,13 +22,14 @@ CLEANFILES = *~ *.bak
 
 SUBDIRS = data
 
-EXTRA_DIST = \
-	run-spec.rb \
-	run-test.sh \
-	tomoe-spec-utils.rb \
-	char_spec.rb \
-	context_spec.rb \
-	dict_spec.rb \
+EXTRA_DIST =			\
+	run-spec.rb		\
+	run-specs.rb		\
+	run-test.sh		\
+	tomoe-spec-utils.rb	\
+	char_spec.rb		\
+	context_spec.rb		\
+	dict_spec.rb		\
 	writing_spec.rb
 
 dict_modules = xml

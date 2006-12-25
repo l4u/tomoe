@@ -1,5 +1,7 @@
 2006-12-25  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/Makefile.am (EXTRA_DIST): added a missing file.
+
 	* configure.in, Makefile.am, db/: added db/ to distributed files.
 
 	* db/search.rb: removed needless file.
