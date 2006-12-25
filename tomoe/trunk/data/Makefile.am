@@ -20,7 +20,7 @@
 
 CLEANFILES = *~ *.bak *.valid
 
-pkgdata_DATA = dict.dtd
+pkgdata_DATA = dict.dtd xml2est.rb
 dict_data_DATA =
 recognizer_data_DATA = handwriting.xml
 conf_DATA = config

@@ -405,7 +405,6 @@ ext/ruby/Makefile
 db/Makefile
 db/lib/Makefile
 db/migrate/Makefile
-utils/Makefile
 test/Makefile
 test/data/Makefile
 benchmark/Makefile
