@@ -21,6 +21,7 @@ Group:     System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 Requires: /sbin/ldconfig
+#Requires: glib2
 Requires: mysql-client
 BuildRequires: pkgconfig
 BuildRequires: glib2-devel
