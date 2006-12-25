@@ -99,7 +99,7 @@ CLEANFILES += \
 $(enum_source_prefix).c: stamp-$(enum_source_prefix)-c $(enum_source_prefix).h
 	@true
 
-stamp-$(enum_source_prefix)-c: $(enum_sources_h) Makefile $(GLIB_MKENUMS)
+stamp-$(enum_source_prefix)-c: $(enum_sources_h) Makefile
 	(cd $(srcdir) && \
 	  include_headers="" && \
 	  for h in $(enum_sources_h); do \
@@ -120,7 +120,7 @@ stamp-$(enum_source_prefix)-c: $(enum_sources_h) Makefile $(GLIB_MKENUMS)
 $(enum_source_prefix).h: stamp-$(enum_source_prefix)-h
 	@true
 
-stamp-$(enum_source_prefix)-h: $(enum_sources_h) Makefile $(GLIB_MKENUMS)
+stamp-$(enum_source_prefix)-h: $(enum_sources_h) Makefile
 	(cd $(srcdir) && \
 	  mark="__`echo $(enum_source_prefix) | sed -e 's/-/_/g' | tr a-z A-Z`_H__" && \
 	  $(GLIB_MKENUMS) \
