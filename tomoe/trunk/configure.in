@@ -402,6 +402,9 @@ module/recognizer/Makefile
 data/Makefile
 ext/Makefile
 ext/ruby/Makefile
+db/Makefile
+db/lib/Makefile
+db/migrate/Makefile
 test/Makefile
 test/data/Makefile
 benchmark/Makefile
