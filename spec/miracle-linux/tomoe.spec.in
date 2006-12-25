@@ -21,8 +21,8 @@ Group:     System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 Requires: /sbin/ldconfig
-Requires: mysql
 Requires: glib2
+Requires: mysql
 BuildRequires: pkgconfig
 BuildRequires: glib2-devel
 BuildRequires: mysql-devel
@@ -79,11 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS ChangeLog COPYING NEWS TODO
 
 %{_libdir}/libtomoe*.so.*
-%{_libdir}/tomoe/module/dict/*
-%{_libdir}/tomoe/module/recognizer/*
+%{_libdir}/tomoe/*
 %{_sysconfdir}/tomoe/*
-%{_datadir}/tomoe/dict.dtd
-%{_datadir}/tomoe/recognizer/*
+%{_datadir}/tomoe/*
 
 %files devel
 %defattr(-,root,root,-)
