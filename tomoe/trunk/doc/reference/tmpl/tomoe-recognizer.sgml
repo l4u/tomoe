@@ -24,6 +24,29 @@ private fields and should not be directly accessed.
 </para>
 
 
+<!-- ##### FUNCTION tomoe_recognizer_load ##### -->
+<para>
+
+</para>
+
+@base_dir: 
+
+
+<!-- ##### FUNCTION tomoe_recognizer_unload ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION tomoe_recognizer_get_registered_types ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
 <!-- ##### FUNCTION tomoe_recognizer_new ##### -->
 <para>
 
@@ -41,7 +64,6 @@ private fields and should not be directly accessed.
 </para>
 
 @recognizer: 
-@dict: 
 @input: 
 @Returns: 
 

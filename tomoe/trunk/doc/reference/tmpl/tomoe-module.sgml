@@ -22,5 +22,42 @@ TomoeModule
 
 </para>
 
-@object: 
+
+<!-- ##### FUNCTION tomoe_module_load_modules ##### -->
+<para>
+
+</para>
+
+@base_dir: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_module_instantiate ##### -->
+<para>
+
+</para>
+
+@modules: 
+@name: 
+@first_property: 
+@var_args: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_module_collect_registered_types ##### -->
+<para>
+
+</para>
+
+@modules: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_module_unload ##### -->
+<para>
+
+</para>
+
+@module: 
+
 

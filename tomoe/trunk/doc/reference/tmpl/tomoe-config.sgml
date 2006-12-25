@@ -4,7 +4,6 @@ TomoeConfig
 <!-- ##### SECTION Short_Description ##### -->
 An object of configuration file.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
@@ -39,15 +38,16 @@ private fields and should not be directly accessed.
 @Returns: 
 
 
-<!-- ##### FUNCTION tomoe_config_load ##### -->
+<!-- ##### FUNCTION tomoe_config_get_filename ##### -->
 <para>
 
 </para>
 
 @config: 
+@Returns: 
 
 
-<!-- ##### FUNCTION tomoe_config_get_filename ##### -->
+<!-- ##### FUNCTION tomoe_config_get_user_dict_name ##### -->
 <para>
 
 </para>

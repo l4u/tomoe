@@ -4,7 +4,6 @@ TomoeReading
 <!-- ##### SECTION Short_Description ##### -->
 An object of reading data of #TomoeChar.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
@@ -65,6 +64,15 @@ private fields and should not be directly accessed.
 
 
 <!-- ##### FUNCTION tomoe_reading_get_reading ##### -->
+<para>
+
+</para>
+
+@reading: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_reading_to_xml ##### -->
 <para>
 
 </para>

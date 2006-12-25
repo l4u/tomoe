@@ -1,3 +1,9 @@
+2006-12-25  Kouhei Sutou  <kou@cozmixng.org>
+
+	* configure.in, Makefile.am, spec/: moved tomoe.spec.in to
+	spec/turbo-linux/.
+	* doc/: updated.
+
 2006-12-22  Kouhei Sutou  <kou@cozmixng.org>
 
 	* module/dict/tomoe-dict-est.c:

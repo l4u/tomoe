@@ -4,7 +4,6 @@ TomoeDict
 <!-- ##### SECTION Short_Description ##### -->
 An object of dictionary.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
@@ -23,6 +22,29 @@ An object of dictionary.
 The #TomoeDict struct contains only
 private fields and should not be directly accessed.
 </para>
+
+
+<!-- ##### FUNCTION tomoe_dict_load ##### -->
+<para>
+
+</para>
+
+@base_dir: 
+
+
+<!-- ##### FUNCTION tomoe_dict_unload ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION tomoe_dict_get_registered_types ##### -->
+<para>
+
+</para>
+
+@Returns: 
 
 
 <!-- ##### FUNCTION tomoe_dict_new ##### -->
@@ -72,6 +94,43 @@ private fields and should not be directly accessed.
 
 @dict: 
 @utf8: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_dict_search ##### -->
+<para>
+
+</para>
+
+@dict: 
+@query: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_dict_flush ##### -->
+<para>
+
+</para>
+
+@dict: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_dict_is_editable ##### -->
+<para>
+
+</para>
+
+@dict: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_dict_get_available_private_utf8 ##### -->
+<para>
+
+</para>
+
+@dict: 
 @Returns: 
 
 

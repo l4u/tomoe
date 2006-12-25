@@ -17,6 +17,20 @@ An object of character data.
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### MACRO TOMOE_CHAR_PRIVATE_USE_AREA_START ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO TOMOE_CHAR_PRIVATE_USE_AREA_END ##### -->
+<para>
+
+</para>
+
+
+
 <!-- ##### STRUCT TomoeChar ##### -->
 <para>
 The #TomoeChar struct contains only
@@ -49,6 +63,16 @@ private fields and should not be directly accessed.
 
 </para>
 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_char_new_from_xml_data ##### -->
+<para>
+
+</para>
+
+@data: 
+@len: 
 @Returns: 
 
 

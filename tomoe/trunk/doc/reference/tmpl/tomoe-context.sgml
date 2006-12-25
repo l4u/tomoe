@@ -4,7 +4,6 @@ TomoeContext
 <!-- ##### SECTION Short_Description ##### -->
 An object of...
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
@@ -24,6 +23,11 @@ The #TomoeContext struct contains only
 private fields and should not be directly accessed.
 </para>
 
+
+<!-- ##### ARG TomoeContext:recognizer ##### -->
+<para>
+
+</para>
 
 <!-- ##### FUNCTION tomoe_context_new ##### -->
 <para>
@@ -59,6 +63,36 @@ private fields and should not be directly accessed.
 
 @ctx: 
 @queries: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_context_get_char ##### -->
+<para>
+
+</para>
+
+@ctx: 
+@utf8: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_context_register ##### -->
+<para>
+
+</para>
+
+@ctx: 
+@chr: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_context_unregister ##### -->
+<para>
+
+</para>
+
+@ctx: 
+@utf8: 
 @Returns: 
 
 
