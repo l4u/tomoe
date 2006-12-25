@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2006 Kouhei Sutou <kou@cozmixng.org>
  *
@@ -20,21 +20,32 @@
  *  $Id$
  */
 
+#ifndef __GLIB_COMPAT_FILE_UTILITIES_H__
+#define __GLIB_COMPAT_FILE_UTILITIES_H__
+
 #include <glib.h>
-#include "glib-utils.h"
 
-void
-g_ptr_array_foreach_reverse (GPtrArray *array,
-                             GFunc      func,
-                             gpointer   user_data)
-{
-    gint i;
+#if GLIB_CHECK_VERSION(2, 6, 0)
+#  include <glib/gstdio.h>
+#else
+#  include <stdio.h>
+#  define g_open(filename, flags, mode)	open(filename, flags, mode)
+#  define g_filename_display_name(name)	(name)
+#  define g_unlink(filename)			unlink(filename)
+#  define g_mkdir(filename, mode)		mkdir(filename, mode)
+#  define g_rename(old_filename, new_filename)	\
+										rename(old_filename, new_filename)
+#endif
 
-    i = array->len - 1;
-    while (i >= 0) {
-        func (g_ptr_array_index (array, i--), user_data);
-    }
-}
+#ifndef O_BINARY
+#  define O_BINARY 0
+#endif
+
+G_BEGIN_DECLS
+
+G_END_DECLS
+
+#endif /* __GLIB_COMPAT_FILE_UTILITIES_H__ */
 
 /*
 vi:ts=4:nowrap:ai:expandtab
