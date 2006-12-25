@@ -1,5 +1,7 @@
 2006-12-25  Kouhei Sutou  <kou@cozmixng.org>
 
+	* db/search.rb: removed needless file.
+
 	* lib/glib-compat-file-utilities.h: used g_strdup () for
 	g_filename_display_name() alternate.
 
