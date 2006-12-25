@@ -20,6 +20,5 @@
 
 CLEANFILES = *~ *.bak
 
-EXTRA_DIST = \
-	dictionary.rb \
-	gtk2dictview.rb
+EXTRA_DIST =		\
+	xml2est.rb
