@@ -28,7 +28,14 @@
 #if GLIB_CHECK_VERSION(2, 6, 0)
 #  include <glib/gstdio.h>
 #else
+#  include "config.h"
 #  include <stdio.h>
+#  ifdef HAVE_SYS_STAT_H
+#    include <sys/stat.h>
+#  endif
+#  ifdef HAVE_SYS_TYPES_H
+#    include <sys/types.h>
+#  endif
 #  define g_open(filename, flags, mode)	open(filename, flags, mode)
 #  define g_filename_display_name(name)	(name)
 #  define g_unlink(filename)			unlink(filename)
