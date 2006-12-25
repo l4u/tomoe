@@ -1,5 +1,9 @@
 2006-12-25  Kouhei Sutou  <kou@cozmixng.org>
 
+	* configure.in, Makefile.am, utils/, data/:
+	- moved xml2est.rb to data/ from utils/.
+	- removed utils/.
+
 	* spec/: updated.
 
 	* configure.in, Makefile.am, utils/Makefile.am: added utils/.
