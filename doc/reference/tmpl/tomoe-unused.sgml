@@ -22,28 +22,28 @@
 tomoe-dict-impl
 
 
-<!-- ##### SECTION ./tmpl/tomoe-module.sgml:Long_Description ##### -->
+<!-- ##### SECTION ./tmpl/tomoe-recognizer-impl.sgml:Long_Description ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### SECTION ./tmpl/tomoe-module.sgml:See_Also ##### -->
+<!-- ##### SECTION ./tmpl/tomoe-recognizer-impl.sgml:See_Also ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### SECTION ./tmpl/tomoe-module.sgml:Short_Description ##### -->
+<!-- ##### SECTION ./tmpl/tomoe-recognizer-impl.sgml:Short_Description ##### -->
 
 
 
-<!-- ##### SECTION ./tmpl/tomoe-module.sgml:Stability_Level ##### -->
+<!-- ##### SECTION ./tmpl/tomoe-recognizer-impl.sgml:Stability_Level ##### -->
 
 
 
-<!-- ##### SECTION ./tmpl/tomoe-module.sgml:Title ##### -->
-TomoeModule
+<!-- ##### SECTION ./tmpl/tomoe-recognizer-impl.sgml:Title ##### -->
+tomoe-recognizer-impl
 
 
 <!-- ##### FUNCTION TOMOE_DICT_IMPL_FREE ##### -->
@@ -212,13 +212,6 @@ TomoeModule
 @utf8: 
 @Returns: 
 
-<!-- ##### STRUCT TomoeModule ##### -->
-<para>
-
-</para>
-
-@object: 
-
 <!-- ##### ARG TomoeModule:default-base-dir ##### -->
 <para>
 
@@ -275,6 +268,13 @@ TomoeModule
 @input: 
 @Returns: 
 
+<!-- ##### FUNCTION tomoe_config_load ##### -->
+<para>
+
+</para>
+
+@config: 
+
 <!-- ##### FUNCTION tomoe_context_load_recognizer ##### -->
 <para>
 
@@ -283,15 +283,6 @@ TomoeModule
 @ctx: 
 @base_dir: 
 @name: 
-
-<!-- ##### FUNCTION tomoe_dict_search ##### -->
-<para>
-
-</para>
-
-@dict: 
-@query: 
-@Returns: 
 
 <!-- ##### FUNCTION tomoe_module_find_module ##### -->
 <para>
@@ -328,59 +319,20 @@ TomoeModule
 
 @module: 
 
-<!-- ##### FUNCTION tomoe_query_get_max_n_strokes ##### -->
+<!-- ##### FUNCTION tomoe_shelf_add_dict ##### -->
 <para>
 
 </para>
 
-@query: 
+@shelf: 
+@dict: 
+
+<!-- ##### FUNCTION tomoe_shelf_remove_dict ##### -->
+<para>
+
+</para>
+
+@shelf: 
+@name: 
 @Returns: 
-
-<!-- ##### FUNCTION tomoe_query_get_min_n_strokes ##### -->
-<para>
-
-</para>
-
-@query: 
-@Returns: 
-
-<!-- ##### FUNCTION tomoe_query_get_radicals ##### -->
-<para>
-
-</para>
-
-@query: 
-@Returns: 
-
-<!-- ##### FUNCTION tomoe_query_get_variant ##### -->
-<para>
-
-</para>
-
-@query: 
-@Returns: 
-
-<!-- ##### FUNCTION tomoe_query_set_max_n_strokes ##### -->
-<para>
-
-</para>
-
-@query: 
-@n_strokes: 
-
-<!-- ##### FUNCTION tomoe_query_set_min_n_strokes ##### -->
-<para>
-
-</para>
-
-@query: 
-@n_strokes: 
-
-<!-- ##### FUNCTION tomoe_query_set_variant ##### -->
-<para>
-
-</para>
-
-@query: 
-@chr: 
 

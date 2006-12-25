@@ -4,7 +4,6 @@ TomoeShelf
 <!-- ##### SECTION Short_Description ##### -->
 An object of dictionaries.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
@@ -33,15 +32,6 @@ private fields and should not be directly accessed.
 @Returns: 
 
 
-<!-- ##### FUNCTION tomoe_shelf_add_dict ##### -->
-<para>
-
-</para>
-
-@shelf: 
-@dict: 
-
-
 <!-- ##### FUNCTION tomoe_shelf_get_dict ##### -->
 <para>
 
@@ -52,7 +42,17 @@ private fields and should not be directly accessed.
 @Returns: 
 
 
-<!-- ##### FUNCTION tomoe_shelf_remove_dict ##### -->
+<!-- ##### FUNCTION tomoe_shelf_register_dict ##### -->
+<para>
+
+</para>
+
+@shelf: 
+@name: 
+@dict: 
+
+
+<!-- ##### FUNCTION tomoe_shelf_unregister_dict ##### -->
 <para>
 
 </para>

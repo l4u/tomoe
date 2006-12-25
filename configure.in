@@ -410,7 +410,11 @@ doc/Makefile
 doc/reference/Makefile
 doc/reference/version.xml
 tomoe.pc
-tomoe.spec
+spec/Makefile
+spec/turbo-linux/Makefile
+spec/turbo-linux/tomoe.spec
+spec/miracle-linux/Makefile
+spec/miracle-linux/tomoe.spec
 ])
 
 AC_OUTPUT
