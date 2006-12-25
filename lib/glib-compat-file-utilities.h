@@ -36,12 +36,12 @@
 #  ifdef HAVE_SYS_TYPES_H
 #    include <sys/types.h>
 #  endif
-#  define g_open(filename, flags, mode)	open(filename, flags, mode)
-#  define g_filename_display_name(name)	(name)
-#  define g_unlink(filename)			unlink(filename)
-#  define g_mkdir(filename, mode)		mkdir(filename, mode)
+#  define g_open(filename, flags, mode)	open (filename, flags, mode)
+#  define g_filename_display_name(name)	g_strdup (name)
+#  define g_unlink(filename)			unlink (filename)
+#  define g_mkdir(filename, mode)		mkdir (filename, mode)
 #  define g_rename(old_filename, new_filename)	\
-										rename(old_filename, new_filename)
+										rename (old_filename, new_filename)
 #endif
 
 #ifndef O_BINARY
