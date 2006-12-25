@@ -25,6 +25,8 @@
 #define __GLIB_UTILS_H__
 
 #include <glib/garray.h>
+#include <glib/gi18n.h>
+#include "glib-compat-file-utilities.h"
 
 G_BEGIN_DECLS
 
