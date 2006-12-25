@@ -24,7 +24,7 @@ SUBDIRS = data
 
 EXTRA_DIST =			\
 	run-spec.rb		\
-	run-specs.rb		\
+	run-specs.sh		\
 	run-test.sh		\
 	tomoe-spec-utils.rb	\
 	char_spec.rb		\
