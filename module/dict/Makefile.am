@@ -65,10 +65,12 @@ dict_module_LTLIBRARIES += libunihan.la
 
 unihan_built_sources = tomoe-unihan-data.h
 
-CLEANFILES += Unihan.stamp Unihan.txt Unihan.txt.cache
+CLEANFILES += Unihan.txt.cache
+MAINTAINERCLEANFILES = Unihan.stamp Unihan.txt
+DISTCLEANFILES = Unihan.zip
 BUILT_SOURCES = $(unihan_built_sources)
 
-EXTRA_DIST = unihan-compiler.rb $(BUILT_SOURCES) Unihan.stamp
+EXTRA_DIST = unihan-compiler.rb $(BUILT_SOURCES)
 
 libunihan_la_SOURCES =		\
 	tomoe-dict-unihan.c	\
@@ -90,8 +92,11 @@ tomoe-unihan-data.h: unihan-compiler.rb Unihan.stamp $(top_builddir)/data/kanjid
 
 Unihan_URL = ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip
 Unihan.stamp:
-	$(RUBY) -r open-uri -e "print open('$(Unihan_URL)').read" > Unihan.zip || exit 1;
-	$(UNZIP) -o Unihan.zip || exit 1;
+	if test ! -f Unihan.txt; then					\
+	  $(RUBY) -r open-uri -e "print open('$(Unihan_URL)').read"	\
+	    > Unihan.zip || exit 1;					\
+	  $(UNZIP) -o Unihan.zip || exit 1;				\
+	fi
 	touch $@
 endif
 
