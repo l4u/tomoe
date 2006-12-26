@@ -20,11 +20,12 @@
 
 CLEANFILES = *~ *.bak
 
-AM_CPPFLAGS = -DG_LOG_DOMAIN=\"TOMOE-RECOGNIZER\"
+AM_CPPFLAGS =
 INCLUDES = $(TOMOE_CFLAGS)
 
 recognizer_module_LTLIBRARIES = libsimple.la
 
+libsimple_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Recognizer:Simple\" $(AM_CPPFLAGS)
 libsimple_la_SOURCES = \
 	tomoe-recognizer-simple.c				\
 	tomoe-recognizer-simple-logic.c				\
