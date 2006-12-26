@@ -48,7 +48,6 @@ enum_sources =			\
 	$(enum_source_prefix).h
 
 BUILT_SOURCES = $(enum_sources)
-CLEANFILES += $(enum_sources)
 
 pkginclude_HEADERS =			\
 	$(tomoe_public_h_sources)	\
@@ -89,13 +88,8 @@ libtomoe_la_LD_ADD = \
 libtomoe_la_LIBADD = $(TOMOE_LIBS)
 
 
-
-BUILT_SOURCES += \
-	stamp-$(enum_source_prefix)-c \
-	stamp-$(enum_source_prefix)-h
-
-CLEANFILES += \
-	stamp-$(enum_source_prefix)-c \
+MAINTAINERCLEANFILES =			\
+	stamp-$(enum_source_prefix)-c	\
 	stamp-$(enum_source_prefix)-h
 
 $(enum_source_prefix).c: stamp-$(enum_source_prefix)-c $(enum_source_prefix).h
