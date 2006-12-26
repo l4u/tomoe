@@ -3,7 +3,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: TOMOE
+Name: Tomoe
 Description: Tegaki Online MOji-ninshiki Engine
 Version: @VERSION@
 Requires: glib-2.0 >= 2.4
