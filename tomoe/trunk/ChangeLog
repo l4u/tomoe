@@ -1,5 +1,7 @@
 2006-12-26  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/dict/Makefile.am: cleanup build dependencies.
+
 	* tomoe.pc.in (Name), configure.in, data/handwriting.xml,
 	doc/reference/tomoe-docs.sgml: Tomoe is not TOMOE.
 
