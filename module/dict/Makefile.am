@@ -72,7 +72,7 @@ MAINTAINERCLEANFILES = Unihan.stamp Unihan.txt
 DISTCLEANFILES = Unihan.zip
 BUILT_SOURCES = $(unihan_built_sources)
 
-EXTRA_DIST = unihan-compiler.rb $(BUILT_SOURCES)
+EXTRA_DIST = unihan-compiler.rb $(BUILT_SOURCES) Unihan.stamp
 
 libunihan_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Unihan\" $(AM_CPPFLAGS)
 libunihan_la_SOURCES =		\
