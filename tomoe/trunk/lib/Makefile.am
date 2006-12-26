@@ -20,7 +20,7 @@
 
 CLEANFILES = *~ *.bak
 
-AM_CPPFLAGS = -DG_LOG_DOMAIN=\"TOMOE\"
+AM_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe\"
 INCLUDES = $(TOMOE_CFLAGS)
 
 tomoe_public_h_sources =		\

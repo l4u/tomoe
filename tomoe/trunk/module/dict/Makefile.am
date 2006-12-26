@@ -21,7 +21,6 @@
 CLEANFILES = *~ *.bak
 
 AM_CPPFLAGS =							\
-	-DG_LOG_DOMAIN=\"TOMOE-DICT\"				\
 	-DRUBY_EXTDIR=\""$(ruby_extdir)"\"			\
 	-DRUBY_LIBDIR=\""$(ruby_libdir)"\"
 
@@ -44,11 +43,13 @@ ptr_array_based_dict_sources =		\
 
 dict_module_LTLIBRARIES = libxml.la
 
+libxml_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:XML\" $(AM_CPPFLAGS)
 libxml_la_SOURCES = tomoe-dict-xml.c $(ptr_array_based_dict_sources)
 
 if WITH_EST
 dict_module_LTLIBRARIES += libest.la
 
+libest_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Est\" $(AM_CPPFLAGS)
 libest_la_SOURCES = tomoe-dict-est.c
 libest_la_LIBADD = $(EST_LIBS)
 endif
@@ -56,6 +57,7 @@ endif
 if ENABLE_DICT_RUBY
 dict_module_LTLIBRARIES += libruby.la
 
+libruby_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Ruby\" $(AM_CPPFLAGS)
 libruby_la_SOURCES = tomoe-dict-ruby.c
 libruby_la_LIBADD = $(RUBY_LIBS)
 endif
@@ -72,6 +74,7 @@ BUILT_SOURCES = $(unihan_built_sources)
 
 EXTRA_DIST = unihan-compiler.rb $(BUILT_SOURCES)
 
+libunihan_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Unihan\" $(AM_CPPFLAGS)
 libunihan_la_SOURCES =		\
 	tomoe-dict-unihan.c	\
 	tomoe-unihan.c		\
@@ -103,6 +106,7 @@ endif
 if WITH_SVN
 dict_module_LTLIBRARIES += libsvn.la
 
+libsvn_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Svn\" $(AM_CPPFLAGS)
 libsvn_la_SOURCES = tomoe-dict-svn.c
 libsvn_la_LIBADD = $(SVN_LIBS)
 endif
@@ -110,6 +114,7 @@ endif
 if WITH_MYSQL
 dict_module_LTLIBRARIES += libmysql.la
 
+libmysql_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:MySQL\" $(AM_CPPFLAGS)
 libmysql_la_SOURCES = tomoe-dict-mysql.c
 libmysql_la_LIBADD = $(MYSQL_LIBS)
 endif
