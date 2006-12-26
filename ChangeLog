@@ -1,5 +1,7 @@
 2006-12-26  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/Makefile.am: cleanup stamp related built system.
+
 	* module/dict/tomoe-dict-ruby.c (TOMOE_MODULE_IMPL_INIT): added
 	initialization check.
 
