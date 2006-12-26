@@ -19,8 +19,8 @@
 ]>
 <book id="index">
   <bookinfo>
-    <title>TOMOE Reference Manual</title>
-    <releaseinfo>for TOMOE &version;</releaseinfo>
+    <title>Tomoe Reference Manual</title>
+    <releaseinfo>for Tomoe &version;</releaseinfo>
   </bookinfo>
 
   <chapter id="tomoe">
