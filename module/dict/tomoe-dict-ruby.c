@@ -195,6 +195,7 @@ TOMOE_MODULE_IMPL_INIT (GTypeModule *type_module)
 {
     GList *registered_types = NULL;
     static gchar *argv[] = {G_STRINGIFY (PACKAGE)};
+    static gboolean initialized = FALSE;
 
     register_type (type_module);
     if (tomoe_type_dict_ruby)
@@ -211,7 +212,10 @@ TOMOE_MODULE_IMPL_INIT (GTypeModule *type_module)
         if (RARRAY(rb_load_path)->len == 0) {
             ruby_init_loadpath ();
         }
+    }
 
+    if (!initialized) {
+        initialized = TRUE;
         rb_ary_unshift (rb_load_path, rb_str_new2 (RUBY_EXTDIR));
         rb_ary_unshift (rb_load_path, rb_str_new2 (RUBY_LIBDIR));
     }
