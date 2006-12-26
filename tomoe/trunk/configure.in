@@ -377,7 +377,7 @@ AM_CONDITIONAL(ENABLE_DICT_RUBY,
 
 
 dnl **************************************************************
-dnl Configure for TOMOE.
+dnl Configure for Tomoe.
 dnl **************************************************************
 
 TOMOE_CFLAGS="$TOMOE_CFLAGS \$(GLIB_CFLAGS)"

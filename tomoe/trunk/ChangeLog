@@ -1,6 +1,7 @@
 2006-12-26  Kouhei Sutou  <kou@cozmixng.org>
 
-	* tomoe.pc.in (Name): Tomoe not TOMOE.
+	* tomoe.pc.in (Name), configure.in, data/handwriting.xml,
+	doc/reference/tomoe-docs.sgml: Tomoe is not TOMOE.
 
 2006-12-25  Kouhei Sutou  <kou@cozmixng.org>
 
