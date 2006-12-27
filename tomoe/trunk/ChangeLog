@@ -1,5 +1,7 @@
 2006-12-27  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/dict_spec.rb: added tests for auto inserting to PUA.
+
 	* lib/tomoe-module-impl.h, lib/tomoe-module.c,
 	lib/tomoe-recognizer.[ch], lib/tomoe-dict.[ch],
 	module/dict/tomoe-dict-*.c,

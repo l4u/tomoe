@@ -77,6 +77,29 @@ context "Tomoe::Dict(#{dict_module_type})" do
     end
   end
 
+  specify "should fail after PUA is full" do
+    make_temporary_dict(@original) do |dict|
+      pua_start = Tomoe::Char::PRIVATE_USE_AREA_START
+      pua_end = Tomoe::Char::PRIVATE_USE_AREA_END
+
+      utf8_to_ucs4(dict.available_private_utf8).should == pua_start
+      pua_start.upto(pua_end - 1) do |i|
+        char = Tomoe::Char.new
+        char.utf8 = ucs4_to_utf8(i)
+        dict.register(char).should == true
+      end
+      utf8_to_ucs4(dict.available_private_utf8).should == pua_end
+
+      char = Tomoe::Char.new
+      char.utf8 = ucs4_to_utf8(pua_end)
+      dict.register(char).should == true
+      dict.available_private_utf8.should_nil
+
+      char = Tomoe::Char.new
+      dict.register(char).should == false
+    end
+  end
+
   specify "should save/restore meta data" do
     make_temporary_dict(@original) do |dict|
       char = Tomoe::Char.new
