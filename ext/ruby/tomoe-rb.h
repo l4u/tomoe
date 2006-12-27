@@ -52,9 +52,10 @@ void _tomoe_rb_init_tomoe_reading(VALUE mTomoe);
 void _tomoe_rb_init_tomoe_recognizer(VALUE mTomoe);
 void _tomoe_rb_init_tomoe_writing(VALUE mTomoe);
 
+void _tomoe_rb_set_log_domain(const gchar *domain);
 
 void _tomoe_rb_module_load   (GList *registered_types, VALUE klass,
-                              const gchar *prefix);
+                              GList *log_domains, const gchar *prefix);
 void _tomoe_rb_module_unload (GList *registered_types, VALUE klass,
                               const gchar *prefix);
 

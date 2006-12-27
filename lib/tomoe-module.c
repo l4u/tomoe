@@ -38,9 +38,10 @@ struct _TomoeModulePrivate
     gchar        *mod_path;
     GList        *registered_types;
 
-    TomoeModuleInitFunc        init;
-    TomoeModuleExitFunc        exit;
-    TomoeModuleInstantiateFunc instantiate;
+    TomoeModuleInitFunc         init;
+    TomoeModuleExitFunc         exit;
+    TomoeModuleInstantiateFunc  instantiate;
+    TomoeModuleGetLogDomainFunc get_log_domain;
 };
 
 G_DEFINE_TYPE (TomoeModule, tomoe_module, G_TYPE_TYPE_MODULE)
@@ -114,7 +115,10 @@ load (GTypeModule *module)
                                   (gpointer )&priv->exit) ||
         !_tomoe_module_load_func (priv->library,
                                   G_STRINGIFY (TOMOE_MODULE_IMPL_INSTANTIATE),
-                                  (gpointer )&priv->instantiate)) {
+                                  (gpointer )&priv->instantiate) ||
+        !_tomoe_module_load_func (priv->library,
+                                  G_STRINGIFY (TOMOE_MODULE_IMPL_GET_LOG_DOMAIN),
+                                  (gpointer )&priv->get_log_domain)) {
         _tomoe_module_close (priv->library);
         priv->library = NULL;
         return FALSE;
@@ -139,6 +143,7 @@ unload (GTypeModule *module)
     priv->init = NULL;
     priv->exit = NULL;
     priv->instantiate = NULL;
+    priv->get_log_domain = NULL;
 
     g_list_free (priv->registered_types);
     priv->registered_types = NULL;
@@ -164,6 +169,34 @@ tomoe_module_collect_registered_types (GList *modules)
                  node;
                  node = g_list_next (node)) {
                 results = g_list_prepend (results, node->data);
+            }
+
+            g_type_module_unuse (g_type_module);
+        }
+    }
+
+    return results;
+}
+
+GList *
+tomoe_module_collect_log_domains (GList *modules)
+{
+    GList *results = NULL;
+    GList *node;
+
+    for (node = modules; node; node = g_list_next (node)) {
+        TomoeModule *module = node->data;
+        GTypeModule *g_type_module;
+
+        g_type_module = G_TYPE_MODULE (module);
+        if (g_type_module_use (g_type_module)) {
+            gchar *log_domain;
+            TomoeModulePrivate *priv;
+
+            priv = TOMOE_MODULE_GET_PRIVATE (module);
+            log_domain = priv->get_log_domain ();
+            if (log_domain) {
+                results = g_list_prepend (results, log_domain);
             }
 
             g_type_module_unuse (g_type_module);

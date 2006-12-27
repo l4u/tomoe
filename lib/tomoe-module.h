@@ -58,6 +58,7 @@ GObject  *tomoe_module_instantiate  (GList       *modules,
                                      va_list      var_args);
 
 GList    *tomoe_module_collect_registered_types (GList *modules);
+GList    *tomoe_module_collect_log_domains      (GList *modules);
 
 void      tomoe_module_unload (TomoeModule *module);
 

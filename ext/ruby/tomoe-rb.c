@@ -2,6 +2,9 @@
 
 #include "tomoe-rb.h"
 
+static ID set_log_domain;
+static VALUE mGLibLog;
+
 #ifndef HAVE_GOBJ2RVALU
 VALUE
 _tomoe_ruby_object_from_instance_with_unref(gpointer instance)
@@ -12,6 +15,12 @@ _tomoe_ruby_object_from_instance_with_unref(gpointer instance)
     return result;
 }
 #endif
+
+void
+_tomoe_rb_set_log_domain (const gchar *domain)
+{
+    rb_funcall(mGLibLog, set_log_domain, 1, rb_str_new2(domain));
+}
 
 void
 Init_tomoe(void)
@@ -33,6 +42,9 @@ Init_tomoe(void)
 
     tomoe_init();
     atexit(tomoe_quit);
+
+    mGLibLog = rb_const_get(mGLib, rb_intern("Log"));
+    set_log_domain = rb_intern("set_log_domain");
 
     _tomoe_rb_dict_module_load();
     _tomoe_rb_recognizer_module_load();

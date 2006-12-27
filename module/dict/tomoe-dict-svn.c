@@ -225,6 +225,13 @@ TOMOE_MODULE_IMPL_INSTANTIATE (const gchar *first_property, va_list var_args)
     return g_object_new_valist (TOMOE_TYPE_DICT_SVN, first_property, var_args);
 }
 
+G_MODULE_EXPORT gchar *
+TOMOE_MODULE_IMPL_GET_LOG_DOMAIN (void)
+{
+    return g_strdup (G_LOG_DOMAIN);
+}
+
+
 static GObject *
 constructor (GType type, guint n_props, GObjectConstructParam *props)
 {
