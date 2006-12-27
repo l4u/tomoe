@@ -54,6 +54,12 @@ tomoe_recognizer_get_registered_types (void)
     return tomoe_module_collect_registered_types (recognizers);
 }
 
+GList *
+tomoe_recognizer_get_log_domains (void)
+{
+    return tomoe_module_collect_log_domains (recognizers);
+}
+
 G_DEFINE_ABSTRACT_TYPE (TomoeRecognizer, tomoe_recognizer, G_TYPE_OBJECT)
 
 static void

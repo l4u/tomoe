@@ -50,6 +50,12 @@ tomoe_dict_get_registered_types (void)
     return tomoe_module_collect_registered_types (dicts);
 }
 
+GList *
+tomoe_dict_get_log_domains (void)
+{
+    return tomoe_module_collect_log_domains (dicts);
+}
+
 G_DEFINE_ABSTRACT_TYPE (TomoeDict, tomoe_dict, G_TYPE_OBJECT)
 
 static void

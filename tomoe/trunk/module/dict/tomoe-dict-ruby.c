@@ -238,6 +238,12 @@ TOMOE_MODULE_IMPL_INSTANTIATE (const gchar *first_property, va_list args)
     return object;
 }
 
+G_MODULE_EXPORT gchar *
+TOMOE_MODULE_IMPL_GET_LOG_DOMAIN (void)
+{
+    return g_strdup (G_LOG_DOMAIN);
+}
+
 static GObject *
 constructor (GType type, guint n_props, GObjectConstructParam *props)
 {

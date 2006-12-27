@@ -33,16 +33,19 @@ typedef GList   *(*TomoeModuleInitFunc)         (GTypeModule *module);
 typedef void     (*TomoeModuleExitFunc)         (void);
 typedef GObject *(*TomoeModuleInstantiateFunc)  (const gchar *first_property,
                                                  va_list      var_args);
+typedef gchar   *(*TomoeModuleGetLogDomainFunc) (void);
 
-#define TOMOE_MODULE_IMPL_INIT        tomoe_module_impl_init
-#define TOMOE_MODULE_IMPL_EXIT        tomoe_module_impl_exit
-#define TOMOE_MODULE_IMPL_INSTANTIATE tomoe_module_impl_instantiate
+#define TOMOE_MODULE_IMPL_INIT           tomoe_module_impl_init
+#define TOMOE_MODULE_IMPL_EXIT           tomoe_module_impl_exit
+#define TOMOE_MODULE_IMPL_INSTANTIATE    tomoe_module_impl_instantiate
+#define TOMOE_MODULE_IMPL_GET_LOG_DOMAIN tomoe_module_impl_get_log_domain
 
 
-GList   *TOMOE_MODULE_IMPL_INIT        (GTypeModule  *module);
-void     TOMOE_MODULE_IMPL_EXIT        (void);
-GObject *TOMOE_MODULE_IMPL_INSTANTIATE (const gchar *first_property,
-                                        va_list      var_args);
+GList   *TOMOE_MODULE_IMPL_INIT           (GTypeModule  *module);
+void     TOMOE_MODULE_IMPL_EXIT           (void);
+GObject *TOMOE_MODULE_IMPL_INSTANTIATE    (const gchar *first_property,
+                                           va_list      var_args);
+gchar   *TOMOE_MODULE_IMPL_GET_LOG_DOMAIN (void);
 
 G_END_DECLS
 

@@ -10,7 +10,7 @@ void
 _tomoe_rb_dict_module_load(void)
 {
     _tomoe_rb_module_load(tomoe_dict_get_registered_types(), mTomoe,
-                          DICT_PREFIX);
+                          tomoe_dict_get_log_domains(), DICT_PREFIX);
 }
 
 static void

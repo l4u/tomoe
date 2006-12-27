@@ -59,6 +59,7 @@ GType            tomoe_recognizer_get_type (void) G_GNUC_CONST;
 void             tomoe_recognizer_load        (const gchar *base_dir);
 void             tomoe_recognizer_unload      (void);
 GList           *tomoe_recognizer_get_registered_types (void);
+GList           *tomoe_recognizer_get_log_domains      (void);
 
 TomoeRecognizer *tomoe_recognizer_new         (const gchar *name,
                                                const gchar *first_property,

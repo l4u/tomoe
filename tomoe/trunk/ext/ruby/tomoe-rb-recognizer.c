@@ -7,15 +7,16 @@ static VALUE mTomoe;
 void
 _tomoe_rb_recognizer_module_load(void)
 {
-    _tomoe_rb_module_load(tomoe_recognizer_get_registered_types(),
-                          mTomoe, RECOGNIZER_PREFIX);
+    _tomoe_rb_module_load(tomoe_recognizer_get_registered_types(), mTomoe,
+                          tomoe_recognizer_get_log_domains(),
+                          RECOGNIZER_PREFIX);
 }
 
 static void
 _tomoe_rb_recognizer_module_unload(void)
 {
-    _tomoe_rb_module_unload(tomoe_recognizer_get_registered_types(),
-                            mTomoe, RECOGNIZER_PREFIX);
+    _tomoe_rb_module_unload(tomoe_recognizer_get_registered_types(), mTomoe,
+                            RECOGNIZER_PREFIX);
 }
 
 static VALUE
