@@ -9,8 +9,8 @@
 
 Name:      tomoe
 Version:   @VERSION@
-Release:   1
-Serial:    2006122501
+Release:   2
+Serial:    2006122801
 
 Summary:   Tegaki Online MOji-ninshiki Engine
 Summary(ja_JP.utf8): 手書き文字認識エンジン Tomoe
@@ -76,7 +76,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 #%doc AUTHORS ChangeLog COPYING INSTALL NEWS README TODO
-%doc AUTHORS ChangeLog COPYING NEWS TODO
+%doc AUTHORS ChangeLog COPYING NEWS README TODO
 
 %{_libdir}/libtomoe*.so.*
 %{_libdir}/tomoe/*
@@ -91,6 +91,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/gtk-doc/*
 
 %changelog
+* Mon Dec 28 2006 Kouhei Sutou <kou@cozmixng.org> - 0.5.0-2
+- added README
+
 * Mon Dec 25 2006 Kouhei Sutou <kou@cozmixng.org> - 0.5.0-1
 - follow the current source.
 
