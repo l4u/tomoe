@@ -1,3 +1,7 @@
+2007-01-09  Kouhei Sutou  <kou@cozmixng.org>
+
+	* db/dump.rb: added a small script for dumping database schema as SQL.
+
 2006-12-29  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* Version-0.5.0.
