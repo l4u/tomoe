@@ -1,3 +1,8 @@
+2007-01-19  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/char_spec.rb: added a test for dumping/loading TomoeChar
+	with n_strokes.
+
 2007-01-09  Kouhei Sutou  <kou@cozmixng.org>
 
 	* db/dump.rb: added a small script for dumping database schema as SQL.
