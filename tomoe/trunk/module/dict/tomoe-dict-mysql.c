@@ -467,6 +467,67 @@ append_string_value (TomoeDictMySQL *dict, GString *sql, const gchar *value)
 }
 
 static gboolean
+does_char_exist (TomoeDictMySQL *dict, const gchar *utf8)
+{
+    GString *sql;
+    gboolean exists = FALSE;
+
+    g_return_val_if_fail (utf8 && *utf8 != '\0', FALSE);
+
+    g_return_val_if_fail (TOMOE_DICT_MYSQL_IS_CONNECTED (dict), FALSE);
+
+    sql = g_string_new ("SELECT utf8 FROM chars WHERE utf8 = ");
+    append_string_value (dict, sql, utf8);
+    if (execute_query (dict, sql->str)) {
+        MYSQL_RES *result;
+        result = mysql_store_result (dict->mysql);
+        exists = mysql_num_rows (result) > 0;
+        mysql_free_result (result);
+        exists = TRUE;
+    }
+
+    g_string_free (sql, TRUE);
+
+    return exists;
+}
+
+static gboolean
+unregister_char_internal (TomoeDictMySQL *dict, const gchar *utf8)
+{
+    GString *sql;
+    gboolean success;
+
+    g_return_val_if_fail (utf8 && *utf8 != '\0', FALSE);
+
+    g_return_val_if_fail (TOMOE_DICT_MYSQL_IS_CONNECTED (dict), FALSE);
+
+    sql = g_string_new ("DELETE FROM chars WHERE utf8 = ");
+    append_string_value (dict, sql, utf8);
+    success = execute_query (dict, sql->str);
+    if (!success) goto done;
+
+    g_string_assign (sql, "DELETE FROM readings WHERE utf8 = ");
+    append_string_value (dict, sql, utf8);
+    success = execute_query (dict, sql->str);
+    if (!success) goto done;
+
+    g_string_assign (sql, "DELETE FROM radicals WHERE utf8 = ");
+    append_string_value (dict, sql, utf8);
+    success = execute_query (dict, sql->str);
+    if (!success) goto done;
+
+    g_string_assign (sql, "DELETE FROM meta_data WHERE utf8 = ");
+    append_string_value (dict, sql, utf8);
+    success = execute_query (dict, sql->str);
+    if (!success) goto done;
+
+  done:
+    g_string_free (sql, TRUE);
+
+    return success;
+}
+
+static gboolean
 register_char_readings (TomoeDictMySQL *dict, const gchar *utf8,
                         const GList *readings)
 {
@@ -570,7 +631,6 @@ static gboolean
 register_char (TomoeDict *_dict, TomoeChar *chr)
 {
     TomoeDictMySQL *dict = TOMOE_DICT_MYSQL (_dict);
-    GString *sql;
     gint n_strokes;
     const gchar *variant;
     const gchar *utf8;
@@ -584,33 +644,39 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
     if (!execute_query (dict, "START TRANSACTION"))
         return FALSE;
 
-    sql = g_string_new ("INSERT INTO chars "
-                        "(utf8, code_point, n_strokes, variant) "
-                        "VALUES (");
-
     utf8 = tomoe_char_get_utf8 (chr);
-    append_string_value (dict, sql, utf8);
+    if (does_char_exist (dict, utf8))
+        success = unregister_char_internal (dict, utf8);
 
-    if (g_utf8_strlen (utf8, -1) == 1)
-        g_string_append_printf (sql, ", %d, ", g_utf8_get_char (utf8));
-    else
-        g_string_append (sql, ", NULL, ");
+    if (success) {
+        GString *sql;
 
-    n_strokes = tomoe_char_get_n_strokes (chr);
-    if (n_strokes >= 0)
-        g_string_append_printf (sql, "%d, ", n_strokes);
-    else
-        g_string_append (sql, "NULL, ");
+        sql = g_string_new ("INSERT INTO chars "
+                            "(utf8, code_point, n_strokes, variant) "
+                            "VALUES (");
+        append_string_value (dict, sql, utf8);
 
-    variant = tomoe_char_get_variant (chr);
-    if (variant)
-        append_string_value (dict, sql, variant);
-    else
-        g_string_append (sql, "NULL");
-    g_string_append_printf (sql, ")");
+        if (g_utf8_strlen (utf8, -1) == 1)
+            g_string_append_printf (sql, ", %d, ", g_utf8_get_char (utf8));
+        else
+            g_string_append (sql, ", NULL, ");
 
-    success = execute_query (dict, sql->str);
-    g_string_free (sql, TRUE);
+        n_strokes = tomoe_char_get_n_strokes (chr);
+        if (n_strokes >= 0)
+            g_string_append_printf (sql, "%d, ", n_strokes);
+        else
+            g_string_append (sql, "NULL, ");
+
+        variant = tomoe_char_get_variant (chr);
+        if (variant)
+            append_string_value (dict, sql, variant);
+        else
+            g_string_append (sql, "NULL");
+        g_string_append_printf (sql, ")");
+
+        success = execute_query (dict, sql->str);
+        g_string_free (sql, TRUE);
+    }
 
     if (success &&
         register_char_readings (dict, utf8, tomoe_char_get_readings (chr)) &&
@@ -627,8 +693,6 @@ static gboolean
 unregister_char (TomoeDict *_dict, const gchar *utf8)
 {
     TomoeDictMySQL *dict = TOMOE_DICT_MYSQL (_dict);
-    GString *sql;
-    gboolean success;
 
     g_return_val_if_fail (TOMOE_IS_DICT_MYSQL (dict), FALSE);
     g_return_val_if_fail (utf8 && *utf8 != '\0', FALSE);
@@ -638,30 +702,7 @@ unregister_char (TomoeDict *_dict, const gchar *utf8)
     if (!execute_query (dict, "START TRANSACTION"))
         return FALSE;
 
-    sql = g_string_new ("DELETE FROM chars WHERE utf8 = ");
-    append_string_value (dict, sql, utf8);
-    success = execute_query (dict, sql->str);
-    if (!success) goto done;
-
-    g_string_assign (sql, "DELETE FROM readings WHERE utf8 = ");
-    append_string_value (dict, sql, utf8);
-    success = execute_query (dict, sql->str);
-    if (!success) goto done;
-
-    g_string_assign (sql, "DELETE FROM radicals WHERE utf8 = ");
-    append_string_value (dict, sql, utf8);
-    success = execute_query (dict, sql->str);
-    if (!success) goto done;
-
-    g_string_assign (sql, "DELETE FROM meta_data WHERE utf8 = ");
-    append_string_value (dict, sql, utf8);
-    success = execute_query (dict, sql->str);
-    if (!success) goto done;
-
-  done:
-    g_string_free (sql, TRUE);
-
-    if (success) {
+    if (unregister_char_internal (dict, utf8)) {
         return execute_query (dict, "COMMIT");
     } else {
         execute_query (dict, "ROLLBACK");

@@ -48,6 +48,37 @@ context "Tomoe::Dict(#{dict_module_type})" do
     end
   end
 
+  specify "should override the first register by the second register" do
+    make_temporary_dict(@original) do |dict|
+      prev = dict.search(Tomoe::Query.new).collect do |cand|
+        cand.char.utf8
+      end
+
+      utf8 = "か"
+      first_n_strokes = 8
+      second_n_strokes = 10
+
+      first_char = Tomoe::Char.new
+      first_char.utf8 = utf8
+      first_char.n_strokes = first_n_strokes
+      dict.register(first_char).should == true
+      dict[utf8].n_strokes.should == first_n_strokes
+      dict.search(Tomoe::Query.new).collect do |cand|
+        cand.char.utf8
+      end.sort.should == [utf8, *prev].sort
+
+      second_char = Tomoe::Char.new
+      second_char.utf8 = utf8
+      second_char.n_strokes = second_n_strokes
+      dict.register(second_char).should == true
+      dict[utf8].n_strokes.should_not == first_n_strokes
+      dict[utf8].n_strokes.should == second_n_strokes
+      dict.search(Tomoe::Query.new).collect do |cand|
+        cand.char.utf8
+      end.sort.should == [utf8, *prev].sort
+    end
+  end
+
   specify "should register/unregister PUA character" do
     make_temporary_dict(@original) do |dict|
       pua_start = Tomoe::Char::PRIVATE_USE_AREA_START
