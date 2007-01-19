@@ -70,6 +70,21 @@ context "Tomoe::Char" do
     new_char.radicals.should == [sanzui]
   end
 
+  specify "should load from dumped XML with n_strokes" do
+    utf8 = "a"
+    n_strokes = 5
+
+    char = Tomoe::Char.new
+    char.utf8 = utf8
+    char.n_strokes.should == -1
+    char.n_strokes = n_strokes
+    char.n_strokes.should == n_strokes
+
+    new_char = Tomoe::Char.new(char.to_xml)
+    new_char.utf8.should == utf8
+    new_char.n_strokes.should == n_strokes
+  end
+
   specify "should set/get n_strokes" do
     char = Tomoe::Char.new
     char.n_strokes.should == -1
