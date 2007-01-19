@@ -532,6 +532,18 @@ tomoe_char_to_xml_writing (TomoeChar *chr, TomoeCharPrivate *priv,
     }
 }
 
+static void
+tomoe_char_to_xml_n_strokes (TomoeChar *chr, TomoeCharPrivate *priv,
+                             GString *output)
+{
+    if (priv->n_strokes < 0) return;
+
+    g_string_append_printf (
+        output,
+        "    <number-of-strokes>%d</number-of-strokes>\n",
+        priv->n_strokes);
+}
+
 
 static void
 tomoe_char_to_xml_meta_datum (gpointer key, gpointer value, gpointer user_data)
@@ -573,6 +585,7 @@ tomoe_char_to_xml (TomoeChar* chr)
     tomoe_char_to_xml_readings (chr, priv, output);
     tomoe_char_to_xml_radicals (chr, priv, output);
     tomoe_char_to_xml_writing (chr, priv, output);
+    tomoe_char_to_xml_n_strokes (chr, priv, output);
     tomoe_char_to_xml_meta (chr, priv, output);
 
     if (output->len > 0) {
