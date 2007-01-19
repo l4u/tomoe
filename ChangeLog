@@ -1,3 +1,10 @@
+2007-01-19  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/dict_spec.rb: tomoe_dict_register should override existed
+	character.
+	* module/dict/tomoe-dict-mysql.c,
+	  module/dict/tomoe-dict-ptr-array.c: followed the specification.
+
 2007-01-19  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* src/tomoe-char.c: Add tomoe_char_to_xml_n_strokes().

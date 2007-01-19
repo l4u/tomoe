@@ -49,6 +49,7 @@ _tomoe_dict_ptr_array_sort (GPtrArray *chars)
 gboolean
 _tomoe_dict_ptr_array_register_char (GPtrArray *chars, TomoeChar *chr)
 {
+    _tomoe_dict_ptr_array_unregister_char (chars, tomoe_char_get_utf8 (chr));
     g_ptr_array_add (chars, g_object_ref (G_OBJECT (chr)));
     _tomoe_dict_ptr_array_sort (chars);
 
