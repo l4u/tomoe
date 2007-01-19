@@ -584,8 +584,8 @@ tomoe_char_to_xml (TomoeChar* chr)
     tomoe_char_to_xml_variant (chr, priv, output);
     tomoe_char_to_xml_readings (chr, priv, output);
     tomoe_char_to_xml_radicals (chr, priv, output);
-    tomoe_char_to_xml_writing (chr, priv, output);
     tomoe_char_to_xml_n_strokes (chr, priv, output);
+    tomoe_char_to_xml_writing (chr, priv, output);
     tomoe_char_to_xml_meta (chr, priv, output);
 
     if (output->len > 0) {
