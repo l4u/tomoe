@@ -1,3 +1,7 @@
+2007-01-19  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* src/tomoe-char.c: Add tomoe_char_to_xml_n_strokes().
+
 2007-01-19  Kouhei Sutou  <kou@cozmixng.org>
 
 	* test/char_spec.rb: added a test for dumping/loading TomoeChar
