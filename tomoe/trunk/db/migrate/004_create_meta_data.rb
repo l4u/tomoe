@@ -3,7 +3,7 @@ class CreateMetaData < ActiveRecord::Migration
     create_table(:meta_data) do |t|
       t.column :utf8, :string, :null => false
       t.column :name, :string, :null => false
-      t.column :value, :string, :null => false
+      t.column :value, :text, :null => false
     end
     add_index :meta_data, :utf8
   end
