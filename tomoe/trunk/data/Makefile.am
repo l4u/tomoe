@@ -27,6 +27,8 @@ conf_DATA = config
 
 EXTRA_DIST =						\
 	kanjidic2-original.xml kanjidic2-original.xsl	\
+	kanjidic.html kanjidic2.html			\
+	kanjidic-licence.html				\
 	kanjidic2.xml					\
 	$(pkgdata_DATA)					\
 	$(dict_data_DATA)				\
