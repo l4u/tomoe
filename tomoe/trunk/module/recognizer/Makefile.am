@@ -23,19 +23,18 @@ CLEANFILES = *~ *.bak
 AM_CPPFLAGS =
 INCLUDES = $(TOMOE_CFLAGS)
 
-recognizer_module_LTLIBRARIES = libsimple.la
+LDFLAGS =							\
+  -rpath $(recognizer_moduledir) -avoid-version -module		\
+  -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)
 
-libsimple_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Recognizer:Simple\" $(AM_CPPFLAGS)
-libsimple_la_SOURCES = \
+recognizer_module_LTLIBRARIES = simple.la
+
+simple_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Recognizer:Simple\" $(AM_CPPFLAGS)
+simple_la_SOURCES = \
 	tomoe-recognizer-simple.c				\
 	tomoe-recognizer-simple-logic.c				\
 	tomoe-recognizer-simple-logic.h
 
-libsimple_la_LDFLAGS =						\
-  -version-info $(LT_VERSION_INFO)				\
-  -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)
+simple_la_LD_ADD = -lm
 
-libsimple_la_LD_ADD = \
-	-lm
-
-libsimple_la_LIBADD = $(TOMOE_LIBS)
+simple_la_LIBADD = $(TOMOE_LIBS)

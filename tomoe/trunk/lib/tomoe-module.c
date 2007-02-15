@@ -288,12 +288,18 @@ _tomoe_module_load_func (GModule *module, const gchar *func_name,
 static TomoeModule *
 _tomoe_module_load (const gchar *base_dir, const gchar *name)
 {
-    gchar *mod_path;
+    gchar *mod_base_name, *mod_path;
     TomoeModule *module = NULL;
 
-    mod_path = g_module_build_path (base_dir, name);
-    if (g_str_has_suffix (mod_path, G_MODULE_SUFFIX) &&
-        g_file_test (mod_path, G_FILE_TEST_EXISTS)) {
+    mod_base_name = g_build_filename (base_dir, name, NULL);
+    if (g_str_has_suffix (mod_base_name, G_MODULE_SUFFIX)) {
+        mod_path = mod_base_name;
+    } else {
+        mod_path = g_strconcat (mod_base_name, "." G_MODULE_SUFFIX, NULL);
+        g_free (mod_base_name);
+    }
+
+    if (g_file_test (mod_path, G_FILE_TEST_EXISTS)) {
         TomoeModulePrivate *priv;
         module = g_object_new (TOMOE_TYPE_MODULE, NULL);
         priv = TOMOE_MODULE_GET_PRIVATE (module);
@@ -335,7 +341,7 @@ _tomoe_module_match_name (const gchar *mod_path, const gchar *name)
     gchar *module_base_name, *normalized_matched_name;
 
     module_base_name = g_path_get_basename (mod_path);
-    normalized_matched_name = g_module_build_path (NULL, name);
+    normalized_matched_name = g_strconcat (name, "." G_MODULE_SUFFIX, NULL);
 
     matched = (0 == strcmp (module_base_name, normalized_matched_name));
 
