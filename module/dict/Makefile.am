@@ -34,36 +34,36 @@ INCLUDES =				\
 
 LIBADD = $(TOMOE_LIBS)
 LDFLAGS =							\
-  -version-info $(LT_VERSION_INFO)				\
+  -rpath $(dict_moduledir) -avoid-version -module		\
   -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)
 
 ptr_array_based_dict_sources =		\
 	tomoe-dict-ptr-array.c		\
 	tomoe-dict-ptr-array.h
 
-dict_module_LTLIBRARIES = libxml.la
+dict_module_LTLIBRARIES = xml.la
 
-libxml_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:XML\" $(AM_CPPFLAGS)
-libxml_la_SOURCES = tomoe-dict-xml.c $(ptr_array_based_dict_sources)
+xml_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:XML\" $(AM_CPPFLAGS)
+xml_la_SOURCES = tomoe-dict-xml.c $(ptr_array_based_dict_sources)
 
 if WITH_EST
-dict_module_LTLIBRARIES += libest.la
+dict_module_LTLIBRARIES += est.la
 
-libest_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Est\" $(AM_CPPFLAGS)
-libest_la_SOURCES = tomoe-dict-est.c
-libest_la_LIBADD = $(EST_LIBS)
+est_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Est\" $(AM_CPPFLAGS)
+est_la_SOURCES = tomoe-dict-est.c
+est_la_LIBADD = $(EST_LIBS)
 endif
 
 if ENABLE_DICT_RUBY
-dict_module_LTLIBRARIES += libruby.la
+dict_module_LTLIBRARIES += ruby.la
 
-libruby_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Ruby\" $(AM_CPPFLAGS)
-libruby_la_SOURCES = tomoe-dict-ruby.c
-libruby_la_LIBADD = $(RUBY_LIBS)
+ruby_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Ruby\" $(AM_CPPFLAGS)
+ruby_la_SOURCES = tomoe-dict-ruby.c
+ruby_la_LIBADD = $(RUBY_LIBS)
 endif
 
 if WITH_UNIHAN
-dict_module_LTLIBRARIES += libunihan.la
+dict_module_LTLIBRARIES += unihan.la
 
 unihan_built_sources = tomoe-unihan-data.h
 
@@ -74,15 +74,15 @@ BUILT_SOURCES = $(unihan_built_sources)
 
 EXTRA_DIST = unihan-compiler.rb $(BUILT_SOURCES) Unihan.stamp
 
-libunihan_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Unihan\" $(AM_CPPFLAGS)
-libunihan_la_SOURCES =		\
+unihan_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Unihan\" $(AM_CPPFLAGS)
+unihan_la_SOURCES =		\
 	tomoe-dict-unihan.c	\
 	tomoe-unihan.c		\
 	tomoe-unihan.h		\
 	$(unihan_built_sources)	\
 	$(ptr_array_based_dict_sources)
 
-unihan-compiler.rb: libxml.la
+unihan-compiler.rb: xml.la
 
 $(top_builddir)/data/kanjidic2.xml:
 	cd $(top_builddir)/data && $(MAKE) $(AM_MAKEFLAGS) kanjidic2.xml
@@ -104,17 +104,17 @@ Unihan.stamp:
 endif
 
 if WITH_SVN
-dict_module_LTLIBRARIES += libsvn.la
+dict_module_LTLIBRARIES += svn.la
 
-libsvn_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Svn\" $(AM_CPPFLAGS)
-libsvn_la_SOURCES = tomoe-dict-svn.c
-libsvn_la_LIBADD = $(SVN_LIBS)
+svn_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Svn\" $(AM_CPPFLAGS)
+svn_la_SOURCES = tomoe-dict-svn.c
+svn_la_LIBADD = $(SVN_LIBS)
 endif
 
 if WITH_MYSQL
-dict_module_LTLIBRARIES += libmysql.la
+dict_module_LTLIBRARIES += mysql.la
 
-libmysql_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:MySQL\" $(AM_CPPFLAGS)
-libmysql_la_SOURCES = tomoe-dict-mysql.c
-libmysql_la_LIBADD = $(MYSQL_LIBS)
+mysql_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:MySQL\" $(AM_CPPFLAGS)
+mysql_la_SOURCES = tomoe-dict-mysql.c
+mysql_la_LIBADD = $(MYSQL_LIBS)
 endif
