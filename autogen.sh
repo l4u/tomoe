@@ -5,7 +5,7 @@ test -z "$srcdir" && srcdir=.
 
 libtoolize --copy --force \
   && gtkdocize \
-  && aclocal \
+  && aclocal -I macros \
   && autoheader \
   && automake --add-missing --foreign --copy \
   && autoconf
