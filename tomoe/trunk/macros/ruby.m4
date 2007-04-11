@@ -1,3 +1,4 @@
+# -*- autoconf -*-
 AC_DEFUN([RUBY_CHECK],
 [
 ruby_required_headers=$1

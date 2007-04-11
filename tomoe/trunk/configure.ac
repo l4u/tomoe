@@ -198,7 +198,8 @@ dnl **************************************************************
 
 use_unihan=yes
 AC_ARG_ENABLE(unihan,
-              [  --disable-unihan         disable Unihan detabase],
+              AS_HELP_STRING([--disable-unihan],
+                             [disable Unihan detabase]),
               [use_unihan=$enableval],
 	      [use_unihan=$enableval])
 AM_CONDITIONAL([WITH_UNIHAN], [test "$use_unihan" = "yes"])
@@ -213,7 +214,8 @@ PKG_CHECK_MODULES(APR, apr-1, [use_svn=yes], [use_svn=no])
 
 svn_includes="/usr/local/include /usr/include"
 AC_ARG_WITH(svn-include,
-            [  --with-svn-include=DIR   Use the given path to the subversion headers.],
+            AS_HELP_STRING([--with-svn-include=DIR],
+                           [Use the given path to the subversion headers.]),
             [if test "$withval" != "yes" -a "$withval" != ""; then
                svn_includes=$withval
              fi])
@@ -235,7 +237,8 @@ SVN_CFLAGS="\$(APR_CFLAGS) -I$svn_include/subversion-1"
 
 svn_libs="/usr/local/lib /usr/lib"
 AC_ARG_WITH(svn-lib,
-            [  --with-svn-lib=DIR  Use the given path to the subversion libraries.],
+            AS_HELP_STRING([--with-svn-lib=DIR],
+                           [Use the given path to the subversion libraries.]),
             [if test "$withval" != "yes" -a "$withval" != ""; then
                SVN_LIBS=$withval
              fi])
@@ -280,8 +283,9 @@ AM_CONDITIONAL([WITH_MYSQL], [test "x$enable_mysql" = "xyes"])
 dnl **************************************************************
 dnl Configure for Ruby dictionary.
 dnl **************************************************************
-AC_ARG_ENABLE(dict_ruby, [  --enable-dict-ruby
-			  Enable Ruby based dictionary module])
+AC_ARG_ENABLE(dict_ruby,
+              AS_HELP_STRING([--enable-dict-ruby],
+			     [Enable Ruby based dictionary module]))
 AM_CONDITIONAL(ENABLE_DICT_RUBY,
                [test x"$enable_dict_ruby" = "xyes" -a \
                      x"$ruby_available" = "xyes"])
