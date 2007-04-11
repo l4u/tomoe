@@ -1,5 +1,7 @@
 2007-04-11  Kouhei Sutou  <kou@cozmixng.org>
 
+	* configure.ac: use AS_HELP_STRING.
+
 	* autogen.sh, Makefile.am (ACLOCAL_AMFLAGS): added macros/
 	sub-directory.
 
