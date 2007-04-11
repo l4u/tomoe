@@ -27,7 +27,6 @@ AC_SUBST(LIBTOOL_EXPORT_OPTIONS)
 dnl **************************************************************
 dnl Checks for programs.
 dnl **************************************************************
-AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
@@ -139,14 +138,6 @@ est_exists=no
 PKG_CHECK_MODULES(EST, hyperestraier,
                   [est_exists=yes], [est_exists=no])
 AM_CONDITIONAL([WITH_EST], [test "$est_exists" = "yes"])
-
-dnl **************************************************************
-dnl Check for neon.
-dnl **************************************************************
-
-neon_exists=no
-PKG_CHECK_MODULES(NEON, neon, [neon_exists=yes], [neon_exists=no])
-AM_CONDITIONAL([WITH_NEON], [test "$neon_exists" = "yes"])
 
 dnl **************************************************************
 dnl Configure for configuration.
