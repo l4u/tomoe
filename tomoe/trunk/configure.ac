@@ -87,6 +87,23 @@ dnl **************************************************************
 GTK_DOC_CHECK([1.4])
 
 dnl **************************************************************
+dnl Check for gettext.
+dnl **************************************************************
+
+IT_PROG_INTLTOOL([0.35.0])
+
+AM_GLIB_GNU_GETTEXT
+dnl should run after AM_GLIB_GNU_GETTEXT
+AC_CONFIG_COMMANDS([modify-itlocaledir], [
+sed \
+  -i'' \
+  -e "s/^itlocaledir = /itlocaledir = \$(datadir)\/locale\n#itlocaledir = /" \
+  po/Makefile
+])
+GETTEXT_PACKAGE=tomoe
+AC_SUBST(GETTEXT_PACKAGE)
+
+dnl **************************************************************
 dnl Checks for xsltproc
 dnl **************************************************************
 
@@ -250,6 +267,7 @@ AC_SUBST(TOMOE_LIBS)
 
 AC_CONFIG_FILES([
 Makefile
+po/Makefile.in
 lib/Makefile
 module/Makefile
 module/dict/Makefile

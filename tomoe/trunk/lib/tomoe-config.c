@@ -105,7 +105,7 @@ tomoe_config_class_init (TomoeConfigClass *klass)
                                      PROP_FILENAME,
                                      g_param_spec_string ("filename",
                                          N_("Filename"),
-                                         N_("The Filename for storing user settings"),
+                                         N_("The filename for storing user settings"),
                                          NULL,
                                          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 

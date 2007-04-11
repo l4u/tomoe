@@ -3,9 +3,20 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-libtoolize --copy --force \
-  && gtkdocize \
-  && aclocal -I macros \
-  && autoheader \
-  && automake --add-missing --foreign --copy \
-  && autoconf
+run()
+{
+    $@
+    if test $? -ne 0; then
+	echo "Failed $@"
+	exit 1
+    fi
+}
+
+run libtoolize --copy --force
+run glib-gettextize --force --copy
+run intltoolize --force --copy --automake
+run gtkdocize --copy
+run aclocal -I macros
+run autoheader
+run automake --add-missing --foreign --copy
+run autoconf
