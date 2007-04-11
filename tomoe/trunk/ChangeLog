@@ -1,3 +1,7 @@
+2007-04-11  Kouhei Sutou  <kou@cozmixng.org>
+
+	* configure.ac: renamed from configure.in.
+
 2007-02-15  Kouhei Sutou  <kou@cozmixng.org>
 
 	* module/dict/Makefile.am, module/recognizer/Makefile.am:
