@@ -3,6 +3,8 @@
 	* configure.ac:
 	- use AS_HELP_STRING.
 	- removed needless codes.
+	- moved Subversion related codes to ...
+	* macros/svn.m4: ... here.
 
 	* autogen.sh, Makefile.am (ACLOCAL_AMFLAGS): added macros/
 	sub-directory.
