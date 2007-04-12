@@ -51,6 +51,7 @@ struct _TomoeContextPrivate
     TomoeShelf *shelf;
     TomoeRecognizer *recognizer;
     TomoeDict *user_dict;
+    gchar **languages;
 };
 
 G_DEFINE_TYPE (TomoeContext, tomoe_context, G_TYPE_OBJECT)
@@ -97,6 +98,7 @@ tomoe_context_init (TomoeContext *context)
     priv->shelf      = NULL;
     priv->recognizer = NULL;
     priv->user_dict  = NULL;
+    priv->languages = g_strdupv ((gchar **)g_get_language_names ());
 }
 
 /**
@@ -168,10 +170,13 @@ dispose (GObject *object)
         g_object_unref (priv->recognizer);
     if (priv->user_dict)
         g_object_unref (priv->user_dict);
+    if (priv->languages)
+        g_strfreev (priv->languages);
 
     priv->shelf      = NULL;
     priv->recognizer = NULL;
     priv->user_dict  = NULL;
+    priv->languages  = NULL;
 
     G_OBJECT_CLASS (tomoe_context_parent_class)->dispose (object);
 }
@@ -270,9 +275,17 @@ tomoe_context_load_config (TomoeContext *ctx, const gchar *config_file)
 
     if (priv->shelf)
         g_object_unref (priv->shelf);
-    priv->shelf = tomoe_config_make_shelf (cfg);
+    priv->shelf = tomoe_config_make_shelf (cfg, NULL);
+
+    if (priv->user_dict)
+        g_object_unref (priv->user_dict);
     priv->user_dict = ensure_user_dict (priv->shelf,
                                         tomoe_config_get_user_dict_name (cfg));
+
+    g_strfreev (priv->languages);
+    priv->languages = g_strdupv ((gchar **)tomoe_config_get_languages (cfg));
+    if (!priv->languages)
+        priv->languages = g_strdupv ((gchar **)g_get_language_names ());
 
     g_object_unref (cfg);
 }
@@ -297,12 +310,32 @@ tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
 
     priv = TOMOE_CONTEXT_GET_PRIVATE (context);
     if (!priv->recognizer) {
-        priv->recognizer = tomoe_recognizer_new ("simple", NULL);
+        gchar **languages;
+
+        languages = priv->languages;
+        while (*languages && priv->recognizer == NULL) {
+            priv->recognizer = tomoe_recognizer_new ("simple",
+                                                     "language", *languages,
+                                                     NULL);
+            languages++;
+
+            if (!priv->recognizer)
+                continue;
+
+            if (!tomoe_recognizer_is_available (priv->recognizer)) {
+                g_object_unref (priv->recognizer);
+                priv->recognizer = NULL;
+            }
+        }
+
+        if (!priv->recognizer)
+            priv->recognizer = tomoe_recognizer_new ("simple", NULL);
         g_return_val_if_fail (TOMOE_IS_RECOGNIZER (priv->recognizer), matched);
     }
 
-    matched = g_list_sort (tomoe_recognizer_search (priv->recognizer, input),
-                           _candidate_compare_func);
+    if (tomoe_recognizer_is_available (priv->recognizer))
+        matched = g_list_sort (tomoe_recognizer_search (priv->recognizer, input),
+                               _candidate_compare_func);
 
     return matched;
 }
@@ -355,7 +388,7 @@ tomoe_context_register (TomoeContext *context, TomoeChar *chr)
 
     priv = TOMOE_CONTEXT_GET_PRIVATE (context);
     if (!priv->user_dict) {
-        g_warning ("user dictionary doesn't exist");
+        g_warning (_("user dictionary doesn't exist"));
         return FALSE;
     }
 
@@ -371,7 +404,7 @@ tomoe_context_unregister (TomoeContext *context, const gchar *utf8)
 
     priv = TOMOE_CONTEXT_GET_PRIVATE (context);
     if (!priv->user_dict) {
-        g_warning ("user dictionary doesn't exist");
+        g_warning (_("user dictionary doesn't exist"));
         return FALSE;
     }
 
