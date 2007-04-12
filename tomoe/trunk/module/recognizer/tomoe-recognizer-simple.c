@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <gmodule.h>
 
+#include <glib/gi18n.h>
+
 #include <tomoe-module-impl.h>
 #include <tomoe-recognizer.h>
 #include "tomoe-recognizer-simple-logic.h"
@@ -70,6 +72,7 @@ static void         get_property              (GObject       *object,
                                                GParamSpec    *pspec);
 static GList       *search                    (TomoeRecognizer *recognizer,
                                                TomoeWriting    *input);
+static gboolean     is_available              (TomoeRecognizer *recognizer);
 
 static void
 class_init (TomoeRecognizerSimpleClass *klass)
@@ -87,14 +90,15 @@ class_init (TomoeRecognizerSimpleClass *klass)
 
     recognizer_class = TOMOE_RECOGNIZER_CLASS (klass);
     recognizer_class->search = search;
+    recognizer_class->is_available = is_available;
 
     g_object_class_install_property (
         gobject_class,
         PROP_DICTIONARY,
         g_param_spec_object (
             "dictionary",
-            "Dictionary",
-            "The dictionary of the recognizer",
+            _("Dictionary"),
+            _("The dictionary of the recognizer"),
             TOMOE_TYPE_DICT,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
@@ -172,18 +176,27 @@ constructor (GType type, guint n_props,
     recognizer = TOMOE_RECOGNIZER_SIMPLE (object);
 
     if (!recognizer->dict) {
-        gchar *filename = g_build_filename (RECOGNIZER_DATADIR,
-                                            "handwriting.xml",
-                                            NULL);
-        recognizer->dict =
-            tomoe_dict_new ("xml",
-                            "filename", filename,
-                            NULL);
-        g_free(filename);
-    }
+        const gchar *language;
+        gchar *dict_name;
+        gchar *filename;
 
-    if (!recognizer->dict) {
-        g_warning ("dictionary isn't set for TomoeRecognizerSimple.");
+        language = tomoe_recognizer_get_language (TOMOE_RECOGNIZER (object));
+        if (language)
+            dict_name = g_strconcat ("handwriting-", language, ".xml", NULL);
+        else
+            dict_name = g_strdup ("handwriting.xml");
+
+        filename = g_build_filename (RECOGNIZER_DATADIR, dict_name, NULL);
+        recognizer->dict = tomoe_dict_new ("xml",
+                                           "filename", filename,
+                                           NULL);
+        if (recognizer->dict && !tomoe_dict_is_available (recognizer->dict)) {
+            g_object_unref (recognizer->dict);
+            recognizer->dict = NULL;
+        }
+
+        g_free(dict_name);
+        g_free(filename);
     }
 
     return object;
@@ -254,6 +267,15 @@ search (TomoeRecognizer *_recognizer, TomoeWriting *input)
     return _tomoe_recognizer_simple_get_candidates (_recognizer,
                                                     recognizer->dict,
                                                     input);
+}
+
+static gboolean
+is_available (TomoeRecognizer *_recognizer)
+{
+    TomoeRecognizerSimple *recognizer;
+
+    recognizer = TOMOE_RECOGNIZER_SIMPLE (_recognizer);
+    return recognizer->dict != NULL;
 }
 
 /*

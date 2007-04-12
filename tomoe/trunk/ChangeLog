@@ -1,5 +1,12 @@
 2007-04-12  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/recognizer/tomoe-recognizer-simple.c:
+	- supported tomoe_recognizer_is_available() interface.
+	- supported language related XML DB filename change.
+
+	* lib/tomoe-recognizer.[ch]: (tomoe_recognizer_is_available,
+	tomoe_recognizer_get_language): added.
+
 	* module/dict/tomoe-dict-xml.c
 	  (is_available): improved check.
 	  (tomoe_dict_xml_save): saved only modified.
