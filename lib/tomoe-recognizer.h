@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
- *  Copyright (C) 2006 Kouhei Sutou <kou@cozmixng.org>
+ *  Copyright (C) 2006-2007 Kouhei Sutou <kou@cozmixng.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -49,8 +49,9 @@ struct _TomoeRecognizerClass
 {
     GObjectClass parent_class;
 
-    GList  *(*search) (TomoeRecognizer *recognizer,
-                       TomoeWriting    *input);
+    GList		*(*search)			(TomoeRecognizer *recognizer,
+                                     TomoeWriting    *input);
+    gboolean	 (*is_available)	(TomoeRecognizer *recognizer);
 };
 
 GType            tomoe_recognizer_get_type (void) G_GNUC_CONST;
@@ -67,6 +68,10 @@ TomoeRecognizer *tomoe_recognizer_new         (const gchar *name,
 
 GList           *tomoe_recognizer_search   (TomoeRecognizer *recognizer,
                                             TomoeWriting    *input);
+
+const gchar		*tomoe_recognizer_get_language	(TomoeRecognizer *recognizer);
+
+gboolean 		 tomoe_recognizer_is_available	(TomoeRecognizer *recognizer);
 
 G_END_DECLS
 
