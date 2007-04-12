@@ -1,5 +1,8 @@
 2007-04-12  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-config.c (tomoe_config_load): used [config] group for
+	language and languages configuration instead of [global] group.
+
 	* lib/tomoe-context.c (tomoe_context_search_by_strokes): supported
 	language related recognizer loading.
 

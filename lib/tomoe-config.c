@@ -252,7 +252,7 @@ tomoe_config_load (TomoeConfig *config)
     if (priv->languages)
         g_strfreev (priv->languages);
     language = _tomoe_config_key_file_get_string (key_file,
-                                                  "global", "language",
+                                                  "config", "language",
                                                   NULL);
     if (language) {
         priv->languages = g_new0(gchar *, 2);
@@ -260,7 +260,7 @@ tomoe_config_load (TomoeConfig *config)
     } else {
         priv->languages =
             _tomoe_config_key_file_get_string_list (key_file,
-                                                    "global", "languages",
+                                                    "config", "languages",
                                                     NULL);
     }
 }
