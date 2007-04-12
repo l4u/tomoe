@@ -1,5 +1,7 @@
 #include "tomoe-rb.h"
 
+#define _SELF(obj) RVAL2TREC(obj)
+
 #define RECOGNIZER_PREFIX "Recognizer"
 
 static VALUE mTomoe;
@@ -35,6 +37,18 @@ tr_s_unload(VALUE self)
     return Qnil;
 }
 
+static VALUE
+tr_language(VALUE self)
+{
+    const gchar *language;
+
+    language = tomoe_recognizer_get_language(_SELF(self));
+    if (language)
+        return rb_str_new2(language);
+    else
+        return Qnil;
+}
+
 void
 _tomoe_rb_init_tomoe_recognizer(VALUE _mTomoe)
 {
@@ -45,4 +59,6 @@ _tomoe_rb_init_tomoe_recognizer(VALUE _mTomoe)
 
     rb_define_singleton_method(cTomoeRecognizer, "load", tr_s_load, 1);
     rb_define_singleton_method(cTomoeRecognizer, "unload", tr_s_unload, 0);
+
+    rb_define_method(cTomoeRecognizer, "language", tr_language, 0);
 }
