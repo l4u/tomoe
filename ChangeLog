@@ -1,5 +1,8 @@
 2007-04-12  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-context.c (tomoe_context_search_by_strokes): supported
+	language related recognizer loading.
+
 	* lib/tomoe-config.[ch]: supported "[global]/language" property
 	and "[global]/languages" property. "[global]/language" is just for
 	convenience.
