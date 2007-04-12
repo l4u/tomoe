@@ -1,6 +1,7 @@
 /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  *  Copyright (C) 2006 Juernjakob Harder <juernjakob.harder@gmail.com>
+ *  Copyright (C) 2007 Kouhei Sutou <kou@cozmixng.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -51,10 +52,12 @@ struct _TomoeConfigClass
 
 GType            tomoe_config_get_type (void) G_GNUC_CONST;
 
-TomoeConfig     *tomoe_config_new                 (const char   *config_file);
-const gchar     *tomoe_config_get_filename        (TomoeConfig  *config);
-const gchar     *tomoe_config_get_user_dict_name  (TomoeConfig  *config);
-TomoeShelf      *tomoe_config_make_shelf          (TomoeConfig  *config);
+TomoeConfig     *tomoe_config_new					(const gchar	*config_file);
+const gchar     *tomoe_config_get_filename			(TomoeConfig	*config);
+const gchar     *tomoe_config_get_user_dict_name	(TomoeConfig	*config);
+TomoeShelf      *tomoe_config_make_shelf			(TomoeConfig	*config,
+                                                     const gchar	*language);
+const gchar *const *tomoe_config_get_languages		(TomoeConfig	*config);
 
 G_END_DECLS
 

@@ -46,6 +46,7 @@ struct _TomoeConfigPrivate
     gchar       *filename;
     gchar       *user_dict_name;
     GKeyFile    *key_file;
+    gchar		**languages;
 };
 
 enum
@@ -80,6 +81,10 @@ static gchar   *_tomoe_config_key_file_get_string  (GKeyFile *key_file,
                                                     const gchar *group,
                                                     const gchar *key,
                                                     const gchar *default_value);
+static gchar  **_tomoe_config_key_file_get_string_list(GKeyFile *key_file,
+                                                       const gchar *group,
+                                                       const gchar *key,
+                                                       gchar **default_value);
 static gint     _tomoe_config_key_file_get_integer (GKeyFile *key_file,
                                                     const gchar *group,
                                                     const gchar *key,
@@ -120,6 +125,7 @@ tomoe_config_init (TomoeConfig *config)
     priv->filename   = NULL;
     priv->user_dict_name = NULL;
     priv->key_file   = NULL;
+    priv->languages  = NULL;
 }
 
 TomoeConfig *
@@ -153,10 +159,13 @@ tomoe_config_dispose (GObject *object)
         g_free (priv->user_dict_name);
     if (priv->key_file)
         g_key_file_free (priv->key_file);
+    if (priv->languages)
+        g_strfreev (priv->languages);
 
     priv->filename  = NULL;
     priv->user_dict_name = NULL;
     priv->key_file = NULL;
+    priv->languages = NULL;
 
     if (G_OBJECT_CLASS (tomoe_config_parent_class)->dispose)
         G_OBJECT_CLASS (tomoe_config_parent_class)->dispose (object);
@@ -172,6 +181,8 @@ tomoe_config_set_property (GObject      *object,
 
     switch (prop_id) {
       case PROP_FILENAME:
+        if (priv->filename)
+            g_free (priv->filename);
         priv->filename = g_value_dup_string (value);
         break;
 
@@ -207,6 +218,7 @@ tomoe_config_load (TomoeConfig *config)
     GError *error = NULL;
     TomoeConfigPrivate *priv;
     const gchar *config_file;
+    gchar *language;
 
     g_return_if_fail (config);
 
@@ -230,10 +242,27 @@ tomoe_config_load (TomoeConfig *config)
 
     priv->key_file = key_file;
 
+    if (priv->user_dict_name)
+        g_free (priv->user_dict_name);
     priv->user_dict_name =
         _tomoe_config_key_file_get_string (key_file,
                                            "config", "user-dictionary",
                                            DEFAULT_USER_DICT_NAME);
+
+    if (priv->languages)
+        g_strfreev (priv->languages);
+    language = _tomoe_config_key_file_get_string (key_file,
+                                                  "global", "language",
+                                                  NULL);
+    if (language) {
+        priv->languages = g_new0(gchar *, 2);
+        priv->languages[0] = language;
+    } else {
+        priv->languages =
+            _tomoe_config_key_file_get_string_list (key_file,
+                                                    "global", "languages",
+                                                    NULL);
+    }
 }
 
 static void
@@ -285,7 +314,7 @@ tomoe_config_get_user_dict_name (TomoeConfig *config)
 }
 
 TomoeShelf *
-tomoe_config_make_shelf (TomoeConfig *config)
+tomoe_config_make_shelf (TomoeConfig *config, const gchar *language)
 {
     TomoeConfigPrivate *priv;
     TomoeShelf *shelf;
@@ -339,6 +368,18 @@ tomoe_config_make_shelf (TomoeConfig *config)
     return shelf;
 }
 
+const gchar *const *
+tomoe_config_get_languages (TomoeConfig *config)
+{
+    TomoeConfigPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_CONFIG (config), NULL);
+
+    priv = TOMOE_CONFIG_GET_PRIVATE (config);
+    return (const gchar *const *)(priv->languages);
+}
+
+
 static gboolean
 _tomoe_config_key_file_get_boolean (GKeyFile *key_file,
                                     const gchar *group,
@@ -385,6 +426,33 @@ _tomoe_config_key_file_get_string (GKeyFile *key_file,
         }
         if (default_value)
             result = g_strdup (default_value);
+    }
+
+    return result;
+}
+
+static gchar **
+_tomoe_config_key_file_get_string_list (GKeyFile *key_file,
+                                        const gchar *group,
+                                        const gchar *key,
+                                        gchar **default_value)
+{
+    gchar **result = NULL;
+    gsize length = 0;
+    GError *error = NULL;
+
+    result = g_key_file_get_string_list (key_file, group, key, &length, &error);
+    if (error) {
+        switch (error->code) {
+          case G_KEY_FILE_ERROR_NOT_FOUND:
+            g_error_free (error);
+            break;
+          case G_KEY_FILE_ERROR_INVALID_VALUE:
+            TOMOE_HANDLE_ERROR (error);
+            break;
+        }
+        if (default_value)
+            result = g_strdupv (default_value);
     }
 
     return result;
