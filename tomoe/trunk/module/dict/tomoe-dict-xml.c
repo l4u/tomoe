@@ -97,6 +97,7 @@ static GList       *search                    (TomoeDict     *dict,
                                                TomoeQuery    *query);
 static gboolean     flush                     (TomoeDict     *dict);
 static gboolean     is_editable               (TomoeDict     *dict);
+static gboolean     is_available              (TomoeDict     *dict);
 static gchar       *get_available_private_utf8 (TomoeDict    *dict);
 static gboolean     tomoe_dict_xml_load       (TomoeDictXML  *dict);
 static gboolean     tomoe_dict_xml_save       (TomoeDictXML  *dict);
@@ -124,6 +125,7 @@ class_init (TomoeDictXMLClass *klass)
     dict_class->search          = search;
     dict_class->flush           = flush;
     dict_class->is_editable     = is_editable;
+    dict_class->is_available    = is_available;
     dict_class->get_available_private_utf8 = get_available_private_utf8;
 
 
@@ -374,6 +376,19 @@ is_editable (TomoeDict *_dict)
     g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
 
     return dict->editable;
+}
+
+static gboolean
+is_available (TomoeDict *_dict)
+{
+    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
+
+    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
+
+    if (!dict->editable)
+        return TRUE;
+
+    return dict->filename != NULL;
 }
 
 static gchar *

@@ -68,6 +68,7 @@ tomoe_dict_class_init (TomoeDictClass *klass)
     klass->search          = NULL;
     klass->flush           = NULL;
     klass->is_editable     = NULL;
+    klass->is_available    = NULL;
     klass->get_available_private_utf8 = NULL;
 }
 
@@ -255,6 +256,20 @@ tomoe_dict_is_editable (TomoeDict *dict)
     klass = TOMOE_DICT_GET_CLASS (dict);
     if (klass->is_editable)
         return klass->is_editable (dict);
+    else
+        return FALSE;
+}
+
+gboolean
+tomoe_dict_is_available (TomoeDict *dict)
+{
+    TomoeDictClass *klass;
+
+    g_return_val_if_fail (TOMOE_IS_DICT (dict), FALSE);
+
+    klass = TOMOE_DICT_GET_CLASS (dict);
+    if (klass->is_available)
+        return klass->is_available (dict);
     else
         return FALSE;
 }

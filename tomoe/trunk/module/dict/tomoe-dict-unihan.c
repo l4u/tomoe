@@ -88,6 +88,7 @@ static GList       *search                    (TomoeDict     *dict,
                                                TomoeQuery    *query);
 static gboolean     flush                     (TomoeDict     *dict);
 static gboolean     is_editable               (TomoeDict     *dict);
+static gboolean     is_available              (TomoeDict     *dict);
 static gchar       *get_available_private_utf8 (TomoeDict    *dict);
 
 static void
@@ -112,6 +113,7 @@ class_init (TomoeDictUnihanClass *klass)
     dict_class->search          = search;
     dict_class->flush           = flush;
     dict_class->is_editable     = is_editable;
+    dict_class->is_available    = is_available;
     dict_class->get_available_private_utf8 = get_available_private_utf8;
 
     g_object_class_install_property (
@@ -306,6 +308,12 @@ static gboolean
 is_editable (TomoeDict *_dict)
 {
     return FALSE;
+}
+
+static gboolean
+is_available (TomoeDict *_dict)
+{
+    return TRUE;
 }
 
 static gchar *

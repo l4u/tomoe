@@ -97,6 +97,7 @@ static GList       *search                    (TomoeDict     *dict,
                                                TomoeQuery    *query);
 static gboolean     flush                     (TomoeDict     *dict);
 static gboolean     is_editable               (TomoeDict     *dict);
+static gboolean     is_available              (TomoeDict     *dict);
 static gchar       *get_available_private_utf8 (TomoeDict    *dict);
 
 static gboolean     tomoe_dict_svn_update      (TomoeDictSvn *dict,
@@ -126,6 +127,7 @@ class_init (TomoeDictSvnClass *klass)
     dict_class->search          = search;
     dict_class->flush           = flush;
     dict_class->is_editable     = is_editable;
+    dict_class->is_available    = is_available;
     dict_class->get_available_private_utf8 = get_available_private_utf8;
 
     g_object_class_install_property (
@@ -300,12 +302,12 @@ dispose (GObject *object)
 
     dict = TOMOE_DICT_SVN (object);
 
-    if (dict->working_copy &&
-        g_file_test (dict->working_copy, G_FILE_TEST_EXISTS))
-        flush (TOMOE_DICT (object));
-
-    if (dict->working_copy)
+    if (dict->working_copy) {
+        if (g_file_test (dict->working_copy, G_FILE_TEST_EXISTS))
+            flush (TOMOE_DICT (object));
         g_free (dict->working_copy);
+    }
+
     if (dict->sub_dict)
         g_object_unref (dict->sub_dict);
     if (dict->pool)
@@ -407,6 +409,23 @@ is_editable (TomoeDict *_dict)
     g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), FALSE);
 
     return tomoe_dict_is_editable (dict->sub_dict);
+}
+
+static gboolean
+is_available (TomoeDict *_dict)
+{
+    TomoeDictSvn *dict = TOMOE_DICT_SVN (_dict);
+
+    g_return_val_if_fail (TOMOE_IS_DICT_SVN (dict), FALSE);
+    g_return_val_if_fail (TOMOE_IS_DICT (dict->sub_dict), FALSE);
+
+    if (!dict->working_copy)
+        return FALSE;
+
+    if (!g_file_test (dict->working_copy, G_FILE_TEST_EXISTS))
+        return FALSE;
+
+    return tomoe_dict_is_available (dict->sub_dict);
 }
 
 static gchar *
