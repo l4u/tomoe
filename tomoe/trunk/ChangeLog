@@ -1,5 +1,14 @@
 2007-04-12  Kouhei Sutou  <kou@cozmixng.org>
 
+	* ext/ruby/tomoe-rb-recognizer.c, ext/ruby/rbtomoe.h: implemented
+	Tomoe::Recognizer#language.
+
+	* ext/ruby/tomoe-rb-config.c, ext/ruby/rbtomoe.h: implemented
+	Tomoe::Config.new and Tomoe::Config#languages.
+
+	* test/config_spec.rb: added tests for TomoeConfig related language
+	configuration.
+
 	* lib/tomoe-config.c (tomoe_config_load): used [config] group for
 	language and languages configuration instead of [global] group.
 
