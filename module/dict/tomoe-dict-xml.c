@@ -145,7 +145,7 @@ class_init (TomoeDictXMLClass *klass)
             "editable",
             "Editable",
             "Editable flag",
-            TRUE,
+            FALSE,
             G_PARAM_READWRITE));
 }
 
@@ -360,12 +360,7 @@ flush (TomoeDict *_dict)
 
     g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
 
-    if (dict->editable && dict->modified) {
-        dict->modified = FALSE;
-        return tomoe_dict_xml_save (dict);
-    } else {
-        return TRUE;
-    }
+    return tomoe_dict_xml_save (dict);
 }
 
 static gboolean
@@ -385,10 +380,14 @@ is_available (TomoeDict *_dict)
 
     g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
 
-    if (!dict->editable)
-        return TRUE;
+    if (dict->editable && !dict->filename)
+        return FALSE;
 
-    return dict->filename != NULL;
+    if (!dict->editable && dict->filename &&
+        !g_file_test (dict->filename, G_FILE_TEST_EXISTS))
+        return FALSE;
+
+    return TRUE;
 }
 
 static gchar *
@@ -432,8 +431,12 @@ tomoe_dict_xml_save (TomoeDictXML *dict)
     guint i;
 
     g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
+
     if (!dict->editable) return FALSE;
+
     g_return_val_if_fail (dict->filename, FALSE);
+
+    if (!dict->modified) return TRUE;
 
     xml = g_string_new (
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
