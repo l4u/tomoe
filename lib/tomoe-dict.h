@@ -64,6 +64,7 @@ struct _TomoeDictClass
                                             TomoeQuery    *query);
     gboolean        (*flush)               (TomoeDict     *dict);
     gboolean        (*is_editable)         (TomoeDict     *dict);
+    gboolean        (*is_available)        (TomoeDict     *dict);
     gchar          *(*get_available_private_utf8) (TomoeDict *dict);
 };
 
@@ -98,6 +99,7 @@ gboolean        tomoe_dict_flush                (TomoeDict     *dict);
 
 
 gboolean        tomoe_dict_is_editable          (TomoeDict *dict);
+gboolean        tomoe_dict_is_available         (TomoeDict *dict);
 
 gchar          *tomoe_dict_get_available_private_utf8 (TomoeDict *dict);
 
