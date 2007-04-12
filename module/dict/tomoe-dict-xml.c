@@ -416,8 +416,9 @@ tomoe_dict_xml_save (TomoeDictXML *dict)
     gboolean success;
     guint i;
 
-    g_return_val_if_fail (TOMOE_IS_DICT (dict), FALSE);
+    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
     if (!dict->editable) return FALSE;
+    g_return_val_if_fail (dict->filename, FALSE);
 
     xml = g_string_new (
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"

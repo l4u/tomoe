@@ -1,3 +1,8 @@
+2007-04-12  Kouhei Sutou  <kou@cozmixng.org>
+
+	* module/dict/tomoe-dict-xml.c (tomoe_dict_xml_save): checked
+	filename is available.
+
 2007-04-11  Kouhei Sutou  <kou@cozmixng.org>
 
 	* autogen.sh, configure.ac, po/: supported intltoolize and
