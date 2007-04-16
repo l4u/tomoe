@@ -22,7 +22,12 @@ ACLOCAL_AMFLAGS = -I macros
 
 SUBDIRS = po lib ext module data db test benchmark doc spec
 
-EXTRA_DIST = autogen.sh tomoe.pc
+EXTRA_DIST =					\
+	autogen.sh				\
+	tomoe.pc				\
+	intltool-update.in			\
+	intltool-merge.in			\
+	intltool-extract.in
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA= tomoe.pc
