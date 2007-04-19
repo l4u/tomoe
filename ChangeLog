@@ -1,3 +1,8 @@
+2007-04-19  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* data/handwriting.xml: Fix stroke data of U+5BBF.
+	Thanks David <daviebdawg@gmail.com>.
+
 2007-04-16  Kouhei Sutou  <kou@cozmixng.org>
 
 	* Makefile.am (EXTRA_DIST): added intltool related files.
