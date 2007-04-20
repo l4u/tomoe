@@ -2,38 +2,49 @@
 
 #define _SELF(obj) RVAL2TREC(obj)
 
-#define RECOGNIZER_PREFIX "Recognizer"
-
 static VALUE mTomoe;
 
-void
-_tomoe_rb_recognizer_module_load(void)
+static VALUE
+td_s_load(VALUE self, VALUE name)
 {
-    _tomoe_rb_module_load(tomoe_recognizer_get_registered_types(), mTomoe,
-                          tomoe_recognizer_get_log_domains(),
-                          RECOGNIZER_PREFIX);
-}
+    VALUE loaded = Qfalse;
+    VALUE normalized_name;
+    TomoeModule *module;
 
-static void
-_tomoe_rb_recognizer_module_unload(void)
-{
-    _tomoe_rb_module_unload(tomoe_recognizer_get_registered_types(), mTomoe,
-                            RECOGNIZER_PREFIX);
+    normalized_name = rb_funcall(name, rb_intern("downcase"), 0);
+    module = tomoe_recognizer_load_module(RVAL2CSTR(normalized_name));
+    if (module)
+    {
+        gchar *type_name, *class_name;
+        GType type;
+
+        class_name = g_strconcat("Recognizer", RVAL2CSTR(name), NULL);
+        type_name = g_strconcat("Tomoe", class_name, NULL);
+        type = g_type_from_name(type_name);
+        if (type) {
+            if (!rb_const_defined(mTomoe, rb_intern(class_name)))
+                G_DEF_CLASS3(type_name, class_name, mTomoe);
+
+            if (rbgobj_lookup_class_by_gtype(type, Qnil))
+                loaded = Qtrue;
+        }
+        g_free(class_name);
+        g_free(type_name);
+    }
+
+    return loaded;
 }
 
 static VALUE
-tr_s_load(VALUE self, VALUE base_dir)
+td_s_default_module_dir(VALUE self)
 {
-    tomoe_recognizer_load(NIL_P(base_dir) ? NULL : RVAL2CSTR(base_dir));
-    _tomoe_rb_recognizer_module_load();
-    return Qnil;
+    return CSTR2RVAL(tomoe_recognizer_get_default_module_dir());
 }
 
 static VALUE
-tr_s_unload(VALUE self)
+td_s_set_default_module_dir(VALUE self, VALUE dir)
 {
-    _tomoe_rb_recognizer_module_unload();
-    tomoe_recognizer_unload();
+    tomoe_recognizer_set_default_module_dir(RVAL2CSTR2(dir));
     return Qnil;
 }
 
@@ -57,8 +68,13 @@ _tomoe_rb_init_tomoe_recognizer(VALUE _mTomoe)
     mTomoe = _mTomoe;
     cTomoeRecognizer = G_DEF_CLASS(TOMOE_TYPE_RECOGNIZER, "Recognizer", mTomoe);
 
-    rb_define_singleton_method(cTomoeRecognizer, "load", tr_s_load, 1);
-    rb_define_singleton_method(cTomoeRecognizer, "unload", tr_s_unload, 0);
+    rb_define_singleton_method(cTomoeRecognizer, "load", td_s_load, 1);
+    rb_define_singleton_method(cTomoeRecognizer, "default_module_dir",
+                               td_s_default_module_dir, 0);
+    rb_define_singleton_method(cTomoeRecognizer, "set_default_module_dir",
+                               td_s_set_default_module_dir, 1);
+    rb_define_singleton_method(cTomoeRecognizer, "default_module_dir=",
+                               td_s_set_default_module_dir, 1);
 
     rb_define_method(cTomoeRecognizer, "language", tr_language, 0);
 }

@@ -45,7 +45,4 @@ Init_tomoe(void)
 
     mGLibLog = rb_const_get(mGLib, rb_intern("Log"));
     set_log_domain = rb_intern("set_log_domain");
-
-    _tomoe_rb_dict_module_load();
-    _tomoe_rb_recognizer_module_load();
 }

@@ -31,7 +31,7 @@
 #define TOMOE_MODULE_GET_PRIVATE(obj) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_MODULE, TomoeModulePrivate))
 
-typedef struct _TomoeModulePrivate	TomoeModulePrivate;
+typedef struct _TomoeModulePrivate  TomoeModulePrivate;
 struct _TomoeModulePrivate
 {
     GModule      *library;
@@ -226,29 +226,39 @@ _tomoe_module_show_error (GModule *module)
     g_free (message);
 }
 
-GObject *
-tomoe_module_instantiate (GList *modules, const gchar *name,
-                          const gchar *first_property, va_list var_args)
+TomoeModule *
+tomoe_module_find (GList *modules, const gchar *name)
 {
     GList *node;
 
-    for (node = modules; node; node = g_list_next (node)) {
+    for (node = modules; node; node = g_list_next(node)) {
         TomoeModule *module = node->data;
         TomoeModulePrivate *priv;
 
-        priv = TOMOE_MODULE_GET_PRIVATE (module);
-        if (_tomoe_module_match_name (priv->mod_path, name) &&
-            g_type_module_use (G_TYPE_MODULE (module))) {
-            GObject *object = NULL;
-            object = priv->instantiate (first_property, var_args);
-            g_type_module_unuse (G_TYPE_MODULE (module));
-            if (object)
-                return object;
-        }
+        priv = TOMOE_MODULE_GET_PRIVATE(module);
+        if (_tomoe_module_match_name(priv->mod_path, name))
+            return module;
     }
 
     return NULL;
 }
+
+GObject *
+tomoe_module_instantiate (TomoeModule *module,
+                          const gchar *first_property, va_list var_args)
+{
+    GObject *object = NULL;
+    TomoeModulePrivate *priv;
+
+    priv = TOMOE_MODULE_GET_PRIVATE (module);
+    if (g_type_module_use (G_TYPE_MODULE(module))) {
+        object = priv->instantiate (first_property, var_args);
+        g_type_module_unuse (G_TYPE_MODULE(module));
+    }
+
+    return object;
+}
+
 
 static GModule *
 _tomoe_module_open (const gchar *mod_path)
@@ -271,6 +281,12 @@ _tomoe_module_close (GModule *module)
     }
 }
 
+static gchar *
+_tomoe_module_module_file_name (const gchar *name)
+{
+    return g_strconcat(name, "." G_MODULE_SUFFIX, NULL);
+}
+
 static gboolean
 _tomoe_module_load_func (GModule *module, const gchar *func_name,
                          gpointer *symbol)
@@ -285,28 +301,39 @@ _tomoe_module_load_func (GModule *module, const gchar *func_name,
     }
 }
 
-static TomoeModule *
-_tomoe_module_load (const gchar *base_dir, const gchar *name)
+TomoeModule *
+tomoe_module_load_module (const gchar *base_dir, const gchar *name)
 {
     gchar *mod_base_name, *mod_path;
     TomoeModule *module = NULL;
 
-    mod_base_name = g_build_filename (base_dir, name, NULL);
-    if (g_str_has_suffix (mod_base_name, G_MODULE_SUFFIX)) {
+    mod_base_name = g_build_filename(base_dir, name, NULL);
+    if (g_str_has_suffix(mod_base_name, G_MODULE_SUFFIX)) {
         mod_path = mod_base_name;
     } else {
-        mod_path = g_strconcat (mod_base_name, "." G_MODULE_SUFFIX, NULL);
-        g_free (mod_base_name);
+        mod_path = _tomoe_module_module_file_name(mod_base_name);
+        g_free(mod_base_name);
     }
 
-    if (g_file_test (mod_path, G_FILE_TEST_EXISTS)) {
+    if (g_file_test(mod_path, G_FILE_TEST_EXISTS)) {
         TomoeModulePrivate *priv;
-        module = g_object_new (TOMOE_TYPE_MODULE, NULL);
-        priv = TOMOE_MODULE_GET_PRIVATE (module);
-        priv->mod_path = g_strdup (mod_path);
-        g_type_module_set_name (G_TYPE_MODULE (module), priv->mod_path);
+        gchar *mod_name;
+
+        module = g_object_new(TOMOE_TYPE_MODULE, NULL);
+        priv = TOMOE_MODULE_GET_PRIVATE(module);
+        priv->mod_path = g_strdup(mod_path);
+
+        mod_name = g_strdup(name);
+        if (g_str_has_suffix(mod_name, "."G_MODULE_SUFFIX)) {
+            guint last_index;
+            last_index =
+                strlen(mod_name) - strlen("."G_MODULE_SUFFIX);
+            mod_name[last_index] = '\0';
+        }
+        g_type_module_set_name(G_TYPE_MODULE(module), mod_name);
+        g_free(mod_name);
     }
-    g_free (mod_path);
+    g_free(mod_path);
 
     return module;
 }
@@ -314,22 +341,36 @@ _tomoe_module_load (const gchar *base_dir, const gchar *name)
 GList *
 tomoe_module_load_modules (const gchar *base_dir)
 {
+    return tomoe_module_load_modules_unique(base_dir, NULL);
+}
+
+GList *
+tomoe_module_load_modules_unique (const gchar *base_dir, GList *exist_modules)
+{
     GDir *dir;
     GList *modules = NULL;
+    const gchar *entry;
 
-    dir = g_dir_open (base_dir, 0, NULL);
-    if (dir) {
-        const gchar *entry;
+    dir = g_dir_open(base_dir, 0, NULL);
+    if (!dir)
+        return modules;
 
-        while ((entry = g_dir_read_name(dir))) {
-            TomoeModule *module;
-            module = _tomoe_module_load (base_dir, entry);
-            if (module)
-                modules = g_list_prepend (modules, module);
+    while ((entry = g_dir_read_name(dir))) {
+        TomoeModule *module;
+
+        module = tomoe_module_load_module(base_dir, entry);
+        if (module)
+        {
+            GTypeModule *g_module;
+
+            g_module = G_TYPE_MODULE(module);
+            if (tomoe_module_find(exist_modules, g_module->name))
+                tomoe_module_unload(module);
+            else
+                modules = g_list_prepend(modules, module);
         }
-
-        g_dir_close(dir);
     }
+    g_dir_close(dir);
 
     return modules;
 }

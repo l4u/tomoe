@@ -49,15 +49,22 @@ struct _TomoeRecognizerClass
 {
     GObjectClass parent_class;
 
-    GList		*(*search)			(TomoeRecognizer *recognizer,
+    GList       *(*search)          (TomoeRecognizer *recognizer,
                                      TomoeWriting    *input);
-    gboolean	 (*is_available)	(TomoeRecognizer *recognizer);
+    gboolean     (*is_available)    (TomoeRecognizer *recognizer);
 };
 
 GType            tomoe_recognizer_get_type (void) G_GNUC_CONST;
 
 
+void             tomoe_recognizer_init        (void);
+void             tomoe_recognizer_quit        (void);
+
+const gchar     *tomoe_recognizer_get_default_module_dir   (void);
+void             tomoe_recognizer_set_default_module_dir   (const gchar *dir);
+
 void             tomoe_recognizer_load        (const gchar *base_dir);
+TomoeModule     *tomoe_recognizer_load_module (const gchar *name);
 void             tomoe_recognizer_unload      (void);
 GList           *tomoe_recognizer_get_registered_types (void);
 GList           *tomoe_recognizer_get_log_domains      (void);
@@ -69,9 +76,9 @@ TomoeRecognizer *tomoe_recognizer_new         (const gchar *name,
 GList           *tomoe_recognizer_search   (TomoeRecognizer *recognizer,
                                             TomoeWriting    *input);
 
-const gchar		*tomoe_recognizer_get_language	(TomoeRecognizer *recognizer);
+const gchar     *tomoe_recognizer_get_language  (TomoeRecognizer *recognizer);
 
-gboolean 		 tomoe_recognizer_is_available	(TomoeRecognizer *recognizer);
+gboolean         tomoe_recognizer_is_available  (TomoeRecognizer *recognizer);
 
 G_END_DECLS
 

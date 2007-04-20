@@ -31,6 +31,7 @@
 
 G_BEGIN_DECLS
 
+#include "tomoe-module.h"
 #include "tomoe-char.h"
 #include "tomoe-query.h"
 
@@ -70,7 +71,14 @@ struct _TomoeDictClass
 
 GType           tomoe_dict_get_type (void) G_GNUC_CONST;
 
+void            tomoe_dict_init        (void);
+void            tomoe_dict_quit        (void);
+
+const gchar    *tomoe_dict_get_default_module_dir   (void);
+void            tomoe_dict_set_default_module_dir   (const gchar *dir);
+
 void            tomoe_dict_load        (const gchar *base_dir);
+TomoeModule    *tomoe_dict_load_module (const gchar *name);
 void            tomoe_dict_unload      (void);
 GList          *tomoe_dict_get_registered_types (void);
 GList          *tomoe_dict_get_log_domains      (void);

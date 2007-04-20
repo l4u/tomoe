@@ -24,16 +24,77 @@
 #include "tomoe-module.h"
 
 static GList *dicts = NULL;
+static gchar *module_dir = NULL;
+
+void tomoe_dict_init (void)
+{
+}
+
+void tomoe_dict_quit (void)
+{
+    tomoe_dict_unload ();
+    tomoe_dict_set_default_module_dir (NULL);
+}
+
+const gchar *
+tomoe_dict_get_default_module_dir (void)
+{
+    return module_dir;
+}
+
+void
+tomoe_dict_set_default_module_dir (const gchar *dir)
+{
+    if (module_dir)
+        g_free (module_dir);
+    module_dir = NULL;
+
+    if (dir)
+        module_dir = g_strdup (dir);
+}
+
+static const gchar *
+_tomoe_dict_module_dir (void)
+{
+    const gchar *dir;
+
+    if (module_dir)
+        return module_dir;
+
+    dir = g_getenv ("TOMOE_DICT_MODULE_DIR");
+    if (dir)
+        return dir;
+
+    return DICT_MODULEDIR;
+}
 
 void
 tomoe_dict_load (const gchar *base_dir)
 {
     if (!base_dir)
-        base_dir = g_getenv ("TOMOE_DICT_MODULE_DIR");
-    if (!base_dir)
-        base_dir = DICT_MODULEDIR;
+        base_dir = _tomoe_dict_module_dir ();
 
     dicts = g_list_concat (tomoe_module_load_modules (base_dir), dicts);
+}
+
+TomoeModule *
+tomoe_dict_load_module (const gchar *name)
+{
+    TomoeModule *module;
+
+    module = tomoe_module_find (dicts, name);
+    if (module)
+        return module;
+
+    module = tomoe_module_load_module (_tomoe_dict_module_dir (), name);
+    if (module) {
+        if (g_type_module_use (G_TYPE_MODULE (module))) {
+            dicts = g_list_prepend (dicts, module);
+            g_type_module_unuse (G_TYPE_MODULE (module));
+        }
+    }
+
+    return module;
 }
 
 void
@@ -56,7 +117,9 @@ tomoe_dict_get_log_domains (void)
     return tomoe_module_collect_log_domains (dicts);
 }
 
+#define tomoe_dict_init init
 G_DEFINE_ABSTRACT_TYPE (TomoeDict, tomoe_dict, G_TYPE_OBJECT)
+#undef tomoe_dict_init
 
 static void
 tomoe_dict_class_init (TomoeDictClass *klass)
@@ -73,7 +136,7 @@ tomoe_dict_class_init (TomoeDictClass *klass)
 }
 
 static void
-tomoe_dict_init (TomoeDict *dict)
+init (TomoeDict *dict)
 {
 }
 
@@ -90,11 +153,15 @@ tomoe_dict_init (TomoeDict *dict)
 TomoeDict *
 tomoe_dict_new (const gchar *name, const gchar *first_property, ...)
 {
+    TomoeModule *module;
     GObject *dict;
     va_list var_args;
 
+    module = tomoe_dict_load_module (name);
+    g_return_val_if_fail (module != NULL, NULL);
+
     va_start (var_args, first_property);
-    dict = tomoe_module_instantiate (dicts, name, first_property, var_args);
+    dict = tomoe_module_instantiate (module, first_property, var_args);
     va_end (var_args);
 
     return TOMOE_DICT (dict);
