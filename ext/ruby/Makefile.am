@@ -18,7 +18,6 @@ tomoe_la_SOURCES =		\
 	tomoe-rb-config.c	\
 	tomoe-rb-context.c	\
 	tomoe-rb-dict.c		\
-	tomoe-rb-module.c	\
 	tomoe-rb-query.c	\
 	tomoe-rb-reading.c	\
 	tomoe-rb-recognizer.c	\

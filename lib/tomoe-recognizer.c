@@ -28,17 +28,79 @@
 #include "tomoe-recognizer.h"
 
 static GList *recognizers = NULL;
+static gchar *module_dir = NULL;
+
+void tomoe_recognizer_init (void)
+{
+}
+
+void tomoe_recognizer_quit (void)
+{
+    tomoe_recognizer_unload ();
+    if (module_dir)
+        g_free (module_dir);
+    module_dir = NULL;
+}
+
+const gchar *
+tomoe_recognizer_get_default_module_dir (void)
+{
+    return module_dir;
+}
+
+void
+tomoe_recognizer_set_default_module_dir (const gchar *dir)
+{
+    if (module_dir)
+        g_free (module_dir);
+    module_dir = NULL;
+
+    if (dir)
+        module_dir = g_strdup (dir);
+}
+
+static const gchar *
+_tomoe_recognizer_module_dir (void)
+{
+    const gchar *dir;
+    if (module_dir)
+        return module_dir;
+
+    dir = g_getenv ("TOMOE_RECOGNIZER_MODULE_DIR");
+    if (dir)
+        return dir;
+
+    return RECOGNIZER_MODULEDIR;
+}
 
 void
 tomoe_recognizer_load (const gchar *base_dir)
 {
     if (!base_dir)
-        base_dir = g_getenv ("TOMOE_RECOGNIZER_MODULE_DIR");
-    if (!base_dir)
-        base_dir = RECOGNIZER_MODULEDIR;
+        base_dir = _tomoe_recognizer_module_dir ();
 
     recognizers = g_list_concat (tomoe_module_load_modules (base_dir),
                                  recognizers);
+}
+
+TomoeModule *
+tomoe_recognizer_load_module (const gchar *name)
+{
+    TomoeModule *module;
+
+    module = tomoe_module_find (recognizers, name);
+    if (module)
+        return module;
+
+    module = tomoe_module_load_module (_tomoe_recognizer_module_dir (), name);
+    if (module) {
+        if (g_type_module_use (G_TYPE_MODULE (module))) {
+            recognizers = g_list_prepend (recognizers, module);
+            g_type_module_unuse (G_TYPE_MODULE (module));
+        }
+    }
+
+    return module;
 }
 
 void
@@ -64,10 +126,10 @@ tomoe_recognizer_get_log_domains (void)
 
 #define TOMOE_RECOGNIZER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_RECOGNIZER, TomoeRecognizerPrivate))
 
-typedef struct _TomoeRecognizerPrivate	TomoeRecognizerPrivate;
+typedef struct _TomoeRecognizerPrivate  TomoeRecognizerPrivate;
 struct _TomoeRecognizerPrivate
 {
-    gchar	*language;
+    gchar   *language;
 };
 
 enum {
@@ -75,14 +137,16 @@ enum {
     PROP_LANGUAGE
 };
 
+#define tomoe_recognizer_init init
 G_DEFINE_ABSTRACT_TYPE (TomoeRecognizer, tomoe_recognizer, G_TYPE_OBJECT)
+#undef tomoe_recognizer_init
 
-static void			dispose					(GObject       *object);
-static void			set_property			(GObject       *object,
+static void         dispose                 (GObject       *object);
+static void         set_property            (GObject       *object,
                                              guint         prop_id,
                                              const GValue  *value,
                                              GParamSpec    *pspec);
-static void			get_property			(GObject       *object,
+static void         get_property            (GObject       *object,
                                              guint          prop_id,
                                              GValue        *value,
                                              GParamSpec    *pspec);
@@ -114,7 +178,7 @@ tomoe_recognizer_class_init (TomoeRecognizerClass *klass)
 }
 
 static void
-tomoe_recognizer_init (TomoeRecognizer *recognizer)
+init (TomoeRecognizer *recognizer)
 {
     TomoeRecognizerPrivate *priv = TOMOE_RECOGNIZER_GET_PRIVATE (recognizer);
 
@@ -129,7 +193,7 @@ dispose (GObject *object)
     if (priv->language)
         g_free (priv->language);
 
-    priv->language	= NULL;
+    priv->language  = NULL;
 
     G_OBJECT_CLASS (tomoe_recognizer_parent_class)->dispose (object);
 }
@@ -193,12 +257,15 @@ get_property (GObject    *object,
 TomoeRecognizer *
 tomoe_recognizer_new (const gchar *name, const gchar *first_property, ...)
 {
+    TomoeModule *module;
     GObject *recognizer;
     va_list var_args;
 
+    module = tomoe_recognizer_load_module (name);
+    g_return_val_if_fail (module != NULL, NULL);
+
     va_start (var_args, first_property);
-    recognizer = tomoe_module_instantiate (recognizers, name,
-                                           first_property, var_args);
+    recognizer = tomoe_module_instantiate (module, first_property, var_args);
     va_end (var_args);
 
     return TOMOE_RECOGNIZER (recognizer);

@@ -50,10 +50,16 @@ struct _TomoeModuleClass
 GType     tomoe_module_get_type (void) G_GNUC_CONST;
 
 
-GList    *tomoe_module_load_modules (const gchar *base_dir);
+TomoeModule *tomoe_module_load_module       (const gchar    *base_dir,
+                                             const gchar    *name);
+GList       *tomoe_module_load_modules (const gchar    *base_dir);
+GList       *tomoe_module_load_modules_unique  (const gchar    *base_dir,
+                                                GList      *modules);
 
-GObject  *tomoe_module_instantiate  (GList       *modules,
-                                     const gchar *name,
+TomoeModule *tomoe_module_find      (GList          *modules,
+                                     const gchar    *name);
+
+GObject  *tomoe_module_instantiate  (TomoeModule *module,
                                      const gchar *first_property,
                                      va_list      var_args);
 

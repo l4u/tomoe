@@ -54,14 +54,6 @@ void _tomoe_rb_init_tomoe_writing(VALUE mTomoe);
 
 void _tomoe_rb_set_log_domain(const gchar *domain);
 
-void _tomoe_rb_module_load   (GList *registered_types, VALUE klass,
-                              GList *log_domains, const gchar *prefix);
-void _tomoe_rb_module_unload (GList *registered_types, VALUE klass,
-                              const gchar *prefix);
-
-void _tomoe_rb_dict_module_load(void);
-void _tomoe_rb_recognizer_module_load(void);
-
 G_END_DECLS
 
 #endif /* __TOMOE_RB_H__ */

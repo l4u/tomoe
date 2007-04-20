@@ -340,7 +340,7 @@ EOC
   end
 end
 
-ENV["TOMOE_DICT_MODULE_DIR"] ||= TomoeSpecUtils::Path.dict_dir
-ENV["TOMOE_RECOGNIZER_MODULE_DIR"] ||= TomoeSpecUtils::Path.recognizer_dir
-
 require 'tomoe'
+
+Tomoe::Dict.default_module_dir = TomoeSpecUtils::Path.dict_dir
+Tomoe::Recognizer.default_module_dir = TomoeSpecUtils::Path.recognizer_dir
