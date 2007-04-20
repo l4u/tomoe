@@ -1,5 +1,8 @@
 2007-04-20  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/data/one_stroke.data: followed the expected test result to
+	dictionary data change.
+
 	* lib/tomoe.c, lib/tomoe-module.[ch], lib/tomoe-dict.[ch],
 	lib/tomoe-recognizer.[ch], ext/ruby/:
 	- supported dynamic loading on demand.
