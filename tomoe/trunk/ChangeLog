@@ -1,3 +1,13 @@
+2007-04-25  Takuro Ashie  <ashie@homa.ne.jp>
+
+	*  module/dict/tomoe-dict-xml.c, module/dict/tomoe-dict-ruby.c,
+	   module/dict/tomoe-dict-unihan.c, module/dict/tomoe-dict-mysql.c,
+	   module/dict/tomoe-dict-svn.c, module/dict/tomoe-dict-est.c,
+	   module/recognizer/tomoe-recognizer-simple.c, configure.ac,
+	   lib/tomoe-char.c, lib/tomoe-query.c, lib/tomoe-config.c,
+	   lib/tomoe-recognizer.c, lib/glib-utils.h, lib/tomoe-reading.c:
+	Use gi18n-lib.h instead of gi18n.h.
+
 2007-04-20  Kouhei Sutou  <kou@cozmixng.org>
 
 	* test/data/one_stroke.data: followed the expected test result to

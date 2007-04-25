@@ -24,8 +24,12 @@
 #ifndef __GLIB_UTILS_H__
 #define __GLIB_UTILS_H__
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include <glib/garray.h>
-#include <glib/gi18n.h>
+#include <glib/gi18n-lib.h>
 #include "glib-compat-file-utilities.h"
 #include "glib-compat-key-file.h"
 

@@ -28,7 +28,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <glib.h>
-#include <glib/gi18n.h>
+#include <glib/gi18n-lib.h>
 
 #include "tomoe-config.h"
 #include "tomoe-dict.h"
