@@ -314,7 +314,7 @@ echo "      Ruby            : ${ruby_available}"
 echo
 echo "  * Dictionary Backends"
 echo
-echo "      Unihan database : ${use_unihan}"
+echo "      Unihan Database : ${use_unihan}"
 echo "      Hyper Estraier  : ${est_exists}"
 echo "      Subversion      : ${use_svn}"
 echo "      MySQL           : ${enable_mysql}"
