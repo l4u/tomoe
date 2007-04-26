@@ -210,7 +210,7 @@ AC_ARG_ENABLE(unihan,
               AS_HELP_STRING([--disable-unihan],
                              [disable Unihan detabase]),
               [use_unihan=$enableval],
-	      [use_unihan=$enableval])
+              [use_unihan=$enableval])
 AM_CONDITIONAL([WITH_UNIHAN], [test "$use_unihan" = "yes"])
 
 AC_PATH_PROG(UNZIP, unzip, unzip-not-found)
@@ -224,6 +224,8 @@ SVN_CHECK()
 dnl **************************************************************
 dnl Configure for MySQL dictionary.
 dnl **************************************************************
+
+enable_mysql=no
 
 AC_PATH_PROG(MYSQL_CONFIG, mysql_config, mysql_config-not-found)
 
@@ -243,10 +245,14 @@ dnl Configure for Ruby dictionary.
 dnl **************************************************************
 AC_ARG_ENABLE(dict_ruby,
               AS_HELP_STRING([--enable-dict-ruby],
-			     [Enable Ruby based dictionary module]))
+                             [Enable Ruby based dictionary module]),
+              [enable_dict_ruby=$enableval],
+              [enable_dict_ruby=$enableval])
+if test x"$ruby_available" != "xyes"; then
+  enable_dict_ruby=no
+fi
 AM_CONDITIONAL(ENABLE_DICT_RUBY,
-               [test x"$enable_dict_ruby" = "xyes" -a \
-                     x"$ruby_available" = "xyes"])
+               [test x"$enable_dict_ruby" = "xyes"])
 
 
 dnl **************************************************************
@@ -294,3 +300,27 @@ spec/miracle-linux/tomoe.spec
 ])
 
 AC_OUTPUT
+
+dnl **************************************************************
+dnl Show configure result
+dnl **************************************************************
+
+echo
+echo "Configure Result:"
+echo
+echo "  * Language Bindings"
+echo
+echo "      Ruby            : ${ruby_available}"
+echo
+echo "  * Dictionary Backends"
+echo
+echo "      Unihan database : ${use_unihan}"
+echo "      Hyper Estraier  : ${est_exists}"
+echo "      Subversion      : ${use_svn}"
+echo "      MySQL           : ${enable_mysql}"
+echo "      Ruby            : ${enable_dict_ruby}"
+echo
+echo "  * Other Features"
+echo
+echo "      gtk-doc         : ${enable_gtk_doc}"
+echo
