@@ -90,16 +90,8 @@ dnl **************************************************************
 dnl Check for gettext.
 dnl **************************************************************
 
-IT_PROG_INTLTOOL([0.35.0])
-
+ALL_LINGUAS="ja"
 AM_GLIB_GNU_GETTEXT
-dnl should run after AM_GLIB_GNU_GETTEXT
-AC_CONFIG_COMMANDS([modify-itlocaledir], [
-sed \
-  -i'' \
-  -e "s/^itlocaledir = /itlocaledir = \$(datadir)\/locale\n#itlocaledir = /" \
-  po/Makefile
-])
 GETTEXT_PACKAGE=tomoe
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"], [Gettext package])

@@ -1,3 +1,8 @@
+2007-04-27  Kouhei Sutou  <kou@cozmixng.org>
+
+	* autogen.sh, configure.ac, po/LINGUAS: removed dependency on
+	intltool.
+
 2007-04-26  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* configure.ac: Show configure result.
