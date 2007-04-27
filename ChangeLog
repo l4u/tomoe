@@ -1,5 +1,7 @@
 2007-04-27  Kouhei Sutou  <kou@cozmixng.org>
 
+	* macros/: ignored auto-generated files.
+
 	* autogen.sh, configure.ac, po/LINGUAS: removed dependency on
 	intltool.
 
