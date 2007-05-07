@@ -1,3 +1,10 @@
+2007-05-07  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* configure.ac:
+	  - Enable Unihan and disable ruby-dict by default.
+	  - Unify names of variables as "use_hoge" for enabling/disabling
+	    dictionaries.
+
 2007-05-07  Kouhei Sutou  <kou@cozmixng.org>
 
 	* module/dict/Makefile.am, module/dict/download.rb: used passive

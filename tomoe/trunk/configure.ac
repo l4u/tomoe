@@ -152,10 +152,10 @@ dnl **************************************************************
 dnl Check for Hyper Estraier.
 dnl **************************************************************
 
-est_exists=no
+use_est=no
 PKG_CHECK_MODULES(EST, hyperestraier,
-                  [est_exists=yes], [est_exists=no])
-AM_CONDITIONAL([WITH_EST], [test "$est_exists" = "yes"])
+                  [use_est=yes], [use_est=no])
+AM_CONDITIONAL([WITH_EST], [test "$use_est" = "yes"])
 
 dnl **************************************************************
 dnl Configure for configuration.
@@ -205,12 +205,11 @@ dnl **************************************************************
 dnl Configure for Unihan dictionary.
 dnl **************************************************************
 
-use_unihan=yes
 AC_ARG_ENABLE(unihan,
               AS_HELP_STRING([--disable-unihan],
                              [disable Unihan detabase]),
               [use_unihan=$enableval],
-              [use_unihan=$enableval])
+              [use_unihan=yes])
 AM_CONDITIONAL([WITH_UNIHAN], [test "$use_unihan" = "yes"])
 
 AC_PATH_PROG(UNZIP, unzip, unzip-not-found)
@@ -225,12 +224,12 @@ dnl **************************************************************
 dnl Configure for MySQL dictionary.
 dnl **************************************************************
 
-enable_mysql=no
+use_mysql=no
 
 AC_PATH_PROG(MYSQL_CONFIG, mysql_config, mysql_config-not-found)
 
 if test "x$MYSQL_CONFIG" != "xmysql_config-not-found"; then
-  enable_mysql=yes
+  use_mysql=yes
   MYSQL_CFLAGS=`$MYSQL_CONFIG --cflags`
   MYSQL_LIBS=`$MYSQL_CONFIG --libs`
 fi
@@ -238,7 +237,7 @@ fi
 AC_SUBST(MYSQL_CFLAGS)
 AC_SUBST(MYSQL_LIBS)
 
-AM_CONDITIONAL([WITH_MYSQL], [test "x$enable_mysql" = "xyes"])
+AM_CONDITIONAL([WITH_MYSQL], [test "x$use_mysql" = "xyes"])
 
 dnl **************************************************************
 dnl Configure for Ruby dictionary.
@@ -246,13 +245,12 @@ dnl **************************************************************
 AC_ARG_ENABLE(dict_ruby,
               AS_HELP_STRING([--enable-dict-ruby],
                              [Enable Ruby based dictionary module]),
-              [enable_dict_ruby=$enableval],
-              [enable_dict_ruby=$enableval])
+              [use_dict_ruby=$enableval],
+              [use_dict_ruby=no])
 if test x"$ruby_available" != "xyes"; then
-  enable_dict_ruby=no
+  use_dict_ruby=no
 fi
-AM_CONDITIONAL(ENABLE_DICT_RUBY,
-               [test x"$enable_dict_ruby" = "xyes"])
+AM_CONDITIONAL(ENABLE_DICT_RUBY, [test x"$use_dict_ruby" = "xyes"])
 
 
 dnl **************************************************************
@@ -315,10 +313,10 @@ echo
 echo "  * Dictionary Backends"
 echo
 echo "      Unihan Database : ${use_unihan}"
-echo "      Hyper Estraier  : ${est_exists}"
+echo "      Hyper Estraier  : ${use_est}"
 echo "      Subversion      : ${use_svn}"
-echo "      MySQL           : ${enable_mysql}"
-echo "      Ruby            : ${enable_dict_ruby}"
+echo "      MySQL           : ${use_mysql}"
+echo "      Ruby            : ${use_dict_ruby}"
 echo
 echo "  * Other Features"
 echo
