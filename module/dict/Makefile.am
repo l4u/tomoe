@@ -72,7 +72,7 @@ MAINTAINERCLEANFILES = Unihan.stamp Unihan.txt
 DISTCLEANFILES = Unihan.zip
 BUILT_SOURCES = $(unihan_built_sources)
 
-EXTRA_DIST = unihan-compiler.rb $(BUILT_SOURCES) Unihan.stamp
+EXTRA_DIST = unihan-compiler.rb download.rb $(BUILT_SOURCES) Unihan.stamp
 
 unihan_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Unihan\" $(AM_CPPFLAGS)
 unihan_la_SOURCES =		\
@@ -96,8 +96,7 @@ tomoe-unihan-data.h: unihan-compiler.rb Unihan.stamp $(top_builddir)/data/kanjid
 Unihan_URL = ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip
 Unihan.stamp:
 	if test ! -f Unihan.txt; then					\
-	  $(RUBY) -r open-uri -e "print open('$(Unihan_URL)').read"	\
-	    > Unihan.zip || exit 1;					\
+	  $(RUBY) $(srcdir)/download.rb $(Unihan_URL) || exit 1;	\
 	  $(UNZIP) -o Unihan.zip || exit 1;				\
 	fi
 	touch $@
