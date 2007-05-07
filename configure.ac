@@ -155,7 +155,7 @@ dnl **************************************************************
 use_est=no
 PKG_CHECK_MODULES(EST, hyperestraier,
                   [use_est=yes], [use_est=no])
-AM_CONDITIONAL([WITH_EST], [test x"$use_est" = "xyes"])
+AM_CONDITIONAL([USE_EST], [test x"$use_est" = "xyes"])
 
 dnl **************************************************************
 dnl Configure for configuration.
@@ -210,7 +210,7 @@ AC_ARG_ENABLE(unihan,
                              [disable Unihan detabase]),
               [use_unihan=$enableval],
               [use_unihan=yes])
-AM_CONDITIONAL([WITH_UNIHAN], [test x"$use_unihan" = "xyes"])
+AM_CONDITIONAL([USE_UNIHAN], [test x"$use_unihan" = "xyes"])
 
 AC_PATH_PROG(UNZIP, unzip, unzip-not-found)
 
@@ -237,7 +237,7 @@ fi
 AC_SUBST(MYSQL_CFLAGS)
 AC_SUBST(MYSQL_LIBS)
 
-AM_CONDITIONAL([WITH_MYSQL], [test "x$use_mysql" = "xyes"])
+AM_CONDITIONAL([USE_MYSQL], [test "x$use_mysql" = "xyes"])
 
 dnl **************************************************************
 dnl Configure for Ruby dictionary.
@@ -250,7 +250,7 @@ AC_ARG_ENABLE(dict_ruby,
 if test x"$ruby_available" != "xyes"; then
   use_dict_ruby=no
 fi
-AM_CONDITIONAL(ENABLE_DICT_RUBY, [test x"$use_dict_ruby" = "xyes"])
+AM_CONDITIONAL(USE_DICT_RUBY, [test x"$use_dict_ruby" = "xyes"])
 
 
 dnl **************************************************************

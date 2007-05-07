@@ -46,7 +46,7 @@ dict_module_LTLIBRARIES = xml.la
 xml_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:XML\" $(AM_CPPFLAGS)
 xml_la_SOURCES = tomoe-dict-xml.c $(ptr_array_based_dict_sources)
 
-if WITH_EST
+if USE_EST
 dict_module_LTLIBRARIES += est.la
 
 est_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Est\" $(AM_CPPFLAGS)
@@ -54,7 +54,7 @@ est_la_SOURCES = tomoe-dict-est.c
 est_la_LIBADD = $(EST_LIBS)
 endif
 
-if ENABLE_DICT_RUBY
+if USE_DICT_RUBY
 dict_module_LTLIBRARIES += ruby.la
 
 ruby_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Ruby\" $(AM_CPPFLAGS)
@@ -62,7 +62,7 @@ ruby_la_SOURCES = tomoe-dict-ruby.c
 ruby_la_LIBADD = $(RUBY_LIBS)
 endif
 
-if WITH_UNIHAN
+if USE_UNIHAN
 dict_module_LTLIBRARIES += unihan.la
 
 unihan_built_sources = tomoe-unihan-data.h
@@ -102,7 +102,7 @@ Unihan.stamp:
 	touch $@
 endif
 
-if WITH_SVN
+if USE_SVN
 dict_module_LTLIBRARIES += svn.la
 
 svn_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Svn\" $(AM_CPPFLAGS)
@@ -110,7 +110,7 @@ svn_la_SOURCES = tomoe-dict-svn.c
 svn_la_LIBADD = $(SVN_LIBS)
 endif
 
-if WITH_MYSQL
+if USE_MYSQL
 dict_module_LTLIBRARIES += mysql.la
 
 mysql_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:MySQL\" $(AM_CPPFLAGS)

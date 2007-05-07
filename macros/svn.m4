@@ -52,5 +52,5 @@ SVN_LIBS="\$(APR_LIBS) -L$svn_lib -lsvn_client-1 -lsvn_subr-1"
 AC_SUBST(SVN_CFLAGS)
 AC_SUBST(SVN_LIBS)
 
-AM_CONDITIONAL([WITH_SVN], [test "$use_svn" = "yes"])
+AM_CONDITIONAL([USE_SVN], [test "$use_svn" = "yes"])
 ])
