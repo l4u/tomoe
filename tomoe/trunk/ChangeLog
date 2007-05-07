@@ -1,3 +1,8 @@
+2007-05-07  Kouhei Sutou  <kou@cozmixng.org>
+
+	* module/dict/Makefile.am, module/dict/download.rb: used passive
+	mode for downloading Unihan.zip.
+
 2007-04-27  Kouhei Sutou  <kou@cozmixng.org>
 
 	* macros/: ignored auto-generated files.
