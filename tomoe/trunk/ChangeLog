@@ -4,6 +4,7 @@
 	  - Enable Unihan and disable ruby-dict by default.
 	  - Unify names of variables as "use_hoge" for enabling/disabling
 	    dictionaries.
+	  - Add "x" when test variables for detecting empty string.
 
 2007-05-07  Kouhei Sutou  <kou@cozmixng.org>
 
