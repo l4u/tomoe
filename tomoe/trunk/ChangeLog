@@ -1,5 +1,15 @@
 2007-05-07  Takuro Ashie  <ashie@homa.ne.jp>
 
+	* configure.ac: Don't use "--disable-*" and "--without-*" for help 
+	string to avoid confusion.
+
+2007-05-07  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* configure.ac, macros/svn.m4, module/dict/Makefile.am,
+	  - Replace WITH_HOGE conditional with USE_HOGE.
+
+2007-05-07  Takuro Ashie  <ashie@homa.ne.jp>
+
 	* configure.ac:
 	  - Enable Unihan and disable ruby-dict by default.
 	  - Unify names of variables as "use_hoge" for enabling/disabling
