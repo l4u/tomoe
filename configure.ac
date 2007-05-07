@@ -155,7 +155,7 @@ dnl **************************************************************
 use_est=no
 PKG_CHECK_MODULES(EST, hyperestraier,
                   [use_est=yes], [use_est=no])
-AM_CONDITIONAL([WITH_EST], [test "$use_est" = "yes"])
+AM_CONDITIONAL([WITH_EST], [test x"$use_est" = "xyes"])
 
 dnl **************************************************************
 dnl Configure for configuration.
@@ -210,7 +210,7 @@ AC_ARG_ENABLE(unihan,
                              [disable Unihan detabase]),
               [use_unihan=$enableval],
               [use_unihan=yes])
-AM_CONDITIONAL([WITH_UNIHAN], [test "$use_unihan" = "yes"])
+AM_CONDITIONAL([WITH_UNIHAN], [test x"$use_unihan" = "xyes"])
 
 AC_PATH_PROG(UNZIP, unzip, unzip-not-found)
 
