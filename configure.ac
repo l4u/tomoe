@@ -206,8 +206,8 @@ dnl Configure for Unihan dictionary.
 dnl **************************************************************
 
 AC_ARG_ENABLE(unihan,
-              AS_HELP_STRING([--disable-unihan],
-                             [disable Unihan detabase]),
+              AS_HELP_STRING([--enable-unihan],
+                             [Enable Unihan detabase (default: yes)]),
               [use_unihan=$enableval],
               [use_unihan=yes])
 AM_CONDITIONAL([USE_UNIHAN], [test x"$use_unihan" = "xyes"])
@@ -244,7 +244,7 @@ dnl Configure for Ruby dictionary.
 dnl **************************************************************
 AC_ARG_ENABLE(dict_ruby,
               AS_HELP_STRING([--enable-dict-ruby],
-                             [Enable Ruby based dictionary module]),
+                             [Enable Ruby based dictionary module (default: no)]),
               [use_dict_ruby=$enableval],
               [use_dict_ruby=no])
 if test x"$ruby_available" != "xyes"; then
