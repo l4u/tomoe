@@ -1,3 +1,9 @@
+2007-05-08  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* test/Makefile.am: Replace WITH_HOGE with USE_HOGE.
+	Sorry, I forgot to commit it.
+	* data/handwriting.xml: Fix some entries which has multiple characters.
+
 2007-05-07  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* configure.ac: Don't use "--disable-*" and "--without-*" for help 

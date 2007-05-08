@@ -33,19 +33,19 @@ EXTRA_DIST =			\
 	writing_spec.rb
 
 dict_modules = xml
-if WITH_EST
+if USE_EST
 dict_modules += est
 endif
-# if ENABLE_DICT_RUBY
+# if USE_DICT_RUBY
 # dict_modules += ruby
 # endif
-if WITH_UNIHAN
+if USE_UNIHAN
 dict_modules += unihan
 endif
-# if WITH_SVN
+# if USE_SVN
 # dict_modules += svn
 # endif
-if WITH_MYSQL
+if USE_MYSQL
 dict_modules += mysql
 endif
 

@@ -461,7 +461,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>&#x65E7;&#x300C;&#x306D;&#x300D;</utf8>
+    <utf8>&#x306D;</utf8>
     <strokes>
       <stroke>
         <point x="280" y="173"/>
@@ -894,7 +894,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>0</utf8>
+    <utf8>&#x30;</utf8>
     <strokes>
       <stroke>
         <point x="536" y="170"/>
@@ -909,7 +909,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>1</utf8>
+    <utf8>&#x31;</utf8>
     <strokes>
       <stroke>
         <point x="536" y="150"/>
@@ -918,7 +918,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>2</utf8>
+    <utf8>&#x32;</utf8>
     <strokes>
       <stroke>
         <point x="286" y="300"/>
@@ -931,7 +931,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>3</utf8>
+    <utf8>&#x33;</utf8>
     <strokes>
       <stroke>
         <point x="333" y="206"/>
@@ -946,7 +946,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>4</utf8>
+    <utf8>&#x34;</utf8>
     <strokes>
       <stroke>
         <point x="520" y="146"/>
@@ -960,7 +960,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>5</utf8>
+    <utf8>&#x35;</utf8>
     <strokes>
       <stroke>
         <point x="353" y="130"/>
@@ -977,7 +977,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>6</utf8>
+    <utf8>&#x36;</utf8>
     <strokes>
       <stroke>
         <point x="723" y="173"/>
@@ -991,7 +991,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>7</utf8>
+    <utf8>&#x37;</utf8>
     <strokes>
       <stroke>
         <point x="276" y="213"/>
@@ -1002,7 +1002,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>8</utf8>
+    <utf8>&#x38;</utf8>
     <strokes>
       <stroke>
         <point x="676" y="313"/>
@@ -1018,7 +1018,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>9</utf8>
+    <utf8>&#x39;</utf8>
     <strokes>
       <stroke>
         <point x="650" y="236"/>
@@ -1653,7 +1653,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>&#x65E7;&#x300C;&#x5316;&#x300D;</utf8>
+    <utf8>&#x5316;</utf8>
     <strokes>
       <stroke>
         <point x="460" y="123"/>
@@ -1677,7 +1677,7 @@
     </strokes>
   </character>
   <character>
-    <utf8>(^^)</utf8>
+    <utf8>&#x28;&#x5E;&#x5E;&#x29;</utf8>
     <strokes>
       <stroke>
         <point x="200" y="190"/>
