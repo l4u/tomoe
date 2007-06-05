@@ -14,7 +14,7 @@ _wrap_tomoe_writing_get_strokes(PyGObject *self)
 
     CONVERT_LIST (py_strokes, strokes);
 
-    g_list_free(strokes);
+    g_list_free (strokes);
 
     return py_strokes;
 }
