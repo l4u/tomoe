@@ -5,13 +5,13 @@ void pytomoe_register_classes (PyObject *d);
 extern PyMethodDef pytomoe_functions[];
 
 DL_EXPORT(void)
-init_tomoe(void)
+inittomoe(void)
 {
     PyObject *m, *d;
 
     init_pygobject ();
 
-    m = Py_InitModule ("_tomoe", pytomoe_functions);
+    m = Py_InitModule ("tomoe", pytomoe_functions);
     d = PyModule_GetDict (m);
 
     pytomoe_register_classes (d);
