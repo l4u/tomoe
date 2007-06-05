@@ -1,0 +1,37 @@
+%%
+headers
+#define NO_IMPORT_PYGOBJECT
+#include "tomoe-python-utils.h"
+%%
+override tomoe_char_get_readings noargs
+static PyObject *
+_wrap_tomoe_char_get_readings(PyGObject *self)
+{
+    GList *readingss;
+    PyObject *py_readings;
+
+    readingss = tomoe_char_get_readings (TOMOE_CHAR(self->obj));
+
+    CONVERT_LIST (py_readings, readings);
+
+    g_list_free (readings);
+
+    return py_readings;
+}
+%%
+override tomoe_char_get_radicals noargs
+static PyObject *
+_wrap_tomoe_char_get_radicals(PyGObject *self)
+{
+    GList *radicalss;
+    PyObject *py_radicals;
+
+    radicalss = tomoe_char_get_radicals (TOMOE_CHAR(self->obj));
+
+    CONVERT_LIST (py_radicals, radicals);
+
+    g_list_free (radicals);
+
+    return py_radicals;
+}
+%%

@@ -277,15 +277,15 @@
   (return-type "gboolean")
 )
 
-(define-method meta_data_foreach
-  (of-object "TomoeChar")
-  (c-name "tomoe_char_meta_data_foreach")
-  (return-type "none")
-  (parameters
-    '("GHFunc" "func")
-    '("gpointer" "user_data")
-  )
-)
+;(define-method meta_data_foreach
+;  (of-object "TomoeChar")
+;  (c-name "tomoe_char_meta_data_foreach")
+;  (return-type "none")
+;  (parameters
+;    '("GHFunc" "func")
+;    '("gpointer" "user_data")
+;  )
+;)
 
 (define-method compare
   (of-object "TomoeChar")
