@@ -1,3 +1,9 @@
+2007-06-06  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* ext/python/tomoe-dict.override,
+	ext/python/tomoe-tomoe-recognizer.override: removed
+	tomoe_XX_get_registered_types and tomoe_XX_get_log_domains.
+
 2007-06-05  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* ext/ruby/Makeifle.am: Use -avoid-version option instead of
