@@ -3,6 +3,16 @@ headers
 #define NO_IMPORT_PYGOBJECT
 #include "tomoe-python-utils.h"
 %%
+new-constructor TOMOE_TYPE_RECOGNIZER
+%%
+override tomoe_recognizer_new
+static PyObject *
+_wrap_tomoe_recognizer_new(PyGObject *self, PyObject *args)
+{
+    /* NOT IMPLEMENTED YET */
+    return NULL;
+}
+%%
 override tomoe_recognizer_search kwargs
 static PyObject *
 _wrap_tomoe_recognizer_search(PyGObject *self, TomoeWriting *writing)
