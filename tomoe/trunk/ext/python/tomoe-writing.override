@@ -1,0 +1,21 @@
+%%
+headers
+#define NO_IMPORT_PYGOBJECT
+#include "tomoe-python-utils.h"
+%%
+override tomoe_writing_get_strokes noargs
+static PyObject *
+_wrap_tomoe_writing_get_strokes(PyGObject *self)
+{
+    GList *strokess;
+    PyObject *py_strokes;
+
+    strokess = tomoe_writing_get_strokes (TOMOE_WRITING(self->obj));
+
+    CONVERT_LIST (py_strokes, strokes);
+
+    g_list_free(strokes);
+
+    return py_strokes;
+}
+%%
