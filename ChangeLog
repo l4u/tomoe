@@ -8,6 +8,7 @@
 	Implement some functions.
 	* ext/python/tomoe-char.override,
 	ext/python/tomoe-recognizer.override: Implement some functions.
+	* ext/python/tomoe-dict.override: Implement some functions.
 
 2007-05-08  Takuro Ashie  <ashie@homa.ne.jp>
 

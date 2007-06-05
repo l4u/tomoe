@@ -3,6 +3,16 @@ headers
 #define NO_IMPORT_PYGOBJECT
 #include "tomoe-python-utils.h"
 %%
+new-constructor TOMOE_TYPE_DICT
+%%
+override tomoe_dict_new
+static PyObject *
+_wrap_tomoe_dict_new(PyGObject *self, PyObject *args)
+{
+    /* NOT IMPLEMENTED YET */
+    return NULL;
+}
+%%
 override tomoe_dict_search kwargs
 static PyObject *
 _wrap_tomoe_dict_search(PyGObject *self, TomoeQuery *query)
@@ -17,5 +27,37 @@ _wrap_tomoe_dict_search(PyGObject *self, TomoeQuery *query)
     g_list_free (candidates);
 
     return py_cands;
+}
+%%
+override tomoe_dict_get_registered_types noargs
+static PyObject *
+_wrap_tomoe_dict_get_registered_types(PyGObject *self)
+{
+    GList *types;
+    PyObject *py_list;
+
+    types = tomoe_dict_get_registered_types (TOMOE_DICT(self->obj));
+
+    CONVERT_LIST (py_list, types);
+
+    g_list_free (types);
+
+    return py_list;
+}
+%%
+override tomoe_dict_get_log_domains noargs
+static PyObject *
+_wrap_tomoe_dict_get_log_domains(PyGObject *self)
+{
+    GList *domains;
+    PyObject *py_list;
+
+    domains = tomoe_dict_get_log_domains (TOMOE_DICT(self->obj));
+
+    CONVERT_LIST (py_list, domains);
+
+    g_list_free (domains);
+
+    return py_list;
 }
 %%
