@@ -6,6 +6,8 @@
 	* ext/python/tomoe-writing.override, ext/python/tomoe-query.override,
 	ext/python/tomo-char.override: Fix double free.
 	* ext/python/tomoe-module.c: added.
+	* ext/python/tomoe-context.override: Ignore
+	tomoe_context_multi_search.
 
 2007-06-05  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
