@@ -7,10 +7,10 @@ override tomoe_query_get_readings noargs
 static PyObject *
 _wrap_tomoe_query_get_readings(PyGObject *self)
 {
-    GList *readingss;
+    GList *readings;
     PyObject *py_readings;
 
-    readingss = tomoe_query_get_readings (TOMOE_QUERY(self->obj));
+    readings = tomoe_query_get_readings (TOMOE_QUERY(self->obj));
 
     CONVERT_LIST (py_readings, readings);
 
@@ -23,10 +23,10 @@ override tomoe_query_get_radicals noargs
 static PyObject *
 _wrap_tomoe_query_get_radicals(PyGObject *self)
 {
-    GList *radicalss;
+    GList *radicals;
     PyObject *py_radicals;
 
-    radicalss = tomoe_query_get_radicals (TOMOE_QUERY(self->obj));
+    radicals = tomoe_query_get_radicals (TOMOE_QUERY(self->obj));
 
     CONVERT_LIST (py_radicals, radicals);
 
