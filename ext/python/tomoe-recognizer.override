@@ -7,6 +7,8 @@ new-constructor TOMOE_TYPE_RECOGNIZER
 %%
 ignore
   tomoe_recognizer_load_module
+  tomoe_recognizer_get_registered_types
+  tomoe_recognizer_get_log_domains
 %%
 override tomoe_recognizer_new
 static PyObject *
