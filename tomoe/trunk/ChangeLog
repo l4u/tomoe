@@ -1,3 +1,8 @@
+2007-06-05  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* ext/ruby/Makeifle.am: Use -avoid-version option instead of
+	version-info.
+
 2007-05-08  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* test/Makefile.am: Replace WITH_HOGE with USE_HOGE.
