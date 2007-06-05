@@ -3,6 +3,8 @@
 	* ext/python/tomoe-dict.override,
 	ext/python/tomoe-tomoe-recognizer.override: removed
 	tomoe_XX_get_registered_types and tomoe_XX_get_log_domains.
+	* ext/python/tomoe-writing.override, ext/python/tomoe-query.override,
+	ext/python/tomo-char.override: Fix double free.
 
 2007-06-05  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 

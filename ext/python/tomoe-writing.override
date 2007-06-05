@@ -7,14 +7,12 @@ override tomoe_writing_get_strokes noargs
 static PyObject *
 _wrap_tomoe_writing_get_strokes(PyGObject *self)
 {
-    GList *strokes;
+    const GList *strokes;
     PyObject *py_strokes;
 
     strokes = tomoe_writing_get_strokes (TOMOE_WRITING(self->obj));
 
-    CONVERT_LIST (py_strokes, strokes);
-
-    g_list_free (strokes);
+    CONVERT_LIST (py_strokes, (GList *) strokes);
 
     return py_strokes;
 }
