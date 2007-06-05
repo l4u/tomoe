@@ -35,13 +35,6 @@
   (gtype-id "TOMOE_TYPE_DICT")
 )
 
-;(define-object Module
-;  (in-module "Tomoe")
-;  (parent "GTypeModule")
-;  (c-name "TomoeModule")
-;  (gtype-id "TOMOE_TYPE_MODULE")
-;)
-
 (define-object Query
   (in-module "Tomoe")
   (parent "GObject")
@@ -962,81 +955,4 @@
 
 
 ;; From tomoe-xml-parser.h
-
-
-
-;; From tomoe-module.h
-
-(define-function tomoe_module_get_type
-  (c-name "tomoe_module_get_type")
-  (return-type "GType")
-)
-
-(define-function tomoe_module_load_module
-  (c-name "tomoe_module_load_module")
-  (return-type "TomoeModule*")
-  (parameters
-    '("const-gchar*" "base_dir")
-    '("const-gchar*" "name")
-  )
-)
-
-(define-function tomoe_module_load_modules
-  (c-name "tomoe_module_load_modules")
-  (return-type "GList*")
-  (parameters
-    '("const-gchar*" "base_dir")
-  )
-)
-
-(define-function tomoe_module_load_modules_unique
-  (c-name "tomoe_module_load_modules_unique")
-  (return-type "GList*")
-  (parameters
-    '("const-gchar*" "base_dir")
-    '("GList*" "modules")
-  )
-)
-
-(define-function tomoe_module_find
-  (c-name "tomoe_module_find")
-  (return-type "TomoeModule*")
-  (parameters
-    '("GList*" "modules")
-    '("const-gchar*" "name")
-  )
-)
-
-(define-method instantiate
-  (of-object "TomoeModule")
-  (c-name "tomoe_module_instantiate")
-  (return-type "GObject*")
-  (parameters
-    '("const-gchar*" "first_property")
-    '("va_list" "var_args")
-  )
-)
-
-(define-function tomoe_module_collect_registered_types
-  (c-name "tomoe_module_collect_registered_types")
-  (return-type "GList*")
-  (parameters
-    '("GList*" "modules")
-  )
-)
-
-(define-function tomoe_module_collect_log_domains
-  (c-name "tomoe_module_collect_log_domains")
-  (return-type "GList*")
-  (parameters
-    '("GList*" "modules")
-  )
-)
-
-(define-method unload
-  (of-object "TomoeModule")
-  (c-name "tomoe_module_unload")
-  (return-type "none")
-)
-
 

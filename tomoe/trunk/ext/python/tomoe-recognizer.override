@@ -5,6 +5,9 @@ headers
 %%
 new-constructor TOMOE_TYPE_RECOGNIZER
 %%
+ignore-glob
+  tomoe_recognizer_load_module
+%%
 override tomoe_recognizer_new
 static PyObject *
 _wrap_tomoe_recognizer_new(PyGObject *self, PyObject *args)

@@ -5,6 +5,9 @@ headers
 %%
 new-constructor TOMOE_TYPE_DICT
 %%
+ignore-glob
+  tomoe_dict_load_module
+%%
 override tomoe_dict_new
 static PyObject *
 _wrap_tomoe_dict_new(PyGObject *self, PyObject *args)
