@@ -8,6 +8,9 @@ INCLUDES =			\
 nodist_tomoe_la_SOURCES =	\
 	tomoe.c
 
+tomoe_la_SOURCES =	\
+	tomoe-module.c
+
 tomoe_la_LDFLAGS =				\
 	-module					\
 	-avoid-version				\
