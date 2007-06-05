@@ -1,0 +1,53 @@
+%%
+headers
+#define NO_IMPORT_PYGOBJECT
+#include "tomoe-python-utils.h"
+%%
+override tomoe_recognizer_search kwargs
+static PyObject *
+_wrap_tomoe_recognizer_search(PyGObject *self, TomoeWriting *writing)
+{
+    GList *candidates;
+    PyObject *py_cands;
+
+    candidates = tomoe_recognizer_search (TOMOE_RECOGNIZER(self->obj), writing);
+
+    CONVERT_LIST (py_cands, candidates);
+
+    g_list_free (candidates);
+
+    return py_cands;
+}
+%%
+override tomoe_recognizer_get_registered_types noargs
+static PyObject *
+_wrap_tomoe_recognizer_get_registered_types(PyGObject *self)
+{
+    GList *types;
+    PyObject *py_list;
+
+    types = tomoe_recognizer_get_registered_types (TOMOE_RECOGNIZER(self->obj));
+
+    CONVERT_LIST (py_list, types);
+
+    g_list_free (types);
+
+    return py_list;
+}
+%%
+override tomoe_recognizer_get_log_domains noargs
+static PyObject *
+_wrap_tomoe_recognizer_get_log_domains(PyGObject *self)
+{
+    GList *domains;
+    PyObject *py_list;
+
+    domains = tomoe_recognizer_get_log_domains (TOMOE_RECOGNIZER(self->obj));
+
+    CONVERT_LIST (py_list, domains);
+
+    g_list_free (domains);
+
+    return py_list;
+}
+%%
