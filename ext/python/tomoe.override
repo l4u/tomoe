@@ -5,7 +5,11 @@ headers
 #include "tomoe.h"
 %%
 include
+  tomoe-context.override
   tomoe-dict.override
+  tomoe-query.override
+  tomoe-shelf.override
+  tomoe-writing.override
 %%
 modulename tomoe
 %%
