@@ -5,7 +5,7 @@ headers
 %%
 new-constructor TOMOE_TYPE_DICT
 %%
-ignore-glob
+ignore
   tomoe_dict_load_module
 %%
 override tomoe_dict_new

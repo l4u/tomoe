@@ -5,7 +5,7 @@ headers
 %%
 new-constructor TOMOE_TYPE_RECOGNIZER
 %%
-ignore-glob
+ignore
   tomoe_recognizer_load_module
 %%
 override tomoe_recognizer_new
