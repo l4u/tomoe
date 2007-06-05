@@ -7,6 +7,8 @@ new-constructor TOMOE_TYPE_DICT
 %%
 ignore
   tomoe_dict_load_module
+  tomoe_dict_get_registered_types
+  tomoe_dict_get_log_domains
 %%
 override tomoe_dict_new
 static PyObject *
