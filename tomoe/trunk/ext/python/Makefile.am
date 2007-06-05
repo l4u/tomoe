@@ -21,10 +21,20 @@ tomoe_la_LIBADD =			\
 	$(PYTHON_LIBS)			\
 	$(top_builddir)/lib/libtomoe.la
 
-tomoe.c: tomoe.defs
+OVERRIDES =					\
+	tomoe.override				\
+	tomoe-char.override			\
+	tomoe-context.override			\
+	tomoe-dict.override			\
+	tomoe-query.override			\
+	tomoe-recognizer.override		\
+	tomoe-shelf.override			\
+	tomoe-writing.override
+
+tomoe.c: tomoe.defs $(OVERRIDES)
 
 CLEANFILES = tomoe.c
-EXTRA_DIST = tomoe.override tomoe.defs
+EXTRA_DIST = tomoe.defs $(OVERRIDES)
 
 .defs.c:
 	(cd $(srcdir)				\

@@ -1,3 +1,7 @@
+2007-06-06  Kouhei Sutou  <kou@cozmixng.org>
+
+	* ext/python/Makefile.am: added dependencies on *.override.
+
 2007-06-06  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* ext/python/tomoe-dict.override,
