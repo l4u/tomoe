@@ -181,6 +181,11 @@ dnl **************************************************************
 RUBY_CHECK([rbgobject.h], [$GLIB_CFLAGS])
 
 dnl **************************************************************
+dnl Bindings: Check for Python.
+dnl **************************************************************
+PYTHON_CHECK
+
+dnl **************************************************************
 dnl Configure for modules.
 dnl **************************************************************
 
@@ -280,6 +285,7 @@ module/recognizer/Makefile
 data/Makefile
 ext/Makefile
 ext/ruby/Makefile
+ext/python/Makefile
 db/Makefile
 db/lib/Makefile
 db/migrate/Makefile
@@ -309,6 +315,7 @@ echo
 echo "  * Language Bindings"
 echo
 echo "      Ruby            : ${ruby_available}"
+echo "      Python          : ${python_available}"
 echo
 echo "  * Dictionary Backends"
 echo

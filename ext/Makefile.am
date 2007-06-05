@@ -5,3 +5,7 @@ SUBDIRS =
 if WITH_RUBY
 SUBDIRS += ruby
 endif
+
+if WITH_PYTHON
+SUBDIRS += python
+endif

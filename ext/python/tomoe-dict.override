@@ -1,0 +1,21 @@
+%%
+headers
+#define NO_IMPORT_PYGOBJECT
+#include "tomoe-python-utils.h"
+%%
+override tomoe_dict_search kwargs
+static PyObject *
+_wrap_tomoe_dict_search(PyGObject *self, TomoeQuery *query)
+{
+    GList *candidates;
+    PyObject *py_cands;
+
+    candidates = tomoe_dict_search (TOMOE_DICT(self->obj), query);
+
+    CONVERT_LIST (py_cands, candidates);
+
+    g_list_free(candidates);
+
+    return py_cands;
+}
+%%
