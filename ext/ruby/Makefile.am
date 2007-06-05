@@ -25,7 +25,7 @@ tomoe_la_SOURCES =		\
 
 tomoe_la_LDFLAGS =				\
 	-module					\
-	-version-info $(LT_VERSION_INFO)	\
+	-avoid-version				\
 	$(RUBY_LDFLAGS)				\
 	$(RUBY_EXT_LDFLAGS)
 
