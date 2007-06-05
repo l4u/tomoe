@@ -14,7 +14,7 @@ _wrap_tomoe_query_get_readings(PyGObject *self)
 
     CONVERT_LIST (py_readings, readings);
 
-    g_list_free(readings);
+    g_list_free (readings);
 
     return py_readings;
 }
@@ -30,7 +30,7 @@ _wrap_tomoe_query_get_radicals(PyGObject *self)
 
     CONVERT_LIST (py_radicals, radicals);
 
-    g_list_free(radicals);
+    g_list_free (radicals);
 
     return py_radicals;
 }

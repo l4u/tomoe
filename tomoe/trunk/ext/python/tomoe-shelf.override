@@ -14,7 +14,7 @@ _wrap_tomoe_shelf_get_dict_name(PyGObject *self)
 
     CONVERT_LIST (py_names, names);
 
-    g_list_free(names);
+    g_list_free (names);
 
     return py_names;
 }

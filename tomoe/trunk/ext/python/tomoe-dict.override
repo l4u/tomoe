@@ -14,7 +14,7 @@ _wrap_tomoe_dict_search(PyGObject *self, TomoeQuery *query)
 
     CONVERT_LIST (py_cands, candidates);
 
-    g_list_free(candidates);
+    g_list_free (candidates);
 
     return py_cands;
 }

@@ -14,7 +14,7 @@ _wrap_tomoe_context_search(PyGObject *self, TomoeQuery *query)
 
     CONVERT_LIST (py_cands, candidates);
 
-    g_list_free(candidates);
+    g_list_free (candidates);
 
     return py_cands;
 }
@@ -30,7 +30,7 @@ _wrap_tomoe_context_multi_search(PyGObject *self, GList *queries)
 
     CONVERT_LIST (py_cands, candidates);
 
-    g_list_free(candidates);
+    g_list_free (candidates);
 
     return py_cands;
 }
