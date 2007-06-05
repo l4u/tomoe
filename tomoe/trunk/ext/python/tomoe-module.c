@@ -16,7 +16,7 @@ init_tomoe(void)
 
     pytomoe_register_classes (d);
 
-    if (PyErr_Occured ())
+    if (PyErr_Occurred ())
     {
         Py_FatalError ("can't initialize module globalkeys");
     }
