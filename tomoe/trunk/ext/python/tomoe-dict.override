@@ -31,36 +31,3 @@ _wrap_tomoe_dict_search(PyGObject *self, TomoeQuery *query)
 
     return py_cands;
 }
-%%
-override tomoe_dict_get_registered_types noargs
-static PyObject *
-_wrap_tomoe_dict_get_registered_types(PyGObject *self)
-{
-    GList *types;
-    PyObject *py_list;
-
-    types = tomoe_dict_get_registered_types (TOMOE_DICT(self->obj));
-
-    CONVERT_LIST (py_list, types);
-
-    g_list_free (types);
-
-    return py_list;
-}
-%%
-override tomoe_dict_get_log_domains noargs
-static PyObject *
-_wrap_tomoe_dict_get_log_domains(PyGObject *self)
-{
-    GList *domains;
-    PyObject *py_list;
-
-    domains = tomoe_dict_get_log_domains (TOMOE_DICT(self->obj));
-
-    CONVERT_LIST (py_list, domains);
-
-    g_list_free (domains);
-
-    return py_list;
-}
-%%
