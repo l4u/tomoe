@@ -3,6 +3,10 @@ headers
 #define NO_IMPORT_PYGOBJECT
 #include "tomoe-python-utils.h"
 %%
+ignore
+  tomoe_context_multi_search
+%%
+%%
 override tomoe_context_search kwargs
 static PyObject *
 _wrap_tomoe_context_search(PyGObject *self, TomoeQuery *query)
@@ -11,22 +15,6 @@ _wrap_tomoe_context_search(PyGObject *self, TomoeQuery *query)
     PyObject *py_cands;
 
     candidates = tomoe_context_search (TOMOE_CONTEXT(self->obj), query);
-
-    CONVERT_LIST (py_cands, candidates);
-
-    g_list_free (candidates);
-
-    return py_cands;
-}
-%%
-override tomoe_context_multi_search kwargs
-static PyObject *
-_wrap_tomoe_context_multi_search(PyGObject *self, GList *queries)
-{
-    GList *candidates;
-    PyObject *py_cands;
-
-    candidates = tomoe_context_multi_search (TOMOE_CONTEXT(self->obj), queries);
 
     CONVERT_LIST (py_cands, candidates);
 
