@@ -309,7 +309,7 @@
   (is-constructor-of "TomoeConfig")
   (return-type "TomoeConfig*")
   (properties
-    '("filename" (argname "config_file"))
+    '("filename" (argname "config_file") (optional))
   )
 )
 
@@ -354,7 +354,7 @@
   (c-name "tomoe_context_load_config")
   (return-type "none")
   (parameters
-    '("const-gchar*" "config_file")
+    '("const-gchar*" "config_file" (null-ok) (default "NULL"))
   )
 )
 
