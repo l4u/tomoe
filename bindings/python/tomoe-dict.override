@@ -20,13 +20,18 @@ _wrap_tomoe_dict_new(PyGObject *self, PyObject *args)
 %%
 override tomoe_dict_search kwargs
 static PyObject *
-_wrap_tomoe_dict_search(PyGObject *self, TomoeQuery *query)
+_wrap_tomoe_dict_search(PyGObject *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "query", NULL };
+    PyGObject *query;
     GList *candidates;
     PyObject *py_cands;
 
-    candidates = tomoe_dict_search (TOMOE_DICT(self->obj), query);
-
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:TomoeDict.search", kwlist, &PyTomoeQuery_Type, &query))
+        return NULL;
+    
+    candidates = tomoe_dict_search (TOMOE_DICT(self->obj), TOMOE_QUERY(query->obj));
+    
     CONVERT_LIST (py_cands, candidates);
 
     g_list_free (candidates);
