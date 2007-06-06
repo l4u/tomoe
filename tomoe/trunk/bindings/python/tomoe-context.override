@@ -9,12 +9,17 @@ ignore
 %%
 override tomoe_context_search kwargs
 static PyObject *
-_wrap_tomoe_context_search(PyGObject *self, TomoeQuery *query)
+_wrap_tomoe_context_search(PyGObject *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "query", NULL };
+    PyGObject *query;
     GList *candidates;
     PyObject *py_cands;
+    
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:TomoeCointext.search", kwlist, &PyTomoeQuery_Type, &query))
+        return NULL;
 
-    candidates = tomoe_context_search (TOMOE_CONTEXT(self->obj), query);
+    candidates = tomoe_context_search (TOMOE_CONTEXT(self->obj), TOMOE_QUERY(query->obj));
 
     CONVERT_LIST (py_cands, candidates);
 

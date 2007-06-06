@@ -20,12 +20,17 @@ _wrap_tomoe_recognizer_new(PyGObject *self, PyObject *args)
 %%
 override tomoe_recognizer_search kwargs
 static PyObject *
-_wrap_tomoe_recognizer_search(PyGObject *self, TomoeWriting *writing)
+_wrap_tomoe_recognizer_search(PyGObject *self, PyObject *args, PyObject *kwargs)
 {
+    static char *kwlist[] = { "writing", NULL };
+    PyGObject *writing;
     GList *candidates;
     PyObject *py_cands;
 
-    candidates = tomoe_recognizer_search (TOMOE_RECOGNIZER(self->obj), writing);
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:TomoeRecognizer.search", kwlist, &PyTomoeWriting_Type, &writing))
+        return NULL;
+
+    candidates = tomoe_recognizer_search (TOMOE_RECOGNIZER(self->obj), TOMOE_WRITING(writing->obj));
 
     CONVERT_LIST (py_cands, candidates);
 

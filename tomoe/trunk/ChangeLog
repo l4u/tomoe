@@ -4,6 +4,10 @@
 	pygtk-codegen-2.0 does not wrap XX_new() function. 
 	* bindings/python/tomoe.defs: tomoe_config_new() and
 	tomoe_context_load_config() does not require arguments.
+	* bindings/python/tomoe-dict.override,
+	bindings/python/tomoe-context.override,
+	bindings/python/tomoe-recognizer.override: Fix implementions. I did
+	not understand how to write Python bindings. Sorry.
 
 2007-06-06  Kouhei Sutou  <kou@cozmixng.org>
 
