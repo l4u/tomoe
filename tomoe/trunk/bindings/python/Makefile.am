@@ -1,4 +1,4 @@
-pkgpyexec_LTLIBRARIES = tomoe.la
+pyexec_LTLIBRARIES = tomoe.la
 
 INCLUDES =			\
 	$(PYTHON_CFLAGS)	\
