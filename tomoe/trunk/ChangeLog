@@ -8,6 +8,7 @@
 	bindings/python/tomoe-context.override,
 	bindings/python/tomoe-recognizer.override: Fix implementions. I did
 	not understand how to write Python bindings. Sorry.
+	* bindings/python/tomoe-module.c: Call tomoe_init() and tomoe_quit().
 
 2007-06-06  Kouhei Sutou  <kou@cozmixng.org>
 

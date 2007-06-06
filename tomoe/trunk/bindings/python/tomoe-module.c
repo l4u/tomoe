@@ -1,4 +1,5 @@
 #include <pygobject.h>
+#include "tomoe.h"
 
 void pytomoe_register_classes (PyObject *d);
 
@@ -20,6 +21,9 @@ inittomoe(void)
     {
         Py_FatalError ("can't initialize module globalkeys");
     }
+
+    tomoe_init ();
+    atexit(tomoe_quit);
 }
 
 /*
