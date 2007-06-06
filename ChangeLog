@@ -2,6 +2,8 @@
 
 	* lib/tomoe-config.c: Invoke tomoe_config_load() in constructor since
 	pygtk-codegen-2.0 does not wrap XX_new() function. 
+	* bindings/python/tomoe.defs: tomoe_config_new() and
+	tomoe_context_load_config() does not require arguments.
 
 2007-06-06  Kouhei Sutou  <kou@cozmixng.org>
 
