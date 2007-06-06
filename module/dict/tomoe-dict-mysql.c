@@ -264,9 +264,9 @@ register_type (GTypeModule *type_module)
         };
 
     tomoe_type_dict_mysql = g_type_module_register_type (type_module,
-                                                       TOMOE_TYPE_DICT,
-                                                       "TomoeDictMySQL",
-                                                       &info, 0);
+                                                         TOMOE_TYPE_DICT,
+                                                         "TomoeDictMySQL",
+                                                         &info, 0);
 }
 
 G_MODULE_EXPORT GList *
