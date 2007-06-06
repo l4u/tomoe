@@ -2,6 +2,7 @@
 headers
 #define NO_IMPORT_PYGOBJECT
 #include "tomoe-python-utils.h"
+#include "tomoe-dict.h"
 %%
 new-constructor TOMOE_TYPE_DICT
 %%
@@ -11,11 +12,77 @@ ignore
   tomoe_dict_get_log_domains
 %%
 override tomoe_dict_new
-static PyObject *
+static int
 _wrap_tomoe_dict_new(PyGObject *self, PyObject *args)
 {
-    /* NOT IMPLEMENTED YET */
-    return NULL;
+    PyObject *first_arg;
+    TomoeModule *module;
+    gchar *dict_name;
+    GObjectClass *class;
+    GType obj_type = pyg_type_from_object((PyObject *) self);
+    GParameter *params;
+    guint i, len, n;
+    int ret = 0;
+
+    if ((len = PyTuple_Size(args)) < 1) {
+        PyErr_SetString(PyExc_TypeError, "requires at least one argument");
+        return 0;
+    }
+
+    first_arg = PyTuple_GetItem(args, 0);
+    if (!PyString_Check(first_arg)) {
+        PyErr_SetString(PyExc_TypeError,
+                        "first argument should be a string");
+        return 0;
+    }
+
+    dict_name = PyString_AsString(first_arg);
+    module = tomoe_dict_load_module(dict_name);
+
+    params = g_new0(GParameter, len / 2);
+
+    class = G_OBJECT_GET_CLASS(self->obj);
+    for (i = 1, n = 0; i < len; i+=2, n++) {
+        PyObject *py_property = PyTuple_GetItem(args, i);
+        PyObject *py_value = PyTuple_GetItem(args, i + 1);
+        gchar *property_name;
+        GParamSpec *pspec;
+
+        if (!PyString_Check(py_property)) {
+            PyErr_SetString(PyExc_TypeError,
+                            "Expected string argument for property.");
+            goto END;
+        }
+
+        property_name = PyString_AsString(py_property);
+
+        pspec = g_object_class_find_property(class, property_name);
+        if (!pspec) {
+            gchar buf[512];
+            g_snprintf(buf, sizeof(buf),
+                       "%s  does not support property `%s'",
+                       g_type_name(obj_type), 
+                       property_name);
+            PyErr_SetString(PyExc_TypeError, buf);
+
+            goto END;
+        }
+
+        params[n].name = property_name;
+        params[n].value.g_type = 0;
+        g_value_init(&params[n].value, G_PARAM_SPEC_VALUE_TYPE(pspec));
+        pyg_value_from_pyobject(&params[n].value, (PyObject*)py_value);
+    }
+
+    ret = pygobject_constructv(self, n, params);
+
+END:
+    while (n--)
+        g_value_unset(&params[n].value);
+    g_free(params);
+    g_type_class_unref(class);
+
+    return ret;
 }
 %%
 override tomoe_dict_search kwargs
