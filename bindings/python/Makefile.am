@@ -8,12 +8,13 @@ INCLUDES =			\
 nodist_tomoe_la_SOURCES =	\
 	tomoe.c
 
-tomoe_la_SOURCES =	\
+tomoe_la_SOURCES =		\
 	tomoe-module.c
 
-tomoe_la_LDFLAGS =				\
-	-module					\
-	-avoid-version				\
+tomoe_la_LDFLAGS =			\
+	-module				\
+	-avoid-version			\
+	$(TOMOE_LDFLAGS)		\
 	$(PYTHON_LDFLAGS)
 
 tomoe_la_LIBADD =			\
