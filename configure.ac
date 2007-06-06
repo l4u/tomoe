@@ -283,9 +283,9 @@ module/Makefile
 module/dict/Makefile
 module/recognizer/Makefile
 data/Makefile
-ext/Makefile
-ext/ruby/Makefile
-ext/python/Makefile
+bindings/Makefile
+bindings/ruby/Makefile
+bindings/python/Makefile
 db/Makefile
 db/lib/Makefile
 db/migrate/Makefile

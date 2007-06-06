@@ -12,6 +12,7 @@
 	* ext/python/tomoe-module.c: added.
 	* ext/python/tomoe-context.override: Ignore
 	tomoe_context_multi_search.
+	* ext -> bindings.
 
 2007-06-05  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 

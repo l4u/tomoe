@@ -20,7 +20,7 @@
 
 ACLOCAL_AMFLAGS = -I macros
 
-SUBDIRS = po lib ext module data db test benchmark doc spec
+SUBDIRS = po lib bindings module data db test benchmark doc spec
 
 EXTRA_DIST =					\
 	autogen.sh				\
