@@ -20,7 +20,7 @@ elif test "$RUBY" = ""; then
 else
   AC_CHECK_FILE([$RUBY],
                 [ruby_available="yes"],
-                [AC_MSG_WARN([$RUBY is not found. Disable Ruby extension.])])
+                [AC_MSG_WARN([$RUBY is not found. Disable Ruby binding.])])
 fi
 
 if test "$ruby_available" = "yes"; then
@@ -51,7 +51,7 @@ if test "$ruby_available" = "yes"; then
 #undef PACKAGE_STRING
 #undef PACKAGE_VERSION
 "
-  ruby_disable_message="Disable Ruby extension."
+  ruby_disable_message="Disable Ruby binding."
   CFLAGS="$CFLAGS $RUBY_CFLAGS"
   AC_CHECK_HEADERS(ruby.h, [],
                    [ruby_available="no"
@@ -66,7 +66,7 @@ if test "$ruby_available" = "yes"; then
   fi
   CFLAGS=$_SAVE_CFLAGS
 
-  AC_MSG_CHECKING([where to install Ruby extensions])
+  AC_MSG_CHECKING([where to install Ruby binding])
   AC_CACHE_VAL([cv_ruby_archdir],
                [cv_ruby_archdir="$rbconfig_sitearchdir"])
   AC_ARG_WITH([ruby-extdir],

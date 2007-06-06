@@ -17,12 +17,11 @@ elif test "$PYTHON" = ""; then
 else
   AC_CHECK_FILE([$PYTHON],
                 [python_available="yes"],
-                [AC_MSG_WARN([$PYTHON is not found. Disable PYTHON extension.])])
+                [AC_MSG_WARN([$PYTHON is not found. Disable PYTHON binding.])])
 fi
 
 if test "$python_available" = "yes"; then
   AC_PATH_PROG(PYTHON_CONFIG, python-config, no)
-  rbconfig="$RUBY -rrbconfig -e "
 
   PYTHON_CFLAGS=`$PYTHON_CONFIG --cflags`
   PYTHON_LIBS=`$PYTHON_CONFIG --libs`
@@ -42,7 +41,7 @@ if test "$python_available" = "yes"; then
 #undef PACKAGE_STRING
 #undef PACKAGE_VERSION
 "
-  python_disable_message="Disable Python extension."
+  python_disable_message="Disable Python binding."
   CFLAGS="$CFLAGS $PYTHON_CFLAGS"
   AC_CHECK_HEADERS(Python.h, [],
                    [python_available="no"
