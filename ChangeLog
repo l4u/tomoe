@@ -1,5 +1,9 @@
 2007-06-06  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/run-spec.rb:
+	- ext -> bindings.
+	- require_gem -> require.
+
 	* ext/python/Makefile.am: added dependencies on *.override.
 
 2007-06-06  Hiroyuki Ikezoe  <poincare@ikezoe.net>
