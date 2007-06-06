@@ -32,7 +32,8 @@ INCLUDES =				\
 	$(MYSQL_CFLAGS)			\
 	$(RUBY_CFLAGS)
 
-LIBADD = $(TOMOE_LIBS)
+LIBADD = $(TOMOE_LIBS)			\
+	$(top_builddir)/lib/libtomoe.la
 LDFLAGS =							\
   -rpath $(dict_moduledir) -avoid-version -module		\
   -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)
@@ -45,13 +46,14 @@ dict_module_LTLIBRARIES = xml.la
 
 xml_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:XML\" $(AM_CPPFLAGS)
 xml_la_SOURCES = tomoe-dict-xml.c $(ptr_array_based_dict_sources)
+xml_la_LIBADD = $(LIBADD) 
 
 if USE_EST
 dict_module_LTLIBRARIES += est.la
 
 est_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Est\" $(AM_CPPFLAGS)
 est_la_SOURCES = tomoe-dict-est.c
-est_la_LIBADD = $(EST_LIBS)
+est_la_LIBADD = $(EST_LIBS) $(LIBADD)
 endif
 
 if USE_DICT_RUBY
@@ -59,7 +61,7 @@ dict_module_LTLIBRARIES += ruby.la
 
 ruby_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Ruby\" $(AM_CPPFLAGS)
 ruby_la_SOURCES = tomoe-dict-ruby.c
-ruby_la_LIBADD = $(RUBY_LIBS)
+ruby_la_LIBADD = $(RUBY_LIBS) $(LIBADD)
 endif
 
 if USE_UNIHAN
@@ -81,6 +83,7 @@ unihan_la_SOURCES =		\
 	tomoe-unihan.h		\
 	$(unihan_built_sources)	\
 	$(ptr_array_based_dict_sources)
+unihan_la_LIBADD = $(LIBADD) 
 
 unihan-compiler.rb: xml.la
 
@@ -107,7 +110,7 @@ dict_module_LTLIBRARIES += svn.la
 
 svn_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Svn\" $(AM_CPPFLAGS)
 svn_la_SOURCES = tomoe-dict-svn.c
-svn_la_LIBADD = $(SVN_LIBS)
+svn_la_LIBADD = $(SVN_LIBS) $(LIBADD)
 endif
 
 if USE_MYSQL
@@ -115,5 +118,5 @@ dict_module_LTLIBRARIES += mysql.la
 
 mysql_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:MySQL\" $(AM_CPPFLAGS)
 mysql_la_SOURCES = tomoe-dict-mysql.c
-mysql_la_LIBADD = $(MYSQL_LIBS)
+mysql_la_LIBADD = $(MYSQL_LIBS) $(LIBADD)
 endif
