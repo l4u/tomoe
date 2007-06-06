@@ -21,11 +21,11 @@ else
 fi
 
 if test "$python_available" = "yes"; then
-  AC_PATH_PROG(PYTHON_CONFIG, python-config, no)
-
-  PYTHON_CFLAGS=`$PYTHON_CONFIG --cflags`
-  PYTHON_LIBS=`$PYTHON_CONFIG --libs`
-  PYTHON_LDFLAGS=`$PYTHON_CONFIG --ldflags`
+  PY_PREFIX=`$PYTHON -c 'import sys ; print sys.prefix'`
+  PY_EXEC_PREFIX=`$PYTHON -c 'import sys ; print sys.exec_prefix'`
+  PYTHON_LIBS="-lpython$PYTHON_VERSION"
+  PYTHON_LIB_LOC="-L$PY_EXEC_PREFIX/lib/python$PYTHON_VERSION/config"
+  PYTHON_CFLAGS="-I$PY_PREFIX/include/python$PYTHON_VERSION"
 
   PKG_CHECK_MODULES(PYGOBJECT, pygobject-2.0)
 
@@ -49,7 +49,7 @@ if test "$python_available" = "yes"; then
                    [$python_undef_package_macros])
   CFLAGS=$_SAVE_CFLAGS
 
-  AC_PATH_PROG(PYGTK_CODEGEN, pygtk-codegen-2.0, none)
+  AC_PATH_PROG(PYGTK_CODEGEN, pygtk-codegen-2.0, [python_avairable="no"])
 fi
 
 AM_CONDITIONAL([WITH_PYTHON], [test "$python_available" = "yes"])
