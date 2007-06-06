@@ -61,7 +61,7 @@ tomoe_quit (void)
     if (initialized) {
         initialized = FALSE;
         tomoe_dict_quit ();
-        tomoe_dict_quit ();
+        tomoe_recognizer_quit ();
     }
 }
 
