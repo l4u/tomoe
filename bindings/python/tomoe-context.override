@@ -16,7 +16,7 @@ _wrap_tomoe_context_search(PyGObject *self, PyObject *args, PyObject *kwargs)
     GList *candidates;
     PyObject *py_cands;
     
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:TomoeCointext.search", kwlist, &PyTomoeQuery_Type, &query))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:TomoeContext.search", kwlist, &PyTomoeQuery_Type, &query))
         return NULL;
 
     candidates = tomoe_context_search (TOMOE_CONTEXT(self->obj), TOMOE_QUERY(query->obj));
