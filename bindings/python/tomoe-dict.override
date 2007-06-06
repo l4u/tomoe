@@ -17,9 +17,9 @@ _wrap_tomoe_dict_new(PyGObject *self, PyObject *args)
 {
     PyObject *first_arg;
     TomoeModule *module;
-    gchar *dict_name;
+    gchar *dict_name, *type_name;
     GObjectClass *class;
-    GType obj_type = pyg_type_from_object((PyObject *) self);
+    GType obj_type;
     GParameter *params;
     guint i, len, n;
     int ret = 0;
@@ -39,9 +39,14 @@ _wrap_tomoe_dict_new(PyGObject *self, PyObject *args)
     dict_name = PyString_AsString(first_arg);
     module = tomoe_dict_load_module(dict_name);
 
+    type_name = g_strconcat("TomoeDict", dict_name, NULL);
+    obj_type = g_type_from_name(type_name);
+    if (!obj_type)
+        return 0;
+
     params = g_new0(GParameter, len / 2);
 
-    class = G_OBJECT_GET_CLASS(self->obj);
+    class = g_type_class_ref(obj_type);
     for (i = 1, n = 0; i < len; i+=2, n++) {
         PyObject *py_property = PyTuple_GetItem(args, i);
         PyObject *py_value = PyTuple_GetItem(args, i + 1);
