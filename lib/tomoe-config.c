@@ -61,6 +61,9 @@ G_DEFINE_TYPE (TomoeConfig, tomoe_config, G_TYPE_OBJECT)
 static const gchar *system_config_file = CONFDIR "/config";
 
 static void     tomoe_config_dispose      (GObject       *object);
+static GObject *tomoe_config_constructor  (GType                  type,
+                                           guint                  n_props,
+                                           GObjectConstructParam *props);
 static void     tomoe_config_set_property (GObject       *object,
                                            guint          prop_id,
                                            const GValue  *value,
@@ -103,6 +106,7 @@ tomoe_config_class_init (TomoeConfigClass *klass)
     gobject_class = G_OBJECT_CLASS (klass);
 
     gobject_class->dispose      = tomoe_config_dispose;
+    gobject_class->constructor  = tomoe_config_constructor;
     gobject_class->set_property = tomoe_config_set_property;
     gobject_class->get_property = tomoe_config_get_property;
 
@@ -115,6 +119,21 @@ tomoe_config_class_init (TomoeConfigClass *klass)
                                          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
     g_type_class_add_private (gobject_class, sizeof (TomoeConfigPrivate));
+}
+
+static GObject *
+tomoe_config_constructor (GType type, guint n_props,
+                          GObjectConstructParam *props)
+{
+
+    GObject *object;
+    GObjectClass *klass = G_OBJECT_CLASS (tomoe_config_parent_class);
+
+    object = klass->constructor (type, n_props, props);
+
+    tomoe_config_load (TOMOE_CONFIG (object));
+
+    return object;
 }
 
 static void
@@ -136,8 +155,6 @@ tomoe_config_new (const gchar *config_file)
     config = g_object_new(TOMOE_TYPE_CONFIG,
                           "filename", config_file,
                           NULL);
-
-    tomoe_config_load (config);
 
     return config;
 }
