@@ -1,3 +1,6 @@
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = pytomoe.pc
+
 pyexec_LTLIBRARIES = tomoe.la
 defsdir = $(pkgdatadir)/python
 

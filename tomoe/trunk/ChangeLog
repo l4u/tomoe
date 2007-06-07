@@ -12,6 +12,7 @@
 	function's name.
 	* bindings/python/Makefile.am: Install tomoe.defs.
 	* tomoe.pc.in: Add defsdir for Python binding.
+	* bindings/python/pytomoe.pc.in: pkg-config file for pytomoe.
 
 2007-06-06  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
