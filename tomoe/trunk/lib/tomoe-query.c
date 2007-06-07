@@ -62,15 +62,15 @@ enum
 
 G_DEFINE_TYPE (TomoeQuery, tomoe_query, G_TYPE_OBJECT)
 
-static void tomoe_query_dispose        (GObject         *object);
-static void tomoe_query_set_property   (GObject         *object,
-                                        guint            prop_id,
-                                        const GValue    *value,
-                                        GParamSpec      *pspec);
-static void tomoe_query_get_property   (GObject         *object,
-                                        guint            prop_id,
-                                        GValue          *value,
-                                        GParamSpec      *pspec);
+static void dispose        (GObject         *object);
+static void set_property   (GObject         *object,
+                            guint            prop_id,
+                            const GValue    *value,
+                            GParamSpec      *pspec);
+static void get_property   (GObject         *object,
+                            guint            prop_id,
+                            GValue          *value,
+                            GParamSpec      *pspec);
 
 static void
 tomoe_query_class_init (TomoeQueryClass *klass)
@@ -80,9 +80,9 @@ tomoe_query_class_init (TomoeQueryClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->dispose  = tomoe_query_dispose;
-    gobject_class->set_property = tomoe_query_set_property;
-    gobject_class->get_property = tomoe_query_get_property;
+    gobject_class->dispose      = dispose;
+    gobject_class->set_property = set_property;
+    gobject_class->get_property = get_property;
 
     spec = g_param_spec_string ("utf8",
                                 N_("UTF8"),
@@ -138,7 +138,7 @@ tomoe_query_new (void)
 }
 
 static void
-tomoe_query_dispose (GObject *object)
+dispose (GObject *object)
 {
     TomoeQueryPrivate *priv = TOMOE_QUERY_GET_PRIVATE (object);
 
@@ -168,10 +168,10 @@ tomoe_query_dispose (GObject *object)
     G_OBJECT_CLASS (tomoe_query_parent_class)->dispose (object);
 }
 static void
-tomoe_query_set_property (GObject      *object,
-                            guint         prop_id,
-                            const GValue *value,
-                            GParamSpec   *pspec)
+set_property (GObject      *object,
+              guint         prop_id,
+              const GValue *value,
+              GParamSpec   *pspec)
 {
     TomoeQuery *query;
     TomoeQueryPrivate *priv;
@@ -199,10 +199,10 @@ tomoe_query_set_property (GObject      *object,
 }
 
 static void
-tomoe_query_get_property (GObject    *object,
-                            guint       prop_id,
-                            GValue     *value,
-                            GParamSpec *pspec)
+get_property (GObject    *object,
+             guint       prop_id,
+             GValue     *value,
+             GParamSpec *pspec)
 {
     TomoeQuery *query;
     TomoeQueryPrivate *priv;

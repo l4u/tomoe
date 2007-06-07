@@ -39,7 +39,7 @@ struct _TomoeWritingPrivate
 
 G_DEFINE_TYPE (TomoeWriting, tomoe_writing, G_TYPE_OBJECT)
 
-static void tomoe_writing_dispose (GObject *object);
+static void          dispose      (GObject *object);
 static GList       *_stroke_new   (gint x, gint y);
 static void         _stroke_free  (GList *stroke);
 
@@ -50,7 +50,7 @@ tomoe_writing_class_init (TomoeWritingClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->dispose = tomoe_writing_dispose;
+    gobject_class->dispose = dispose;
 
     g_type_class_add_private (gobject_class, sizeof (TomoeWritingPrivate));
 }
@@ -64,7 +64,7 @@ tomoe_writing_init (TomoeWriting *writing)
 }
 
 static void
-tomoe_writing_dispose (GObject *object)
+dispose (GObject *object)
 {
     TomoeWriting *writing = TOMOE_WRITING (object);
 

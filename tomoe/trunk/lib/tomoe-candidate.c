@@ -40,15 +40,15 @@ struct _TomoeCandidatePrivate
 
 G_DEFINE_TYPE (TomoeCandidate, tomoe_candidate, G_TYPE_OBJECT)
 
-static void tomoe_candidate_dispose      (GObject      *object);
-static void tomoe_candidate_set_property (GObject      *object,
-                                          guint         prop_id,
-                                          const GValue *value,
-                                          GParamSpec   *pspec);
-static void tomoe_candidate_get_property (GObject      *object,
-                                          guint         prop_id,
-                                          GValue       *value,
-                                          GParamSpec   *pspec);
+static void dispose      (GObject      *object);
+static void set_property (GObject      *object,
+                          guint         prop_id,
+                          const GValue *value,
+                          GParamSpec   *pspec);
+static void get_property (GObject      *object,
+                          guint         prop_id,
+                          GValue       *value,
+                          GParamSpec   *pspec);
 
 static void
 tomoe_candidate_class_init (TomoeCandidateClass *klass)
@@ -57,9 +57,9 @@ tomoe_candidate_class_init (TomoeCandidateClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->dispose = tomoe_candidate_dispose;
-    gobject_class->set_property = tomoe_candidate_set_property;
-    gobject_class->get_property = tomoe_candidate_get_property;
+    gobject_class->dispose      = dispose;
+    gobject_class->set_property = set_property;
+    gobject_class->get_property = get_property;
 
     g_object_class_install_property (
         gobject_class,
@@ -96,7 +96,7 @@ tomoe_candidate_init (TomoeCandidate *cand)
 }
 
 static void
-tomoe_candidate_dispose (GObject *object)
+dispose (GObject *object)
 {
     TomoeCandidatePrivate *priv = TOMOE_CANDIDATE_GET_PRIVATE (object);
 
@@ -108,10 +108,10 @@ tomoe_candidate_dispose (GObject *object)
 }
 
 static void
-tomoe_candidate_set_property (GObject *object,
-                              guint prop_id,
-                              const GValue *value,
-                              GParamSpec *pspec)
+set_property (GObject *object,
+              guint prop_id,
+              const GValue *value,
+              GParamSpec *pspec)
 {
     TomoeCandidate *cand = TOMOE_CANDIDATE (object);
     TomoeCandidatePrivate *priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);
@@ -134,10 +134,10 @@ tomoe_candidate_set_property (GObject *object,
 
 
 static void
-tomoe_candidate_get_property (GObject *object,
-                              guint prop_id,
-                              GValue *value,
-                              GParamSpec *pspec)
+get_property (GObject *object,
+              guint prop_id,
+              GValue *value,
+              GParamSpec *pspec)
 {
     TomoeCandidate *cand = TOMOE_CANDIDATE (object);
     TomoeCandidatePrivate *priv = TOMOE_CANDIDATE_GET_PRIVATE (cand);

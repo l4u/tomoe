@@ -60,18 +60,18 @@ G_DEFINE_TYPE (TomoeConfig, tomoe_config, G_TYPE_OBJECT)
 
 static const gchar *system_config_file = CONFDIR "/config";
 
-static void     tomoe_config_dispose      (GObject       *object);
-static GObject *tomoe_config_constructor  (GType                  type,
-                                           guint                  n_props,
-                                           GObjectConstructParam *props);
-static void     tomoe_config_set_property (GObject       *object,
-                                           guint          prop_id,
-                                           const GValue  *value,
-                                           GParamSpec    *pspec);
-static void     tomoe_config_get_property (GObject       *object,
-                                           guint          prop_id,
-                                           GValue        *value,
-                                           GParamSpec    *pspec);
+static void     dispose      (GObject       *object);
+static GObject *constructor  (GType                  type,
+                              guint                  n_props,
+                              GObjectConstructParam *props);
+static void     set_property (GObject       *object,
+                              guint          prop_id,
+                              const GValue  *value,
+                              GParamSpec    *pspec);
+static void     get_property (GObject       *object,
+                              guint          prop_id,
+                              GValue        *value,
+                              GParamSpec    *pspec);
 
 static void     tomoe_config_load         (TomoeConfig  *config);
 static void     tomoe_config_save         (TomoeConfig *config);
@@ -105,10 +105,10 @@ tomoe_config_class_init (TomoeConfigClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->dispose      = tomoe_config_dispose;
-    gobject_class->constructor  = tomoe_config_constructor;
-    gobject_class->set_property = tomoe_config_set_property;
-    gobject_class->get_property = tomoe_config_get_property;
+    gobject_class->dispose      = dispose;
+    gobject_class->constructor  = constructor;
+    gobject_class->set_property = set_property;
+    gobject_class->get_property = get_property;
 
     g_object_class_install_property (gobject_class,
                                      PROP_FILENAME,
@@ -122,8 +122,7 @@ tomoe_config_class_init (TomoeConfigClass *klass)
 }
 
 static GObject *
-tomoe_config_constructor (GType type, guint n_props,
-                          GObjectConstructParam *props)
+constructor (GType type, guint n_props, GObjectConstructParam *props)
 {
 
     GObject *object;
@@ -160,7 +159,7 @@ tomoe_config_new (const gchar *config_file)
 }
 
 static void
-tomoe_config_dispose (GObject *object)
+dispose (GObject *object)
 {
     TomoeConfig *config;
     TomoeConfigPrivate *priv;
@@ -189,10 +188,10 @@ tomoe_config_dispose (GObject *object)
 }
 
 static void
-tomoe_config_set_property (GObject      *object,
-                           guint         prop_id,
-                           const GValue *value,
-                           GParamSpec   *pspec)
+set_property (GObject      *object,
+              guint         prop_id,
+              const GValue *value,
+              GParamSpec   *pspec)
 {
     TomoeConfigPrivate *priv = TOMOE_CONFIG_GET_PRIVATE (object);
 
@@ -210,10 +209,10 @@ tomoe_config_set_property (GObject      *object,
 }
 
 static void
-tomoe_config_get_property (GObject    *object,
-                           guint       prop_id,
-                           GValue     *value,
-                           GParamSpec *pspec)
+get_property (GObject    *object,
+              guint       prop_id,
+              GValue     *value,
+              GParamSpec *pspec)
 {
     TomoeConfigPrivate *priv = TOMOE_CONFIG_GET_PRIVATE (object);
 

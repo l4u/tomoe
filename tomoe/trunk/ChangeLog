@@ -4,6 +4,8 @@
 	bindings/python/tomoe-recognizer.override: TomoeDict and
 	TomoeRecognizer object can be created.
 	tomoe.Dict("XML", "filename", "/usr/share/tomoe/handwriting.xml") or tomoe.Dict("Unihan").
+	* lib/tomoe-*.c: Remove "tomoe-" prefix from GObject's virtual
+	function's name.
 
 2007-06-06  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
