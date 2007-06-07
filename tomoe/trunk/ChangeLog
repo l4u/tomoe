@@ -1,3 +1,10 @@
+2007-06-07  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* bindings/python/tomoe-dict.override,
+	bindings/python/tomoe-recognizer.override: TomoeDict and
+	TomoeRecognizer object can be created.
+	tomoe.Dict("XML", filename) or tomoe.Dict("Unihan").
+
 2007-06-06  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-config.c: Invoke tomoe_config_load() in constructor since
