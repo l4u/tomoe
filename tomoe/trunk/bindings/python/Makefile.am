@@ -1,4 +1,5 @@
 pyexec_LTLIBRARIES = tomoe.la
+defsdir = $(pkgdatadir)/python
 
 INCLUDES =			\
 	$(PYTHON_CFLAGS)	\
@@ -32,10 +33,12 @@ OVERRIDES =					\
 	tomoe-shelf.override			\
 	tomoe-writing.override
 
-tomoe.c: tomoe.defs $(OVERRIDES)
+defs_DATA = tomoe.defs
+
+tomoe.c: $(defs_DATA) $(OVERRIDES)
 
 CLEANFILES = tomoe.c
-EXTRA_DIST = tomoe.defs $(OVERRIDES)
+EXTRA_DIST = $(defs_DATA) $(OVERRIDES)
 
 .defs.c:
 	(cd $(srcdir)				\
