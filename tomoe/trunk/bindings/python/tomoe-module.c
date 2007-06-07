@@ -23,7 +23,7 @@ inittomoe(void)
     }
 
     tomoe_init ();
-    atexit(tomoe_quit);
+    atexit (tomoe_quit);
 }
 
 /*
