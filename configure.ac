@@ -286,6 +286,7 @@ data/Makefile
 bindings/Makefile
 bindings/ruby/Makefile
 bindings/python/Makefile
+bindings/python/pytomoe.pc
 db/Makefile
 db/lib/Makefile
 db/migrate/Makefile

@@ -5,9 +5,6 @@ includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@
 
-# for Python binding
-defsdir=${datadir}/@PACKAGE@/python
-
 Name: Tomoe
 Description: Tegaki Online MOji-ninshiki Engine
 Version: @VERSION@
