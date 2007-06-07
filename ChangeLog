@@ -7,6 +7,7 @@
 	* lib/tomoe-*.c: Remove "tomoe-" prefix from GObject's virtual
 	function's name.
 	* bindings/python/Makefile.am: Install tomoe.defs.
+	* tomoe.pc.in: Add defsdir for Python binding.
 
 2007-06-06  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
