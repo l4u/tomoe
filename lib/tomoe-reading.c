@@ -52,15 +52,15 @@ enum
 
 G_DEFINE_TYPE (TomoeReading, tomoe_reading, G_TYPE_OBJECT)
 
-static void tomoe_reading_dispose        (GObject         *object);
-static void tomoe_reading_set_property   (GObject         *object,
-                                          guint            prop_id,
-                                          const GValue    *value,
-                                          GParamSpec      *pspec);
-static void tomoe_reading_get_property   (GObject         *object,
-                                          guint            prop_id,
-                                          GValue          *value,
-                                          GParamSpec      *pspec);
+static void dispose        (GObject         *object);
+static void set_property   (GObject         *object,
+                            guint            prop_id,
+                            const GValue    *value,
+                            GParamSpec      *pspec);
+static void get_property   (GObject         *object,
+                            guint            prop_id,
+                            GValue          *value,
+                            GParamSpec      *pspec);
 
 static void
 tomoe_reading_class_init (TomoeReadingClass *klass)
@@ -70,9 +70,9 @@ tomoe_reading_class_init (TomoeReadingClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->dispose  = tomoe_reading_dispose;
-    gobject_class->set_property = tomoe_reading_set_property;
-    gobject_class->get_property = tomoe_reading_get_property;
+    gobject_class->dispose      = dispose;
+    gobject_class->set_property = set_property;
+    gobject_class->get_property = get_property;
 
     spec = g_param_spec_enum ("type",
                               N_("Type"),
@@ -112,7 +112,7 @@ tomoe_reading_new (TomoeReadingType type, const gchar *reading)
 }
 
 static void
-tomoe_reading_dispose (GObject *object)
+dispose (GObject *object)
 {
     TomoeReadingPrivate *priv = TOMOE_READING_GET_PRIVATE (object);
 
@@ -123,10 +123,10 @@ tomoe_reading_dispose (GObject *object)
     G_OBJECT_CLASS (tomoe_reading_parent_class)->dispose (object);
 }
 static void
-tomoe_reading_set_property (GObject      *object,
-                            guint         prop_id,
-                            const GValue *value,
-                            GParamSpec   *pspec)
+set_property (GObject      *object,
+              guint         prop_id,
+              const GValue *value,
+              GParamSpec   *pspec)
 {
     TomoeReading *reading;
     TomoeReadingPrivate *priv;
@@ -149,10 +149,10 @@ tomoe_reading_set_property (GObject      *object,
 }
 
 static void
-tomoe_reading_get_property (GObject    *object,
-                            guint       prop_id,
-                            GValue     *value,
-                            GParamSpec *pspec)
+get_property (GObject    *object,
+              guint       prop_id,
+              GValue     *value,
+              GParamSpec *pspec)
 {
     TomoeReading *reading;
     TomoeReadingPrivate *priv;

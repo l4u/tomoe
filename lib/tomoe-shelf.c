@@ -35,7 +35,7 @@ struct _TomoeShelfPrivate
 
 G_DEFINE_TYPE (TomoeShelf, tomoe_shelf, G_TYPE_OBJECT)
 
-static void tomoe_shelf_dispose      (GObject *object);
+static void dispose      (GObject *object);
 
 static void
 tomoe_shelf_class_init (TomoeShelfClass *klass)
@@ -44,7 +44,7 @@ tomoe_shelf_class_init (TomoeShelfClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->dispose  = tomoe_shelf_dispose;
+    gobject_class->dispose  = dispose;
 
     g_type_class_add_private (gobject_class, sizeof (TomoeShelfPrivate));
 }
@@ -69,7 +69,7 @@ tomoe_shelf_new(void)
 }
 
 static void
-tomoe_shelf_dispose (GObject *object)
+dispose (GObject *object)
 {
     TomoeShelfPrivate *priv = TOMOE_SHELF_GET_PRIVATE (object);
 

@@ -60,15 +60,15 @@ enum
 
 G_DEFINE_TYPE (TomoeChar, tomoe_char, G_TYPE_OBJECT)
 
-static void tomoe_char_dispose        (GObject         *object);
-static void tomoe_char_set_property   (GObject         *object,
-                                       guint            prop_id,
-                                       const GValue    *value,
-                                       GParamSpec      *pspec);
-static void tomoe_char_get_property   (GObject         *object,
-                                       guint            prop_id,
-                                       GValue          *value,
-                                       GParamSpec      *pspec);
+static void dispose        (GObject         *object);
+static void set_property   (GObject         *object,
+                            guint            prop_id,
+                            const GValue    *value,
+                            GParamSpec      *pspec);
+static void get_property   (GObject         *object,
+                            guint            prop_id,
+                            GValue          *value,
+                            GParamSpec      *pspec);
 
 static void
 tomoe_char_class_init (TomoeCharClass *klass)
@@ -78,9 +78,9 @@ tomoe_char_class_init (TomoeCharClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
 
-    gobject_class->dispose      = tomoe_char_dispose;
-    gobject_class->set_property = tomoe_char_set_property;
-    gobject_class->get_property = tomoe_char_get_property;
+    gobject_class->dispose      = dispose;
+    gobject_class->set_property = set_property;
+    gobject_class->get_property = get_property;
 
     spec = g_param_spec_string ("utf8",
                                 N_("UTF8"),
@@ -147,7 +147,7 @@ tomoe_char_new_from_xml_data (const gchar *data, gssize len)
 }
 
 static void
-tomoe_char_dispose (GObject *object)
+dispose (GObject *object)
 {
     TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (object);
 
@@ -180,10 +180,10 @@ tomoe_char_dispose (GObject *object)
 }
 
 static void
-tomoe_char_set_property (GObject      *object,
-                         guint         prop_id,
-                         const GValue *value,
-                         GParamSpec   *pspec)
+set_property (GObject      *object,
+              guint         prop_id,
+              const GValue *value,
+              GParamSpec   *pspec)
 {
     TomoeChar *chr;
 
@@ -208,10 +208,10 @@ tomoe_char_set_property (GObject      *object,
 }
 
 static void
-tomoe_char_get_property (GObject    *object,
-                         guint       prop_id,
-                         GValue     *value,
-                         GParamSpec *pspec)
+get_property (GObject    *object,
+              guint       prop_id,
+              GValue     *value,
+              GParamSpec *pspec)
 {
     TomoeChar *chr;
     TomoeCharPrivate *priv;
