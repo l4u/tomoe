@@ -12,7 +12,7 @@ AC_ARG_WITH([ruby],
 
 if test "$RUBY" = "no"; then
   : # ignore
-elif test "$RUBY" = ""; then
+elif test "$RUBY" = "" -o "$RUBY" = "yes"; then
   AC_PATH_PROG(RUBY, ruby, none)
   if test "$RUBY" != "none"; then
     ruby_available="yes"
