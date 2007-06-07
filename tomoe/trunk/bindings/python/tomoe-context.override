@@ -1,7 +1,7 @@
 %%
 headers
 #define NO_IMPORT_PYGOBJECT
-#include "tomoe-python-utils.h"
+#include "pytomoe-utils.h"
 %%
 ignore
   tomoe_context_multi_search

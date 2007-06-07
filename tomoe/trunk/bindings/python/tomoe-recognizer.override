@@ -1,7 +1,7 @@
 %%
 headers
 #define NO_IMPORT_PYGOBJECT
-#include "tomoe-python-utils.h"
+#include "pytomoe-utils.h"
 %%
 new-constructor TOMOE_TYPE_RECOGNIZER
 %%
