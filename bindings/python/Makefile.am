@@ -1,6 +1,12 @@
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = pytomoe.pc
 
+pytomoe_public_h_sources =		\
+	pytomoe-utils.h
+
+pkginclude_HEADERS =			\
+	$(pytomoe_public_h_sources)
+
 pyexec_LTLIBRARIES = tomoe.la
 defsdir = $(pkgdatadir)/python
 
@@ -41,7 +47,7 @@ defs_DATA = tomoe.defs
 tomoe.c: $(defs_DATA) $(OVERRIDES)
 
 CLEANFILES = tomoe.c
-EXTRA_DIST = $(defs_DATA) $(OVERRIDES)
+EXTRA_DIST = $(defs_DATA) $(OVERRIDES) 
 
 .defs.c:
 	(cd $(srcdir)				\
