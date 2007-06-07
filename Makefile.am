@@ -30,7 +30,7 @@ EXTRA_DIST =					\
 	intltool-extract.in
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_data= tomoe.pc
+pkgconfig_DATA = tomoe.pc
 
 CLEANFILES = *~ *.bak
 DISTCLEANFILES = tomoe.pc
