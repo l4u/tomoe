@@ -251,7 +251,9 @@ EOC
     end
 
     def check_dict_module_availability(type)
-      unless Tomoe.const_defined?("Dict#{type}")
+      begin
+        Tomoe.const_get("Dict#{type}")
+      rescue NameError
         raise "Tomoe doesn't support the dictionary type: #{type}"
       end
     end

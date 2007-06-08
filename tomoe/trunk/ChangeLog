@@ -1,5 +1,7 @@
 2007-06-08  Kouhei Sutou  <kou@cozmixng.org>
 
+	* test/tomoe-test-utils.rb: fixed dynamic dictionary search method.
+
 	* test/test_dict.rb: ignore tests for Unihan.
 
 	* bindings/ruby/tomoe.rb: ensure initialize @missing.
