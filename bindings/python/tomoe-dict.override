@@ -65,6 +65,7 @@ _wrap_tomoe_dict_new(PyGObject *self, PyObject *args)
         if (!PyString_Check(py_property)) {
             PyErr_SetString(PyExc_TypeError,
                             "Expected string argument for property.");
+            ret = -1;
             goto END;
         }
 
@@ -78,7 +79,7 @@ _wrap_tomoe_dict_new(PyGObject *self, PyObject *args)
                        g_type_name(obj_type), 
                        property_name);
             PyErr_SetString(PyExc_TypeError, buf);
-
+            ret = -1;
             goto END;
         }
 
