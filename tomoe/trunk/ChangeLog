@@ -19,6 +19,9 @@
 	* test/python/*: Add a test program.
 	* bindings/python/tomoe-dict.override,
 	bindings/python/tomoe-recognizer.override: Support keyword argument.
+	* lib/tomoe-reading.[ch]: Add tomoe_reading_compare function.
+	* module/dict/tomoe-dict-ptr-array.c: Use tomoe_reading_compare for
+	searching.
 
 2007-06-07  Kouhei Sutou  <kou@cozmixng.org>
 

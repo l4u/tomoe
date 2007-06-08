@@ -231,6 +231,37 @@ tomoe_reading_to_xml (TomoeReading *reading)
         return g_markup_printf_escaped (format, priv->reading);
 }
 
+/**
+ * tomoe_reading_compare:
+ * @a: a TomoeReading object.
+ * @b: a TomoeReading object to compare with.
+ *
+ * Compare to TomoeReading objects with its own utf8 character.
+ *
+ * Return value: -1 a != b, 0 a= b, 
+ */
+gint
+tomoe_reading_compare (const TomoeReading *a, const TomoeReading *b)
+{
+    TomoeReadingPrivate *priv_a, *priv_b;
+
+    if (!a || !b) return 0;
+
+    priv_a = TOMOE_READING_GET_PRIVATE (a);
+    priv_b = TOMOE_READING_GET_PRIVATE (b);
+    if (!priv_a || !priv_b) return 0;
+
+    if (!priv_a->reading || !priv_b->reading) return 0;
+
+    if (priv_a->type != priv_b->type &&
+        (priv_a->type != TOMOE_READING_UNKNOWN &&
+         priv_b->type != TOMOE_READING_UNKNOWN)) {
+        return -1;
+    }
+
+    return strcmp (priv_a->reading, priv_b->reading);
+}
+
 /*
 vi:ts=4:nowrap:ai:expandtab
 */

@@ -147,14 +147,9 @@ does_match_char_with_n_strokes (TomoeChar *chr, gint min, gint max)
 }
 
 static gint
-compare_reading (gconstpointer a, gconstpointer b)
+reading_compare_func (gconstpointer a, gconstpointer b)
 {
-    TomoeReading *reading, *searched_reading;
-
-    reading = TOMOE_READING(a);
-    searched_reading = TOMOE_READING(b);
-    return strcmp(tomoe_reading_get_reading(reading),
-                  tomoe_reading_get_reading(searched_reading));
+    return tomoe_reading_compare (TOMOE_READING (a), TOMOE_READING (b));
 }
 
 static gboolean
@@ -164,7 +159,7 @@ does_match_char_with_reading (TomoeChar *chr, TomoeReading *reading)
         return TRUE;
 
     if (g_list_find_custom ((GList *)tomoe_char_get_readings (chr),
-                            reading, compare_reading))
+                            reading, reading_compare_func))
         return TRUE;
     else
         return FALSE;
