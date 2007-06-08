@@ -52,7 +52,7 @@ _wrap_tomoe_dict_new(PyGObject *self, PyObject *args, PyObject *kwargs)
     class = g_type_class_ref(obj_type);
 
     if (kwargs) {
-        Py_ssize_t pos = 0;
+        int pos = 0;
         PyObject *key;
         PyObject *value;
 
