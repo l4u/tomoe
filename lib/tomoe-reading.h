@@ -64,6 +64,9 @@ const gchar      *tomoe_reading_get_reading      (TomoeReading     *reading);
 
 gchar            *tomoe_reading_to_xml           (TomoeReading     *reading);
 
+gint              tomoe_reading_compare          (const TomoeReading *a,
+                                                  const TomoeReading *b);
+
 G_END_DECLS
 
 #endif /* __TOMOE_READING_H__ */
