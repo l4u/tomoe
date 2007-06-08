@@ -1,5 +1,8 @@
 # -*- coding: UTF=8 -*-
+import os
+import sys
 import unittest
+sys.path.append('../../bindings/python/.libs')
 import tomoe
 
 class TomoeDictTest(unittest.TestCase):
@@ -175,6 +178,8 @@ class TomoeDictTest(unittest.TestCase):
         self.assertEqual(candidates[0].get_char().get_utf8(), char_code)
 
 if __name__ == '__main__':
-    unittest.main()
+    suite = unittest.makeSuite(TomoeDictTest)
+    unittest.TextTestRunner(verbosity=2).run(suite)
+    #unittest.main()
 
 # vi:ts=4:nowrap:ai:expandtab
