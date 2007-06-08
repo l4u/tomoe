@@ -41,11 +41,8 @@ _wrap_tomoe_recognizer_new(PyGObject *self, PyObject *args, PyObject *kwargs)
 
     obj_type = g_type_from_name(type_name);
     if (!obj_type) {
-        gchar buf[512];
-        g_snprintf(buf, sizeof(buf),
-                   "%s does not exist",
-                   type_name); 
-        PyErr_SetString(PyExc_TypeError, buf);
+        PyErr_Format(PyExc_TypeError,
+                     "object of type `%s' doesn't exist", type_name);
         g_free(type_name);
         return -1;
     }
