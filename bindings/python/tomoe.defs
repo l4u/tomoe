@@ -707,6 +707,14 @@
   (return-type "gchar*")
 )
 
+(define-method compare
+  (of-object "TomoeReading")
+  (c-name "tomoe_reading_compare")
+  (return-type "gint")
+  (parameters
+    '("const-TomoeReading*" "b")
+  )
+)
 
 
 ;; From tomoe-recognizer.h
