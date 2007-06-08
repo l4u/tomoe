@@ -60,7 +60,7 @@ class TomoeDictTest(unittest.TestCase):
     def testUnregisterChar(self):
         char_code ='池'
         dict_contents = """
-        <?xml version="1.0" standalone="no"?>
+        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <!DOCTYPE dictionary SYSTEM "/usr/share/tomoe/dict.dtd">
         <dictionary>
           <character>
@@ -74,6 +74,15 @@ class TomoeDictTest(unittest.TestCase):
 
         tomoe_char = dict.get_char(char_code)
         self.assertEqual(tomoe_char, None)
+
+        dict.flush()
+        contents = """\
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE dictionary SYSTEM "/usr/share/tomoe/dict.dtd">
+<dictionary>
+</dictionary>
+"""
+        self.assertEqual(contents, self.getDictContents())
 
     def testGetExistChar(self):
         char_code ='池'
