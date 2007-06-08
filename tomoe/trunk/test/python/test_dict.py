@@ -16,19 +16,46 @@ class TomoeDictTest(unittest.TestCase):
 
         return tomoe.Dict("XML", filename = dict_name, editable = True)
 
+    def getDictContents(self):
+        dict_name = "tomoe-test-xmldict.xml"
+        dict_file = open(dict_name, "r")
+        contents = dict_file.read()
+        dict_file.close()
+
+        return contents
+
     def testRegisterChar(self):
         dict_contents = """
-        <?xml version="1.0" standalone="no"?>
+        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <!DOCTYPE dictionary SYSTEM "/usr/share/tomoe/dict.dtd">
         <dictionary>
         </dictionary>
         """
         dict = self.setUpXMLDict(dict_contents)
         char_code ='池'
+        tomoe_char = dict.get_char(char_code)
+        self.assertEqual(tomoe_char, None)
+
         tomoe_char = tomoe.Char()
         tomoe_char.set_utf8(char_code)
         ret = dict.register_char(tomoe_char)
         self.assertEqual(ret, True)
+
+        tomoe_char = dict.get_char(char_code)
+        self.assertNotEqual(tomoe_char, None)
+        self.assertEqual(tomoe_char.get_utf8(), char_code)
+
+        dict.flush()
+        contents = """\
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE dictionary SYSTEM "/usr/share/tomoe/dict.dtd">
+<dictionary>
+  <character>
+    <utf8>池</utf8>
+  </character>
+</dictionary>
+"""
+        self.assertEqual(contents, self.getDictContents())
 
     def testUnregisterChar(self):
         char_code ='池'
@@ -44,6 +71,9 @@ class TomoeDictTest(unittest.TestCase):
         dict = self.setUpXMLDict(dict_contents)
         ret = dict.unregister_char(char_code)
         self.assertEqual(ret, True)
+
+        tomoe_char = dict.get_char(char_code)
+        self.assertEqual(tomoe_char, None)
 
     def testGetExistChar(self):
         char_code ='池'
