@@ -1,25 +1,10 @@
-require 'tomoe-spec-utils'
+require 'tomoe-test-utils'
 
-context "Tomoe::Context" do
-  @@context = nil
-  def context
-    return @@context if @@context
-    config = {
-      "filename" => File.join(data_dir, "handwriting.xml"),
-      "editable" => false,
-    }
-    dict = Tomoe::DictXML.new(config)
-    recognizer = Tomoe::RecognizerSimple.new("dictionary" => dict)
-    @@context = Tomoe::Context.new("recognizer" => recognizer)
-    @@context.load_config(@config_file.path)
-    @@context
-  end
+class TestContext < Test::Unit::TestCase
+  include TomoeTestUtils
 
-  setup do
-    setup_user_dict
-  end
-
-  def setup_user_dict
+  def setup
+    super
     @user_dict_file = Tempfile.new("tomoe-user-dict")
     @user_dict_file.open
     @user_dict_file.puts(<<-EOD)
@@ -44,45 +29,46 @@ EOC
     @user_dict_config_file.close
   end
 
-  TomoeSpecUtils::Path.test_data_files.each do |file|
+  TomoeTestUtils::Path.test_data_files.each do |file|
     base = File.basename(file)
-    specify "Search by strokes for #{base}" do
-      expected, writing = TomoeSpecUtils::TestData.parse(file)
+    define_method("test_search_by_strokes_for_#{base}") do
+      expected, writing = TomoeTestUtils::TestData.parse(file)
       query = Tomoe::Query.new
       query.writing = writing
       cands = context.search(query)
       actual = cands.collect {|cand| cand.char.utf8}
 
-      [base, actual].should == [base, expected]
+      assert_equal([base, expected], [base, actual])
     end
   end
 
-  specify "Search by reading" do
+  def test_search_by_reading
     query = Tomoe::Query.new
     query.add_reading(Tomoe::Reading.new(Tomoe::Reading::JA_KUN, "せい"))
     cands = context.search(query)
-    cands.collect {|cand| cand.char.utf8}.sort.should == ["汐", "背", "脊"].sort
+    assert_equal(["汐", "背", "脊"].sort,
+                 cands.collect {|cand| cand.char.utf8}.sort)
   end
 
-  specify "User dictionary" do
+  def test_user_dictionary
     context = Tomoe::Context.new()
     context.load_config(@user_dict_config_file.path)
 
-    context.search(Tomoe::Query.new).should_be_empty
+    assert_equal([], context.search(Tomoe::Query.new))
 
     char = Tomoe::Char.new
     char.utf8 = "あ"
-    context.register(char).should == true
-    context.search(Tomoe::Query.new).collect do |cand|
-      cand.char.utf8
-    end.should == [char.utf8]
+    assert_true(context.register(char))
+    assert_equal([char.utf8],
+                 context.search(Tomoe::Query.new).collect do |cand|
+                   cand.char.utf8
+                 end)
 
-    context.unregister(char.utf8).should == true
-    context.search(Tomoe::Query.new).should_be_empty
+    assert_true(context.unregister(char.utf8))
+    assert_equal([], context.search(Tomoe::Query.new))
   end
 
-  specify "should assign available UTF8 encoded code point " \
-          "when a character is registered without UTF8 value" do
+  def test_auto_assign_available_utf8_encoded_code_point
     context = Tomoe::Context.new()
     context.load_config(@user_dict_config_file.path)
 
@@ -91,40 +77,60 @@ EOC
     query.min_n_strokes = n_strokes
     query.max_n_strokes = n_strokes
 
-    context.search(query).should_be_empty
+    assert_equal([], context.search(query))
 
     char = Tomoe::Char.new
     char.n_strokes = n_strokes
-    context.register(char).should == true
-    char.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)
+    assert_true(context.register(char))
+    assert_equal(ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START),
+                 char.utf8)
 
-    context.search(query).collect do |cand|
-      cand.char.utf8
-    end.should == [char.utf8]
+    assert_equal([char.utf8],
+                 context.search(query).collect do |cand|
+                   cand.char.utf8
+                 end)
 
 
     char2 = Tomoe::Char.new
     char2.n_strokes = n_strokes
-    context.register(char2).should == true
-    char2.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START + 1)
+    assert_true(context.register(char2))
+    assert_equal(ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START + 1),
+                 char2.utf8)
 
-    context.search(query).collect do |cand|
-      cand.char.utf8
-    end.sort.should == [char.utf8, char2.utf8].sort
+    assert_equal([char.utf8, char2.utf8].sort,
+                 context.search(query).collect do |cand|
+                   cand.char.utf8
+                 end.sort)
   end
 
-  specify "should get character by UTF8" do
+  def test_get_character_by_utf8
     context = Tomoe::Context.new()
     context.load_config(@user_dict_config_file.path)
 
-    context[ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)].should_nil
+    assert_nil(context[ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)])
 
     char = Tomoe::Char.new
     char.n_strokes = 8
-    context.register(char).should == true
-    char.utf8.should == ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)
+    assert_true(context.register(char))
+    assert_equal(ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START),
+                 char.utf8)
 
     retrieved_char = context[ucs4_to_utf8(Tomoe::Char::PRIVATE_USE_AREA_START)]
-    retrieved_char.n_strokes.should == char.n_strokes
+    assert_equal(char.n_strokes, retrieved_char.n_strokes)
+  end
+
+  private
+  @@context = nil
+  def context
+    return @@context if @@context
+    config = {
+      "filename" => File.join(data_dir, "handwriting.xml"),
+      "editable" => false,
+    }
+    dict = Tomoe::DictXML.new(config)
+    recognizer = Tomoe::RecognizerSimple.new("dictionary" => dict)
+    @@context = Tomoe::Context.new("recognizer" => recognizer)
+    @@context.load_config(@config_file.path)
+    @@context
   end
 end

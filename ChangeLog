@@ -1,5 +1,9 @@
 2007-06-08  Kouhei Sutou  <kou@cozmixng.org>
 
+	* bindings/ruby/tomoe.rb: ensure initialize @missing.
+
+	* test/test_*.rb: used Test::Unit instead of RSpec.
+
 	* test/Makefile.am, test/run-test.sh: cleanup.
 
 	* test/: used Test::Unit instead of RSpec because RSpec API is

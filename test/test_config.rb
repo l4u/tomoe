@@ -1,46 +1,49 @@
-require 'tomoe-spec-utils'
+require 'tomoe-test-utils'
 
-context "Tomoe::Config" do
-  def config_file(contents)
-    config_file = Tempfile.new("tomoe-context")
-    config_file.open
-    config_file.puts(contents)
-    config_file.close
-    config_file
-  end
+class TestConfig < Test::Unit::TestCase
+  include TomoeTestUtils
 
-  specify "Get language" do
+  def test_get_language
     file = config_file(<<-EOC)
 [config]
 language = ja
 EOC
     config = Tomoe::Config.new(file.path)
-    config.languages.should == ['ja']
+    assert_equal(["ja"], config.languages)
   end
 
-  specify "Get languages" do
+  def test_get_languages
     file = config_file(<<-EOC)
 [config]
 languages = ja
 EOC
     config = Tomoe::Config.new(file.path)
-    config.languages.should == ['ja']
+    assert_equal(["ja"], config.languages)
 
     file = config_file(<<-EOC)
 [config]
 languages = ja;en;fr
 EOC
     config = Tomoe::Config.new(file.path)
-    config.languages.should == ['ja', 'en', 'fr']
+    assert_equal(['ja', 'en', 'fr'], config.languages)
   end
 
-  specify "both language and languages are specified" do
+  def test_language_and_languages
     file = config_file(<<-EOC)
 [config]
 language = ja
 languages = en;ja;fr
 EOC
     config = Tomoe::Config.new(file.path)
-    config.languages.should == ['ja']
+    assert_equal(["ja"], config.languages)
+  end
+
+  private
+  def config_file(contents)
+    config_file = Tempfile.new("tomoe-context")
+    config_file.open
+    config_file.puts(contents)
+    config_file.close
+    config_file
   end
 end

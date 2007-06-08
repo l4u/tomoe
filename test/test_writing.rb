@@ -1,7 +1,10 @@
-require 'tomoe-spec-utils'
+require 'tomoe-test-utils'
 
-context "Tomoe::Writing" do
-  setup do
+class TestWriting < Test::Unit::TestCase
+  include TomoeTestUtils
+
+  def setup
+    super
     @writing = Tomoe::Writing.new
     @strokes = [
                 [[51, 29], [177, 41]],
@@ -22,12 +25,12 @@ context "Tomoe::Writing" do
     end
   end
 
-  specify "should each all strokes" do
-    @writing.strokes.should == @strokes
-    @writing.collect{|stroke| stroke}.should == @strokes
+  def test_each
+    assert_equal(@strokes, @writing.strokes)
+    assert_equal(@strokes, @writing.collect{|stroke| stroke})
   end
 
-  specify "should dump XML" do
+  def test_dump_xml
     xml = ""
     xml << "    <strokes>\n"
     @strokes.each do |stroke|
@@ -38,6 +41,6 @@ context "Tomoe::Writing" do
       xml << "      </stroke>\n"
     end
     xml << "    </strokes>\n"
-    @writing.to_xml.should == xml
+    assert_equal(xml, @writing.to_xml)
   end
 end
