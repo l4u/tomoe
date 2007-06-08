@@ -49,7 +49,7 @@ if USE_MYSQL
 dict_modules += mysql
 endif
 
-TESTS = run-specs.sh
+TESTS = run-tests.sh
 TESTS_ENVIRONMENT = DICT_MODULES="$(dict_modules)"
 
 output_dict_modules:

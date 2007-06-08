@@ -1,21 +1,23 @@
-require 'tomoe-spec-utils'
+require 'tomoe-test-utils'
 
-context "Tomoe::Char" do
-  specify "should not dump any XML without data" do
+class TestContext < Test::Unit::TestCase
+  include TomoeTestUtils
+
+  def test_dump_without_data
     char = Tomoe::Char.new
-    char.to_xml.should_empty
+    assert_equal("", char.to_xml)
   end
 
-  specify "should dump XML with UTF8" do
+  def test_dump_with_utf8
     char = Tomoe::Char.new
     char.utf8 = "あ"
     xml = "  <character>\n"
     xml << "    <utf8>あ</utf8>\n"
     xml << "  </character>\n"
-    char.to_xml.should == xml
+    assert_equal(xml, char.to_xml)
   end
 
-  specify "should dump XML with variant" do
+  def test_dump_with_variant
     hashigo_daka = ucs4_to_utf8(39641) # はしご高
     char = Tomoe::Char.new
     char.utf8 = "高"
@@ -24,10 +26,10 @@ context "Tomoe::Char" do
     xml << "    <utf8>高</utf8>\n"
     xml << "    <variant>#{hashigo_daka}</variant>\n"
     xml << "  </character>\n"
-    char.to_xml.should == xml
+    assert_equal(xml, char.to_xml)
   end
 
-  specify "should dump XML with radicals" do
+  def test_dump_with_radicals
     sanzui = ucs4_to_utf8(27701) # さんずい
     char = Tomoe::Char.new
     char.utf8 = "池"
@@ -38,123 +40,125 @@ context "Tomoe::Char" do
     xml << "      <radical>#{sanzui}</radical>\n"
     xml << "    </radicals>\n"
     xml << "  </character>\n"
-    char.to_xml.should == xml
+    assert_equal(xml, char.to_xml)
   end
 
-  specify "should load from dumped XML" do
+  def test_load_from_dumped_XML
     char = Tomoe::Char.new
     char.utf8 = "あ"
     new_char = Tomoe::Char.new(char.to_xml)
-    new_char.utf8.should == char.utf8
+    assert_equal(char.utf8, new_char.utf8)
   end
 
-  specify "should load from dumped XML with variant" do
+  def test_load_from_dumped_XML_with_variant
     hashigo_daka = ucs4_to_utf8(39641) # はしご高
     char = Tomoe::Char.new
     char.utf8 = "高"
     char.variant = hashigo_daka
 
     new_char = Tomoe::Char.new(char.to_xml)
-    new_char.utf8.should == char.utf8
-    new_char.variant.should == hashigo_daka
+    assert_equal(char.utf8, new_char.utf8)
+    assert_equal(hashigo_daka, new_char.variant)
   end
 
-  specify "should load from dumped XML with radicals" do
+  def test_load_from_dumped_XML_with_radicals
     sanzui = ucs4_to_utf8(27701) # さんずい
     char = Tomoe::Char.new
     char.utf8 = "池"
     char.add_radical(sanzui)
 
     new_char = Tomoe::Char.new(char.to_xml)
-    new_char.utf8.should == char.utf8
-    new_char.radicals.should == [sanzui]
+    assert_equal(char.utf8, new_char.utf8)
+    assert_equal([sanzui], new_char.radicals)
   end
 
-  specify "should load from dumped XML with n_strokes" do
+  def test_load_from_dumped_XML_with_n_strokes
     utf8 = "a"
     n_strokes = 5
 
     char = Tomoe::Char.new
     char.utf8 = utf8
-    char.n_strokes.should == -1
+    assert_equal(-1, char.n_strokes)
     char.n_strokes = n_strokes
-    char.n_strokes.should == n_strokes
+    assert_equal(n_strokes, char.n_strokes)
 
     new_char = Tomoe::Char.new(char.to_xml)
-    new_char.utf8.should == utf8
-    new_char.n_strokes.should == n_strokes
+    assert_equal(utf8, new_char.utf8)
+    assert_equal(n_strokes, new_char.n_strokes)
   end
 
-  specify "should set/get n_strokes" do
+  def test_n_strokes_accessor
     char = Tomoe::Char.new
-    char.n_strokes.should == -1
+    assert_equal(-1, char.n_strokes)
 
     char.n_strokes = 5
-    char.n_strokes.should == 5
+    assert_equal(5, char.n_strokes)
   end
 
-  specify "should set/get variant" do
+  def test_variant_accessor
     variant = "異"
 
     char = Tomoe::Char.new
-    char.variant.should_nil
+    assert_nil(char.variant)
 
     char.variant = variant
-    char.variant.should == variant
+    assert_equal(variant, char.variant)
   end
 
-  specify "should set/get writing" do
+  def test_writing_accessor
     strokes = [[[0, 0], [10, 10]]]
     writing = Tomoe::Writing.new
     writing.move_to(*strokes[0][0])
     writing.line_to(*strokes[0][1])
-    writing.strokes.should == strokes
+    assert_equal(strokes, writing.strokes)
 
     char = Tomoe::Char.new
-    char.writing.should_nil
+    assert_nil(char.writing)
 
     char.writing = writing
-    char.writing.strokes.should == strokes
+    assert_equal(strokes, char.writing.strokes)
   end
 
-  specify "should add/get reading" do
+  def test_reading_accessor
     reading_a = Tomoe::Reading.new(Tomoe::Reading::JA_ON, "あ")
 
     reading_kai = Tomoe::Reading.new(Tomoe::Reading::JA_KUN, "カイ")
 
     char = Tomoe::Char.new
-    char.readings.should_empty
+    assert_equal([], char.readings)
 
     char.add_reading(reading_a)
-    char.readings.collect do |reading|
-      reading.reading
-    end.sort.should == [reading_a.reading]
+    assert_equal([reading_a.reading].sort,
+                 char.readings.collect do |reading|
+                   reading.reading
+                 end.sort)
 
     char.add_reading(reading_kai)
-    char.readings.collect do |reading|
-      reading.reading
-    end.sort.should == [reading_a.reading, reading_kai.reading].sort
+    assert_equal([reading_a.reading, reading_kai.reading].sort,
+                 char.readings.collect do |reading|
+                   reading.reading
+                 end.sort)
   end
 
-  specify "should add/get radical" do
+  def test_radical_accessor
     radical1 = "木"
     radical2 = "水"
 
     char = Tomoe::Char.new
-    char.radicals.should_empty
+    assert_equal([], char.radicals)
 
     char.add_radical(radical1)
-    char.radicals.sort.should == [radical1]
+    assert_equal([radical1], char.radicals.sort)
 
     char.add_radical(radical2)
-    char.radicals.sort.should == [radical1, radical2].sort
+    assert_equal([radical1, radical2].sort, char.radicals.sort)
   end
 
-  specify "should be comparable" do
+  def test_comparable
     char1 = Tomoe::Char.new
     char1.utf8 = "あ"
     char2 = Tomoe::Char.new
     char2.utf8 = "あ"
-    char1.should == char2
+    assert_equal(char1, char2)
   end
 end
