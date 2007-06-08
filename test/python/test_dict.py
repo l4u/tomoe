@@ -11,7 +11,7 @@ class TomoeDictTest(unittest.TestCase):
         dict_file.write(dict_contents)
         dict_file.close()
 
-        return tomoe.Dict("XML", "filename", dict_name, "editable", True)
+        return tomoe.Dict("XML", filename = dict_name, editable = True)
 
     def testRegisterChar(self):
         dict_contents = """

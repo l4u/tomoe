@@ -17,6 +17,8 @@
 
 	* bindings/python/tomoe-module.c: Call pytomoe_add_constants().
 	* test/python/*: Add a test program.
+	* bindings/python/tomoe-dict.override,
+	bindings/python/tomoe-recognizer.override: Support keyword argument.
 
 2007-06-07  Kouhei Sutou  <kou@cozmixng.org>
 
