@@ -23,9 +23,8 @@ CLEANFILES = *~ *.bak
 SUBDIRS = data
 
 EXTRA_DIST =			\
-	run-spec.rb		\
-	run-specs.sh		\
-	run-test.sh		\
+	run-test.rb		\
+	run-tests.sh		\
 	tomoe-spec-utils.rb	\
 	char_spec.rb		\
 	context_spec.rb		\
