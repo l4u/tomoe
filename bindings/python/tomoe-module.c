@@ -2,6 +2,7 @@
 #include "tomoe.h"
 
 void pytomoe_register_classes (PyObject *d);
+void pytomoe_add_constants    (PyObject *module, const gchar *strip_prefix);
 
 extern PyMethodDef pytomoe_functions[];
 
@@ -16,6 +17,7 @@ inittomoe(void)
     d = PyModule_GetDict (m);
 
     pytomoe_register_classes (d);
+    pytomoe_add_constants (m, "TOMOE_");
 
     if (PyErr_Occurred ())
     {
