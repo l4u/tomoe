@@ -1,6 +1,7 @@
 2007-06-08  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* bindings/python/tomoe-module.c: Call pytomoe_add_constants().
+	* test/python/*: Add a test program.
 
 2007-06-07  Kouhei Sutou  <kou@cozmixng.org>
 
