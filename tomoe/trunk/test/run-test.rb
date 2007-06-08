@@ -12,7 +12,7 @@ $LOAD_PATH.unshift(File.join(test_dir))
 
 require 'tomoe-test-utils'
 
-Dir.glob(File.join(test_dir, "test_char.rb")) do |file|
+Dir.glob(File.join(test_dir, "test_*.rb")) do |file|
   require file.gsub(/\.rb/, "")
 end
 

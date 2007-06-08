@@ -5,8 +5,8 @@ module Tomoe
   LOG_DOMAIN = "Tomoe"
 
   class << self
-    @missing = false
     def const_missing(name)
+      @missing ||= false
       super if @missing
       begin
         missing = @missing

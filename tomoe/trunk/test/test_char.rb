@@ -1,6 +1,6 @@
 require 'tomoe-test-utils'
 
-class TestContext < Test::Unit::TestCase
+class TestChar < Test::Unit::TestCase
   include TomoeTestUtils
 
   def test_dump_without_data
@@ -43,14 +43,14 @@ class TestContext < Test::Unit::TestCase
     assert_equal(xml, char.to_xml)
   end
 
-  def test_load_from_dumped_XML
+  def test_load_from_dumped_xml
     char = Tomoe::Char.new
     char.utf8 = "あ"
     new_char = Tomoe::Char.new(char.to_xml)
     assert_equal(char.utf8, new_char.utf8)
   end
 
-  def test_load_from_dumped_XML_with_variant
+  def test_load_from_dumped_xml_with_variant
     hashigo_daka = ucs4_to_utf8(39641) # はしご高
     char = Tomoe::Char.new
     char.utf8 = "高"
@@ -61,7 +61,7 @@ class TestContext < Test::Unit::TestCase
     assert_equal(hashigo_daka, new_char.variant)
   end
 
-  def test_load_from_dumped_XML_with_radicals
+  def test_load_from_dumped_xml_with_radicals
     sanzui = ucs4_to_utf8(27701) # さんずい
     char = Tomoe::Char.new
     char.utf8 = "池"
@@ -72,7 +72,7 @@ class TestContext < Test::Unit::TestCase
     assert_equal([sanzui], new_char.radicals)
   end
 
-  def test_load_from_dumped_XML_with_n_strokes
+  def test_load_from_dumped_xml_with_n_strokes
     utf8 = "a"
     n_strokes = 5
 

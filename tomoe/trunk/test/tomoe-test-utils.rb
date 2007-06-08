@@ -13,6 +13,7 @@ module TomoeTestUtils
       include Config
       include Dictionary
       include Unicode
+      include Assertions
     end
   end
 
@@ -313,6 +314,16 @@ EOC
 
     def utf8_to_ucs4(utf8)
       Uconv.u8tou4(utf8).unpack("I*")[0]
+    end
+  end
+
+  module Assertions
+    def assert_true(actual, *args)
+      assert_equal(true, actual, *args)
+    end
+
+    def assert_false(actual, *args)
+      assert_equal(false, actual, *args)
     end
   end
 end
