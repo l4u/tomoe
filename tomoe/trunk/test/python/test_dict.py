@@ -31,13 +31,18 @@ class TomoeDictTest(unittest.TestCase):
         <dictionary>
         </dictionary>
         """
-        dict = self.setUpXMLDict(dict_contents)
         char_code ='池'
+        char_data = """
+        <character>
+          <utf8>%s</utf8>
+        </character>
+        """ % (char_code)
+
+        dict = self.setUpXMLDict(dict_contents)
         tomoe_char = dict.get_char(char_code)
         self.assertEqual(tomoe_char, None)
 
-        tomoe_char = tomoe.Char()
-        tomoe_char.set_utf8(char_code)
+        tomoe_char = tomoe.tomoe_char_new_from_xml_data(char_data, -1)
         ret = dict.register_char(tomoe_char)
         self.assertEqual(ret, True)
 
