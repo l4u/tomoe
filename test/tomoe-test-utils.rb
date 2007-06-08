@@ -5,32 +5,7 @@ require 'uconv'
 
 $KCODE = "u"
 
-module TomoeSpecSetup
-  def before_context_eval
-    super
-    @context_eval_module.class_eval do
-      include TomoeSpecUtils
-
-      setup do
-        setup_context
-      end
-
-      teardown do
-        teardown_context
-      end
-    end
-  end
-end
-
-module Spec
-  module Runner
-    class Context
-      include TomoeSpecSetup
-    end
-  end
-end
-
-module TomoeSpecUtils
+module TomoeTestUtils
   def self.included(base)
     base.class_eval do
       include Base
@@ -42,10 +17,12 @@ module TomoeSpecUtils
   end
 
   module Base
-    def setup_context
+    def setup
+      super
     end
 
-    def teardown_context
+    def teardown
+      super
     end
   end
 
@@ -116,13 +93,13 @@ module TomoeSpecUtils
       config
     end
 
-    def setup_context
+    def setup
       super
       @config_file = make_config_file
       FileUtils.mkdir_p(tmp_dir)
     end
 
-    def teardown_context
+    def teardown
       super
       FileUtils.rm_rf(tmp_dir)
     end
@@ -342,5 +319,5 @@ end
 
 require 'tomoe'
 
-Tomoe::Dict.default_module_dir = TomoeSpecUtils::Path.dict_dir
-Tomoe::Recognizer.default_module_dir = TomoeSpecUtils::Path.recognizer_dir
+Tomoe::Dict.default_module_dir = TomoeTestUtils::Path.dict_dir
+Tomoe::Recognizer.default_module_dir = TomoeTestUtils::Path.recognizer_dir
