@@ -10,20 +10,19 @@ ignore
   tomoe_recognizer_get_registered_types
   tomoe_recognizer_get_log_domains
 %%
-override tomoe_recognizer_new
+override tomoe_recognizer_new kwargs
 static int
-_wrap_tomoe_recognizer_new(PyGObject *self, PyObject *args)
+_wrap_tomoe_recognizer_new(PyGObject *self, PyObject *args, PyObject *kwargs)
 {
     PyObject *first_arg;
     TomoeModule *module;
     gchar *recognizer_name, *type_name;
     GObjectClass *class;
     GType obj_type;
-    GParameter *params;
-    guint i, len, n;
-    int ret = 0;
+    GParameter *params = NULL;
+    guint n = 0;
 
-    if ((len = PyTuple_Size(args)) < 1) {
+    if (PyTuple_Size(args) < 1) {
         PyErr_SetString(PyExc_TypeError, "requires at least one argument");
         return -1;
     }
@@ -52,39 +51,36 @@ _wrap_tomoe_recognizer_new(PyGObject *self, PyObject *args)
     }
     g_free(type_name);
 
-    params = g_new0(GParameter, len / 2);
-
     class = g_type_class_ref(obj_type);
-    for (i = 1, n = 0; i < len; i+=2, n++) {
-        PyObject *py_property = PyTuple_GetItem(args, i);
-        PyObject *py_value = PyTuple_GetItem(args, i + 1);
-        gchar *property_name;
-        GParamSpec *pspec;
+    
+    if (kwargs) {
+        Py_ssize_t pos = 0;
+        PyObject *key;
+        PyObject *value;
 
-        if (!PyString_Check(py_property)) {
-            PyErr_SetString(PyExc_TypeError,
-                            "Expected string argument for property.");
-            goto END;
+        params = g_new0(GParameter, PyDict_Size(kwargs));
+        while (PyDict_Next (kwargs, &pos, &key, &value)) {
+            GParamSpec *pspec;
+            gchar *key_str = PyString_AsString(key);
+
+            pspec = g_object_class_find_property(class, key_str);
+            if (!pspec) {
+                PyErr_Format(PyExc_TypeError,
+                             "object of type `%s' doesn't support property `%s'",
+                             g_type_name(obj_type), key_str);
+                goto END;
+            }
+            g_value_init(&params[n].value,
+            G_PARAM_SPEC_VALUE_TYPE(pspec));
+            if (pyg_value_from_pyobject(&params[n].value, value)) {
+                PyErr_Format(PyExc_TypeError,
+                             "could not convert value for property `%s'",
+                             key_str);
+                goto END;
+            }
+            params[n].name = g_strdup(key_str);
+            n++;
         }
-
-        property_name = PyString_AsString(py_property);
-
-        pspec = g_object_class_find_property(class, property_name);
-        if (!pspec) {
-            gchar buf[512];
-            g_snprintf(buf, sizeof(buf),
-                       "%s  does not support property `%s'",
-                       g_type_name(obj_type), 
-                       property_name);
-            PyErr_SetString(PyExc_TypeError, buf);
-
-            goto END;
-        }
-
-        params[n].name = property_name;
-        params[n].value.g_type = 0;
-        g_value_init(&params[n].value, G_PARAM_SPEC_VALUE_TYPE(pspec));
-        pyg_value_from_pyobject(&params[n].value, (PyObject*)py_value);
     }
 
     if (self->obj == NULL) {
@@ -95,12 +91,14 @@ _wrap_tomoe_recognizer_new(PyGObject *self, PyObject *args)
     }
 
 END:
-    while (n--)
+    while (n--) {
+        g_free((gchar *) params[n].name);
         g_value_unset(&params[n].value);
+    }
     g_free(params);
     g_type_class_unref(class);
 
-    return ret;
+    return self->obj ? 0 : -1;
 }
 %%
 override tomoe_recognizer_search kwargs
