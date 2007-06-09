@@ -3,6 +3,8 @@
 	* bindings/python/tomoe.defs: Implement tomoe_reading_compare().
 	* test/python/runtest.py: Taken from PyGtk.
 	* bindings/python/tomoe.defs: tomoe.Char() accepts default arguments
+	* test/python/test_char.rb: More test code for TomoeChar. But
+	testRadical() causes seg fault now. Fix it.
 
 2007-06-08  Kouhei Sutou  <kou@cozmixng.org>
 
