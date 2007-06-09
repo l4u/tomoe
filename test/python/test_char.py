@@ -45,6 +45,7 @@ class TomoeCharTest(unittest.TestCase):
 
         tomoe_char.add_radical(radical_string)
 
+        #self.assertNotEqual(len(tomoe_char.get_radicals()), 0)
         self.fail()
 
     def testWriting(self):
@@ -72,8 +73,5 @@ class TomoeCharTest(unittest.TestCase):
         tomoe_char2 = tomoe.Char()
         tomoe_char2.set_utf8(char2)
         self.assertNotEqual(tomoe_char1.compare(tomoe_char2), 0)
-
-if __name__ == '__main__':
-    unittest.main()
 
 # vi:ts=4:nowrap:ai:expandtab

@@ -2,7 +2,6 @@
 import os
 import sys
 import unittest
-sys.path.append('../../bindings/python/.libs')
 import tomoe
 
 class TomoeReadingTest(unittest.TestCase):
@@ -83,10 +82,5 @@ class TomoeReadingTest(unittest.TestCase):
         self.assertNotEqual(reading2.compare(reading1), 0)
         self.assertNotEqual(reading2.compare(reading3), 0)
         self.assertNotEqual(reading1.compare(reading4), 0)
-
-if __name__ == '__main__':
-    #suite = unittest.makeSuite(TomoeReadingTest)
-    #unittest.TextTestRunner(verbosity=2).run(suite)
-    unittest.main()
 
 # vi:ts=4:nowrap:ai:expandtab

@@ -2,12 +2,10 @@
 import os
 import sys
 import unittest
-sys.path.append('../../bindings/python/.libs')
 import tomoe
 
 class TomoeDictTest(unittest.TestCase):
-    def setUp(self):
-        tomoe.tomoe_dict_set_default_module_dir('../../module/dict/.libs')
+    #def setUp(self):
 
     def setUpXMLDict(self, dict_contents):
         dict_name = "tomoe-test-xmldict.xml"
@@ -221,10 +219,5 @@ class TomoeDictTest(unittest.TestCase):
         tomoe_query.add_reading(tomoe_reading)
         candidates = dict.search(tomoe_query)
         self.assertEqual(candidates[0].get_char().get_utf8(), char_code)
-
-if __name__ == '__main__':
-    suite = unittest.makeSuite(TomoeDictTest)
-    unittest.TextTestRunner(verbosity=2).run(suite)
-    #unittest.main()
 
 # vi:ts=4:nowrap:ai:expandtab
