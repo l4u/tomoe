@@ -12,7 +12,7 @@ _wrap_tomoe_char_get_readings(PyGObject *self)
 
     readings = tomoe_char_get_readings (TOMOE_CHAR(self->obj));
 
-    CONVERT_LIST (py_readings, (GList *) readings);
+    CONVERT_OBJECT_LIST (py_readings, (GList *) readings);
 
     return py_readings;
 }
@@ -26,7 +26,7 @@ _wrap_tomoe_char_get_radicals(PyGObject *self)
 
     radicals = tomoe_char_get_radicals (TOMOE_CHAR(self->obj));
 
-    CONVERT_LIST (py_radicals, (GList *) radicals);
+    CONVERT_STRING_LIST (py_radicals, (GList *) radicals);
 
     return py_radicals;
 }

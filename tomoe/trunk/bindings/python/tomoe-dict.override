@@ -113,7 +113,7 @@ _wrap_tomoe_dict_search(PyGObject *self, PyObject *args, PyObject *kwargs)
     
     candidates = tomoe_dict_search (TOMOE_DICT(self->obj), TOMOE_QUERY(query->obj));
     
-    CONVERT_LIST (py_cands, candidates);
+    CONVERT_OBJECT_LIST (py_cands, candidates);
 
     g_list_free (candidates);
 
