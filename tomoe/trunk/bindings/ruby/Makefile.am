@@ -4,8 +4,8 @@ ruby_lib_DATA = tomoe.rb
 
 EXTRA_DIST = $(ruby_lib_DATA)
 
-ruby_ext_HEADERS = rbtomoe.h
-ruby_ext_LTLIBRARIES = tomoe.la
+ruby_binding_HEADERS = rbtomoe.h
+ruby_binding_LTLIBRARIES = tomoe.la
 
 INCLUDES =		\
 	$(TOMOE_CFLAGS)	\

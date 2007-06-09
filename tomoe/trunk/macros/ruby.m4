@@ -69,13 +69,13 @@ if test "$ruby_available" = "yes"; then
   AC_MSG_CHECKING([where to install Ruby binding])
   AC_CACHE_VAL([cv_ruby_archdir],
                [cv_ruby_archdir="$rbconfig_sitearchdir"])
-  AC_ARG_WITH([ruby-extdir],
-                AS_HELP_STRING([--with-ruby-extdir=EXTDIR],
+  AC_ARG_WITH([ruby-bindingdir],
+                AS_HELP_STRING([--with-ruby-bindingdir=EXTDIR],
                                [install Ruby bindings in EXTDIR
                                 (default is same as ruby's one)]),
-                [ruby_extdir="$withval"],
-                [ruby_extdir="$cv_ruby_archdir"])
-  AC_MSG_RESULT([$ruby_extdir])
+                [ruby_bindingdir="$withval"],
+                [ruby_bindingdir="$cv_ruby_archdir"])
+  AC_MSG_RESULT([$ruby_bindingdir])
 
   AC_MSG_CHECKING([where to install Ruby scripts])
   AC_CACHE_VAL([cv_ruby_sitedir],
@@ -88,7 +88,7 @@ if test "$ruby_available" = "yes"; then
                [ruby_libdir="$cv_ruby_sitedir"])
   AC_MSG_RESULT([$ruby_libdir])
 
-  AC_SUBST(ruby_extdir)
+  AC_SUBST(ruby_bindingdir)
   AC_SUBST(ruby_libdir)
 fi
 
