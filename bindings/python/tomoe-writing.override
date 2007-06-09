@@ -12,7 +12,7 @@ _wrap_tomoe_writing_get_strokes(PyGObject *self)
 
     strokes = tomoe_writing_get_strokes (TOMOE_WRITING(self->obj));
 
-    CONVERT_LIST (py_strokes, (GList *) strokes);
+    CONVERT_OBJECT_LIST (py_strokes, (GList *) strokes);
 
     return py_strokes;
 }

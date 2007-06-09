@@ -12,7 +12,7 @@ _wrap_tomoe_shelf_get_dict_names(PyGObject *self)
 
     names = tomoe_shelf_get_dict_names (TOMOE_SHELF(self->obj));
 
-    CONVERT_LIST (py_names, names);
+    CONVERT_STRING_LIST (py_names, names);
 
     g_list_free (names);
 
