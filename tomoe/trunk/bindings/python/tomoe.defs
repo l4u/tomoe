@@ -144,6 +144,12 @@
   (c-name "tomoe_char_new")
   (is-constructor-of "TomoeChar")
   (return-type "TomoeChar*")
+  (properties
+    '("utf8" (argname "utf8") (optional))
+    '("writing" (argname "writing") (optional))
+    '("n_strokes" (argname "n_strokes") (optional))
+    '("variant" (argname "variant") (optional))
+  )
 )
 
 (define-function tomoe_char_new_from_xml_data
