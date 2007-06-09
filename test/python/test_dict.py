@@ -6,7 +6,8 @@ sys.path.append('../../bindings/python/.libs')
 import tomoe
 
 class TomoeDictTest(unittest.TestCase):
-    #def setUp(self):
+    def setUp(self):
+        tomoe.tomoe_dict_set_default_module_dir('../../module/dict/.libs')
 
     def setUpXMLDict(self, dict_contents):
         dict_name = "tomoe-test-xmldict.xml"
