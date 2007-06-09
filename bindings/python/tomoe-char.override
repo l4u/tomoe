@@ -31,3 +31,10 @@ _wrap_tomoe_char_get_radicals(PyGObject *self)
     return py_radicals;
 }
 %%
+override-slot TomoeChar.tp_compare
+static int
+_wrap_tomoe_char_tp_compare(PyGObject *obj1, PyGObject *obj2)
+{
+	return tomoe_char_compare(TOMOE_CHAR(obj1->obj), TOMOE_CHAR(obj2->obj));
+}
+%%

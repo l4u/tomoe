@@ -9,6 +9,8 @@
 	CONVERT_LIST to CONVERT_OBJECT_LIST.
 	* bindings/python/*.override: Follow the above change. Now
 	testRadical() works fine.
+	* bindings/python/tomoe-char.override,
+	bindings/python/tomoe-reading.override: Implement compare operator.
 
 2007-06-08  Kouhei Sutou  <kou@cozmixng.org>
 
