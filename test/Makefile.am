@@ -26,10 +26,11 @@ EXTRA_DIST =			\
 	run-test.rb		\
 	run-tests.sh		\
 	tomoe-spec-utils.rb	\
-	char_spec.rb		\
-	context_spec.rb		\
-	dict_spec.rb		\
-	writing_spec.rb
+	test_char.rb		\
+	test_config.rb		\
+	test_context.rb		\
+	test_dict.rb		\
+	test_writing.rb
 
 dict_modules = xml
 if USE_EST
