@@ -1,3 +1,7 @@
+2007-06-10  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* bindings/ruby/tomoe-rb-reading.c: Implement compare operator.
+
 2007-06-09  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* bindings/python/tomoe.defs: Implement tomoe_reading_compare().

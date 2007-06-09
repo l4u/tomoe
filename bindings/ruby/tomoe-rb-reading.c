@@ -26,6 +26,12 @@ tr_to_xml(VALUE self)
     return rb_xml;
 }
 
+static VALUE
+tr_compare(VALUE self, VALUE other)
+{
+    return INT2NUM(tomoe_reading_compare(_SELF(self), RVAL2TRDG(other)));
+}
+
 void
 _tomoe_rb_init_tomoe_reading(VALUE mTomoe)
 {
@@ -37,6 +43,8 @@ _tomoe_rb_init_tomoe_reading(VALUE mTomoe)
     G_DEF_CONSTANTS(cTomoeReading, TOMOE_TYPE_READING_TYPE, "TOMOE_READING_");
 
     rb_define_method(cTomoeReading, "initialize", tr_initialize, 2);
+
+    rb_define_method(cTomoeReading, "<=>", tr_compare, 1);
 
     rb_define_method(cTomoeReading, "to_xml", tr_to_xml, 0);
 }
