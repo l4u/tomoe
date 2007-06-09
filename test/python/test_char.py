@@ -99,10 +99,9 @@ class TomoeCharTest(unittest.TestCase):
         
         tomoe_char1 = tomoe.Char(utf8 = char1)
         tomoe_char2 = tomoe.Char(utf8 = char1)
-
-        self.assertEqual(tomoe_char1.compare(tomoe_char2), 0)
+        self.assertEqual(tomoe_char1, tomoe_char2)
         
         tomoe_char2 = tomoe.Char(utf8 = char2)
-        self.assertNotEqual(tomoe_char1.compare(tomoe_char2), 0)
+        self.assertNotEqual(tomoe_char1, tomoe_char2, 0)
 
 # vi:ts=4:nowrap:ai:expandtab
