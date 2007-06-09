@@ -563,6 +563,12 @@
   (c-name "tomoe_query_new")
   (is-constructor-of "TomoeQuery")
   (return-type "TomoeQuery*")
+  (properties
+    '("utf8" (argname "utf8") (optional))
+    '("writing" (argname "writing") (optional))
+    '("min_n_strokes" (argname "min_n_strokes") (optional))
+    '("max_n_strokes" (argname "max_n_strokes") (optional))
+  )
 )
 
 (define-method get_utf8
