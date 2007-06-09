@@ -2,7 +2,6 @@
 import os
 import sys
 import unittest
-sys.path.append('../../bindings/python/.libs')
 import tomoe
 
 class TomoeCharTest(unittest.TestCase):
