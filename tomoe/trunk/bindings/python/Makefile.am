@@ -38,6 +38,7 @@ OVERRIDES =					\
 	tomoe-context.override			\
 	tomoe-dict.override			\
 	tomoe-query.override			\
+	tomoe-reading.override			\
 	tomoe-recognizer.override		\
 	tomoe-shelf.override			\
 	tomoe-writing.override
