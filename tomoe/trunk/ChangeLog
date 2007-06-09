@@ -13,6 +13,7 @@
 	bindings/python/tomoe-reading.override: Implement compare operator.
 	* bindings/python/tomoe.defs: add optional arguments for
 	tomoe.Query().
+	* test/python/test_query.rb: Some test code for TomoeQuery.
 
 2007-06-08  Kouhei Sutou  <kou@cozmixng.org>
 
