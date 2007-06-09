@@ -6,7 +6,6 @@ sys.path.append('../../bindings/python/.libs')
 import tomoe
 
 class TomoeCharTest(unittest.TestCase):
-    #def setUp(self):
 
     def testUTF8(self):
         utf8 = '池'
@@ -52,14 +51,17 @@ class TomoeCharTest(unittest.TestCase):
         self.assertEqual(tomoe_char.get_readings().sort(), [reading1, reading2].sort())
 
     def testRadical(self):
-        radical_string = 'いけ'
+        radical_string1 = 'いけ'
 
         tomoe_char = tomoe.Char()
         self.assertEqual(len(tomoe_char.get_radicals()), 0)
 
-        tomoe_char.add_radical(radical_string)
+        tomoe_char.add_radical(radical_string1)
+        self.assertEqual(tomoe_char.get_radicals(), [radical_string1])
 
-        self.assertNotEqual(len(tomoe_char.get_radicals()), 0)
+        radical_string2 = 'ほげ'
+        tomoe_char.add_radical(radical_string2)
+        self.assertEqual(tomoe_char.get_radicals().sort(), [radical_string1, radical_string2].sort())
 
     def testWriting(self):
         writing = tomoe.Writing()
@@ -95,15 +97,12 @@ class TomoeCharTest(unittest.TestCase):
         char1 = '池'
         char2 = '地'
         
-        tomoe_char1 = tomoe.Char()
-        tomoe_char1.set_utf8(char1)
-        tomoe_char2 = tomoe.Char()
-        tomoe_char2.set_utf8(char1)
+        tomoe_char1 = tomoe.Char(utf8 = char1)
+        tomoe_char2 = tomoe.Char(utf8 = char1)
 
         self.assertEqual(tomoe_char1.compare(tomoe_char2), 0)
         
-        tomoe_char2 = tomoe.Char()
-        tomoe_char2.set_utf8(char2)
+        tomoe_char2 = tomoe.Char(utf8 = char2)
         self.assertNotEqual(tomoe_char1.compare(tomoe_char2), 0)
 
 # vi:ts=4:nowrap:ai:expandtab

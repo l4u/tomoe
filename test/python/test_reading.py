@@ -5,7 +5,6 @@ import unittest
 import tomoe
 
 class TomoeReadingTest(unittest.TestCase):
-    #def setUp(self):
 
     def testGetReadingType(self):
         reading_string = "いけ"
