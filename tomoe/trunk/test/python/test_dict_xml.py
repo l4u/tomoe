@@ -13,6 +13,7 @@ class TomoeDictXMLTest(test_dict.TomoeDictTest):
     def tearDown(self):
         self.dict.flush()
         self.dict = None
-        os.unlink(self.dict_name)
+        if os.access(self.dict_name, os.F_OK):
+            os.unlink(self.dict_name)
 
 # vi:ts=4:nowrap:ai:expandtab
