@@ -1,3 +1,8 @@
+2007-06-11  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* test/python/test_dict_xml.py: Unlink temporary file only if the file
+	exists
+
 2007-06-10  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* bindings/ruby/tomoe-rb-reading.c: Implement compare operator.
