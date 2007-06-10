@@ -24,12 +24,56 @@ private fields and should not be directly accessed.
 </para>
 
 
+<!-- ##### ARG TomoeRecognizer:language ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION tomoe_recognizer_init ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION tomoe_recognizer_quit ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION tomoe_recognizer_get_default_module_dir ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_recognizer_set_default_module_dir ##### -->
+<para>
+
+</para>
+
+@dir: 
+
+
 <!-- ##### FUNCTION tomoe_recognizer_load ##### -->
 <para>
 
 </para>
 
 @base_dir: 
+
+
+<!-- ##### FUNCTION tomoe_recognizer_load_module ##### -->
+<para>
+
+</para>
+
+@name: 
+@Returns: 
 
 
 <!-- ##### FUNCTION tomoe_recognizer_unload ##### -->
@@ -40,6 +84,14 @@ private fields and should not be directly accessed.
 
 
 <!-- ##### FUNCTION tomoe_recognizer_get_registered_types ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_recognizer_get_log_domains ##### -->
 <para>
 
 </para>
@@ -65,6 +117,24 @@ private fields and should not be directly accessed.
 
 @recognizer: 
 @input: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_recognizer_get_language ##### -->
+<para>
+
+</para>
+
+@recognizer: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_recognizer_is_available ##### -->
+<para>
+
+</para>
+
+@recognizer: 
 @Returns: 
 
 

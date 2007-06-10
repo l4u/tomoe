@@ -24,12 +24,51 @@ private fields and should not be directly accessed.
 </para>
 
 
+<!-- ##### FUNCTION tomoe_dict_init ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION tomoe_dict_quit ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION tomoe_dict_get_default_module_dir ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_dict_set_default_module_dir ##### -->
+<para>
+
+</para>
+
+@dir: 
+
+
 <!-- ##### FUNCTION tomoe_dict_load ##### -->
 <para>
 
 </para>
 
 @base_dir: 
+
+
+<!-- ##### FUNCTION tomoe_dict_load_module ##### -->
+<para>
+
+</para>
+
+@name: 
+@Returns: 
 
 
 <!-- ##### FUNCTION tomoe_dict_unload ##### -->
@@ -40,6 +79,14 @@ private fields and should not be directly accessed.
 
 
 <!-- ##### FUNCTION tomoe_dict_get_registered_types ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_dict_get_log_domains ##### -->
 <para>
 
 </para>
@@ -117,6 +164,15 @@ private fields and should not be directly accessed.
 
 
 <!-- ##### FUNCTION tomoe_dict_is_editable ##### -->
+<para>
+
+</para>
+
+@dict: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_dict_is_available ##### -->
 <para>
 
 </para>

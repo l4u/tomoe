@@ -23,6 +23,16 @@ TomoeModule
 </para>
 
 
+<!-- ##### FUNCTION tomoe_module_load_module ##### -->
+<para>
+
+</para>
+
+@base_dir: 
+@name: 
+@Returns: 
+
+
 <!-- ##### FUNCTION tomoe_module_load_modules ##### -->
 <para>
 
@@ -32,19 +42,47 @@ TomoeModule
 @Returns: 
 
 
-<!-- ##### FUNCTION tomoe_module_instantiate ##### -->
+<!-- ##### FUNCTION tomoe_module_load_modules_unique ##### -->
+<para>
+
+</para>
+
+@base_dir: 
+@modules: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_module_find ##### -->
 <para>
 
 </para>
 
 @modules: 
 @name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_module_instantiate ##### -->
+<para>
+
+</para>
+
+@module: 
 @first_property: 
 @var_args: 
 @Returns: 
 
 
 <!-- ##### FUNCTION tomoe_module_collect_registered_types ##### -->
+<para>
+
+</para>
+
+@modules: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_module_collect_log_domains ##### -->
 <para>
 
 </para>
