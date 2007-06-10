@@ -292,6 +292,7 @@ db/lib/Makefile
 db/migrate/Makefile
 test/Makefile
 test/data/Makefile
+test/python/Makefile
 benchmark/Makefile
 doc/Makefile
 doc/reference/Makefile

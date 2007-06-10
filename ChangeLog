@@ -1,6 +1,8 @@
 2007-06-10  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* bindings/ruby/tomoe-rb-reading.c: Implement compare operator.
+	* configure.ac, test/Makefile.am, test/python/Makefile.am: Add
+	test/python/Makefile.am.
 
 2007-06-09  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
