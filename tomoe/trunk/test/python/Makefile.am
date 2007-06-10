@@ -24,6 +24,9 @@ EXTRA_DIST =			\
 	runtests.py		\
 	test_char.py		\
 	test_dict.py		\
+	test_dict_est.py	\
+	test_dict_unihan.py	\
+	test_dict_xml.py	\
 	test_query.py		\
 	test_reading.py
 
