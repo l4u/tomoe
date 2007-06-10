@@ -42,8 +42,7 @@ class TomoeDictTest(unittest.TestCase):
         self.assertEqual(tomoe_char, None)
 
         tomoe_char = tomoe.tomoe_char_new_from_xml_data(char_data, -1)
-        ret = dict.register_char(tomoe_char)
-        self.assertEqual(ret, True)
+        self.assert_(dict.register_char(tomoe_char))
 
         tomoe_char = dict.get_char(char_code)
         self.assertNotEqual(tomoe_char, None)
@@ -73,8 +72,7 @@ class TomoeDictTest(unittest.TestCase):
         </dictionary>
         """ % (char_code)
         dict = self.setUpXMLDict(dict_contents)
-        ret = dict.unregister_char(char_code)
-        self.assertEqual(ret, True)
+        self.assert_(dict.unregister_char(char_code))
 
         tomoe_char = dict.get_char(char_code)
         self.assertEqual(tomoe_char, None)
