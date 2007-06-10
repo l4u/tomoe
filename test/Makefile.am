@@ -29,7 +29,7 @@ endif
 EXTRA_DIST =			\
 	run-test.rb		\
 	run-tests.sh		\
-	tomoe-spec-utils.rb	\
+	tomoe-test-utils.rb	\
 	test_char.rb		\
 	test_config.rb		\
 	test_context.rb		\
