@@ -2,6 +2,14 @@
 
 	* test/python/test_dict_xml.py: Unlink temporary file only if the file
 	exists
+	* test/python/runtests.py: Test Unihan dict. Use insert() for addition
+	path for loading tomoe module instead of append() since building tomoe
+	module is prior to system tomoe module.
+	* test/python/test_dict_xml.py: Create test dictionary in setUp().
+	* test/python/test_dict.py: Follow the above change.
+	* test/python/test_dict_unihan.py: Override some methods of
+	TomoeDictTest since Unihan dictionary module does not have some
+	functions.
 
 2007-06-10  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
