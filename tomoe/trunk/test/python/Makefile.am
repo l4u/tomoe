@@ -20,21 +20,12 @@
 
 CLEANFILES = *~ *.bak
 
-SUBDIRS = data
-
-if WITH_PYTHON
-SUBDIRS += python
-endif
-
 EXTRA_DIST =			\
-	run-test.rb		\
-	run-tests.sh		\
-	tomoe-spec-utils.rb	\
-	test_char.rb		\
-	test_config.rb		\
-	test_context.rb		\
-	test_dict.rb		\
-	test_writing.rb
+	runtests.rb		\
+	test_char.py		\
+	test_dict.py		\
+	test_query.py		\
+	test_reading.py
 
 dict_modules = xml
 if USE_EST
@@ -53,11 +44,5 @@ if USE_MYSQL
 dict_modules += mysql
 endif
 
-TESTS = run-tests.sh
+TESTS = runtests.py
 TESTS_ENVIRONMENT = DICT_MODULES="$(dict_modules)"
-
-output_dict_modules:
-	@echo $(dict_modules)
-
-output_RUBY:
-	@echo $(RUBY)
