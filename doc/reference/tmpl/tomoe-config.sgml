@@ -62,6 +62,16 @@ private fields and should not be directly accessed.
 </para>
 
 @config: 
+@language: 
+@Returns: 
+
+
+<!-- ##### FUNCTION tomoe_config_get_languages ##### -->
+<para>
+
+</para>
+
+@config: 
 @Returns: 
 
 
