@@ -42,4 +42,59 @@ class TomoeQueryTest(unittest.TestCase):
         query.add_radical(radical2)
         self.assertEqual(query.get_radicals().sort(), [radical1, radical2].sort())
 
+    def testRadical(self):
+        query = tomoe.Query()
+        self.assertEqual(len(query.get_radicals()), 0)
+
+        radical1 = "いけ"
+        query.add_radical(radical1)
+        self.assertEqual(query.get_radicals(), [radical1])
+
+        radical2 = "ひげ"
+        query.add_radical(radical2)
+        self.assertEqual(query.get_radicals().sort(), [radical1, radical2].sort())
+
+    def testVariant(self):
+        query = tomoe.Query()
+        self.assertEqual(query.get_variant(), None)
+
+        variant = "池"
+        query.set_variant(variant)
+        self.assertEqual(query.get_variant(), variant)
+
+        variant = "地"
+        query.set_variant(variant)
+        self.assertEqual(query.get_variant(), variant)
+
+    def testMinStroke(self):
+        query = tomoe.Query()
+        self.assertEqual(query.get_min_n_strokes(), -1)
+
+        n_strokes = 2
+        query.set_min_n_strokes(n_strokes)
+        self.assertEqual(query.get_min_n_strokes(), n_strokes)
+
+        n_strokes = 3
+        query.set_min_n_strokes(n_strokes)
+        self.assertEqual(query.get_min_n_strokes(), n_strokes)
+
+    def testMaxStroke(self):
+        query = tomoe.Query()
+        self.assertEqual(query.get_max_n_strokes(), -1)
+
+        n_strokes = 2
+        query.set_max_n_strokes(n_strokes)
+        self.assertEqual(query.get_max_n_strokes(), n_strokes)
+
+        n_strokes = 3
+        query.set_max_n_strokes(n_strokes)
+        self.assertEqual(query.get_max_n_strokes(), n_strokes)
+
+    def testEmpty(self):
+        query = tomoe.Query()
+        self.assert_(query.is_empty())
+
+        query = tomoe.Query(utf8 = '池')
+        self.assert_(not query.is_empty())
+
 # vi:ts=4:nowrap:ai:expandtab
