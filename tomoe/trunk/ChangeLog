@@ -3,6 +3,7 @@
 	* bindings/ruby/tomoe-rb-reading.c: Implement compare operator.
 	* configure.ac, test/Makefile.am, test/python/Makefile.am: Add
 	test/python/Makefile.am.
+	* test/python/test_query.py: More test code for TomoeQuery.
 
 2007-06-09  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
