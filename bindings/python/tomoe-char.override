@@ -3,6 +3,9 @@ headers
 #define NO_IMPORT_PYGOBJECT
 #include "pytomoe-utils.h"
 %%
+ignore
+  tomoe_char_metadata_foreach
+%%
 override tomoe_char_get_readings noargs
 static PyObject *
 _wrap_tomoe_char_get_readings(PyGObject *self)
