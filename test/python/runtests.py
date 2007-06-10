@@ -7,7 +7,7 @@ sys.path.append('../../bindings/python/.libs')
 import tomoe
 tomoe.tomoe_dict_set_default_module_dir('../../module/dict/.libs')
 
-SKIP_FILES = ['runtests']
+SKIP_FILES = ['runtests', 'test_dict', 'test_dict_est', 'test_dict_unihan']
 
 dir = os.path.split(os.path.abspath(__file__))[0]
 os.chdir(dir)
