@@ -130,6 +130,8 @@ EOC
     dict = Tomoe::DictXML.new(config)
     recognizer = Tomoe::RecognizerSimple.new("dictionary" => dict)
     @@context = Tomoe::Context.new("recognizer" => recognizer)
+    ensure_dict = "ensure_dict_#{dict_module_type}"
+    __send__(ensure_dict) if respond_to?(ensure_dict, true)
     @@context.load_config(@config_file.path)
     @@context
   end
