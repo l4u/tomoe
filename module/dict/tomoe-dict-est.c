@@ -615,7 +615,7 @@ append_search_cond_readings (TomoeDictEst *dict, ESTCOND *cond, GString *phrase,
           case TOMOE_READING_INVALID:
           case TOMOE_READING_UNKNOWN:
           default:
-            expr = g_strdup_printf ("all_readings STRINC %s", read_str);
+            expr = g_strdup_printf ("all_readings STRRX (\\s|^)%s(\\s|$)", read_str);
             est_cond_add_attr (cond, expr);
             g_free (expr);
             break;

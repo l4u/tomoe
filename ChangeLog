@@ -26,6 +26,8 @@
 	in attribute area of document.
 	* module/dict/tomoe-dict-est.c: Query of search by reading is always
 	handled as TOMOE_READING_UNKNOWN type.
+	* module/dict/tomoe-dict-est.c: Use STRRX flag for searching readings.
+	It brings the result that includes readings matched exactly with queries.
 
 2007-06-10  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
