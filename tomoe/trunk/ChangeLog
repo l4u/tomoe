@@ -1,3 +1,10 @@
+2007-06-12  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* lib/tomoe-reading.[ch]: Add tomoe_reading_has_prefix().
+	* module/dict/tomoe-dict-est.c, module/dict/tomoe-dict-ptr-array.c:
+	Now reading search is prefix search.
+	* test/test_context.rb: Fix test results suited for prefix search.
+
 2007-06-11  Kouhei Sutou  <kou@cozmixng.org>
 
 	* test/tomoe-test-utils.rb, test/test_context.rb: fixed test when

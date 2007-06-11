@@ -67,6 +67,9 @@ gchar            *tomoe_reading_to_xml           (TomoeReading     *reading);
 gint              tomoe_reading_compare          (const TomoeReading *a,
                                                   const TomoeReading *b);
 
+gboolean          tomoe_reading_has_prefix       (TomoeReading       *reading,
+                                                  const TomoeReading *prefix_reading);
+
 G_END_DECLS
 
 #endif /* __TOMOE_READING_H__ */

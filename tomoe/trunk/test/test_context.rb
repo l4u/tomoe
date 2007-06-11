@@ -46,7 +46,7 @@ EOC
     query = Tomoe::Query.new
     query.add_reading(Tomoe::Reading.new(Tomoe::Reading::JA_KUN, "せい"))
     cands = context.search(query)
-    assert_equal(["汐", "背", "脊"].sort,
+    assert_equal(["汐", "背", "脊", "醎", "鈼", "鮬", "鹹"].sort,
                  cands.collect {|cand| cand.char.utf8}.sort)
   end
 

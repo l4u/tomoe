@@ -262,6 +262,28 @@ tomoe_reading_compare (const TomoeReading *a, const TomoeReading *b)
     return strcmp (priv_a->reading, priv_b->reading);
 }
 
+gboolean
+tomoe_reading_has_prefix (TomoeReading *reading, const TomoeReading *prefix_reading)
+{
+    TomoeReadingPrivate *priv_a, *priv_b;
+
+    if (!reading || !prefix_reading) return TRUE;
+
+    priv_a = TOMOE_READING_GET_PRIVATE (reading);
+    priv_b = TOMOE_READING_GET_PRIVATE (prefix_reading);
+    if (!priv_a || !priv_b) return 0;
+
+    if (!priv_a->reading || !priv_b->reading) return TRUE;
+
+    if (priv_a->type != priv_b->type &&
+        (priv_a->type != TOMOE_READING_UNKNOWN &&
+         priv_b->type != TOMOE_READING_UNKNOWN)) {
+        return FALSE;
+    }
+
+    return g_str_has_prefix (priv_a->reading, priv_b->reading);
+}
+
 /*
 vi:ts=4:nowrap:ai:expandtab
 */
