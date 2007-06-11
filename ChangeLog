@@ -28,6 +28,9 @@
 	handled as TOMOE_READING_UNKNOWN type.
 	* module/dict/tomoe-dict-est.c: Use STRRX flag for searching readings.
 	It brings the result that includes readings matched exactly with queries.
+	* module/dict/tomoe-dict-est.c: Insert a space before append
+	on_readings and kun_readings string to all_readings. Now all tests
+	passed!
 
 2007-06-10  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
