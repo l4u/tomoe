@@ -76,7 +76,7 @@ class TomoeDictTest(unittest.TestCase):
 
     def testUnknownOnReadingSearch(self):
         char_code = '池'
-        reading = 'いけ'
+        reading = 'チ'
         tomoe_reading = tomoe.Reading(tomoe.READING_UNKNOWN, reading)
         tomoe_query = tomoe.Query()
         tomoe_query.add_reading(tomoe_reading)
