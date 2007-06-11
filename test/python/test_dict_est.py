@@ -17,6 +17,8 @@ class TomoeDictEstTest(test_dict.TomoeDictTest):
         tomoe_char.add_reading(reading)
         reading = tomoe.Reading(tomoe.READING_JA_ON, 'チ')
         tomoe_char.add_reading(reading)
+        reading = tomoe.Reading(tomoe.READING_JA_ON, 'タ')
+        tomoe_char.add_reading(reading)
         reading = tomoe.Reading(tomoe.READING_UNKNOWN, 'あんのうん')
         tomoe_char.add_reading(reading)
 
