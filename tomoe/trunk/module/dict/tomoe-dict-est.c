@@ -405,12 +405,14 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
 
         if (on_readings) {
             est_doc_add_attr (doc, "ja_on_readings", on_readings->str);
+            all_readings = g_string_append_c (all_readings, ' ');
             all_readings = g_string_append (all_readings, on_readings->str);
             g_string_free (on_readings, TRUE);
         }
         all_readings = g_string_append_c (all_readings, ' ');
         if (kun_readings) {
             est_doc_add_attr (doc, "ja_kun_readings", kun_readings->str);
+            all_readings = g_string_append_c (all_readings, ' ');
             all_readings = g_string_append (all_readings, kun_readings->str);
             g_string_free (kun_readings, TRUE);
         }
