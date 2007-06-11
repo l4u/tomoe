@@ -22,6 +22,8 @@
 	* test/python/runtests.py: test_dict_est.py is now avairable.
 	* module/dict/tomoe-dict-est.c: Readings is set into document
 	attribute.
+	* module/dict/tomoe-dict-est.c: Reading data is separated by a space
+	in attribute area of document.
 
 2007-06-10  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
