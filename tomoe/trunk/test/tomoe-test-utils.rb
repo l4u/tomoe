@@ -96,8 +96,8 @@ module TomoeTestUtils
 
     def setup
       super
-      @config_file = make_config_file
       FileUtils.mkdir_p(tmp_dir)
+      @config_file = make_config_file
     end
 
     def teardown
@@ -136,12 +136,33 @@ type = unihan
 EOC
     end
 
+    def est_db
+      File.join(tmp_dir, File.basename(dictionary).sub(/\.xml$/, ''))
+    end
+
+    def ensure_dict_est
+      unless File.exists?(est_db)
+        tmp_est_db = "#{est_db}.tmp"
+        FileUtils.rm_rf(tmp_est_db)
+        xml_dict = Tomoe::DictXML.new("filename" => dictionary,
+                                      "editable" => false)
+        est_dict = Tomoe::DictEst.new("database" => tmp_est_db,
+                                      "editable" => true)
+        xml_dict.search(Tomoe::Query.new).each_with_index do |cand, i|
+          est_dict.register(cand.char)
+        end
+        est_dict.flush
+        FileUtils.cp_r(tmp_est_db, est_db)
+      end
+    end
+
     def make_config_file_for_est
+      dict_basename = File.basename(dictionary).sub(/\.xml$/, '')
       <<-EOC
-[#{File.basename(dictionary)}-dictionary]
+[#{dict_basename}-dictionary]
 type = est
-name = #{File.basename(dictionary)}
-database = #{dictionary.sub(/\.xml$/, '')}
+name = #{dict_basename}
+database = #{est_db}
 EOC
     end
 

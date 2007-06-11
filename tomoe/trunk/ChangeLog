@@ -1,3 +1,8 @@
+2007-06-11  Kouhei Sutou  <kou@cozmixng.org>
+
+	* test/tomoe-test-utils.rb, test/test_context.rb: fixed test when
+	TOMOE_DICT_MODULE=est.
+
 2007-06-11  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* test/python/test_dict_xml.py: Unlink temporary file only if the file
