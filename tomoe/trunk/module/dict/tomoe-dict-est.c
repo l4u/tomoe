@@ -375,6 +375,7 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
     readings = tomoe_char_get_readings (chr);
     if (readings) {
         GString *on_readings = NULL, *kun_readings = NULL, *all_readings = NULL;
+        all_readings = g_string_new (NULL);
         for (node = readings; node; node = g_list_next (node)) {
             TomoeReading *reading = TOMOE_READING (node->data);
             const gchar *read_str = tomoe_reading_get_reading (reading);
@@ -395,17 +396,19 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
                 break;
               case TOMOE_READING_UNKNOWN: 
               case TOMOE_READING_INVALID: 
+                all_readings = g_string_append_c (all_readings, ' ');
+                all_readings = g_string_append (all_readings, read_str);
               default:
                 break;
             }
         }
 
-        all_readings = g_string_new (NULL);
         if (on_readings) {
             est_doc_add_attr (doc, "ja_on_readings", on_readings->str);
             all_readings = g_string_append (all_readings, on_readings->str);
             g_string_free (on_readings, TRUE);
         }
+        all_readings = g_string_append_c (all_readings, ' ');
         if (kun_readings) {
             est_doc_add_attr (doc, "ja_kun_readings", kun_readings->str);
             all_readings = g_string_append (all_readings, kun_readings->str);
@@ -589,8 +592,12 @@ append_search_cond_readings (TomoeDictEst *dict, ESTCOND *cond, GString *phrase,
         gchar *expr;
 
         switch (tomoe_reading_get_reading_type (reading)) {
+#if 0
           case TOMOE_READING_JA_ON:
             expr = g_strdup_printf ("ja_on_readings STRINC %s", read_str);
+            est_cond_add_attr (cond, expr);
+            g_free (expr);
+            expr = g_strdup_printf ("all_readings STRINC %s", read_str);
             est_cond_add_attr (cond, expr);
             g_free (expr);
             break;
@@ -598,13 +605,19 @@ append_search_cond_readings (TomoeDictEst *dict, ESTCOND *cond, GString *phrase,
             expr = g_strdup_printf ("ja_kun_readings STRINC %s", read_str);
             est_cond_add_attr (cond, expr);
             g_free (expr);
-            break;
-          case TOMOE_READING_INVALID:
-          case TOMOE_READING_UNKNOWN:
             expr = g_strdup_printf ("all_readings STRINC %s", read_str);
             est_cond_add_attr (cond, expr);
             g_free (expr);
+            break;
+#endif
+          case TOMOE_READING_JA_ON:
+          case TOMOE_READING_JA_KUN:
+          case TOMOE_READING_INVALID:
+          case TOMOE_READING_UNKNOWN:
           default:
+            expr = g_strdup_printf ("all_readings STRINC %s", read_str);
+            est_cond_add_attr (cond, expr);
+            g_free (expr);
             break;
         }
     }
