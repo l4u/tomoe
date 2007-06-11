@@ -332,6 +332,8 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
     const gchar *original_value;
     gchar *value;
     gint n_strokes;
+    const GList *readings, *node;
+    GList *on_readings = NULL, *kun_readings = NULL;
     ESTDOC *doc;
 
     g_return_val_if_fail (TOMOE_IS_DICT_EST (dict), success);
@@ -369,6 +371,34 @@ register_char (TomoeDict *_dict, TomoeChar *chr)
     original_value = tomoe_char_get_variant (chr);
     if (original_value) {
         est_doc_add_attr (doc, "variant", original_value);
+    }
+
+    readings = tomoe_char_get_readings (chr);
+    if (readings) {
+        for (node = readings; node; node = g_list_next (node)) {
+            TomoeReading *reading = TOMOE_READING (node->data);
+            const gchar *read_str = tomoe_reading_get_reading (reading);
+            switch (tomoe_reading_get_reading_type (reading)) {
+              case TOMOE_READING_JA_ON:
+                on_readings = g_list_prepend (on_readings, (gchar *) read_str);
+                break;
+              case TOMOE_READING_JA_KUN:
+                kun_readings = g_list_prepend (kun_readings, (gchar *) read_str);
+                break;
+              case TOMOE_READING_UNKNOWN: 
+              case TOMOE_READING_INVALID: 
+              default:
+                break;
+            }
+        }
+        for (node = on_readings; node; node = g_list_next (node)) {
+            est_doc_add_attr (doc, "ja_on_readings", node->data);
+            est_doc_add_attr (doc, "all_readings", node->data);
+        }
+        for (node = kun_readings; node; node = g_list_next (node)) {
+            est_doc_add_attr (doc, "ja_kun_readings", node->data);
+            est_doc_add_attr (doc, "all_readings", node->data);
+        }
     }
 
     value = tomoe_char_to_xml (chr);
@@ -540,12 +570,29 @@ append_search_cond_readings (TomoeDictEst *dict, ESTCOND *cond, GString *phrase,
 {
     GList *node;
     for (node = (GList *)readings; node; node = g_list_next (node)) {
-        TomoeReading *reading = node->data;
-        gchar *xml;
+        TomoeReading *reading = TOMOE_READING (node->data);
+        const gchar *read_str = tomoe_reading_get_reading (reading);
+        gchar *expr;
 
-        xml = tomoe_reading_to_xml (reading);
-        g_string_append_printf (phrase, " %s", xml);
-        g_free (xml);
+        switch (tomoe_reading_get_reading_type (reading)) {
+          case TOMOE_READING_JA_ON:
+            expr = g_strdup_printf ("ja_on_readings STREQ %s", read_str);
+            est_cond_add_attr (cond, expr);
+            g_free (expr);
+            break;
+          case TOMOE_READING_JA_KUN:
+            expr = g_strdup_printf ("ja_kun_readings STREQ %s", read_str);
+            est_cond_add_attr (cond, expr);
+            g_free (expr);
+            break;
+          case TOMOE_READING_INVALID:
+          case TOMOE_READING_UNKNOWN:
+            expr = g_strdup_printf ("all_readings STREQ %s", read_str);
+            est_cond_add_attr (cond, expr);
+            g_free (expr);
+          default:
+            break;
+        }
     }
 }
 
