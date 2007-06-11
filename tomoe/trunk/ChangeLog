@@ -12,6 +12,9 @@
 	functions.
 	* test/python/test_dict_est.py: Create a test test dictionary fot
 	TomoeEst.
+	* test/python/test_dict_est.py: Remove the directory which stores est
+	databse whenever each test exits
+	* test/python/runtests.py: test_dict_est.py is now avairable.
 
 2007-06-10  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
