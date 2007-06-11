@@ -149,7 +149,7 @@ does_match_char_with_n_strokes (TomoeChar *chr, gint min, gint max)
 static gint
 reading_compare_func (gconstpointer a, gconstpointer b)
 {
-    return tomoe_reading_compare (TOMOE_READING (a), TOMOE_READING (b));
+    return tomoe_reading_has_prefix (TOMOE_READING (a), TOMOE_READING (b)) ? 0 : -1;
 }
 
 static gboolean
