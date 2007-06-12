@@ -8,7 +8,7 @@ benchmark_files =		\
 	search-by-dict.rb	\
 	convert-char.rb
 
-benchmark: $(top_builddir)/ext/ruby/tomoe.la
+benchmark: $(top_builddir)/bindings/ruby/tomoe.la
 	for bench in $(benchmark_files);	\
 	do					\
 	  echo "running benchmark: $$bench";	\
