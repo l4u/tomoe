@@ -22,7 +22,7 @@ CLEANFILES = *~ *.bak *.valid
 
 pkgdata_DATA = dict.dtd xml2est.rb
 dict_data_DATA =
-recognizer_data_DATA = handwriting-ch_ZN.xml handwriting-ja.xml
+recognizer_data_DATA = handwriting-zh_CN.xml handwriting-ja.xml
 conf_DATA = config
 
 EXTRA_DIST =						\
