@@ -2,8 +2,8 @@ dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.57)
 
 m4_define([tomoe_major_version], [0])
-m4_define([tomoe_minor_version], [5])
-m4_define([tomoe_micro_version], [1])
+m4_define([tomoe_minor_version], [6])
+m4_define([tomoe_micro_version], [0])
 m4_define([tomoe_version],
           [tomoe_major_version.tomoe_minor_version.tomoe_micro_version])
 
