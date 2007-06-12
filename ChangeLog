@@ -1,6 +1,6 @@
 2007-06-12  Kouhei Sutou  <kou@cozmixng.org>
 
-	* db/init.rb: followed the current mail.
+	* db/init.rb, db/xml2db.rb: followed the current changes.
 
 2007-06-12  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
