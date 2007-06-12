@@ -1,3 +1,11 @@
+Overview of Changes from libtomoe-0.5.1 to libtomoe-0.6.0
+==============================================================
+* Chinese dictionary.
+* Enhanced Japanese dictionary (Add JIS X 0208 level2 support).
+* Python binding.
+* Don't use RSpec for test anymore.
+* Some minor fixes.
+
 Overview of Changes from libtomoe-0.5.0 to libtomoe-0.5.1
 ==============================================================
 * Add missing licence file.
