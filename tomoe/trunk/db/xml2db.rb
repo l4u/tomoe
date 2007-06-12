@@ -9,7 +9,7 @@ ActiveRecord::Base.logger.level = Logger::INFO
 
 def utf8_to_ucs4(utf8)
   if utf8
-    TomoeSpecUtils::Unicode.utf8_to_ucs4(utf8)
+    TomoeTestUtils::Unicode.utf8_to_ucs4(utf8)
   else
     nil
   end
@@ -24,10 +24,10 @@ $stdout.flush
 `#{migrate}`
 puts "done."
 
-filename = TomoeSpecUtils::Path.dictionary
+filename = TomoeTestUtils::Path.dictionary
 dict = Tomoe::DictXML.new("filename" => filename,
                           "editable" => false)
-config = TomoeSpecUtils::Config.db_config.merge("editable" => true)
+config = TomoeTestUtils::Config.db_config.merge("editable" => true)
 mysql_dict = Tomoe::DictMySQL.new(config)
 
 cands = dict.search(Tomoe::Query.new)
