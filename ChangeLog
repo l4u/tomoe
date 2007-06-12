@@ -13,6 +13,7 @@
 	* module/dict/tomoe-dict-est.c, module/dict/tomoe-dict-ptr-array.c:
 	Now reading search is prefix search.
 	* test/test_context.rb: Fix test results suited for prefix search.
+	* module/dict-tomoe-dict-mysql.c: Suport prefix search.
 
 2007-06-11  Kouhei Sutou  <kou@cozmixng.org>
 

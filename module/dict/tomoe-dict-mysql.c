@@ -796,8 +796,11 @@ append_sql_condition_readings (TomoeDictMySQL *dict, GString *sql,
 
         reading = tomoe_reading_get_reading (tomoe_reading);
         if (reading) {
-            g_string_append (sql, "       AND reading = ");
-            append_string_value (dict, sql, reading);
+            gchar *tmp;
+            g_string_append (sql, "       AND reading LIKE ");
+            tmp = g_strdup_printf ("%s%%", reading);
+            append_string_value (dict, sql, tmp);
+            g_free (tmp);
             g_string_append (sql, "\n");
         }
     }
