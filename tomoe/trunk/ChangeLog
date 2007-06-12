@@ -1,6 +1,7 @@
 2007-06-12  Kouhei Sutou  <kou@cozmixng.org>
 
-	* db/init.rb, db/xml2db.rb: followed the current changes.
+	* db/init.rb, db/xml2db.rb, module/dict/unihan-compiler.rb:
+	followed the current changes.
 
 2007-06-12  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 

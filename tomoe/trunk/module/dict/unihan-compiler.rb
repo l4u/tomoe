@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'tomoe-spec-utils'
+require 'tomoe-test-utils'
 
 require 'uconv'
 require 'suikyo/suikyo'
@@ -45,11 +45,11 @@ def romaji_to_katakana(romaji)
 end
 
 def ucs4_to_utf8(ucs4)
-  TomoeSpecUtils::Unicode.ucs4_to_utf8(Integer("0x#{ucs4}"))
+  TomoeTestUtils::Unicode.ucs4_to_utf8(Integer("0x#{ucs4}"))
 end
 
 def utf8_to_ucs4(utf8)
-  "%X" % TomoeSpecUtils::Unicode.utf8_to_ucs4(utf8)
+  "%X" % TomoeTestUtils::Unicode.utf8_to_ucs4(utf8)
 end
 
 def cache(filename)
