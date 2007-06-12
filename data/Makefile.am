@@ -46,4 +46,11 @@ SUFFIXES: .xml .valid
 
 .PHONY: validate
 
-validate: handwriting.valid kanjidic2.valid
+validate: handwriting-zh_CN.valid handwriting-ja.valid kanjidic2.valid
+
+
+# temporary added for hardcoded test code.
+# should be removed
+BUILT_SOURCES = handwriting.xml
+handwriting.xml:
+	ln -sf handwriting-ja.xml handwriting.xml
