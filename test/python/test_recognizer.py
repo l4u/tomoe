@@ -13,7 +13,7 @@ class TomoeRecognizerTest(unittest.TestCase):
         self.recognizer = tomoe.Recognizer('Simple', dictionary = dict)
         self.writings = []
         self.results = []
-        for file in glob.glob('../data/*.data'):
+        for file in glob.glob(os.path.join(test_common.test_data_dir, '*.data')):
             results, writing = self.parseStrokeData(file)
             self.writings.append(writing)
             self.results.append(results)
