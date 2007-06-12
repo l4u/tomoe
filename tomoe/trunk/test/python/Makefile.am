@@ -30,22 +30,4 @@ EXTRA_DIST =			\
 	test_query.py		\
 	test_reading.py
 
-dict_modules = xml
-if USE_EST
-dict_modules += est
-endif
-# if USE_DICT_RUBY
-# dict_modules += ruby
-# endif
-if USE_UNIHAN
-dict_modules += unihan
-endif
-# if USE_SVN
-# dict_modules += svn
-# endif
-if USE_MYSQL
-dict_modules += mysql
-endif
-
 TESTS = runtests.py
-TESTS_ENVIRONMENT = DICT_MODULES="$(dict_modules)"
