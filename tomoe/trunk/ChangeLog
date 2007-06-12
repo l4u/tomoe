@@ -1,8 +1,13 @@
 2007-06-12  Takuro Ashie  <ashie@homa.ne.jp>
 
+	* data/Makefile.am: Link handwriting-ja.xml to handwriting.xml for hard
+	coded test codes. It should be fixed later.
+
+2007-06-12  Takuro Ashie  <ashie@homa.ne.jp>
+
         * data/handwriting-zh_CN.xml: Added. Thanks Red Hat guys!
-	* data/handwriting-ja.xml: Renamed from handwriting.xml and merge jis-x-0208-level2.xml
-	handwriting.xml will be revived with latin characters.
+	* data/handwriting-ja.xml: Renamed from handwriting.xml and merge
+	jis-x-0208-level2.xml handwriting.xml will be revived with latin characters.
 	* data/Makefile.am: Follow the change.
 
 2007-06-12  Takuro Ashie  <ashie@homa.ne.jp>
