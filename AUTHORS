@@ -1,6 +1,3 @@
-Porting to Xml database:
-  Juernjakob Harder <juernjakob.harder@gmail.com>
-
 Authors:
   Kouhei Sutou  <kou@cozmixng.org>
   Hiroyuki Ikezoe <poincare@ikezoe.net>
@@ -8,6 +5,9 @@ Authors:
 
 Porting to Ruby and C (Not in active):
   Hiroaki Nakamura <hnakamur@good-day.co.jp>
+
+Porting to Xml database (Not in active):
+  Juernjakob Harder <juernjakob.harder@gmail.com>
 
 Original code written in perl (Not in active):
   Hiroyuki Komatsu <komatsu@taiyaki.org>
