@@ -17,6 +17,7 @@ class TomoeDictXMLTest(test_dict.TomoeDictTest):
     <utf8>池</utf8>
     <number-of-strokes>6</number-of-strokes>
     <readings>
+      <reading type="ja_on">タ</reading>
       <reading type="ja_on">チ</reading>
       <reading type="ja_kun">いけ</reading>
       <reading type="ja_unknown">あんのうん</reading>
