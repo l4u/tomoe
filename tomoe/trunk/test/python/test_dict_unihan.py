@@ -5,13 +5,6 @@ import unittest
 import tomoe
 import test_dict
 
-#class TestDictUnihan(tomoe.Dict):
-#    def register_char(self, char):
-#        return True
-#
-#    def unregister_char(self, char):
-#        return True
-
 class TomoeDictUnihanTest(test_dict.TomoeDictTest):
     def setUp(self):
         self.dict = tomoe.Dict("Unihan")
