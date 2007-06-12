@@ -10,9 +10,9 @@ $LOAD_PATH.unshift(File.join(top, "test"))
 $LOAD_PATH.unshift(File.join(top, "ext", "ruby", ".libs"))
 $LOAD_PATH.unshift(File.join(top, "ext", "ruby"))
 
-require 'tomoe-spec-utils'
+require 'tomoe-test-utils'
 
-config = TomoeSpecUtils::Config.db_config_for_active_record(ENV["TOMOE_ENV"])
+config = TomoeTestUtils::Config.db_config_for_active_record
 ActiveRecord::Base.establish_connection(config)
 
 logger = Logger.new($stdout)
