@@ -6,6 +6,7 @@ import unittest
 sys.path.insert(0, '../../bindings/python/.libs')
 import tomoe
 tomoe.tomoe_dict_set_default_module_dir('../../module/dict/.libs')
+tomoe.tomoe_recognizer_set_default_module_dir('../../module/recognizer/.libs')
 
 SKIP_FILES = ['runtests', 'test_dict']
 

@@ -8,7 +8,7 @@ import tomoe
 class TomoeRecognizerTest(unittest.TestCase):
 
     def setUp(self):
-        self.recognizer = tomoe.Recognizer('Simple')
+        self.recognizer = tomoe.Recognizer('Simple', language = 'ja')
         self.writings = []
         self.results = []
         for file in glob.glob('../data/*.data'):
