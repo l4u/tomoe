@@ -52,12 +52,12 @@ struct _TomoeConfigClass
 
 GType            tomoe_config_get_type (void) G_GNUC_CONST;
 
-TomoeConfig     *tomoe_config_new					(const gchar	*config_file);
-const gchar     *tomoe_config_get_filename			(TomoeConfig	*config);
-const gchar     *tomoe_config_get_user_dict_name	(TomoeConfig	*config);
-TomoeShelf      *tomoe_config_make_shelf			(TomoeConfig	*config,
-                                                     const gchar	*language);
-const gchar *const *tomoe_config_get_languages		(TomoeConfig	*config);
+TomoeConfig     *tomoe_config_new                 (const gchar *config_file);
+const gchar     *tomoe_config_get_filename        (TomoeConfig *config);
+const gchar     *tomoe_config_get_user_dict_name  (TomoeConfig  *config);
+TomoeShelf      *tomoe_config_make_shelf          (TomoeConfig *config,
+                                                   const gchar *language);
+const gchar *const *tomoe_config_get_languages    (TomoeConfig *config);
 
 G_END_DECLS
 
