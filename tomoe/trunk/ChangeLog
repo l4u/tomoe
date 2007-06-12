@@ -9,7 +9,7 @@
 
 2007-06-12  Takuro Ashie  <ashie@homa.ne.jp>
 
-        * data/handwriting-zh_CN.xml: Added. Thanks Red Hat guys!
+	* data/handwriting-zh_CN.xml: Added. Thanks Red Hat guys!
 	* data/handwriting-ja.xml: Renamed from handwriting.xml and merge
 	jis-x-0208-level2.xml handwriting.xml will be revived with latin characters.
 	* data/Makefile.am: Follow the change.
@@ -34,6 +34,8 @@
 	* test/python/test_recognizer.py: Set language property ja.
 	* test/python/runtests.py: Use
 	tomoe_recognizer_set_default_module_dir().
+	* test/data/*.data: Update test stroke data suited for new
+	handwriring-ja.xml.
 
 2007-06-11  Kouhei Sutou  <kou@cozmixng.org>
 
