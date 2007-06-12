@@ -24,13 +24,13 @@ class TomoeRecognizerTest(unittest.TestCase):
             if l == 0:
                 results = line
             else:
-                i = 0
-                for point in line.split(','):
-                    if i == 0:
-                        writing.move_to(int(point.split()[0]), int(point.split()[1]))
-                    else:
-                        writing.line_to(int(point.split()[0]), int(point.split()[1]))
-                    i+=1
+                points = line.split(',')
+                first_point = points.pop(0)
+                x, y = first_point.split()
+                writing.move_to(int(x), int(y))
+                for point in points:
+                    x, y = point.split()
+                    writing.line_to(int(x), int(y))
             l+=1
 
         return results, writing
