@@ -3,12 +3,14 @@ import os
 import sys
 import glob
 import unittest
+import test_common
 import tomoe
 
 class TomoeRecognizerTest(unittest.TestCase):
 
     def setUp(self):
-        self.recognizer = tomoe.Recognizer('Simple', language = 'ja')
+        dict = tomoe.Dict("XML", filename = os.path.join(test_common.data_dir, 'handwriting-ja.xml'))
+        self.recognizer = tomoe.Recognizer('Simple', dictionary = dict)
         self.writings = []
         self.results = []
         for file in glob.glob('../data/*.data'):

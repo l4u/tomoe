@@ -1,14 +1,12 @@
 #!/usr/bin/env python
+# -*- coding: UTF=8 -*-
 import glob
 import os
 import sys
 import unittest
-sys.path.insert(0, '../../bindings/python/.libs')
-import tomoe
-tomoe.tomoe_dict_set_default_module_dir('../../module/dict/.libs')
-tomoe.tomoe_recognizer_set_default_module_dir('../../module/recognizer/.libs')
+import test_common
 
-SKIP_FILES = ['runtests', 'test_dict']
+SKIP_FILES = ['runtests', 'test_dict', 'test_common']
 
 dir = os.path.split(os.path.abspath(__file__))[0]
 os.chdir(dir)

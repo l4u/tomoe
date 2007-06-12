@@ -22,6 +22,7 @@ CLEANFILES = *~ *.bak
 
 EXTRA_DIST =			\
 	runtests.py		\
+	test_common.py		\
 	test_char.py		\
 	test_dict.py		\
 	test_dict_est.py	\

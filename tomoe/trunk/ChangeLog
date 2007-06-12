@@ -1,3 +1,7 @@
+2007-06-13  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* test/python/test_common.py: Added.
+
 2007-06-29  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* configure.ac: Version-0.6.0.
