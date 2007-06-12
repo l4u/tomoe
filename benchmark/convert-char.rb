@@ -3,11 +3,11 @@ require "benchmark"
 benchmark_dir = File.expand_path(File.dirname(__FILE__))
 top_dir = File.expand_path(File.join(benchmark_dir, ".."))
 test_dir = File.join(top_dir, "test")
-$LOAD_PATH.unshift(File.join(top_dir, "ext", "ruby", ".libs"))
-$LOAD_PATH.unshift(File.join(top_dir, "ext", "ruby"))
+$LOAD_PATH.unshift(File.join(top_dir, "bindings", "ruby", ".libs"))
+$LOAD_PATH.unshift(File.join(top_dir, "bindings", "ruby"))
 $LOAD_PATH.unshift(File.join(test_dir))
 
-require "tomoe-spec-utils"
+require "tomoe-test-utils"
 
 xml = <<-XML
   <character>
