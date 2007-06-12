@@ -37,7 +37,6 @@ class TomoeRecognizerTest(unittest.TestCase):
 
     def testStrokeSearch(self):
         for writing, result in zip(self.writings, self.results):
-            self.recognizer.search(writing)
             for a, b in zip(self.recognizer.search(writing), result.split()):
                 self.assertEqual(a.get_char().get_utf8(), b)
 
