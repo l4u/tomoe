@@ -41,8 +41,9 @@ class TomoeDictUnihanTest(test_dict.TomoeDictTest):
         tomoe_query.add_reading(tomoe_reading)
 
         candidates = self.dict.search(tomoe_query)
-        for char, candidate in zip(sorted(char_codes), sorted(self.dict.search(tomoe_query))):
-            self.assertEqual(candidate.get_char().get_utf8(), char)
+        candidate_chars = map(lambda x: x.get_char().get_utf8() , candidates)
+        for char, candidate_char in zip(sorted(char_codes), sorted(candidate_chars)):
+            self.assertEqual(candidate_char, char)
 
     def testKunReadingSearch(self):
         char_codes = [ '池', '垳', '汪', '溏', '潢' ]
@@ -52,8 +53,9 @@ class TomoeDictUnihanTest(test_dict.TomoeDictTest):
         tomoe_query.add_reading(tomoe_reading)
 
         candidates = self.dict.search(tomoe_query)
-        for char, candidate in zip(sorted(char_codes), sorted(self.dict.search(tomoe_query))):
-            self.assertEqual(candidate.get_char().get_utf8(), char)
+        candidate_chars = map(lambda x: x.get_char().get_utf8() , candidates)
+        for char, candidate_char in zip(sorted(char_codes), sorted(candidate_chars)):
+            self.assertEqual(candidate_char, char)
 
     def testOnReadingSearch(self):
         char_codes = [ '垳' ]
@@ -63,8 +65,9 @@ class TomoeDictUnihanTest(test_dict.TomoeDictTest):
         tomoe_query.add_reading(tomoe_reading)
 
         candidates = self.dict.search(tomoe_query)
-        for char, candidate in zip(sorted(char_codes), sorted(self.dict.search(tomoe_query))):
-            self.assertEqual(candidate.get_char().get_utf8(), char)
+        candidate_chars = map(lambda x: x.get_char().get_utf8() , candidates)
+        for char, candidate_char in zip(sorted(char_codes), sorted(candidate_chars)):
+            self.assertEqual(candidate_char, char)
 
     def testUnknownOnReadingSearch(self):
         char_codes = [ '垳' ]
@@ -74,7 +77,8 @@ class TomoeDictUnihanTest(test_dict.TomoeDictTest):
         tomoe_query.add_reading(tomoe_reading)
 
         candidates = self.dict.search(tomoe_query)
-        for char, candidate in zip(sorted(char_codes), sorted(self.dict.search(tomoe_query))):
-            self.assertEqual(candidate.get_char().get_utf8(), char)
+        candidate_chars = map(lambda x: x.get_char().get_utf8() , candidates)
+        for char, candidate_char in zip(sorted(char_codes), sorted(candidate_chars)):
+            self.assertEqual(candidate_char, char)
 
 # vi:ts=4:nowrap:ai:expandtab

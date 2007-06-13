@@ -1,6 +1,9 @@
 2007-06-13  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* test/python/test_common.py: Added.
+	* test/python/test_dict_unihan.py: Sort TomoeCandidate list by its
+	UTF-8.
+	* test/python/test_candidate.py: Added.
 
 2007-06-12  Takuro Ashie  <ashie@homa.ne.jp>
 
