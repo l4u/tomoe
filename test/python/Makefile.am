@@ -30,6 +30,7 @@ EXTRA_DIST =			\
 	test_dict_unihan.py	\
 	test_dict_xml.py	\
 	test_query.py		\
-	test_reading.py
+	test_reading.py		\
+	test_shelf.py
 
 TESTS = runtests.py
