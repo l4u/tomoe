@@ -4,6 +4,8 @@
 	* test/python/test_dict_unihan.py: Sort TomoeCandidate list by its
 	UTF-8.
 	* test/python/test_candidate.py: Added.
+	* test/tomoe-test-utils.rb: Create a temporary test database for MySQL
+	backend.
 
 2007-06-12  Takuro Ashie  <ashie@homa.ne.jp>
 
