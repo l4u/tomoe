@@ -2,7 +2,6 @@
 import os
 import sys
 import glob
-import fileinput
 import unittest
 import test_common
 import tomoe
@@ -21,18 +20,16 @@ class TomoeRecognizerTest(unittest.TestCase):
 
     def parseStrokeData(self, file):
         writing = tomoe.Writing()
-        results = []
-        for line in fileinput.input(file):
-            if fileinput.filelineno() == 1:
-                results = line
-            else:
-                points = line.split(',')
-                first_point = points.pop(0)
-                x, y = first_point.split()
-                writing.move_to(int(x), int(y))
-                for point in points:
-                    x, y = point.split()
-                    writing.line_to(int(x), int(y))
+        lines = open(file, 'r').readlines()
+        results = lines.pop(0)
+        for line in lines:
+            points = line.split(',')
+            first_point = points.pop(0)
+            x, y = first_point.split()
+            writing.move_to(int(x), int(y))
+            for point in points:
+                x, y = point.split()
+                writing.line_to(int(x), int(y))
 
         return results, writing
 
