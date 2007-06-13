@@ -156,6 +156,16 @@ EOC
       end
     end
 
+    def ensure_dict_mysql
+      sql_purge("test")
+      xml_dict = Tomoe::DictXML.new("filename" => dictionary,
+                                    "editable" => false)
+      mysql_dict = Tomoe::DictMySQL.new(db_config("test"))
+      xml_dict.search(Tomoe::Query.new).each_with_index do |cand, i|
+        mysql_dict.register(cand.char)
+      end
+    end
+
     def make_config_file_for_est
       dict_basename = File.basename(dictionary).sub(/\.xml$/, '')
       <<-EOC
