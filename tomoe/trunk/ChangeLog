@@ -7,6 +7,7 @@
 	* test/tomoe-test-utils.rb: Create a temporary test database for MySQL
 	backend.
 	* test/python/*.py: Swap first and second argument of assertEqual().
+	* test/python/test_shelf.py: Added.
 
 2007-06-12  Takuro Ashie  <ashie@homa.ne.jp>
 
