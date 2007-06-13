@@ -28,7 +28,7 @@ class TomoeQueryTest(unittest.TestCase):
         reading_string = "ひげ"
         reading2 = tomoe.Reading(tomoe.READING_JA_KUN, reading_string)
         query.add_reading(reading2)
-        self.assertEqual(reading2].sort(), query.get_readings().sort(), [reading1)
+        self.assertEqual([reading1, reading2].sort(), query.get_readings().sort())
 
     def testRadical(self):
         query = tomoe.Query()
@@ -40,7 +40,7 @@ class TomoeQueryTest(unittest.TestCase):
 
         radical2 = "ひげ"
         query.add_radical(radical2)
-        self.assertEqual(radical2].sort(), query.get_radicals().sort(), [radical1)
+        self.assertEqual([radical1, radical2].sort(), query.get_radicals().sort())
 
     def testRadical(self):
         query = tomoe.Query()
@@ -52,7 +52,7 @@ class TomoeQueryTest(unittest.TestCase):
 
         radical2 = "ひげ"
         query.add_radical(radical2)
-        self.assertEqual(radical2].sort(), query.get_radicals().sort(), [radical1)
+        self.assertEqual([radical1, radical2].sort(), query.get_radicals().sort())
 
     def testVariant(self):
         query = tomoe.Query()
