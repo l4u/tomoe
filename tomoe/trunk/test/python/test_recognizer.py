@@ -36,7 +36,7 @@ class TomoeRecognizerTest(unittest.TestCase):
     def testStrokeSearch(self):
         for writing, result in zip(self.writings, self.results):
             for a, b in zip(self.recognizer.search(writing), result.split()):
-                self.assertEqual(a.get_char().get_utf8(), b)
+                self.assertEqual(b, a.get_char().get_utf8())
 
 
 # vi:ts=4:nowrap:ai:expandtab

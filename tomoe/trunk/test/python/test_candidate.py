@@ -14,15 +14,15 @@ class TomoeCandidateTest(unittest.TestCase):
 
         score = 1
         cand = tomoe.Candidate(tomoe_char)
-        self.assertEqual(cand.get_score(), 0)
+        self.assertEqual(0, cand.get_score())
         cand.set_score(score)
-        self.assertEqual(cand.get_score(), score)
+        self.assertEqual(score, cand.get_score())
 
     def testGetChar(self):
         char_code = '池'
         tomoe_char = tomoe.Char(utf8 = char_code)
         cand = tomoe.Candidate(tomoe_char)
-        self.assertEqual(cand.get_char().get_utf8(), char_code)
+        self.assertEqual(char_code, cand.get_char().get_utf8())
 
     def testCompare(self):
         char_code = '池'

@@ -43,7 +43,7 @@ class TomoeDictUnihanTest(test_dict.TomoeDictTest):
         candidates = self.dict.search(tomoe_query)
         candidate_chars = map(lambda x: x.get_char().get_utf8() , candidates)
         for char, candidate_char in zip(sorted(char_codes), sorted(candidate_chars)):
-            self.assertEqual(candidate_char, char)
+            self.assertEqual(char, candidate_char)
 
     def testKunReadingSearch(self):
         char_codes = [ '池', '垳', '汪', '溏', '潢' ]
@@ -55,7 +55,7 @@ class TomoeDictUnihanTest(test_dict.TomoeDictTest):
         candidates = self.dict.search(tomoe_query)
         candidate_chars = map(lambda x: x.get_char().get_utf8() , candidates)
         for char, candidate_char in zip(sorted(char_codes), sorted(candidate_chars)):
-            self.assertEqual(candidate_char, char)
+            self.assertEqual(char, candidate_char)
 
     def testOnReadingSearch(self):
         char_codes = [ '垳' ]
@@ -67,7 +67,7 @@ class TomoeDictUnihanTest(test_dict.TomoeDictTest):
         candidates = self.dict.search(tomoe_query)
         candidate_chars = map(lambda x: x.get_char().get_utf8() , candidates)
         for char, candidate_char in zip(sorted(char_codes), sorted(candidate_chars)):
-            self.assertEqual(candidate_char, char)
+            self.assertEqual(char, candidate_char)
 
     def testUnknownOnReadingSearch(self):
         char_codes = [ '垳' ]
@@ -79,6 +79,6 @@ class TomoeDictUnihanTest(test_dict.TomoeDictTest):
         candidates = self.dict.search(tomoe_query)
         candidate_chars = map(lambda x: x.get_char().get_utf8() , candidates)
         for char, candidate_char in zip(sorted(char_codes), sorted(candidate_chars)):
-            self.assertEqual(candidate_char, char)
+            self.assertEqual(char, candidate_char)
 
 # vi:ts=4:nowrap:ai:expandtab
