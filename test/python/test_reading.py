@@ -48,7 +48,6 @@ class TomoeReadingTest(unittest.TestCase):
         reading3 = tomoe.Reading(tomoe.READING_JA_KUN, reading_string2)
         reading4 = tomoe.Reading(tomoe.READING_UNKNOWN, reading_string2)
         self.assertEqual(reading1, reading2)
-        self.assertEqual(reading2, reading1)
         self.assertNotEqual(reading2, reading3)
         self.assertNotEqual(reading1, reading4)
 
@@ -57,7 +56,6 @@ class TomoeReadingTest(unittest.TestCase):
         reading3 = tomoe.Reading(tomoe.READING_JA_ON, reading_string2)
         reading4 = tomoe.Reading(tomoe.READING_UNKNOWN, reading_string2)
         self.assertEqual(reading1, reading2)
-        self.assertEqual(reading2, reading1)
         self.assertNotEqual(reading2, reading3)
         self.assertNotEqual(reading1, reading4)
 
@@ -78,7 +76,6 @@ class TomoeReadingTest(unittest.TestCase):
         reading3 = tomoe.Reading(tomoe.READING_JA_ON, reading_string2)
         reading4 = tomoe.Reading(tomoe.READING_JA_KUN, reading_string2)
         self.assertNotEqual(reading1, reading2)
-        self.assertNotEqual(reading2, reading1)
         self.assertNotEqual(reading2, reading3)
         self.assertNotEqual(reading1, reading4)
 
