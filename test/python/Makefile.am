@@ -23,6 +23,8 @@ CLEANFILES = *~ *.bak
 EXTRA_DIST =			\
 	runtests.py		\
 	test_common.py		\
+	test_config.py		\
+	test_context.py		\
 	test_candidate.py	\
 	test_char.py		\
 	test_dict.py		\
@@ -31,6 +33,7 @@ EXTRA_DIST =			\
 	test_dict_xml.py	\
 	test_query.py		\
 	test_reading.py		\
-	test_shelf.py
+	test_shelf.py		\
+	test_writing.py
 
 TESTS = runtests.py
