@@ -10,21 +10,21 @@ class TomoeReadingTest(unittest.TestCase):
         reading_string = "いけ"
 
         reading = tomoe.Reading(tomoe.READING_INVALID, reading_string)
-        self.assertEqual(reading.get_reading_type(), tomoe.READING_INVALID)
+        self.assertEqual(tomoe.READING_INVALID, reading.get_reading_type())
 
         reading = tomoe.Reading(tomoe.READING_UNKNOWN, reading_string)
-        self.assertEqual(reading.get_reading_type(), tomoe.READING_UNKNOWN)
+        self.assertEqual(tomoe.READING_UNKNOWN, reading.get_reading_type())
 
         reading = tomoe.Reading(tomoe.READING_JA_KUN, reading_string)
-        self.assertEqual(reading.get_reading_type(), tomoe.READING_JA_KUN)
+        self.assertEqual(tomoe.READING_JA_KUN, reading.get_reading_type())
 
         reading = tomoe.Reading(tomoe.READING_JA_ON, reading_string)
-        self.assertEqual(reading.get_reading_type(), tomoe.READING_JA_ON)
+        self.assertEqual(tomoe.READING_JA_ON, reading.get_reading_type())
 
     def testGetReading(self):
         reading_string = "いけ"
         reading = tomoe.Reading(tomoe.READING_UNKNOWN, reading_string)
-        self.assertEqual(reading.get_reading(), reading_string)
+        self.assertEqual(reading_string, reading.get_reading())
 
     def testToXML(self):
         reading_string = "いけ"
@@ -32,7 +32,7 @@ class TomoeReadingTest(unittest.TestCase):
         reading_data = """\
       <reading type="unknown">%s</reading>
 """ % (reading_string)
-        self.assertEqual(reading.to_xml(), reading_data)
+        self.assertEqual(reading_data, reading.to_xml())
 
     def testCompare(self):
         reading_string = "いけ"

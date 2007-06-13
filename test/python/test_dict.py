@@ -9,40 +9,40 @@ class TomoeDictTest(unittest.TestCase):
     def testRegisterChar(self):
         char_code = '地'
         tomoe_char = self.dict.get_char(char_code)
-        self.assertEqual(tomoe_char, None)
+        self.assertEqual(None, tomoe_char)
 
         tomoe_char = tomoe.Char(char_code)
         self.assert_(self.dict.register_char(tomoe_char))
 
         tomoe_char = self.dict.get_char(char_code)
-        self.assertNotEqual(tomoe_char, None)
-        self.assertEqual(tomoe_char.get_utf8(), char_code)
+        self.assertNotEqual(None, tomoe_char)
+        self.assertEqual(char_code, tomoe_char.get_utf8())
 
     def testUnregisterChar(self):
         char_code = '池'
         tomoe_char = self.dict.get_char(char_code)
-        self.assertEqual(tomoe_char.get_utf8(), char_code)
+        self.assertEqual(char_code, tomoe_char.get_utf8())
 
         self.assert_(self.dict.unregister_char(char_code))
-        self.assertEqual(self.dict.get_char(char_code), None)
+        self.assertEqual(None, self.dict.get_char(char_code))
 
     def testGetExistChar(self):
         char_code = '池'
         n_strokes = 6
         tomoe_char = self.dict.get_char(char_code)
-        self.assertEqual(tomoe_char.get_utf8(), char_code)
-        self.assertEqual(tomoe_char.get_n_strokes(), n_strokes)
+        self.assertEqual(char_code, tomoe_char.get_utf8())
+        self.assertEqual(n_strokes, tomoe_char.get_n_strokes())
 
     def testFailGetExistChar(self):
         char_code = '存在しない'
-        self.assertEqual(self.dict.get_char(char_code), None)
+        self.assertEqual(None, self.dict.get_char(char_code))
 
     def testFailReadingSearch(self):
         tomoe_reading = tomoe.Reading(tomoe.READING_UNKNOWN, 'そんなよみかたありません')
         tomoe_query = tomoe.Query()
         tomoe_query.add_reading(tomoe_reading)
         candidates = self.dict.search(tomoe_query)
-        self.assertEqual(len(candidates), 0)
+        self.assertEqual(0, len(candidates))
 
     def testUnknownReadingSearch(self):
         char_code = '池'
@@ -52,7 +52,7 @@ class TomoeDictTest(unittest.TestCase):
         tomoe_query.add_reading(tomoe_reading)
 
         candidates = self.dict.search(tomoe_query)
-        self.assertEqual(candidates[0].get_char().get_utf8(), char_code)
+        self.assertEqual(char_code, candidates[0].get_char().get_utf8())
 
     def testKunReadingSearch(self):
         char_code = '池'
@@ -62,7 +62,7 @@ class TomoeDictTest(unittest.TestCase):
         tomoe_query.add_reading(tomoe_reading)
 
         candidates = self.dict.search(tomoe_query)
-        self.assertEqual(candidates[0].get_char().get_utf8(), char_code)
+        self.assertEqual(char_code, candidates[0].get_char().get_utf8())
 
     def testOnReadingSearch(self):
         char_code = '池'
@@ -72,7 +72,7 @@ class TomoeDictTest(unittest.TestCase):
         tomoe_query.add_reading(tomoe_reading)
 
         candidates = self.dict.search(tomoe_query)
-        self.assertEqual(candidates[0].get_char().get_utf8(), char_code)
+        self.assertEqual(char_code, candidates[0].get_char().get_utf8())
 
     def testUnknownOnReadingSearch(self):
         char_code = '池'
@@ -82,7 +82,7 @@ class TomoeDictTest(unittest.TestCase):
         tomoe_query.add_reading(tomoe_reading)
 
         candidates = self.dict.search(tomoe_query)
-        self.assertEqual(candidates[0].get_char().get_utf8(), char_code)
+        self.assertEqual(char_code, candidates[0].get_char().get_utf8())
 
     def testUnknownKunReadingSearch(self):
         char_code = '池'
@@ -92,7 +92,7 @@ class TomoeDictTest(unittest.TestCase):
         tomoe_query.add_reading(tomoe_reading)
 
         candidates = self.dict.search(tomoe_query)
-        self.assertEqual(candidates[0].get_char().get_utf8(), char_code)
+        self.assertEqual(char_code, candidates[0].get_char().get_utf8())
 
     def testOnUnknownReadingSearch(self):
         char_code = '池'
@@ -102,7 +102,7 @@ class TomoeDictTest(unittest.TestCase):
         tomoe_query.add_reading(tomoe_reading)
 
         candidates = self.dict.search(tomoe_query)
-        self.assertEqual(candidates[0].get_char().get_utf8(), char_code)
+        self.assertEqual(char_code, candidates[0].get_char().get_utf8())
 
     def testKunUnknownReadingSearch(self):
         char_code = '池'
@@ -112,6 +112,6 @@ class TomoeDictTest(unittest.TestCase):
         tomoe_query.add_reading(tomoe_reading)
 
         candidates = self.dict.search(tomoe_query)
-        self.assertEqual(candidates[0].get_char().get_utf8(), char_code)
+        self.assertEqual(char_code, candidates[0].get_char().get_utf8())
 
 # vi:ts=4:nowrap:ai:expandtab
