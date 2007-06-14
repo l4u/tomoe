@@ -1,3 +1,8 @@
+2007-06-14  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* bindings/python/pytomoe-utils.h: Define CONVERT_POINTER_LIST.
+	* bindings/python/tomoe-writing.override: Use CONVERT_POINTER_LIST.
+
 2007-06-13  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* test/python/test_common.py: Added.
