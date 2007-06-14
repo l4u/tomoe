@@ -8,14 +8,26 @@ import tomoe
 
 class TomoeConfigTest(unittest.TestCase):
 
-    def testGetFilename(self):
-        self.assert_(False)
+    def setUp(self):
+        self.config_filename = "test-config"
+        config_file = open(self.config_filename, "w")
+        contents = """
+[config]
+user-dictionary = user-dict
+languages = ja;zh_CN
+         """
+        config_file.write(contents)
+        config_file.close()
+        self.config = tomoe.Config(self.config_filename)
 
-    def testGetUserDictNamer(self):
-        self.assert_(False)
+    def testGetFilename(self):
+        self.assertEqual(self.config_filename, self.config.get_filename())
+
+    def testGetUserDictName(self):
+        self.assertEqual('user-dict', self.config.get_user_dict_name())
 
     def testGetLanguages(self):
-        self.assert_(False)
+        self.assertEqual(sorted(['ja', 'zh_CN']), sorted(self.config.get_languages()))
 
     def testMakeShelf(self):
         self.assert_(False)
