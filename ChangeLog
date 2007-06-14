@@ -1,3 +1,8 @@
+2007-06-15  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* bindings/python/tomoe-config.override: Implement
+	tomoe.Config.get_languages().
+
 2007-06-14  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* bindings/python/pytomoe-utils.h: Define CONVERT_POINTER_LIST.
