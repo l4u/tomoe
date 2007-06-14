@@ -9,5 +9,8 @@ Porting to Ruby and C (Not in active):
 Porting to Xml database (Not in active):
   Juernjakob Harder <juernjakob.harder@gmail.com>
 
+Simplified Chinese Dictionary and stroke editor:
+  Hu Zheng <zhu@redhat.com>
+
 Original code written in perl (Not in active):
   Hiroyuki Komatsu <komatsu@taiyaki.org>
