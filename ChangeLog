@@ -2,6 +2,8 @@
 
 	* bindings/python/pytomoe-utils.h: Define CONVERT_POINTER_LIST.
 	* bindings/python/tomoe-writing.override: Use CONVERT_POINTER_LIST.
+	* bindings/python/tomoe-writing.override: tomoe.Writing.get_strokes
+	return list of tuple list.
 
 2007-06-13  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
