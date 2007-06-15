@@ -110,6 +110,9 @@ gboolean        tomoe_dict_flush                (TomoeDict     *dict);
 gboolean        tomoe_dict_copy                 (TomoeDict     *src_dict,
                                                  TomoeDict     *dest_dict);
 
+gboolean        tomoe_dict_plain_copy           (TomoeDict     *src_dict,
+                                                 TomoeDict     *dest_dict);
+
 gboolean        tomoe_dict_is_editable          (TomoeDict *dict);
 gboolean        tomoe_dict_is_available         (TomoeDict *dict);
 

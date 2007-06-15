@@ -22,6 +22,7 @@
 
 #include "tomoe-dict.h"
 #include "tomoe-module.h"
+#include "tomoe-candidate.h"
 
 static GList *dicts = NULL;
 static gchar *module_dir = NULL;
@@ -334,6 +335,55 @@ tomoe_dict_copy (TomoeDict *src_dict, TomoeDict *dest_dict)
         return klass->copy (src_dict, dest_dict);
     else
         return FALSE;
+}
+
+gboolean
+tomoe_dict_plain_copy (TomoeDict *src_dict, TomoeDict *dest_dict)
+{
+    TomoeQuery *query;
+    GList *cands = NULL, *node;
+
+    g_return_val_if_fail (TOMOE_IS_DICT (src_dict), FALSE);
+    g_return_val_if_fail (TOMOE_IS_DICT (dest_dict), FALSE);
+
+    if (!tomoe_dict_is_available (src_dict)) {
+        g_warning ("source dictionary isn't available.");
+        return FALSE;
+    }
+    if (!tomoe_dict_is_editable (dest_dict)) {
+        g_warning ("destination dictionary isn't editable.");
+        return FALSE;
+    }
+
+    query = tomoe_query_new ();
+
+    cands = tomoe_dict_search (dest_dict, query);
+    for (node = cands; node; node = g_list_next (node)) {
+        TomoeChar *chr = tomoe_candidate_get_char (node->data);
+        tomoe_dict_unregister_char (dest_dict, tomoe_char_get_utf8 (chr));
+    }
+    
+    if (cands) {
+        g_list_foreach (cands, (GFunc) g_object_unref, NULL);
+        g_list_free (cands);
+    }
+    
+    cands = tomoe_dict_search (src_dict, query);
+    for (node = cands; node; node = g_list_next (node)) {
+        TomoeChar *chr = tomoe_candidate_get_char (node->data);
+        TomoeChar *new_chr = tomoe_char_dup (chr);
+        tomoe_dict_register_char (dest_dict, new_chr);
+        g_object_unref (new_chr);
+    }
+    
+    if (cands) {
+        g_list_foreach (cands, (GFunc) g_object_unref, NULL);
+        g_list_free (cands);
+    }
+
+    g_object_unref (query);
+
+    return TRUE;
 }
 
 gboolean

@@ -8,6 +8,7 @@
 	* test/python/test_char.py: Add tomoe.Char.duplicate test.
 	* test/python/test_writing.py: Add tomoe.Writing.duplicate test.
 	* test/python/test_context.py: Add some tests.
+	* lib/tomoe-dict.[ch]: Add tomoe_dict_plain_copy().
 
 2007-06-14  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
