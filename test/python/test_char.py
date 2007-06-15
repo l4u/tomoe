@@ -76,7 +76,7 @@ class TomoeCharTest(unittest.TestCase):
         writing.move_to(1, 1)
         writing.line_to(2, 2)
         tomoe_char.set_writing(writing)
-        self.assertEqual(writing, tomoe_char.get_writing())
+        self.assertEqual(writing.to_xml(), tomoe_char.get_writing().to_xml())
 
     def testVariant(self):
         variant = '池'
