@@ -22,6 +22,7 @@
 	element.
 	* lib/tomoe-dict.c: Call copy() only if the type of source and destination
 	dictionary is the same.
+	* lib/tomoe-writing.c: Plugged memory leak and fix double free.
 
 2007-06-14  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
