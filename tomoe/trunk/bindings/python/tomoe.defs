@@ -331,6 +331,12 @@
   (return-type "const-gchar*")
 )
 
+(define-method get_languages
+  (of-object "TomoeConfig")
+  (c-name "tomoe_config_get_languages")
+  (return-type "const-gchar**")
+)
+
 (define-method make_shelf
   (of-object "TomoeConfig")
   (c-name "tomoe_config_make_shelf")
