@@ -16,9 +16,9 @@ class TomoeDictTest(unittest.TestCase):
             elif dest_dict_name == "est":
                 dest_dict = tomoe.Dict('Est', name = 'copy-test', database = 'copy-test', editable = True)
             elif dest_dict_name == "mysql":
-                continue
+                self.assert_(False)
             else:
-                continue
+                self.assert_(False)
             self.assertNotEqual(None, dest_dict)
             self.dict.copy(dest_dict)
 
