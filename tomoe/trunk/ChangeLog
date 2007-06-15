@@ -3,6 +3,7 @@
 	* bindings/python/tomoe-config.override: Implement
 	tomoe.Config.get_languages().
 	* test/python/test_dict.py: Add tomoe_dict_copy() test.
+	* lib/tomoe-dict.[ch]: Define tomoe_dict_copy().
 
 2007-06-14  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 

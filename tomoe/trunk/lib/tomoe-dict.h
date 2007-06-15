@@ -64,6 +64,8 @@ struct _TomoeDictClass
     GList          *(*search)              (TomoeDict     *dict,
                                             TomoeQuery    *query);
     gboolean        (*flush)               (TomoeDict     *dict);
+    gboolean        (*copy)                (TomoeDict     *src_dict,
+                                            TomoeDict     *dest_dict);
     gboolean        (*is_editable)         (TomoeDict     *dict);
     gboolean        (*is_available)        (TomoeDict     *dict);
     gchar          *(*get_available_private_utf8) (TomoeDict *dict);
@@ -105,6 +107,8 @@ GList          *tomoe_dict_search               (TomoeDict     *dict,
 
 gboolean        tomoe_dict_flush                (TomoeDict     *dict);
 
+gboolean        tomoe_dict_copy                 (TomoeDict     *src_dict,
+                                                 TomoeDict     *dest_dict);
 
 gboolean        tomoe_dict_is_editable          (TomoeDict *dict);
 gboolean        tomoe_dict_is_available         (TomoeDict *dict);
