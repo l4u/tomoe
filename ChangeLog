@@ -14,6 +14,7 @@
 	duplicate() -> dup().
 	* test/python/test_reading.py: Add tomoe.Reading.dup() test.
 	* lib/tomoe-reading.[ch]: Add tomoe_reading_dup().
+	* lib/tomoe-char.[ch]: Add tomoe_char_dup().
 
 2007-06-14  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 

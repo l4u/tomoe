@@ -147,6 +147,57 @@ tomoe_char_new_from_xml_data (const gchar *data, gssize len)
 }
 
 static void
+copy_meta_data (gpointer key, gpointer value, gpointer user_data)
+{
+    TomoeChar *chr = user_data;
+    gchar *meta_key = key;
+    gchar *meta_value = value;
+
+    tomoe_char_register_meta_data (chr, meta_key, meta_value);
+}
+
+TomoeChar*
+tomoe_char_dup (TomoeChar *chr)
+{
+    TomoeChar *new_chr;
+    TomoeCharPrivate *priv;
+
+    new_chr = tomoe_char_new ();
+    priv = TOMOE_CHAR_GET_PRIVATE (chr);
+
+    tomoe_char_set_utf8 (new_chr, priv->utf8);
+    tomoe_char_set_n_strokes (new_chr, priv->n_strokes);
+
+    if (priv->writing)
+        tomoe_char_set_writing (new_chr, tomoe_writing_dup (priv->writing));
+
+    if (priv->variant)
+        tomoe_char_set_variant (new_chr, priv->variant);
+
+    if (priv->readings) {
+        GList *node; 
+        for (node = priv->readings; node; node = g_list_next (node)) {
+            TomoeReading *new_reading = tomoe_reading_dup (TOMOE_READING(node->data));
+            tomoe_char_add_reading (new_chr, new_reading);
+            g_object_unref (new_reading);
+        }
+    }
+
+    if (priv->radicals) {
+        GList *node; 
+        for (node = priv->radicals; node; node = g_list_next (node)) {
+            tomoe_char_add_radical (new_chr, node->data);
+        }
+    }
+
+    if (priv->meta_data) {
+        tomoe_char_meta_data_foreach (chr, (GHFunc) copy_meta_data, new_chr);
+    }
+
+    return new_chr;
+}
+
+static void
 dispose (GObject *object)
 {
     TomoeCharPrivate *priv = TOMOE_CHAR_GET_PRIVATE (object);
