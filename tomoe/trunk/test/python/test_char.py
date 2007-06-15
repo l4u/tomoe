@@ -6,6 +6,30 @@ import tomoe
 
 class TomoeCharTest(unittest.TestCase):
 
+    def testDuplicate(self):
+        data = """
+<character>
+  <utf8>池</utf8>
+  <number-of-strokes>6</number-of-strokes>
+  <readings>
+    <reading type="ja_on">タ</reading>
+    <reading type="ja_on">チ</reading>
+    <reading type="ja_kun">いけ</reading>
+    <reading type="ja_unknown">あんのうん</reading>
+  </readings>
+  <meta>
+    <jis208>35-51</jis208>
+    <ucs>6c60</ucs>
+    <jouyou>2</jouyou>
+    <meaning>pond, cistern, pool, reservoir</meaning>
+  </meta>
+</character>
+        """
+        char1 = tomoe.tomoe_char_new_from_xml_data(data, int(-1))
+        self.assertNotEqual(None, char1)
+        char2 = char1.duplicate()
+        self.assertEqual(char1.to_xml(), char2.to_xml())
+
     def testUTF8(self):
         utf8 = '池'
 
