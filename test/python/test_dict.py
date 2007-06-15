@@ -1,6 +1,7 @@
 # -*- coding: UTF=8 -*-
 import os
 import sys
+import shutil
 import unittest
 import tomoe
 
@@ -10,10 +11,14 @@ class TomoeDictTest(unittest.TestCase):
         dict_modules = os.getenv('DICT_MODULES').split()
         for dest_dict_name in dict_modules:
             if dest_dict_name == "xml":
+                if os.access('copy-test.xml', os.F_OK):
+                    os.unlink('copy-test.xml')
                 dest_dict = tomoe.Dict("XML", filename = 'copy-test.xml' ,editable = True)
             elif dest_dict_name == "unihan":
                 return 
             elif dest_dict_name == "est":
+                if os.access('copy-test', os.F_OK):
+                    shutil.rmtree('copy-test')
                 dest_dict = tomoe.Dict('Est', name = 'copy-test', database = 'copy-test', editable = True)
             elif dest_dict_name == "mysql":
                 self.assert_(False)
@@ -23,8 +28,8 @@ class TomoeDictTest(unittest.TestCase):
             self.assert_(self.dict.copy(dest_dict))
 
             query = tomoe.Query()
-            for src_char, dest_char in zip(sorted(map(lambda x: x.get_char(), self.dict.search(query))),
-                                           sorted(map(lambda x: x.get_char(), dest_dict.search(query)))):
+            for src_char, dest_char in zip(map(lambda x: x.get_char(), self.dict.search(query)),
+                                           map(lambda x: x.get_char(), dest_dict.search(query))):
                 self.assertEqual(src_char.to_xml(), dest_char.to_xml())
 
     def testRegisterChar(self):

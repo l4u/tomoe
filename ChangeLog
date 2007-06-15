@@ -26,6 +26,8 @@
 	* module/dict/tomoe-dict-ptr-array.[ch]: Define
 	_tomoe_dict_ptr_array_copy().
 	* module/dict/tomoe-dict-xml.c: Use _tomoe_dict_prt_array_copy().
+	* test/python/test_dict.py: Remove previous test dictionary before run
+	test.
 
 2007-06-14  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
