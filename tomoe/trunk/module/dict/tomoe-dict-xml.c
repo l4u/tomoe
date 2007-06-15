@@ -100,6 +100,8 @@ static TomoeChar   *get_char                  (TomoeDict     *dict,
 static GList       *search                    (TomoeDict     *dict,
                                                TomoeQuery    *query);
 static gboolean     flush                     (TomoeDict     *dict);
+static gboolean     copy                      (TomoeDict     *src_dict,
+                                               TomoeDict     *dest_dict);
 static gboolean     is_editable               (TomoeDict     *dict);
 static gboolean     is_available              (TomoeDict     *dict);
 static gchar       *get_available_private_utf8 (TomoeDict    *dict);
@@ -128,6 +130,7 @@ class_init (TomoeDictXMLClass *klass)
     dict_class->get_char        = get_char;
     dict_class->search          = search;
     dict_class->flush           = flush;
+    dict_class->copy            = copy;
     dict_class->is_editable     = is_editable;
     dict_class->is_available    = is_available;
     dict_class->get_available_private_utf8 = get_available_private_utf8;
@@ -365,6 +368,23 @@ flush (TomoeDict *_dict)
     g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
 
     return tomoe_dict_xml_save (dict);
+}
+
+static gboolean
+copy (TomoeDict *_src_dict, TomoeDict *dest_dict)
+{
+    TomoeDictXML *src_dict;
+    g_return_val_if_fail (TOMOE_IS_DICT_XML (_src_dict), FALSE);
+
+    src_dict = TOMOE_DICT_XML (_src_dict);
+
+    if (TOMOE_IS_DICT_XML (dest_dict)) {
+        tomoe_dict_plain_copy (_src_dict, dest_dict);
+    } else {
+        tomoe_dict_plain_copy (_src_dict, dest_dict);
+    }
+
+    return TRUE;
 }
 
 static gboolean
