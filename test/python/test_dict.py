@@ -20,10 +20,10 @@ class TomoeDictTest(unittest.TestCase):
             else:
                 self.assert_(False)
             self.assertNotEqual(None, dest_dict)
-            self.dict.copy(dest_dict)
+            self.assert_(self.dict.copy(dest_dict))
 
             query = tomoe.Query()
-            for src_char, dest_char in zip(sorted(map(lambda x: x.get_char(), dict.search(query))),
+            for src_char, dest_char in zip(sorted(map(lambda x: x.get_char(), self.dict.search(query))),
                                            sorted(map(lambda x: x.get_char(), dest_dict.search(query)))):
                 self.assertEqual(src_char.to_xml(), dest_char.to_xml())
 
