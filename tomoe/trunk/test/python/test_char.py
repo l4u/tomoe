@@ -27,7 +27,7 @@ class TomoeCharTest(unittest.TestCase):
         """
         char1 = tomoe.tomoe_char_new_from_xml_data(data, int(-1))
         self.assertNotEqual(None, char1)
-        char2 = char1.duplicate()
+        char2 = char1.dup()
         self.assertEqual(char1.to_xml(), char2.to_xml())
 
     def testUTF8(self):
