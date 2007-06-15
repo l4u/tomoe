@@ -63,6 +63,7 @@ struct _TomoePoint
 
 GType           tomoe_writing_get_type          (void) G_GNUC_CONST;
 TomoeWriting   *tomoe_writing_new               (void);
+TomoeWriting   *tomoe_writing_dup               (TomoeWriting  *writing);
 void            tomoe_writing_move_to           (TomoeWriting  *writing,
                                                  gint           x,
                                                  gint           y);

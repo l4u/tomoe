@@ -80,6 +80,43 @@ tomoe_writing_new (void)
     return writing;
 }
 
+TomoeWriting *
+tomoe_writing_dup (TomoeWriting *writing)
+{
+    TomoeWriting *new_writing;
+    TomoeWritingPrivate *priv;
+    GList *stroke_list;
+
+    g_return_val_if_fail (TOMOE_IS_WRITING (writing), NULL);
+
+    new_writing = tomoe_writing_new ();
+
+    priv = TOMOE_WRITING_GET_PRIVATE(writing);
+    if (!priv->stroke_first) return new_writing;
+
+    for (stroke_list = priv->stroke_first;
+         stroke_list;
+         stroke_list = g_list_next (stroke_list)) {
+        GList *point_list = stroke_list->data;
+        GList *first_point = point_list;
+
+        if (!point_list) continue;
+
+        for (; point_list; point_list = g_list_next (point_list)) {
+            TomoePoint *p = point_list->data;
+
+            if (!p) continue;
+ 
+            if (point_list == first_point)
+                tomoe_writing_move_to (new_writing, p->x, p->y);
+            else
+                tomoe_writing_line_to (new_writing, p->x, p->y);
+        }
+    }
+
+    return new_writing;
+}
+
 void
 tomoe_writing_move_to (TomoeWriting *writing, gint x, gint y)
 {
