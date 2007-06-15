@@ -111,6 +111,18 @@ tomoe_reading_new (TomoeReadingType type, const gchar *reading)
                         NULL);
 }
 
+TomoeReading *
+tomoe_reading_dup (TomoeReading *reading)
+{
+    TomoeReadingPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_READING (reading), NULL);
+
+    priv = TOMOE_READING_GET_PRIVATE (reading);
+
+    return tomoe_reading_new (priv->type, priv->reading);
+}
+
 static void
 dispose (GObject *object)
 {

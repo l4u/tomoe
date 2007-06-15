@@ -59,6 +59,8 @@ GType             tomoe_reading_get_type (void) G_GNUC_CONST;
 TomoeReading     *tomoe_reading_new              (TomoeReadingType type,
                                                   const gchar      *reading);
 
+TomoeReading     *tomoe_reading_dup              (TomoeReading     *reading);
+
 TomoeReadingType  tomoe_reading_get_reading_type (TomoeReading     *reading);
 const gchar      *tomoe_reading_get_reading      (TomoeReading     *reading);
 
