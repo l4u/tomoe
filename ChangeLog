@@ -7,6 +7,7 @@
 	* bindings/python/tomoe.def: Define tomoe.Dict.copy().
 	* test/python/test_char.py: Add tomoe.Char.duplicate test.
 	* test/python/test_writing.py: Add tomoe.Writing.duplicate test.
+	* test/python/test_context.py: Add some tests.
 
 2007-06-14  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
