@@ -371,18 +371,14 @@ flush (TomoeDict *_dict)
 }
 
 static gboolean
-copy (TomoeDict *_src_dict, TomoeDict *dest_dict)
+copy (TomoeDict *src_dict, TomoeDict *dest_dict)
 {
-    TomoeDictXML *src_dict;
-    g_return_val_if_fail (TOMOE_IS_DICT_XML (_src_dict), FALSE);
+    g_return_val_if_fail (TOMOE_IS_DICT_XML (src_dict), FALSE);
 
-    src_dict = TOMOE_DICT_XML (_src_dict);
-
-    if (TOMOE_IS_DICT_XML (dest_dict)) {
-        tomoe_dict_plain_copy (_src_dict, dest_dict);
-    } else {
-        tomoe_dict_plain_copy (_src_dict, dest_dict);
-    }
+    if (TOMOE_IS_DICT_XML (dest_dict))
+        _tomoe_dict_ptr_array_copy (TOMOE_DICT_XML (src_dict)->chars, TOMOE_DICT_XML (dest_dict)->chars);
+    else
+        tomoe_dict_plain_copy (src_dict, dest_dict);
 
     return TRUE;
 }

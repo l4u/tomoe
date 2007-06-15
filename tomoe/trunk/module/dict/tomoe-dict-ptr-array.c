@@ -256,6 +256,29 @@ _tomoe_dict_ptr_array_search (GPtrArray *chars, TomoeQuery *query)
     return search_context.results;
 }
 
+static void
+copy_all_chars (gpointer data, gpointer user_data)
+{
+    TomoeChar *chr = data;
+    GPtrArray **dest_chars = user_data;
+
+    g_ptr_array_add (*dest_chars, tomoe_char_dup (chr));
+}
+
+gboolean
+_tomoe_dict_ptr_array_copy (GPtrArray *src_chars, GPtrArray *dest_chars)
+{
+    /* remove all chars from destination */
+    if (dest_chars->len > 0) {
+        g_ptr_array_foreach (dest_chars, (GFunc) g_object_unref, NULL);
+        g_ptr_array_remove_range (dest_chars, 0, dest_chars->len);
+    }
+
+    g_ptr_array_foreach_reverse (src_chars, copy_all_chars, &dest_chars);
+
+    return TRUE;
+}
+
 gchar *
 _tomoe_dict_ptr_array_get_available_private_utf8 (GPtrArray *chars)
 {
