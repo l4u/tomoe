@@ -161,6 +161,12 @@
   )
 )
 
+(define-method dup
+  (of-object "TomoeChar")
+  (c-name "tomoe_char_dup")
+  (return-type "TomoeChar*")
+)
+
 (define-method get_utf8
   (of-object "TomoeChar")
   (c-name "tomoe_char_get_utf8")
@@ -716,6 +722,12 @@
   )
 )
 
+(define-method dup
+  (of-object "TomoeReading")
+  (c-name "tomoe_reading_dup")
+  (return-type "TomoeReading*")
+)
+
 (define-method get_reading_type
   (of-object "TomoeReading")
   (c-name "tomoe_reading_get_reading_type")
@@ -907,6 +919,12 @@
 (define-function tomoe_writing_new
   (c-name "tomoe_writing_new")
   (is-constructor-of "TomoeWriting")
+  (return-type "TomoeWriting*")
+)
+
+(define-method dup
+  (of-object "TomoeWriting")
+  (c-name "tomoe_writing_dup")
   (return-type "TomoeWriting*")
 )
 
