@@ -537,6 +537,15 @@
   (return-type "gboolean")
 )
 
+(define-method copy
+  (of-object "TomoeDict")
+  (c-name "tomoe_dict_copy")
+  (return-type "gboolean")
+  (parameters
+    '("TomoeDict*" "dest_dict")
+  )
+)
+
 (define-method is_editable
   (of-object "TomoeDict")
   (c-name "tomoe_dict_is_editable")
