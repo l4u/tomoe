@@ -6,6 +6,27 @@ import tomoe
 
 class TomoeDictTest(unittest.TestCase):
 
+    def testCopy(self):
+        dict_modules = os.getenv('DICT_MODULES').split()
+        for dest_dict_name in dict_modules:
+            if dest_dict_name == "xml":
+                dest_dict = tomoe.Dict("XML", filename = 'copy-test.xml' ,editable = True)
+            elif dest_dict_name == "unihan":
+                return 
+            elif dest_dict_name == "est":
+                dest_dict = tomoe.Dict('Est', name = 'copy-test', database = 'copy-test', editable = True)
+            elif dest_dict_name == "mysql":
+                continue
+            else:
+                continue
+            self.assertNotEqual(None, dest_dict)
+            self.dict.copy(dest_dict)
+
+            query = tomoe.Query()
+            for src_char, dest_char in zip(sorted(map(lambda x: x.get_char(), dict.search(query))),
+                                           sorted(map(lambda x: x.get_char(), dest_dict.search(query)))):
+                self.assertEqual(src_char.to_xml(), dest_char.to_xml())
+
     def testRegisterChar(self):
         char_code = '地'
         tomoe_char = self.dict.get_char(char_code)
