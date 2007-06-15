@@ -59,6 +59,7 @@ GType           tomoe_char_get_type (void) G_GNUC_CONST;
 TomoeChar      *tomoe_char_new                  (void);
 TomoeChar      *tomoe_char_new_from_xml_data    (const gchar   *data,
                                                  gssize         len);
+TomoeChar      *tomoe_char_dup                  (TomoeChar     *chr);
 
 const gchar    *tomoe_char_get_utf8             (TomoeChar     *chr);
 void            tomoe_char_set_utf8             (TomoeChar     *chr,
