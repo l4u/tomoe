@@ -5,6 +5,7 @@
 	* test/python/test_dict.py: Add tomoe_dict_copy() test.
 	* lib/tomoe-dict.[ch]: Define tomoe_dict_copy().
 	* bindings/python/tomoe.def: Define tomoe.Dict.copy().
+	* test/python/test_char.py: Add tomoe.Char.duplicate test.
 
 2007-06-14  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
