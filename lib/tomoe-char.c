@@ -176,7 +176,7 @@ tomoe_char_dup (TomoeChar *chr)
 
     if (priv->readings) {
         GList *node; 
-        for (node = priv->readings; node; node = g_list_next (node)) {
+        for (node = g_list_last(priv->readings); node; node = g_list_previous (node)) {
             TomoeReading *new_reading = tomoe_reading_dup (TOMOE_READING(node->data));
             tomoe_char_add_reading (new_chr, new_reading);
             g_object_unref (new_reading);
@@ -185,7 +185,7 @@ tomoe_char_dup (TomoeChar *chr)
 
     if (priv->radicals) {
         GList *node; 
-        for (node = priv->radicals; node; node = g_list_next (node)) {
+        for (node = g_list_last(priv->radicals); node; node = g_list_previous (node)) {
             tomoe_char_add_radical (new_chr, node->data);
         }
     }
