@@ -38,6 +38,8 @@ TomoeChar *_tomoe_dict_ptr_array_get_char       (GPtrArray   *chars,
                                                  const gchar *utf8);
 GList     *_tomoe_dict_ptr_array_search         (GPtrArray   *chars,
                                                  TomoeQuery  *query);
+gboolean  _tomoe_dict_ptr_array_copy            (GPtrArray   *src_chars,
+                                                 GPtrArray   *dest_chars);
 gchar     *_tomoe_dict_ptr_array_get_available_private_utf8 (GPtrArray *chars);
 
 G_END_DECLS
