@@ -8,6 +8,16 @@ import tomoe
 
 class TomoeWritingTest(unittest.TestCase):
 
+    def testDuplicate(self):
+        writing1 = tomoe.Writing()
+        n = 10
+        for i in range(n):
+            writing1.move_to(i, i)
+            writing1.line_to(i * 2, i * 2)
+        
+        writing2 = writing1.duplicate()
+        self.assertEqual(writing1.to_xml(), writing2.to_xml())
+
     def testClear(self):
         writing = tomoe.Writing()
 
