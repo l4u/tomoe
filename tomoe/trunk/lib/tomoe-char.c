@@ -168,8 +168,11 @@ tomoe_char_dup (TomoeChar *chr)
     tomoe_char_set_utf8 (new_chr, priv->utf8);
     tomoe_char_set_n_strokes (new_chr, priv->n_strokes);
 
-    if (priv->writing)
-        tomoe_char_set_writing (new_chr, tomoe_writing_dup (priv->writing));
+    if (priv->writing) {
+        TomoeWriting *new_writing = tomoe_writing_dup (priv->writing);
+        tomoe_char_set_writing (new_chr, new_writing);
+        g_object_unref (new_writing);
+    }
 
     if (priv->variant)
         tomoe_char_set_variant (new_chr, priv->variant);
@@ -308,7 +311,8 @@ tomoe_char_set_utf8 (TomoeChar *chr, const gchar *utf8)
     g_return_if_fail (TOMOE_IS_CHAR (chr));
 
     priv = TOMOE_CHAR_GET_PRIVATE (chr);
-    g_free (priv->utf8);
+    if (priv->utf8)
+        g_free (priv->utf8);
     priv->utf8 = utf8 ? g_strdup (utf8) : NULL;
 }
 
