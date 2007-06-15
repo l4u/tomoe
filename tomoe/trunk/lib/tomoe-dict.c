@@ -317,8 +317,6 @@ tomoe_dict_flush (TomoeDict *dict)
 gboolean
 tomoe_dict_copy (TomoeDict *src_dict, TomoeDict *dest_dict)
 {
-    TomoeDictClass *klass;
-
     g_return_val_if_fail (TOMOE_IS_DICT (src_dict), FALSE);
     g_return_val_if_fail (TOMOE_IS_DICT (dest_dict), FALSE);
 
@@ -330,11 +328,13 @@ tomoe_dict_copy (TomoeDict *src_dict, TomoeDict *dest_dict)
         g_warning ("destination dictionary isn't editable.");
         return FALSE;
     }
-    klass = TOMOE_DICT_GET_CLASS (src_dict);
-    if (klass->copy)
-        return klass->copy (src_dict, dest_dict);
-    else
-        return FALSE;
+
+    if (G_OBJECT_TYPE (src_dict) == G_OBJECT_TYPE (dest_dict) &&
+        TOMOE_DICT_GET_CLASS (src_dict)->copy) {
+        return TOMOE_DICT_GET_CLASS (src_dict)->copy (src_dict, dest_dict);
+    }
+
+    return tomoe_dict_plain_copy (src_dict, dest_dict);
 }
 
 gboolean
@@ -359,7 +359,7 @@ tomoe_dict_plain_copy (TomoeDict *src_dict, TomoeDict *dest_dict)
 
     cands = tomoe_dict_search (dest_dict, query);
     for (node = cands; node; node = g_list_next (node)) {
-        TomoeChar *chr = tomoe_candidate_get_char (node->data);
+        TomoeChar *chr = tomoe_candidate_get_char (TOMOE_CANDIDATE (node->data));
         tomoe_dict_unregister_char (dest_dict, tomoe_char_get_utf8 (chr));
     }
     
@@ -370,7 +370,7 @@ tomoe_dict_plain_copy (TomoeDict *src_dict, TomoeDict *dest_dict)
     
     cands = tomoe_dict_search (src_dict, query);
     for (node = cands; node; node = g_list_next (node)) {
-        TomoeChar *chr = tomoe_candidate_get_char (node->data);
+        TomoeChar *chr = tomoe_candidate_get_char (TOMOE_CANDIDATE (node->data));
         TomoeChar *new_chr = tomoe_char_dup (chr);
         tomoe_dict_register_char (dest_dict, new_chr);
         g_object_unref (new_chr);

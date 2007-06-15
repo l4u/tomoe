@@ -20,6 +20,8 @@
 	plain copy().
 	* lib/tomoe-char.c: Readings and radicals copies from its last
 	element.
+	* lib/tomoe-dict.c: Call copy() only if the type of source and destination
+	dictionary is the same.
 
 2007-06-14  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
