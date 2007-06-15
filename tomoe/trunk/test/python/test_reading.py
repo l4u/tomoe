@@ -6,6 +6,14 @@ import tomoe
 
 class TomoeReadingTest(unittest.TestCase):
 
+    def testDuplicate(self):
+        for type in (tomoe.READING_INVALID, tomoe.READING_UNKNOWN, tomoe.READING_JA_KUN, tomoe.READING_JA_ON):
+            reading_string = 'いけ'
+            reading1 = tomoe.Reading(type, reading_string)
+            reading2 = reading1.dup()
+            self.assertEqual(type, reading2.get_reading_type())
+            self.assertEqual(reading_string, reading2.get_reading())
+
     def testGetReadingType(self):
         reading_string = "いけ"
 

@@ -12,6 +12,7 @@
 	* lib/tomoe-writing.[ch]: Add tomoe_writing_dup().
 	* test/python/bindings/test_char.py, test/python/test_writing.py:
 	duplicate() -> dup().
+	* test/python/test_reading.py: Add tomoe.Reading.dup() test.
 
 2007-06-14  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
