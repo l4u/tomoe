@@ -355,7 +355,7 @@ search (TomoeDict *_dict, TomoeQuery *query)
 {
     TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
 
-    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
+    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), NULL);
 
     return _tomoe_dict_ptr_array_search (dict->chars, query);
 }
