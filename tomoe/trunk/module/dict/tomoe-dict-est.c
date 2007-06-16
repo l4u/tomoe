@@ -79,7 +79,7 @@ typedef struct _TomoeDictSearchContext {
 } TomoeDictSearchContext;
 
 static GType tomoe_type_dict_est = 0;
-static GObjectClass *parent_class;
+static TomoeDictClass *parent_class;
 
 static GObject     *constructor               (GType                  type,
                                                guint                  n_props,
