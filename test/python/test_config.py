@@ -20,6 +20,10 @@ languages = ja;zh_CN
         config_file.close()
         self.config = tomoe.Config(self.config_filename)
 
+    def tearDown(self):
+        if os.access(self.config_filename, os.F_OK):
+            os.unlink(self.config_filename)
+        
     def testGetFilename(self):
         self.assertEqual(self.config_filename, self.config.get_filename())
 
