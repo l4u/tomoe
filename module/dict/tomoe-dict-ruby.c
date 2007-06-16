@@ -86,7 +86,7 @@ typedef struct _TomoeDictSearchContext {
 extern VALUE rb_load_path;
 
 static GType tomoe_type_dict_ruby = 0;
-static GObjectClass *parent_class;
+static TomoeDictClass *parent_class;
 
 static GObject     *constructor               (GType                  type,
                                                guint                  n_props,

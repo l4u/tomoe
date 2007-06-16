@@ -74,7 +74,7 @@ struct _TomoeDictSvnClass
 };
 
 static GType tomoe_type_dict_svn = 0;
-static GObjectClass *parent_class;
+static TomoeDictClass *parent_class;
 
 static apr_pool_t *pool;
 
