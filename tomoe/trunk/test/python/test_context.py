@@ -19,6 +19,10 @@ languages = ja;zh_CN
         config_file.write(contents)
         config_file.close()
 
+    def tearDown(self):
+        if os.access(self.config_filename, os.F_OK):
+            os.unlink(self.config_filename)
+
     def testLoadConfig(self):
         context = tomoe.Context()
         context.load_config(self.config_filename)
