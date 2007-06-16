@@ -9,14 +9,13 @@
 #include "tomoe-unihan.h"
 #include "tomoe-unihan-data.h"
 
-GPtrArray *
-_tomoe_unihan_create (void)
+void
+_tomoe_unihan_create (GPtrArray *array)
 {
-    GPtrArray *array;
     gint i, infos_size;
 
     infos_size = G_N_ELEMENTS (tomoe_unihan_infos);
-    array = g_ptr_array_sized_new (infos_size);
+    g_ptr_array_set_size (array, infos_size);
     array->len = infos_size;
 
     for (i = 0; i < infos_size; i++) {
@@ -64,6 +63,4 @@ _tomoe_unihan_create (void)
 
         array->pdata[i] = chr;
     }
-
-    return array;
 }
