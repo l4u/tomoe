@@ -9,6 +9,7 @@
 	* module/dict/tomoe-dict-ptr-array.[ch]: Removed. All functions were moved into
 	TomoeDictPtrArray object.
 	* module/dict/tomoe-unihan.[ch]: Adapt to TomoeDictPtrArray.
+	* lib/tomoe-dict.c: Call copy() only if the class has copy function.
 
 2007-06-15  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 

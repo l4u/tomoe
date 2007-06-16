@@ -329,10 +329,8 @@ tomoe_dict_copy (TomoeDict *src_dict, TomoeDict *dest_dict)
         return FALSE;
     }
 
-    if (G_OBJECT_TYPE (src_dict) == G_OBJECT_TYPE (dest_dict) &&
-        TOMOE_DICT_GET_CLASS (src_dict)->copy) {
+    if (TOMOE_DICT_GET_CLASS (src_dict)->copy)
         return TOMOE_DICT_GET_CLASS (src_dict)->copy (src_dict, dest_dict);
-    }
 
     return tomoe_dict_plain_copy (src_dict, dest_dict);
 }
