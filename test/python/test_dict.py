@@ -56,6 +56,7 @@ class TomoeDictTest(unittest.TestCase):
         char_code = '池'
         n_strokes = 6
         tomoe_char = self.dict.get_char(char_code)
+        self.assertNotEqual(None, tomoe_char)
         self.assertEqual(char_code, tomoe_char.get_utf8())
         self.assertEqual(n_strokes, tomoe_char.get_n_strokes())
 
