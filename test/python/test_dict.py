@@ -28,8 +28,8 @@ class TomoeDictTest(unittest.TestCase):
             self.assert_(self.dict.copy(dest_dict))
 
             query = tomoe.Query()
-            for src_char, dest_char in zip(map(lambda x: x.get_char(), self.dict.search(query)),
-                                           map(lambda x: x.get_char(), dest_dict.search(query))):
+            for src_char, dest_char in zip(sorted(map(lambda x: x.get_char(), self.dict.search(query)), key=lambda char: char.get_utf8()),
+                                           sorted(map(lambda x: x.get_char(), dest_dict.search(query)), key=lambda char: char.get_utf8())):
                 self.assertEqual(src_char.to_xml(), dest_char.to_xml())
 
     def testRegisterChar(self):
