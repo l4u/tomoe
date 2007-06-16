@@ -542,7 +542,7 @@ tomoe_char_to_xml_readings (TomoeChar *chr, TomoeCharPrivate *priv,
     if (!priv->readings) return;
 
     g_string_append (output, "    <readings>\n");
-    for (node = priv->readings; node; node = g_list_next (node)) {
+    for (node = g_list_last (priv->readings); node; node = g_list_previous (node)) {
         TomoeReading *reading = node->data;
         gchar *xml;
 

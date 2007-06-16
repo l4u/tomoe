@@ -1,3 +1,9 @@
+2007-06-16  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* lib/tomoe-char.c: tomoe_char_to_xml_readings() puts each reading
+	from the last element of its list for the sake of preserving the order
+	of readings.
+
 2007-06-15  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* bindings/python/tomoe-config.override: Implement
