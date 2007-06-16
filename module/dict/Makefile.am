@@ -38,14 +38,10 @@ LDFLAGS =							\
   -rpath $(dict_moduledir) -avoid-version -module		\
   -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)
 
-ptr_array_based_dict_sources =		\
-	tomoe-dict-ptr-array.c		\
-	tomoe-dict-ptr-array.h
-
 dict_module_LTLIBRARIES = xml.la
 
 xml_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:XML\" $(AM_CPPFLAGS)
-xml_la_SOURCES = tomoe-dict-xml.c $(ptr_array_based_dict_sources)
+xml_la_SOURCES = tomoe-dict-xml.c
 xml_la_LIBADD = $(LIBADD) 
 
 if USE_EST
@@ -81,8 +77,7 @@ unihan_la_SOURCES =		\
 	tomoe-dict-unihan.c	\
 	tomoe-unihan.c		\
 	tomoe-unihan.h		\
-	$(unihan_built_sources)	\
-	$(ptr_array_based_dict_sources)
+	$(unihan_built_sources)
 unihan_la_LIBADD = $(LIBADD) 
 
 unihan-compiler.rb: xml.la

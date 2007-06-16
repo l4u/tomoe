@@ -68,8 +68,7 @@ struct _TomoeDictUnihanClass
 };
 
 static GType tomoe_type_dict_unihan = 0;
-static GObjectClass *parent_class;
-static GPtrArray *chars = NULL;
+static TomoeDictPtrArray *parent_class;
 static guint chars_ref_count = 0;
 
 static GObject     *constructor               (GType                  type,
@@ -86,10 +85,6 @@ static void         get_property              (GObject       *object,
                                                GValue        *value,
                                                GParamSpec    *pspec);
 static const gchar *get_name                  (TomoeDict     *dict);
-static TomoeChar   *get_char                  (TomoeDict     *dict,
-                                               const gchar   *utf8);
-static GList       *search                    (TomoeDict     *dict,
-                                               TomoeQuery    *query);
 static gboolean     flush                     (TomoeDict     *dict);
 static gboolean     is_editable               (TomoeDict     *dict);
 static gboolean     is_available              (TomoeDict     *dict);
@@ -113,8 +108,6 @@ class_init (TomoeDictUnihanClass *klass)
 
     dict_class = TOMOE_DICT_CLASS (klass);
     dict_class->get_name        = get_name;
-    dict_class->get_char        = get_char;
-    dict_class->search          = search;
     dict_class->flush           = flush;
     dict_class->is_editable     = is_editable;
     dict_class->is_available    = is_available;
@@ -154,7 +147,7 @@ register_type (GTypeModule *type_module)
         };
 
     tomoe_type_dict_unihan = g_type_module_register_type (type_module,
-                                                       TOMOE_TYPE_DICT,
+                                                       TOMOE_TYPE_DICT_PTR_ARRAY,
                                                        "TomoeDictUnihan",
                                                        &info, 0);
 }
@@ -201,8 +194,8 @@ constructor (GType type, guint n_props,
 
     chars_ref_count++;
     if (chars_ref_count == 1) {
-        g_assert (chars == NULL);
-        chars = _tomoe_unihan_create ();
+        GPtrArray *chars = _tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (object));
+        _tomoe_unihan_create (chars);
     }
 
     return object;
@@ -266,9 +259,6 @@ finalize (GObject *object)
 {
     chars_ref_count--;
     if (chars_ref_count == 0) {
-        g_assert (chars != NULL);
-        TOMOE_PTR_ARRAY_FREE_ALL (chars, g_object_unref);
-        chars = NULL;
     }
 
     G_OBJECT_CLASS (parent_class)->finalize (object);
@@ -282,25 +272,6 @@ get_name (TomoeDict *_dict)
     return dict->name ? dict->name : DEFAULT_NAME;
 }
 
-static TomoeChar *
-get_char (TomoeDict *_dict, const gchar *utf8)
-{
-    TomoeDictUnihan *dict = TOMOE_DICT_UNIHAN (_dict);
-
-    g_return_val_if_fail (TOMOE_IS_DICT_UNIHAN (dict), NULL);
-
-    return _tomoe_dict_ptr_array_get_char (chars, utf8);
-}
-
-static GList *
-search (TomoeDict *_dict, TomoeQuery *query)
-{
-    TomoeDictUnihan *dict = TOMOE_DICT_UNIHAN (_dict);
-
-    g_return_val_if_fail (TOMOE_IS_DICT_UNIHAN (dict), FALSE);
-
-    return _tomoe_dict_ptr_array_search (chars, query);
-}
 
 static gboolean
 flush (TomoeDict *_dict)

@@ -27,7 +27,7 @@
 
 G_BEGIN_DECLS
 
-GPtrArray *_tomoe_unihan_create (void);
+void _tomoe_unihan_create (GPtrArray *array);
 
 G_END_DECLS
 

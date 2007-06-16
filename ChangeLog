@@ -3,6 +3,12 @@
 	* lib/tomoe-char.c: tomoe_char_to_xml_readings() puts each reading
 	from the last element of its list for the sake of preserving the order
 	of readings.
+	* lib/tomoe-dict-ptr-array.[ch]: A new abstract object.
+	* module/dict/tomoe-dict-xml.c, module/dict/tomoe-dict-unihan.c: Use
+	TomoeDictPtrArray.
+	* module/dict/tomoe-dict-ptr-array.[ch]: Removed. All functions were moved into
+	TomoeDictPtrArray object.
+	* module/dict/tomoe-unihan.[ch]: Adapt to TomoeDictPtrArray.
 
 2007-06-15  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 

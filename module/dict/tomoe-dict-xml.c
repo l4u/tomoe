@@ -61,10 +61,9 @@ typedef struct _TomoeDictXML TomoeDictXML;
 typedef struct _TomoeDictXMLClass TomoeDictXMLClass;
 struct _TomoeDictXML
 {
-    TomoeDict            object;
+    TomoeDictPtrArray    object;
     gchar               *filename;
     gchar               *name;
-    GPtrArray           *chars;
 
     gboolean             editable;
     gboolean             modified;
@@ -72,11 +71,11 @@ struct _TomoeDictXML
 
 struct _TomoeDictXMLClass
 {
-    TomoeDictClass parent_class;
+    TomoeDictPtrArrayClass parent_class;
 };
 
 static GType tomoe_type_dict_xml = 0;
-static GObjectClass *parent_class;
+static TomoeDictPtrArrayClass *parent_class;
 
 static GObject     *constructor               (GType                  type,
                                                guint                  n_props,
@@ -91,20 +90,9 @@ static void         get_property              (GObject       *object,
                                                GValue        *value,
                                                GParamSpec    *pspec);
 static const gchar *get_name                  (TomoeDict     *dict);
-static gboolean     register_char             (TomoeDict     *dict,
-                                               TomoeChar     *chr);
-static gboolean     unregister_char           (TomoeDict     *dict,
-                                               const gchar   *utf8);
-static TomoeChar   *get_char                  (TomoeDict     *dict,
-                                               const gchar   *utf8);
-static GList       *search                    (TomoeDict     *dict,
-                                               TomoeQuery    *query);
 static gboolean     flush                     (TomoeDict     *dict);
-static gboolean     copy                      (TomoeDict     *src_dict,
-                                               TomoeDict     *dest_dict);
 static gboolean     is_editable               (TomoeDict     *dict);
 static gboolean     is_available              (TomoeDict     *dict);
-static gchar       *get_available_private_utf8 (TomoeDict    *dict);
 static gboolean     tomoe_dict_xml_load       (TomoeDictXML  *dict);
 static gboolean     tomoe_dict_xml_save       (TomoeDictXML  *dict);
 
@@ -125,16 +113,9 @@ class_init (TomoeDictXMLClass *klass)
 
     dict_class = TOMOE_DICT_CLASS (klass);
     dict_class->get_name        = get_name;
-    dict_class->register_char   = register_char;
-    dict_class->unregister_char = unregister_char;
-    dict_class->get_char        = get_char;
-    dict_class->search          = search;
     dict_class->flush           = flush;
-    dict_class->copy            = copy;
     dict_class->is_editable     = is_editable;
     dict_class->is_available    = is_available;
-    dict_class->get_available_private_utf8 = get_available_private_utf8;
-
 
     g_object_class_install_property (
         gobject_class,
@@ -161,7 +142,6 @@ init (TomoeDictXML *dict)
 {
     dict->filename = NULL;
     dict->name     = NULL;
-    dict->chars    = g_ptr_array_new();
     dict->modified = FALSE;
     dict->editable = FALSE;
 }
@@ -183,7 +163,7 @@ register_type (GTypeModule *type_module)
         };
 
     tomoe_type_dict_xml = g_type_module_register_type (type_module,
-                                                       TOMOE_TYPE_DICT,
+                                                       TOMOE_TYPE_DICT_PTR_ARRAY,
                                                        "TomoeDictXML",
                                                        &info, 0);
 }
@@ -291,12 +271,9 @@ dispose (GObject *object)
         g_free (dict->name);
     if (dict->filename)
         g_free (dict->filename);
-    if (dict->chars)
-        TOMOE_PTR_ARRAY_FREE_ALL(dict->chars, g_object_unref);
 
     dict->name     = NULL;
     dict->filename = NULL;
-    dict->chars    = NULL;
 
     G_OBJECT_CLASS (parent_class)->dispose (object);
 }
@@ -310,57 +287,6 @@ get_name (TomoeDict *_dict)
 }
 
 static gboolean
-register_char (TomoeDict *_dict, TomoeChar *chr)
-{
-    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
-
-    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
-    g_return_val_if_fail (TOMOE_IS_CHAR (chr), FALSE);
-
-    if (_tomoe_dict_ptr_array_register_char (dict->chars, chr)) {
-        dict->modified = TRUE;
-        return TRUE;
-    } else {
-        return FALSE;
-    }
-}
-
-static gboolean
-unregister_char (TomoeDict *_dict, const gchar *utf8)
-{
-    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
-
-    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
-
-    if (_tomoe_dict_ptr_array_unregister_char (dict->chars, utf8)) {
-        dict->modified = TRUE;
-        return TRUE;
-    } else {
-        return FALSE;
-    }
-}
-
-static TomoeChar *
-get_char (TomoeDict *_dict, const gchar *utf8)
-{
-    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
-
-    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), NULL);
-
-    return _tomoe_dict_ptr_array_get_char (dict->chars, utf8);
-}
-
-static GList *
-search (TomoeDict *_dict, TomoeQuery *query)
-{
-    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
-
-    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), NULL);
-
-    return _tomoe_dict_ptr_array_search (dict->chars, query);
-}
-
-static gboolean
 flush (TomoeDict *_dict)
 {
     TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
@@ -368,19 +294,6 @@ flush (TomoeDict *_dict)
     g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
 
     return tomoe_dict_xml_save (dict);
-}
-
-static gboolean
-copy (TomoeDict *src_dict, TomoeDict *dest_dict)
-{
-    g_return_val_if_fail (TOMOE_IS_DICT_XML (src_dict), FALSE);
-
-    if (TOMOE_IS_DICT_XML (dest_dict))
-        _tomoe_dict_ptr_array_copy (TOMOE_DICT_XML (src_dict)->chars, TOMOE_DICT_XML (dest_dict)->chars);
-    else
-        tomoe_dict_plain_copy (src_dict, dest_dict);
-
-    return TRUE;
 }
 
 static gboolean
@@ -410,16 +323,6 @@ is_available (TomoeDict *_dict)
     return TRUE;
 }
 
-static gchar *
-get_available_private_utf8 (TomoeDict *_dict)
-{
-    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
-
-    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), NULL);
-
-    return _tomoe_dict_ptr_array_get_available_private_utf8 (dict->chars);
-}
-
 static gboolean
 tomoe_dict_xml_load (TomoeDictXML *dict)
 {
@@ -430,14 +333,14 @@ tomoe_dict_xml_load (TomoeDictXML *dict)
         return success;
 
     result.name = NULL;
-    result.chars = dict->chars;
+    result.chars = _tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (dict));
     success = _tomoe_xml_parser_parse_dictionary_file (dict->filename, &result);
     if (result.name) {
         g_free (dict->name);
         dict->name = g_strdup (result.name);
         g_free (result.name);
     }
-    _tomoe_dict_ptr_array_sort (dict->chars);
+    _tomoe_dict_ptr_array_sort (TOMOE_DICT_PTR_ARRAY (dict));
 
     return success;
 }
@@ -449,6 +352,7 @@ tomoe_dict_xml_save (TomoeDictXML *dict)
     GError *error = NULL;
     gboolean success;
     guint i;
+    GPtrArray *chars;
 
     g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
 
@@ -467,9 +371,10 @@ tomoe_dict_xml_save (TomoeDictXML *dict)
     else
         g_string_append (xml, "<dictionary>\n");
 
-    for (i = 0; i < dict->chars->len; i++) {
+    chars = _tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (dict));
+    for (i = 0; i < chars->len; i++) {
         gchar *chr_xml;
-        TomoeChar *chr = g_ptr_array_index (dict->chars, i);
+        TomoeChar *chr = g_ptr_array_index (chars, i);
 
         chr_xml = tomoe_char_to_xml (chr);
         if (chr_xml) {

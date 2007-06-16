@@ -17,20 +17,91 @@
  *  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  *  Boston, MA  02111-1307  USA
  *
- *  $Id$
+ *  $Id: tomoe-dict-ptr-array.c 1486 2007-06-15 12:48:40Z ikezoe $
  */
 
 #include <string.h>
 
 #include "tomoe-dict-ptr-array.h"
 
-#include <tomoe-candidate.h>
+#include "tomoe-candidate.h"
 #include <glib-utils.h>
 
 typedef struct _TomoeDictSearchContext {
     TomoeQuery *query;
     GList *results;
 } TomoeDictSearchContext;
+
+#define TOMOE_DICT_PTR_ARRAY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_DICT_PTR_ARRAY, TomoeDictPtrArrayPrivate))
+
+typedef struct _TomoeDictPtrArrayPrivate	TomoeDictPtrArrayPrivate;
+struct _TomoeDictPtrArrayPrivate
+{
+    GPtrArray           *chars;
+};
+
+static TomoeDictClass *parent_class;
+
+G_DEFINE_ABSTRACT_TYPE (TomoeDictPtrArray, _tomoe_dict_ptr_array, TOMOE_TYPE_DICT)
+
+static void         dispose                    (GObject       *object);
+static gboolean     register_char              (TomoeDict     *dict,
+                                                TomoeChar     *chr);
+static gboolean     unregister_char            (TomoeDict     *dict,
+                                                const gchar   *utf8);
+static TomoeChar   *get_char                   (TomoeDict     *dict,
+                                                const gchar   *utf8);
+static GList       *search                     (TomoeDict     *dict,
+                                                TomoeQuery    *query);
+static gboolean     copy                       (TomoeDict     *src_dict,
+                                                TomoeDict     *dest_dict);
+static gchar       *get_available_private_utf8 (TomoeDict     *dict);
+
+static void
+_tomoe_dict_ptr_array_class_init (TomoeDictPtrArrayClass *klass)
+{
+    GObjectClass *gobject_class;
+    TomoeDictClass *dict_class;
+
+    gobject_class = G_OBJECT_CLASS (klass);
+    gobject_class->dispose      = dispose;
+
+    parent_class = g_type_class_peek_parent (klass);
+
+    dict_class = TOMOE_DICT_CLASS (klass);
+    dict_class->get_name        = NULL;
+    dict_class->register_char   = register_char;
+    dict_class->unregister_char = unregister_char;
+    dict_class->get_char        = get_char;
+    dict_class->search          = search;
+    dict_class->flush           = NULL;
+    dict_class->copy            = copy;
+    dict_class->is_editable     = NULL;
+    dict_class->is_available    = NULL;
+    dict_class->get_available_private_utf8 = get_available_private_utf8;
+
+    g_type_class_add_private (gobject_class, sizeof (TomoeDictPtrArrayPrivate));
+}
+
+static void
+_tomoe_dict_ptr_array_init (TomoeDictPtrArray *dict)
+{
+    TomoeDictPtrArrayPrivate *priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dict);
+    priv->chars    = g_ptr_array_new();
+}
+
+static void
+dispose (GObject *object)
+{
+    TomoeDictPtrArrayPrivate *priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (object);
+
+    if (priv->chars)
+        TOMOE_PTR_ARRAY_FREE_ALL(priv->chars, g_object_unref);
+
+    priv->chars    = NULL;
+
+    G_OBJECT_CLASS (parent_class)->dispose (object);
+}
 
 static gint
 char_compare_func (gconstpointer a, gconstpointer b)
@@ -41,32 +112,49 @@ char_compare_func (gconstpointer a, gconstpointer b)
 }
 
 void
-_tomoe_dict_ptr_array_sort (GPtrArray *chars)
+_tomoe_dict_ptr_array_sort (TomoeDictPtrArray *dict)
 {
-    g_ptr_array_sort (chars, char_compare_func);
+    TomoeDictPtrArrayPrivate *priv;
+
+    g_return_if_fail (TOMOE_IS_DICT_PTR_ARRAY (dict));
+
+    priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dict);
+
+    g_ptr_array_sort (priv->chars, char_compare_func);
 }
 
-gboolean
-_tomoe_dict_ptr_array_register_char (GPtrArray *chars, TomoeChar *chr)
+static gboolean
+register_char (TomoeDict *dict, TomoeChar *chr)
 {
-    _tomoe_dict_ptr_array_unregister_char (chars, tomoe_char_get_utf8 (chr));
-    g_ptr_array_add (chars, g_object_ref (G_OBJECT (chr)));
-    _tomoe_dict_ptr_array_sort (chars);
+    TomoeDictPtrArrayPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_DICT_PTR_ARRAY (dict), FALSE);
+    g_return_val_if_fail (TOMOE_IS_CHAR (chr), FALSE);
+
+    priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dict);
+
+    unregister_char (dict, tomoe_char_get_utf8 (chr));
+    g_ptr_array_add (priv->chars, g_object_ref (G_OBJECT (chr)));
+    _tomoe_dict_ptr_array_sort (TOMOE_DICT_PTR_ARRAY (dict));
 
     return TRUE;
 }
 
-gboolean
-_tomoe_dict_ptr_array_unregister_char (GPtrArray *chars, const gchar *utf8)
+static gboolean
+unregister_char (TomoeDict *dict, const gchar *utf8)
 {
+    TomoeDictPtrArrayPrivate *priv;
     TomoeChar *removed = NULL;
     gint i, len, index = -1;
 
+    g_return_val_if_fail (TOMOE_IS_DICT_PTR_ARRAY (dict), FALSE);
     g_return_val_if_fail (utf8 && *utf8 != '\0', FALSE);
 
-    len = chars->len;
+    priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dict);
+
+    len = priv->chars->len;
     for (i = 0; i < len; i++) {
-        TomoeChar *chr = g_ptr_array_index (chars, i);
+        TomoeChar *chr = g_ptr_array_index (priv->chars, i);
         if (g_str_equal (tomoe_char_get_utf8(chr), utf8)) {
             index = i;
             removed = chr;
@@ -75,7 +163,7 @@ _tomoe_dict_ptr_array_unregister_char (GPtrArray *chars, const gchar *utf8)
     }
 
     if (index >= 0) {
-        g_ptr_array_remove_index (chars, index);
+        g_ptr_array_remove_index (priv->chars, index);
         g_object_unref (removed);
         return TRUE;
     } else {
@@ -83,16 +171,20 @@ _tomoe_dict_ptr_array_unregister_char (GPtrArray *chars, const gchar *utf8)
     }
 }
 
-TomoeChar *
-_tomoe_dict_ptr_array_get_char (GPtrArray *chars, const gchar *utf8)
+static TomoeChar *
+get_char (TomoeDict *dict, const gchar *utf8)
 {
+    TomoeDictPtrArrayPrivate *priv;
     gint i, len;
 
+    g_return_val_if_fail (TOMOE_IS_DICT_PTR_ARRAY (dict), NULL);
     g_return_val_if_fail (utf8 && *utf8 != '\0', NULL);
 
-    len = chars->len;
+    priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dict);
+
+    len = priv->chars->len;
     for (i = 0; i < len; i++) {
-        TomoeChar *chr = g_ptr_array_index (chars, i);
+        TomoeChar *chr = g_ptr_array_index (priv->chars, i);
         if (g_str_equal (tomoe_char_get_utf8(chr), utf8)) {
             return g_object_ref (chr);
         }
@@ -236,19 +328,24 @@ collect_all_chars (gpointer data, gpointer user_data)
                                        tomoe_candidate_new (chr));
 }
 
-GList *
-_tomoe_dict_ptr_array_search (GPtrArray *chars, TomoeQuery *query)
+static GList *
+search (TomoeDict *dict, TomoeQuery *query)
 {
     TomoeDictSearchContext search_context;
+    TomoeDictPtrArrayPrivate *priv;
+
+    g_return_val_if_fail (TOMOE_IS_DICT_PTR_ARRAY (dict), NULL);
+
+    priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dict);
 
     search_context.query = g_object_ref (query);
     search_context.results = NULL;
 
     if (tomoe_query_is_empty (query)) {
-        g_ptr_array_foreach_reverse (chars, collect_all_chars,
+        g_ptr_array_foreach_reverse (priv->chars, collect_all_chars,
                                      &search_context);
     } else {
-        g_ptr_array_foreach_reverse (chars, collect_chars_by_query,
+        g_ptr_array_foreach_reverse (priv->chars, collect_chars_by_query,
                                      &search_context);
     }
     g_object_unref (search_context.query);
@@ -266,32 +363,47 @@ copy_all_chars (gpointer data, gpointer user_data)
 }
 
 gboolean
-_tomoe_dict_ptr_array_copy (GPtrArray *src_chars, GPtrArray *dest_chars)
+copy (TomoeDict *src_dict, TomoeDict *dest_dict)
 {
+    TomoeDictPtrArrayPrivate *src_priv, *dest_priv;
+    g_return_val_if_fail (TOMOE_IS_DICT_PTR_ARRAY (src_dict), FALSE);
+
+    if (!TOMOE_IS_DICT_PTR_ARRAY (dest_dict)) {
+        tomoe_dict_plain_copy (src_dict, dest_dict);
+        return TRUE;
+    }
+    src_priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (src_dict);
+    dest_priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dest_dict);
+
     /* remove all chars from destination */
-    if (dest_chars->len > 0) {
-        g_ptr_array_foreach (dest_chars, (GFunc) g_object_unref, NULL);
-        g_ptr_array_remove_range (dest_chars, 0, dest_chars->len);
+    if (dest_priv->chars->len > 0) {
+        g_ptr_array_foreach (dest_priv->chars, (GFunc) g_object_unref, NULL);
+        g_ptr_array_remove_range (dest_priv->chars, 0, dest_priv->chars->len);
     }
 
-    g_ptr_array_foreach_reverse (src_chars, copy_all_chars, &dest_chars);
+    g_ptr_array_foreach_reverse (src_priv->chars, copy_all_chars, &dest_priv->chars);
 
     return TRUE;
 }
 
 gchar *
-_tomoe_dict_ptr_array_get_available_private_utf8 (GPtrArray *chars)
+get_available_private_utf8 (TomoeDict *dict)
 {
+    TomoeDictPtrArrayPrivate *priv;
     gint i, len, result_len;
     gchar *result;
     gunichar result_ucs = TOMOE_CHAR_PRIVATE_USE_AREA_START;
 
-    len = chars->len;
+    g_return_val_if_fail (TOMOE_IS_DICT_PTR_ARRAY (dict), NULL);
+
+    priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dict);
+
+    len = priv->chars->len;
     for (i = 0; i < len; i++) {
         TomoeChar *chr;
         gunichar ucs;
 
-        chr = chars->pdata[i];
+        chr = priv->chars->pdata[i];
         ucs = g_utf8_get_char (tomoe_char_get_utf8 (chr));
         if (ucs >= TOMOE_CHAR_PRIVATE_USE_AREA_START) {
             if (ucs >= TOMOE_CHAR_PRIVATE_USE_AREA_END) {
@@ -307,6 +419,14 @@ _tomoe_dict_ptr_array_get_available_private_utf8 (GPtrArray *chars)
     g_unichar_to_utf8 (result_ucs, result);
     result[result_len] = '\0';
     return result;
+}
+
+GPtrArray *
+_tomoe_dict_ptr_array_get_array (TomoeDictPtrArray *dict)
+{
+    g_return_val_if_fail (TOMOE_IS_DICT_PTR_ARRAY (dict), NULL);
+
+    return TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dict)->chars;
 }
 
 /*

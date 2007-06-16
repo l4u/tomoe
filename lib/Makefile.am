@@ -69,6 +69,8 @@ libtomoe_la_SOURCES =		\
 	tomoe-context.c		\
 	tomoe-config.c		\
 	tomoe-dict.c		\
+	tomoe-dict-ptr-array.c	\
+	tomoe-dict-ptr-array.h	\
 	tomoe-module.c		\
 	tomoe-query.c		\
 	tomoe-reading.c		\
