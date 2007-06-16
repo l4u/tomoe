@@ -13,8 +13,17 @@ class TomoeConfigTest(unittest.TestCase):
         config_file = open(self.config_filename, "w")
         contents = """
 [config]
+use-system-dictionaries = false
 user-dictionary = user-dict
 languages = ja;zh_CN
+
+[test1-dictionary]
+type = xml
+file = ../../data/kanjidic2.xml
+
+[test2-dictionary]
+type = xml
+file = ../../data/kanjidic2.xml
          """
         config_file.write(contents)
         config_file.close()
@@ -34,6 +43,7 @@ languages = ja;zh_CN
         self.assertEqual(sorted(['ja', 'zh_CN']), sorted(self.config.get_languages()))
 
     def testMakeShelf(self):
-        self.assert_(False)
+        shelf = self.config.make_shelf('')
+        self.assertEqual(sorted(['test1', 'test2']), sorted(shelf.get_dict_names()))
 
 # vi:ts=4:nowrap:ai:expandtab
