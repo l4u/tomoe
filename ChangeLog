@@ -1,3 +1,8 @@
+2007-06-17  Kouhei Sutou  <kou@cozmixng.org>
+
+	* macros/python.m4: disabled Python bindings not error if pygobject-2.0
+	package is not found.
+
 2007-06-16  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* lib/tomoe-char.c: tomoe_char_to_xml_readings() puts each reading
