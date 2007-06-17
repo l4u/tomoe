@@ -69,13 +69,12 @@ struct _TomoeDictUnihanClass
 
 static GType tomoe_type_dict_unihan = 0;
 static TomoeDictPtrArray *parent_class;
-static guint chars_ref_count = 0;
+static TomoeDictUnihan *the_singleton = NULL;
 
 static GObject     *constructor               (GType                  type,
                                                guint                  n_props,
                                                GObjectConstructParam *props);
 static void         dispose                   (GObject       *object);
-static void         finalize                  (GObject       *object);
 static void         set_property              (GObject       *object,
                                                guint         prop_id,
                                                const GValue  *value,
@@ -102,7 +101,6 @@ class_init (TomoeDictUnihanClass *klass)
 
     gobject_class->constructor  = constructor;
     gobject_class->dispose      = dispose;
-    gobject_class->finalize     = finalize;
     gobject_class->set_property = set_property;
     gobject_class->get_property = get_property;
 
@@ -190,12 +188,16 @@ constructor (GType type, guint n_props,
     GObject *object;
     GObjectClass *klass = G_OBJECT_CLASS (parent_class);
 
-    object = klass->constructor (type, n_props, props);
+    if (!the_singleton) {
+        GPtrArray *chars;
+        object = klass->constructor (type, n_props, props);
+        the_singleton = TOMOE_DICT_UNIHAN (object);
 
-    chars_ref_count++;
-    if (chars_ref_count == 1) {
-        GPtrArray *chars = _tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (object));
+        chars = _tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (object));
         _tomoe_unihan_create (chars);
+
+    } else {
+        object = g_object_ref (G_OBJECT (the_singleton));
     }
 
     return object;
@@ -252,16 +254,6 @@ dispose (GObject *object)
     dict->name     = NULL;
 
     G_OBJECT_CLASS (parent_class)->dispose (object);
-}
-
-static void
-finalize (GObject *object)
-{
-    chars_ref_count--;
-    if (chars_ref_count == 0) {
-    }
-
-    G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static const gchar*
