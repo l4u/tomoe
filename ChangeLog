@@ -27,6 +27,7 @@
 	* test/data/test-dict.xml: Added stroke data.
 	* test/python/test_common.py, test/python/test_recognizer.py:
 	parseStrokeData() was moved into test_common.py.
+	* test/python/test_context.py: Implement all tests.
 
 2007-06-15  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
