@@ -29,6 +29,7 @@ EXTRA_DIST =			\
 	test_char.py		\
 	test_dict.py		\
 	test_dict_est.py	\
+	test_dict_mysql.py	\
 	test_dict_unihan.py	\
 	test_dict_xml.py	\
 	test_query.py		\
