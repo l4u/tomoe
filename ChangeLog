@@ -24,6 +24,7 @@
 	* test/data/test-dict.xml: Added.
 	* test/python/test_dict_xml.py: Use test-dict.xml.
 	* test/python/test_context.py: Use test-dict.xml.
+	* test/data/test-dict.xml: Added stroke data.
 
 2007-06-15  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
