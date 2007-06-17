@@ -1,4 +1,4 @@
-# -*- coding: UTF=8 -*-
+# encoding: utf-8
 import os
 import sys
 import unittest
