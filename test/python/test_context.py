@@ -13,8 +13,13 @@ class TomoeContextTest(unittest.TestCase):
         config_file = open(self.config_filename, "w")
         contents = """
 [config]
+use-system-dictionaries = false
 user-dictionary = user-dict
 languages = ja;zh_CN
+
+[test-dictionary]
+type = xml
+file = test-dict.xml
          """
         config_file.write(contents)
         config_file.close()
@@ -35,13 +40,34 @@ languages = ja;zh_CN
         context = tomoe.Context()
         context.load_config(self.config_filename)
 
-        char = context.get_char('池')
-        self.assertEqual('池', char.get_utf8())
+        char_code = '池'
+        tomoe_char = context.get_char(char_code)
+        self.assertEqual(char_code, tomoe_char.get_utf8())
 
     def testRegister(self):
-        self.assert_(False)
+        context = tomoe.Context()
+        context.load_config(self.config_filename)
+
+        char_code = '地'
+        tomoe_char = context.get_char(char_code)
+        self.assertEqual(None, tomoe_char)
+
+        tomoe_char = tomoe.Char(char_code)
+        self.assert_(context.register(tomoe_char))
+
+        tomoe_char = context.get_char(char_code)
+        self.assertNotEqual(None, tomoe_char)
+        self.assertEqual(char_code, tomoe_char.get_utf8())
 
     def testUnregister(self):
-        self.assert_(False)
+        context = tomoe.Context()
+        context.load_config(self.config_filename)
+
+        char_code = '池'
+        tomoe_char = context.get_char(char_code)
+        self.assertEqual(char_code, tomoe_char.get_utf8())
+
+        self.assert_(context.unregister(char_code))
+        self.assertEqual(None, context.get_char(char_code))
 
 # vi:ts=4:nowrap:ai:expandtab
