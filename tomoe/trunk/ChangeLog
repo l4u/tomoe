@@ -4,6 +4,7 @@
 	- disabled Python bindings not error if pygobject-2.0
   	  package is not found.
 	- removed needless spaces.
+	- removed needless macros.
 
 2007-06-16  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 

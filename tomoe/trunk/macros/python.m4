@@ -39,17 +39,10 @@ if test "$python_available" = "yes"; then
 
     AC_SUBST(PYGOBJECT_CFLAGS)
 
-    python_undef_package_macros="
-#undef PACKAGE_NAME
-#undef PACKAGE_TARNAME
-#undef PACKAGE_STRING
-#undef PACKAGE_VERSION
-"
     CFLAGS="$CFLAGS $PYTHON_CFLAGS"
     AC_CHECK_HEADERS(Python.h, [],
 		     [python_available="no"
-		      AC_MSG_WARN([$python_disable_message])],
-		     [$python_undef_package_macros])
+		      AC_MSG_WARN([$python_disable_message])])
     CFLAGS=$_SAVE_CFLAGS
   fi
 
