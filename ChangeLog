@@ -21,6 +21,8 @@
 	TomoeDictPtrArray object.
 	* module/dict/tomoe-unihan.[ch]: Adapt to TomoeDictPtrArray.
 	* lib/tomoe-dict.c: Call copy() only if the class has copy function.
+	* test/data/test-dict.xml: Added.
+	* test/python/test_dict_xml.py: Use test-dict.xml.
 
 2007-06-15  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 

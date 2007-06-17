@@ -18,7 +18,7 @@
 ## Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 ## Boston, MA  02111-1307  USA
 
-EXTRA_DIST =		\
+stroke_FILES =		\
 	aki.data	\
 	asi.data	\
 	fuyu.data	\
@@ -32,3 +32,10 @@ EXTRA_DIST =		\
 	niku.data	\
 	one_stroke.data	\
 	su.data
+
+dict_FILES = 		\
+	test-dict.xml
+
+EXTRA_DIST =		\
+	$(stroke_FILES)	\
+	$(dict_FILES)
