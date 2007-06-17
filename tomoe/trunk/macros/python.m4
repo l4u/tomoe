@@ -39,17 +39,20 @@ if test "$python_available" = "yes"; then
 
     AC_SUBST(PYGOBJECT_CFLAGS)
 
-    CFLAGS="$CFLAGS $PYTHON_CFLAGS"
+    _SAVE_CPPFLAGS="$CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS $PYTHON_CFLAGS"
     AC_CHECK_HEADERS(Python.h, [],
 		     [python_available="no"
 		      AC_MSG_WARN([$python_disable_message])])
-    CFLAGS=$_SAVE_CFLAGS
+    CPPFLAGS=$_SAVE_CPPFLAGS
   fi
 
   if test "$python_available" = "yes"; then
-    AC_PATH_PROG(PYGTK_CODEGEN, pygtk-codegen-2.0,
-		 [python_available="no"
-		  AC_MSG_WARN([$python_disable_message])])
+    AC_PATH_PROG(PYGTK_CODEGEN, pygtk-codegen-2.0)
+    if test -z "$PYGTK_CODEGEN"; then
+      python_available="no"
+      AC_MSG_WARN([$python_disable_message])
+    fi
   fi
 fi
 

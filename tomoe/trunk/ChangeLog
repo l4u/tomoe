@@ -5,6 +5,7 @@
   	  package is not found.
 	- removed needless spaces.
 	- removed needless macros.
+	- used $CPPFLAGS not $CFLAGS.
 
 2007-06-16  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
