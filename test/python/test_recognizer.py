@@ -14,24 +14,9 @@ class TomoeRecognizerTest(unittest.TestCase):
         self.writings = []
         self.results = []
         for file in glob.glob(os.path.join(test_common.test_data_dir, '*.data')):
-            results, writing = self.parseStrokeData(file)
+            results, writing = test_common.parseStrokeData(file)
             self.writings.append(writing)
             self.results.append(results)
-
-    def parseStrokeData(self, file):
-        writing = tomoe.Writing()
-        lines = open(file, 'r').readlines()
-        results = lines.pop(0)
-        for line in lines:
-            points = line.split(',')
-            first_point = points.pop(0)
-            x, y = first_point.split()
-            writing.move_to(int(x), int(y))
-            for point in points:
-                x, y = point.split()
-                writing.line_to(int(x), int(y))
-
-        return results, writing
 
     def testStrokeSearch(self):
         for writing, result in zip(self.writings, self.results):
