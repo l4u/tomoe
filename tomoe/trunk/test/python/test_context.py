@@ -1,6 +1,7 @@
 # encoding: utf-8
 import os
 import sys
+import shutil
 import glob
 import unittest
 import test_common
@@ -9,24 +10,31 @@ import tomoe
 class TomoeContextTest(unittest.TestCase):
 
     def setUp(self):
+        test_dict_name = os.path.join(test_common.test_data_dir, 'test-dict.xml')
+        self.dict_name = "tomoe-test-xmldict.xml"
+        shutil.copy(test_dict_name, self.dict_name)
+ 
         self.config_filename = "test-config"
         config_file = open(self.config_filename, "w")
         contents = """
 [config]
 use-system-dictionaries = false
-user-dictionary = user-dict
+user-dictionary = test
 languages = ja;zh_CN
 
 [test-dictionary]
 type = xml
-file = test-dict.xml
-         """
+file = %s
+         """ % (self.dict_name)
         config_file.write(contents)
         config_file.close()
 
     def tearDown(self):
         if os.access(self.config_filename, os.F_OK):
             os.unlink(self.config_filename)
+
+        if os.access(self.dict_name, os.F_OK):
+            os.unlink(self.dict_name)
 
     def testLoadConfig(self):
         context = tomoe.Context()
