@@ -28,6 +28,9 @@
 	* test/python/test_common.py, test/python/test_recognizer.py:
 	parseStrokeData() was moved into test_common.py.
 	* test/python/test_context.py: Implement all tests.
+	* module/dict/tomoe-dict-unihan.c: Now TomoeDictUnihan is a singleton
+	object. But it is fragile because _tomoe_unihan_create() takes a lot
+	of time.
 
 2007-06-15  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
