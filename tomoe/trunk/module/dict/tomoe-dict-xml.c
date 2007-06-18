@@ -81,6 +81,10 @@ static GObject     *constructor               (GType                  type,
                                                guint                  n_props,
                                                GObjectConstructParam *props);
 static void         dispose                   (GObject       *object);
+static gboolean     register_char             (TomoeDict     *dict,
+                                               TomoeChar     *chr);
+static gboolean     unregister_char           (TomoeDict     *dict,
+                                               const gchar   *utf8);
 static void         set_property              (GObject       *object,
                                                guint         prop_id,
                                                const GValue  *value,
@@ -113,6 +117,8 @@ class_init (TomoeDictXMLClass *klass)
 
     dict_class = TOMOE_DICT_CLASS (klass);
     dict_class->get_name        = get_name;
+    dict_class->register_char   = register_char;
+    dict_class->unregister_char = unregister_char;
     dict_class->flush           = flush;
     dict_class->is_editable     = is_editable;
     dict_class->is_available    = is_available;
@@ -276,6 +282,30 @@ dispose (GObject *object)
     dict->filename = NULL;
 
     G_OBJECT_CLASS (parent_class)->dispose (object);
+}
+
+static gboolean
+register_char (TomoeDict *dict, TomoeChar *chr)
+{
+    gboolean success;
+
+    success = TOMOE_DICT_PTR_ARRAY_CLASS (parent_class)->register_char (dict, chr);
+    if (success)
+        TOMOE_DICT_XML (dict)->modified = TRUE;
+
+    return success;
+}
+
+static gboolean
+unregister_char (TomoeDict *dict, const gchar *utf8)
+{
+    gboolean success;
+
+    success = TOMOE_DICT_PTR_ARRAY_CLASS (parent_class)->unregister_char (dict, utf8);
+    if (success)
+        TOMOE_DICT_XML (dict)->modified = TRUE;
+
+    return success;
 }
 
 static const gchar*

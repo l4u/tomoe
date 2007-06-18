@@ -1,6 +1,10 @@
 2007-06-18  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* bindings/ruby/tomoe-rb-dict.c: Implement copy() function.
+	* lib/tomoe-dict-ptr-array.[ch]: Added register and unregister virtual
+	functions. 
+	* module/tomoe-dict-xml.c: Invoke TomoeDictPtrArray::register_char
+	to set modified flag.
 
 2007-06-17  Kouhei Sutou  <kou@cozmixng.org>
 
