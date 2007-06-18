@@ -80,6 +80,9 @@ _tomoe_dict_ptr_array_class_init (TomoeDictPtrArrayClass *klass)
     dict_class->is_available    = NULL;
     dict_class->get_available_private_utf8 = get_available_private_utf8;
 
+    klass->register_char        = register_char;
+    klass->unregister_char      = unregister_char;
+
     g_type_class_add_private (gobject_class, sizeof (TomoeDictPtrArrayPrivate));
 }
 
