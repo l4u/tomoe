@@ -1,3 +1,7 @@
+2007-06-18  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* bindings/ruby/tomoe-rb-dict.c: Implement copy() function.
+
 2007-06-17  Kouhei Sutou  <kou@cozmixng.org>
 
 	* test/python/*.py: fixed encoding preamble(?).
