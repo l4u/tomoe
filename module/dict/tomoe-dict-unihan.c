@@ -58,13 +58,13 @@ typedef struct _TomoeDictUnihan TomoeDictUnihan;
 typedef struct _TomoeDictUnihanClass TomoeDictUnihanClass;
 struct _TomoeDictUnihan
 {
-    TomoeDict            object;
+    TomoeDictPtrArray    object;
     gchar               *name;
 };
 
 struct _TomoeDictUnihanClass
 {
-    TomoeDictClass parent_class;
+    TomoeDictPtrArrayClass parent_class;
 };
 
 static GType tomoe_type_dict_unihan = 0;
@@ -145,9 +145,9 @@ register_type (GTypeModule *type_module)
         };
 
     tomoe_type_dict_unihan = g_type_module_register_type (type_module,
-                                                       TOMOE_TYPE_DICT_PTR_ARRAY,
-                                                       "TomoeDictUnihan",
-                                                       &info, 0);
+                                                          TOMOE_TYPE_DICT_PTR_ARRAY,
+                                                          "TomoeDictUnihan",
+                                                          &info, 0);
 }
 
 G_MODULE_EXPORT GList *

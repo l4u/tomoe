@@ -5,6 +5,7 @@
 	functions. 
 	* module/tomoe-dict-xml.c: Invoke TomoeDictPtrArray::register_char
 	to set modified flag.
+	* module/tomoe-dict-unihan.c: Fix critical typos.
 
 2007-06-17  Kouhei Sutou  <kou@cozmixng.org>
 
