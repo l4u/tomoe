@@ -34,10 +34,18 @@ typedef struct _TomoeDictSearchContext {
 
 #define TOMOE_DICT_PTR_ARRAY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TOMOE_TYPE_DICT_PTR_ARRAY, TomoeDictPtrArrayPrivate))
 
+enum {
+    PROP_0,
+    PROP_EDITABLE,
+    PROP_MODIFIED
+};
+
 typedef struct _TomoeDictPtrArrayPrivate	TomoeDictPtrArrayPrivate;
 struct _TomoeDictPtrArrayPrivate
 {
     GPtrArray           *chars;
+    gboolean             editable;
+    gboolean             modified;
 };
 
 static TomoeDictClass *parent_class;
@@ -45,6 +53,14 @@ static TomoeDictClass *parent_class;
 G_DEFINE_ABSTRACT_TYPE (TomoeDictPtrArray, _tomoe_dict_ptr_array, TOMOE_TYPE_DICT)
 
 static void         dispose                    (GObject       *object);
+static void         set_property               (GObject       *object,
+                                                guint         prop_id,
+                                                const GValue  *value,
+                                                GParamSpec    *pspec);
+static void         get_property               (GObject       *object,
+                                                guint          prop_id,
+                                                GValue        *value,
+                                                GParamSpec    *pspec);
 static gboolean     register_char              (TomoeDict     *dict,
                                                 TomoeChar     *chr);
 static gboolean     unregister_char            (TomoeDict     *dict,
@@ -55,6 +71,7 @@ static GList       *search                     (TomoeDict     *dict,
                                                 TomoeQuery    *query);
 static gboolean     copy                       (TomoeDict     *src_dict,
                                                 TomoeDict     *dest_dict);
+static gboolean     is_editable                (TomoeDict     *dict);
 static gchar       *get_available_private_utf8 (TomoeDict     *dict);
 
 static void
@@ -65,6 +82,8 @@ _tomoe_dict_ptr_array_class_init (TomoeDictPtrArrayClass *klass)
 
     gobject_class = G_OBJECT_CLASS (klass);
     gobject_class->dispose      = dispose;
+    gobject_class->set_property = set_property;
+    gobject_class->get_property = get_property;
 
     parent_class = g_type_class_peek_parent (klass);
 
@@ -76,12 +95,32 @@ _tomoe_dict_ptr_array_class_init (TomoeDictPtrArrayClass *klass)
     dict_class->search          = search;
     dict_class->flush           = NULL;
     dict_class->copy            = copy;
-    dict_class->is_editable     = NULL;
+    dict_class->is_editable     = is_editable;
     dict_class->is_available    = NULL;
     dict_class->get_available_private_utf8 = get_available_private_utf8;
 
     klass->register_char        = register_char;
     klass->unregister_char      = unregister_char;
+
+    g_object_class_install_property(
+        gobject_class,
+        PROP_EDITABLE,
+        g_param_spec_boolean(
+            "editable",
+            "Editable",
+            "Editable flag",
+            FALSE,
+            G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+    g_object_class_install_property(
+        gobject_class,
+        PROP_MODIFIED,
+        g_param_spec_boolean(
+            "modified",
+            "Modified",
+            "Modified flag",
+            FALSE,
+            G_PARAM_READWRITE));
 
     g_type_class_add_private (gobject_class, sizeof (TomoeDictPtrArrayPrivate));
 }
@@ -91,6 +130,51 @@ _tomoe_dict_ptr_array_init (TomoeDictPtrArray *dict)
 {
     TomoeDictPtrArrayPrivate *priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dict);
     priv->chars    = g_ptr_array_new();
+    priv->editable = FALSE;
+    priv->modified = FALSE;
+}
+
+static void
+set_property (GObject *object,
+              guint prop_id,
+              const GValue *value,
+              GParamSpec *pspec)
+{
+    TomoeDictPtrArrayPrivate *priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (object);
+
+    switch (prop_id) {
+    case PROP_EDITABLE:
+        priv->editable = g_value_get_boolean (value);
+        break;
+    case PROP_MODIFIED:
+        priv->modified = g_value_get_boolean (value);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
+    }
+}
+
+
+static void
+get_property (GObject *object,
+              guint prop_id,
+              GValue *value,
+              GParamSpec *pspec)
+{
+    TomoeDictPtrArrayPrivate *priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (object);
+
+    switch (prop_id) {
+    case PROP_EDITABLE:
+        g_value_set_boolean (value, priv->editable);
+        break;
+    case PROP_MODIFIED:
+        g_value_set_boolean (value, priv->modified);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
+    }
 }
 
 static void
@@ -140,6 +224,8 @@ register_char (TomoeDict *dict, TomoeChar *chr)
     g_ptr_array_add (priv->chars, g_object_ref (G_OBJECT (chr)));
     _tomoe_dict_ptr_array_sort (TOMOE_DICT_PTR_ARRAY (dict));
 
+    priv->modified = TRUE;
+
     return TRUE;
 }
 
@@ -168,6 +254,7 @@ unregister_char (TomoeDict *dict, const gchar *utf8)
     if (index >= 0) {
         g_ptr_array_remove_index (priv->chars, index);
         g_object_unref (removed);
+        priv->modified = TRUE;
         return TRUE;
     } else {
         return FALSE;
@@ -371,10 +458,14 @@ copy (TomoeDict *src_dict, TomoeDict *dest_dict)
     TomoeDictPtrArrayPrivate *src_priv, *dest_priv;
     g_return_val_if_fail (TOMOE_IS_DICT_PTR_ARRAY (src_dict), FALSE);
 
+    if (!tomoe_dict_is_editable (dest_dict))
+        return FALSE;
+
     if (!TOMOE_IS_DICT_PTR_ARRAY (dest_dict)) {
         tomoe_dict_plain_copy (src_dict, dest_dict);
         return TRUE;
     }
+
     src_priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (src_dict);
     dest_priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dest_dict);
 
@@ -387,6 +478,14 @@ copy (TomoeDict *src_dict, TomoeDict *dest_dict)
     g_ptr_array_foreach_reverse (src_priv->chars, copy_all_chars, &dest_priv->chars);
 
     return TRUE;
+}
+
+static gboolean
+is_editable (TomoeDict *dict)
+{
+    g_return_val_if_fail (TOMOE_IS_DICT_PTR_ARRAY (dict), FALSE);
+
+    return TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dict)->editable;
 }
 
 gchar *

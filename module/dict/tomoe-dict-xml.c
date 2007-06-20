@@ -53,8 +53,7 @@
 
 enum {
     PROP_0,
-    PROP_FILENAME,
-    PROP_EDITABLE
+    PROP_FILENAME
 };
 
 typedef struct _TomoeDictXML TomoeDictXML;
@@ -64,9 +63,6 @@ struct _TomoeDictXML
     TomoeDictPtrArray    object;
     gchar               *filename;
     gchar               *name;
-
-    gboolean             editable;
-    gboolean             modified;
 };
 
 struct _TomoeDictXMLClass
@@ -81,10 +77,6 @@ static GObject     *constructor               (GType                  type,
                                                guint                  n_props,
                                                GObjectConstructParam *props);
 static void         dispose                   (GObject       *object);
-static gboolean     register_char             (TomoeDict     *dict,
-                                               TomoeChar     *chr);
-static gboolean     unregister_char           (TomoeDict     *dict,
-                                               const gchar   *utf8);
 static void         set_property              (GObject       *object,
                                                guint         prop_id,
                                                const GValue  *value,
@@ -95,7 +87,6 @@ static void         get_property              (GObject       *object,
                                                GParamSpec    *pspec);
 static const gchar *get_name                  (TomoeDict     *dict);
 static gboolean     flush                     (TomoeDict     *dict);
-static gboolean     is_editable               (TomoeDict     *dict);
 static gboolean     is_available              (TomoeDict     *dict);
 static gboolean     tomoe_dict_xml_load       (TomoeDictXML  *dict);
 static gboolean     tomoe_dict_xml_save       (TomoeDictXML  *dict);
@@ -117,10 +108,7 @@ class_init (TomoeDictXMLClass *klass)
 
     dict_class = TOMOE_DICT_CLASS (klass);
     dict_class->get_name        = get_name;
-    dict_class->register_char   = register_char;
-    dict_class->unregister_char = unregister_char;
     dict_class->flush           = flush;
-    dict_class->is_editable     = is_editable;
     dict_class->is_available    = is_available;
 
     g_object_class_install_property (
@@ -132,15 +120,6 @@ class_init (TomoeDictXMLClass *klass)
             "The filename of xml file",
             NULL,
             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
-    g_object_class_install_property(
-        gobject_class,
-        PROP_EDITABLE,
-        g_param_spec_boolean(
-            "editable",
-            "Editable",
-            "Editable flag",
-            FALSE,
-            G_PARAM_READWRITE));
 }
 
 static void
@@ -148,8 +127,6 @@ init (TomoeDictXML *dict)
 {
     dict->filename = NULL;
     dict->name     = NULL;
-    dict->modified = FALSE;
-    dict->editable = FALSE;
 }
 
 static void
@@ -233,9 +210,6 @@ set_property (GObject *object,
     case PROP_FILENAME:
         dict->filename = g_value_dup_string (value);
         break;
-    case PROP_EDITABLE:
-        dict->editable = g_value_get_boolean (value);
-        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
         break;
@@ -254,9 +228,6 @@ get_property (GObject *object,
     switch (prop_id) {
     case PROP_FILENAME:
         g_value_set_string (value, dict->filename);
-        break;
-    case PROP_EDITABLE:
-        g_value_set_boolean (value, dict->editable);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -284,30 +255,6 @@ dispose (GObject *object)
     G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
-static gboolean
-register_char (TomoeDict *dict, TomoeChar *chr)
-{
-    gboolean success;
-
-    success = TOMOE_DICT_PTR_ARRAY_CLASS (parent_class)->register_char (dict, chr);
-    if (success)
-        TOMOE_DICT_XML (dict)->modified = TRUE;
-
-    return success;
-}
-
-static gboolean
-unregister_char (TomoeDict *dict, const gchar *utf8)
-{
-    gboolean success;
-
-    success = TOMOE_DICT_PTR_ARRAY_CLASS (parent_class)->unregister_char (dict, utf8);
-    if (success)
-        TOMOE_DICT_XML (dict)->modified = TRUE;
-
-    return success;
-}
-
 static const gchar*
 get_name (TomoeDict *_dict)
 {
@@ -327,26 +274,16 @@ flush (TomoeDict *_dict)
 }
 
 static gboolean
-is_editable (TomoeDict *_dict)
-{
-    TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
-
-    g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
-
-    return dict->editable;
-}
-
-static gboolean
 is_available (TomoeDict *_dict)
 {
     TomoeDictXML *dict = TOMOE_DICT_XML (_dict);
 
     g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
 
-    if (dict->editable && !dict->filename)
+    if (tomoe_dict_is_editable (_dict) && !dict->filename)
         return FALSE;
 
-    if (!dict->editable && dict->filename &&
+    if (!tomoe_dict_is_editable (_dict) && dict->filename &&
         !g_file_test (dict->filename, G_FILE_TEST_EXISTS))
         return FALSE;
 
@@ -381,16 +318,18 @@ tomoe_dict_xml_save (TomoeDictXML *dict)
     GString *xml;
     GError *error = NULL;
     gboolean success;
+    gboolean modified = FALSE;
     guint i;
     GPtrArray *chars;
 
     g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
 
-    if (!dict->editable) return FALSE;
+    if (!tomoe_dict_is_editable (TOMOE_DICT (dict))) return FALSE;
 
     g_return_val_if_fail (dict->filename, FALSE);
 
-    if (!dict->modified) return TRUE;
+    g_object_get (dict, "modified", &modified, NULL);
+    if (!modified) return TRUE;
 
     xml = g_string_new (
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
@@ -417,7 +356,7 @@ tomoe_dict_xml_save (TomoeDictXML *dict)
 
     success = g_file_set_contents (dict->filename, xml->str, xml->len, &error);
     if (success)
-        dict->modified = FALSE;
+        g_object_set (dict, "modified", FALSE, NULL);
     else
         TOMOE_HANDLE_ERROR (error);
 
