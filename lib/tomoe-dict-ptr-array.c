@@ -474,6 +474,8 @@ copy (TomoeDict *src_dict, TomoeDict *dest_dict)
 
     g_ptr_array_foreach_reverse (src_priv->chars, copy_all_chars, &dest_priv->chars);
 
+    dest_priv->modified = TRUE;
+
     return TRUE;
 }
 
