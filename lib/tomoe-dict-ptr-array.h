@@ -47,11 +47,6 @@ struct _TomoeDictPtrArray
 struct _TomoeDictPtrArrayClass
 {
     TomoeDictClass parent_class;
-
-    gboolean        (*register_char)       (TomoeDict   *dict,
-                                            TomoeChar   *chr);
-    gboolean        (*unregister_char)     (TomoeDict   *dict,
-                                            const gchar *utf8);
 };
 
 GType     _tomoe_dict_ptr_array_get_type        (void) G_GNUC_CONST;
