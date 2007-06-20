@@ -320,10 +320,6 @@ tomoe_dict_copy (TomoeDict *src_dict, TomoeDict *dest_dict)
     g_return_val_if_fail (TOMOE_IS_DICT (src_dict), FALSE);
     g_return_val_if_fail (TOMOE_IS_DICT (dest_dict), FALSE);
 
-    if (!tomoe_dict_is_available (src_dict)) {
-        g_warning ("source dictionary isn't available.");
-        return FALSE;
-    }
     if (!tomoe_dict_is_editable (dest_dict)) {
         g_warning ("destination dictionary isn't editable.");
         return FALSE;
