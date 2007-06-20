@@ -3,6 +3,7 @@
 	* lib/tomoe-dict-ptr-array.c: TomoeDictPtrArray has editable and
 	modified property.
 	* module/dict/tomoe-dict-xml.c: Follow the above change.
+	* lib/tomoe-dict-ptr-array.c: Remove needless virtual functions.
 
 2007-06-18  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
