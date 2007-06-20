@@ -270,6 +270,9 @@ flush (TomoeDict *_dict)
 
     g_return_val_if_fail (TOMOE_IS_DICT_XML (dict), FALSE);
 
+    if (!dict->filename)
+        return FALSE;
+
     return tomoe_dict_xml_save (dict);
 }
 
