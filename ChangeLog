@@ -5,6 +5,7 @@
 	* module/dict/tomoe-dict-xml.c: Follow the above change.
 	* lib/tomoe-dict-ptr-array.c: Remove needless virtual functions.
 	* lib/tomoe-dict-ptr-array.c: Set modified flag TRUE after copy().
+	* module/dict/tomoe-dict-xml.c: Save only if filename is not NULL.
 
 2007-06-18  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
