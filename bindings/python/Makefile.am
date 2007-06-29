@@ -35,6 +35,7 @@ tomoe_la_LIBADD =			\
 OVERRIDES =					\
 	tomoe.override				\
 	tomoe-char.override			\
+	tomoe-config.override			\
 	tomoe-context.override			\
 	tomoe-dict.override			\
 	tomoe-query.override			\
