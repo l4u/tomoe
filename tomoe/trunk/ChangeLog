@@ -1,3 +1,8 @@
+2007-07-06  Kouhei Sutou  <kou@cozmixng.org>
+
+	* module/dict/Makefile.am (tomoe-unihan-data.h): top_builddir not
+	top_srcdir.
+
 2007-06-29  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* Version-0.6.0.
