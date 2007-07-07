@@ -79,6 +79,14 @@ td_get_available_private_utf8(VALUE self)
 }
 
 static VALUE
+td_get_name(VALUE self)
+{
+    const gchar *name;
+    name = tomoe_dict_get_name(_SELF(self));
+    return name ? CSTR2RVAL(name) : Qnil;
+}
+
+static VALUE
 td_flush(VALUE self)
 {
     return CBOOL2RVAL(tomoe_dict_flush(_SELF(self)));
@@ -114,6 +122,7 @@ _tomoe_rb_init_tomoe_dict(VALUE _mTomoe)
 
     rb_define_method(cTomoeDict, "available_private_utf8",
                      td_get_available_private_utf8, 0);
+    rb_define_method(cTomoeDict, "name", td_get_name, 0);
     rb_define_method(cTomoeDict, "flush", td_flush, 0);
     rb_define_method(cTomoeDict, "copy", td_copy, 1);
 }
