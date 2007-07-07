@@ -14,6 +14,31 @@ else
       @original = Tomoe::DictXML.new("filename" => @dict_file.path)
     end
 
+    def test_name
+      return unless dict_module_type == "xml"
+
+      name = "Temporary Dictionary"
+      dict_file = make_dict_file(<<-EOX)
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE dictionary SYSTEM "tomoe-dict.dtd">
+<dictionary name='#{name}'/>
+EOX
+      dict = Tomoe::DictXML.new("filename" => dict_file.path)
+      assert_equal(name, dict.name)
+    end
+
+    def test_null_name
+      return unless dict_module_type == "xml"
+
+      dict_file = make_dict_file(<<-EOX)
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE dictionary SYSTEM "tomoe-dict.dtd">
+<dictionary/>
+EOX
+      dict = Tomoe::DictXML.new("filename" => dict_file.path)
+      assert_nil(dict.name)
+    end
+
     def test_load
       make_temporary_dict(@original) do |dict|
         a = dict[@utf8]
@@ -272,6 +297,12 @@ else
     end
 
     private
+    def make_dict_file(content)
+      dict_file = Tempfile.new("tomoe-dict-xml")
+      set_content(dict_file, content)
+      dict_file
+    end
+
     def setup_strokes
       @strokes = [
                   [
@@ -298,7 +329,6 @@ else
     end
 
     def setup_dict_file
-      @dict_file = Tempfile.new("tomoe-dict-xml")
       @utf8 = "あ"
 
       setup_strokes
@@ -327,7 +357,7 @@ EOC
 #{@character_xml}
 </dictionary>
 EOX
-      set_content(@dict_file, @dict_content)
+      @dict_file = make_dict_file(@dict_content)
     end
 
     def setup_est_draft_file
