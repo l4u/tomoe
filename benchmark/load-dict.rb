@@ -11,13 +11,27 @@ require "tomoe-test-utils"
 
 n = 3
 Benchmark.bmbm do |x|
-  dictionary = TomoeTestUtils::Path.dictionary
+  if ARGV.length == 1
+    binary = ARGV[0] + ".bin"
+
+    x.report(File.basename(binary)) do
+      n.times {Tomoe::DictBinary.new("filename" => binary,
+                                     "editable" => false)}
+    end
+
+    dictionary = ARGV[0] + ".xml"
+  else
+    dictionary = TomoeTestUtils::Path.dictionary
+  end
+
   x.report(File.basename(dictionary)) do
     n.times {Tomoe::DictXML.new("filename" => dictionary,
                                 "editable" => false)}
   end
 
-  x.report("Unihan") do
-    n.times {Tomoe::DictUnihan.new}
+  if Tomoe::Dict.load("Unihan")
+    x.report("Unihan") do
+      n.times {Tomoe::DictUnihan.new}
+    end
   end
 end

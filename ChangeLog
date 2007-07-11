@@ -1,3 +1,10 @@
+2007-07-11  Mathieu Blondel  <mblondel@rubyforge.org>
+
+    * module/dict/tomoe-dict-binary.c: added new backend using binary file.
+    * data/xml2binary.rb: convert a xml file to a binary file.
+    * module/dict/Makefile.am: compile the above backend.
+    * benchmark/load-dict.rb: compare binary and xml backends.
+
 2007-07-07  Kouhei Sutou  <kou@cozmixng.org>
 
 	* bindings/ruby/tomoe-rb-dict.c: added Tomoe::Dict#name suggested

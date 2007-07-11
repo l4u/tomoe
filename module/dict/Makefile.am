@@ -44,6 +44,13 @@ xml_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:XML\" $(AM_CPPFLAGS)
 xml_la_SOURCES = tomoe-dict-xml.c
 xml_la_LIBADD = $(LIBADD) 
 
+
+dict_module_LTLIBRARIES += binary.la
+
+binary_la_CPPFLAGS = -DG_LOG_DOMAIN=\"Tomoe/Dict:Binary\" $(AM_CPPFLAGS)
+binary_la_SOURCES = tomoe-dict-binary.c
+binary_la_LIBADD = $(LIBADD) 
+
 if USE_EST
 dict_module_LTLIBRARIES += est.la
 
