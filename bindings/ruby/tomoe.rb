@@ -23,6 +23,19 @@ module Tomoe
       end
     end
   end
+
+  class Dict
+    class << self
+      def exist?(name)
+        begin
+          Tomoe.const_get("Dict#{name}")
+          true
+        rescue NameError
+          false
+        end
+      end
+    end
+  end
 end
 
 GLib::Log.set_log_domain(Tomoe::LOG_DOMAIN)
