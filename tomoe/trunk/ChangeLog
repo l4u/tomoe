@@ -1,3 +1,9 @@
+2007-07-12  Kouhei Sutou  <kou@cozmixng.org>
+
+	* benchmark/load-dict.rb: used Tomoe::Dict.exist?.
+
+	* bindings/ruby/tomoe.rb (Tomoe::Dict.exist?): added.
+
 2007-07-11  Mathieu Blondel  <mblondel@rubyforge.org>
 
     * module/dict/tomoe-dict-binary.c: added new backend using binary file.
