@@ -11,29 +11,22 @@ require "tomoe-test-utils"
 
 n = 3
 Benchmark.bmbm do |x|
-#   if ARGV.length == 1
-#     binary = ARGV[0] + ".bin"
+  if ARGV.length == 1
+    binary = ARGV[0] + ".bin"
 
-#     x.report(File.basename(binary)) do
-#       n.times {Tomoe::DictBinary.new("filename" => binary,
-#                                      "editable" => false)}
-#     end
+    x.report(File.basename(binary)) do
+      n.times {Tomoe::DictBinary.new("filename" => binary,
+                                     "editable" => false)}
+    end
 
-#     dictionary = ARGV[0] + ".xml"
-#   else
-#     dictionary = TomoeTestUtils::Path.dictionary
-#   end
+    dictionary = ARGV[0] + ".xml"
+  else
+    dictionary = TomoeTestUtils::Path.dictionary
+  end
 
-#   x.report(File.basename(dictionary)) do
-#     n.times {Tomoe::DictXML.new("filename" => dictionary,
-#                                 "editable" => false)}
-#   end
-
-  have_unihan = false
-  begin
-    Tomoe::DictUnihan
-    have_unihan = true
-  rescue NameError
+  x.report(File.basename(dictionary)) do
+    n.times {Tomoe::DictXML.new("filename" => dictionary,
+                                "editable" => false)}
   end
 
   if Tomoe::Dict.exist?("Unihan")
