@@ -367,8 +367,7 @@ tomoe_dict_binary_load (TomoeDictBinary *dict)
         dict->name = read_string (data, length, &cursor);    
 
     n_chars = read_ulong (data, &cursor);
-    for (i=0; i < n_chars; i++)
-    {
+    for (i=0; i < n_chars; i++) {
         chr = tomoe_char_new ();
 
         length = read_ushort (data, &cursor);
@@ -378,12 +377,10 @@ tomoe_dict_binary_load (TomoeDictBinary *dict)
 
         n_strokes = read_ushort (data, &cursor);
         writing = tomoe_writing_new ();
-        for (j=0; j < n_strokes; j++)
-        {            
+        for (j=0; j < n_strokes; j++) {            
             n_pairs = read_ushort (data, &cursor);
 
-            for (k=0; k < n_pairs; k++)
-            {
+            for (k=0; k < n_pairs; k++) {
                 x = read_ushort (data, &cursor);
                 y = read_ushort (data, &cursor);
                 if (k == 0)
@@ -448,22 +445,18 @@ tomoe_dict_binary_save (TomoeDictBinary *dict)
 
     file = g_fopen (dict->filename, "w");
 
-    if (dict->name)
-    {
+    if (dict->name) {
         length = sizeof (dict->name);
         put_ushort (file, length);
         fwrite (dict->name, 1, length, file);
-    }
-    else
-    {
+    } else {
         put_ushort (file, 0);
     }
 
     chars = _tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (dict));
     put_ulong (file, chars->len);
 
-    for (i = 0; i < chars->len; i++)
-    {
+    for (i = 0; i < chars->len; i++) {
         chr = g_ptr_array_index (chars, i);
 
         utf8 = tomoe_char_get_utf8 (chr);
@@ -477,20 +470,16 @@ tomoe_dict_binary_save (TomoeDictBinary *dict)
         put_ushort (file, n_strokes);        
 
         stroke_list = tomoe_writing_get_strokes (writing);
-        for (; stroke_list; stroke_list = g_list_next (stroke_list))
-        {
+        for (; stroke_list; stroke_list = g_list_next (stroke_list)) {
             point_list = stroke_list->data;
 
-            if (!point_list)
-            {
+            if (!point_list) {
                 put_ushort (file, 0);
             }
-            else
-            {
+            else {
                 put_ushort (file, g_list_length (point_list));
 
-                for (; point_list; point_list = g_list_next (point_list))
-                {
+                for (; point_list; point_list = g_list_next (point_list)) {
                     p = point_list->data;
                     put_ushort (file, p->x);
                     put_ushort (file, p->y);
