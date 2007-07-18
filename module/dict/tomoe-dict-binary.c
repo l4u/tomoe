@@ -463,7 +463,6 @@ tomoe_dict_binary_save (TomoeDictBinary *dict)
         length = sizeof (utf8);
         put_ushort (file, length);
         fwrite (utf8, 1, length, file);
-        g_free (utf8);
 
         writing = tomoe_char_get_writing (chr);        
         n_strokes = tomoe_writing_get_n_strokes (writing);

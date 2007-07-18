@@ -1,3 +1,7 @@
+2007-07-18  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* module/dict/tomoe-dict-binary.c: Remove needless freeing.
+
 2007-07-16  Mathieu Blondel  <mblondel@rubyforge.org>
 
 	* module/dict/tomoe-dict-binary.c: update to fit project's coding
