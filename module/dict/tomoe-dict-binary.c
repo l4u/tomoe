@@ -446,7 +446,7 @@ tomoe_dict_binary_save (TomoeDictBinary *dict)
     file = g_fopen (dict->filename, "w");
 
     if (dict->name) {
-        length = sizeof (dict->name);
+        length = strlen (dict->name);
         put_ushort (file, length);
         fwrite (dict->name, 1, length, file);
     } else {
@@ -460,7 +460,7 @@ tomoe_dict_binary_save (TomoeDictBinary *dict)
         chr = g_ptr_array_index (chars, i);
 
         utf8 = tomoe_char_get_utf8 (chr);
-        length = sizeof (utf8);
+        length = strlen (utf8);
         put_ushort (file, length);
         fwrite (utf8, 1, length, file);
 
