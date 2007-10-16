@@ -20,7 +20,7 @@
 
 CLEANFILES = *~ *.bak *.valid
 
-pkgdata_DATA = dict.dtd xml2est.rb
+pkgdata_DATA = dict.dtd xml2est.rb kanjidic2xml.rb
 dict_data_DATA =
 recognizer_data_DATA = handwriting-zh_CN.xml handwriting-ja.xml
 conf_DATA = config
@@ -35,8 +35,13 @@ EXTRA_DIST =						\
 	$(recognizer_data_DATA)				\
 	$(conf_DATA)
 
+if USE_KANJIDIC
+kanjidic2.xml: $(KANJIDIC)
+	$(RUBY) $(srcdir)/kanjidic2xml.rb $(KANJIDIC) > $@
+else
 kanjidic2.xml: kanjidic2-original.xsl kanjidic2-original.xml
 	$(XSLTPROC) kanjidic2-original.xsl kanjidic2-original.xml > $@
+endif
 
 SUFFIXES: .xml .valid
 
