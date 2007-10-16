@@ -257,6 +257,27 @@ if test x"$ruby_available" != "xyes"; then
 fi
 AM_CONDITIONAL(USE_DICT_RUBY, [test x"$use_dict_ruby" = "xyes"])
 
+dnl **************************************************************
+dnl Configure for KanjiDic.
+dnl **************************************************************
+
+kanjidic_result="bundled"
+AC_ARG_WITH([kanjidic],
+            AS_HELP_STRING([--with-kanjidic=PATH],
+                           [Use specified kanjidic instead of including kanjidic2]),
+            [use_kanjidic=yes; KANJIDIC="$withval"])
+
+AC_SUBST(KANJIDIC)
+
+if test x"$ruby_available" != "xyes"; then
+  use_kanjidic=no
+fi
+if test x"$use_kanjidic" = "xyes"; then
+  kanjidic_result=$KANJIDIC
+fi
+
+AM_CONDITIONAL(USE_KANJIDIC, [test x"$use_kanjidic" = "xyes"])
+
 
 dnl **************************************************************
 dnl Configure for Tomoe.
@@ -330,4 +351,5 @@ echo
 echo "  * Other Features"
 echo
 echo "      gtk-doc         : ${enable_gtk_doc}"
+echo "      KanjiDic        : ${kanjidic_result}"
 echo
