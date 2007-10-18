@@ -2,11 +2,14 @@
 
 require 'tomoe-test-utils'
 
+require 'enumerator'
 require 'uconv'
 require 'suikyo/suikyo'
 
 unihan_txt = ARGV.shift
 kanjidic2_xml = ARGV.shift
+unihan_data_c_format = ARGV.shift
+n_unihan_data_c = Integer(ARGV.shift)
 
 DO_NOT_EDIT_HEADER = <<-EOH
 /*
@@ -146,47 +149,51 @@ def merge_kanjidic2_xml(kanjidic2_xml, infos)
   infos
 end
 
-def generate_header(infos)
-  prefix = "tomoe_unihan_"
+def generate_sources(infos, unihan_data_c_format, n_unihan_data_c)
+  window = (infos.size / n_unihan_data_c.to_f).ceil
+  i = 0
+  infos.each_slice(window) do |sub_infos|
+    unihan_data_c = unihan_data_c_format % i
+    File.open(unihan_data_c, "w") do |output|
+      generate_source(output, sub_infos, i)
+    end
+    i += 1
+  end
+end
 
-  puts <<-EOH
+def generate_source(output, infos, i)
+  prefix = "_tomoe_unihan_"
+
+  output.puts <<-EOH
 /* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 #{DO_NOT_EDIT_HEADER}
 
-#include "tomoe-unihan.h"
-
-#include <tomoe-char.h>
-
-typedef struct _TomoeUnihanReading TomoeUnihanReading;
-typedef struct _TomoeUnihanMetaData TomoeUnihanMetaData;
-typedef struct _TomoeUnihanInfo TomoeUnihanInfo;
-
-struct _TomoeUnihanReading {
-    TomoeReadingType  type;
-    gchar            *reading;
-};
-
-struct _TomoeUnihanMetaData {
-    gchar *key;
-    gchar *value;
-};
-
-struct _TomoeUnihanInfo {
-    gchar                *utf8;
-    gint                  n_strokes;
-    TomoeUnihanReading   *readings;
-    gint                  readings_size;
-    gchar               **radicals;
-    gint                  radicals_size;
-    gchar               **variants;
-    gint                  variants_size;
-    TomoeUnihanMetaData  *meta_data;
-    gint                  meta_data_size;
-};
-
+#include "tomoe-unihan-data.h"
 EOH
 
-  infos.each_with_index do |(ucs4, info), i|
+  output.puts
+  generate_character_details(output, infos, prefix)
+  output.puts
+  generate_characters(output, infos, prefix)
+  output.puts
+
+  output.puts <<-EOF
+TomoeUnihanInfo *
+_tomoe_unihan_data#{i} (void)
+{
+  return #{prefix}infos;
+}
+
+gint
+_tomoe_unihan_data#{i}_size (void)
+{
+  return #{infos.size};
+}
+EOF
+end
+
+def generate_character_details(output, infos, prefix)
+  infos.each do |ucs4, info|
     readings = []
     kuns = info[:ja_kuns]
     ons = info[:ja_ons]
@@ -199,46 +206,48 @@ EOH
 
     unless readings.empty?
       info[:have_readings] = true
-      puts("static TomoeUnihanReading #{prefix}readings_#{ucs4}[] = {")
+      output.puts("static TomoeUnihanReading #{prefix}readings_#{ucs4}[] = {")
       readings.each do |type, reading|
-        puts("    {#{type}, \"#{reading}\"},")
+        output.puts("    {#{type}, \"#{reading}\"},")
       end
-      puts("};")
+      output.puts("};")
     end
 
     radicals = info[:radicals] || []
     unless radicals.empty?
       info[:have_radicals] = true
-      puts("static gchar *#{prefix}radicals_#{ucs4}[] = {")
+      output.puts("static gchar *#{prefix}radicals_#{ucs4}[] = {")
       radicals.each do |radical|
-        puts("    \"#{radical}\",")
+        output.puts("    \"#{radical}\",")
       end
-      puts("};");
+      output.puts("};");
     end
 
     variants = info[:variants] || []
     unless variants.empty?
       info[:have_variants] = true
-      puts("static gchar *#{prefix}variants_#{ucs4}[] = {")
+      output.puts("static gchar *#{prefix}variants_#{ucs4}[] = {")
       variants.each do |variant|
-        puts("    \"#{variant}\",")
+        output.puts("    \"#{variant}\",")
       end
-      puts("};");
+      output.puts("};");
     end
 
     meta_data = info[:meta_data] || []
     unless meta_data.empty?
       info[:have_meta_data] = true
-      puts("static TomoeUnihanMetaData #{prefix}meta_data_#{ucs4}[] = {")
+      output.puts("static TomoeUnihanMetaData #{prefix}meta_data_#{ucs4}[] = {")
       meta_data.each do |key, value|
-        puts("    {\"#{key}\", \"#{value.gsub(/\"/, '\"')}\"},")
+        output.puts("    {\"#{key}\", \"#{value.gsub(/\"/, '\"')}\"},")
       end
-      puts("};")
+      output.puts("};")
     end
   end
+end
 
-  puts("static TomoeUnihanInfo #{prefix}infos[] = {")
-  infos.each_with_index do |(ucs4, info), i|
+def generate_characters(output, infos, prefix)
+  output.puts("static TomoeUnihanInfo #{prefix}infos[] = {")
+  infos.each do |ucs4, info|
     utf8 = ucs4_to_utf8(ucs4)
     n_strokes = info[:n_strokes] || -1
     readings = radicals = variants = meta_data = "NULL"
@@ -260,11 +269,11 @@ EOH
       meta_data_size = "G_N_ELEMENTS(#{meta_data})"
     end
 
-    puts("    {\"#{utf8}\", #{n_strokes}, #{readings}, #{readings_size},")
-    puts("     #{radicals}, #{radicals_size}, #{variants}, #{variants_size},")
-    puts("     #{meta_data}, #{meta_data_size}},")
+    output.puts("    {\"#{utf8}\", #{n_strokes}, #{readings}, #{readings_size},")
+    output.puts("     #{radicals}, #{radicals_size}, #{variants},")
+    output.puts("     #{variants_size}, #{meta_data}, #{meta_data_size}},")
   end
-  puts("};")
+  output.puts("};")
 end
 
 infos = parse_unihan_txt(unihan_txt)
@@ -273,4 +282,4 @@ infos = merge_kanjidic2_xml(kanjidic2_xml, infos).collect do |ucs4, info|
 end.sort_by do |ucs4, info|
   ucs4
 end
-generate_header(infos)
+generate_sources(infos, unihan_data_c_format, n_unihan_data_c)

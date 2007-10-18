@@ -1,3 +1,9 @@
+2007-10-18  Kouhei Sutou  <kou@cozmixng.org>
+
+	* module/dict/Makefile.am, module/dict/unihan-compiler.rb,
+	module/dict/tomoe-unihan.c: supported divided unihan dictionary
+	backend compile.
+
 2007-10-16  Kouhei Sutou  <kou@cozmixng.org>
 
 	* configure.ac, data/kanjidic2xml.rb, data/Makefile.am: added
