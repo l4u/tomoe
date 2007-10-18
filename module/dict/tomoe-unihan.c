@@ -9,21 +9,18 @@
 #include "tomoe-unihan.h"
 #include "tomoe-unihan-data.h"
 
-void
-_tomoe_unihan_create (GPtrArray *array)
+static gint
+_tomoe_unihan_append_infos (GPtrArray *array, TomoeUnihanInfo *infos,
+                            gint infos_size, gint offset)
 {
-    gint i, infos_size;
-
-    infos_size = G_N_ELEMENTS (tomoe_unihan_infos);
-    g_ptr_array_set_size (array, infos_size);
-    array->len = infos_size;
+    gint i;
 
     for (i = 0; i < infos_size; i++) {
         TomoeUnihanInfo info;
         TomoeChar *chr;
         gint j, len;
 
-        info = tomoe_unihan_infos[i];
+        info = infos[i];
 
         chr = tomoe_char_new ();
         tomoe_char_set_utf8 (chr, info.utf8);
@@ -61,6 +58,70 @@ _tomoe_unihan_create (GPtrArray *array)
             tomoe_char_register_meta_data (chr, meta_data.key, meta_data.value);
         }
 
-        array->pdata[i] = chr;
+        array->pdata[i + offset] = chr;
     }
+
+    return i + offset;
+}
+
+void
+_tomoe_unihan_create (GPtrArray *array)
+{
+    gint offset, infos_size;
+
+    infos_size =
+        _tomoe_unihan_data0_size () +
+        _tomoe_unihan_data1_size () +
+        _tomoe_unihan_data2_size () +
+        _tomoe_unihan_data3_size () +
+        _tomoe_unihan_data4_size () +
+        _tomoe_unihan_data5_size () +
+        _tomoe_unihan_data6_size () +
+        _tomoe_unihan_data7_size () +
+        _tomoe_unihan_data8_size () +
+        _tomoe_unihan_data9_size ();
+    g_ptr_array_set_size (array, infos_size);
+    array->len = infos_size;
+
+    offset = 0;
+    offset = _tomoe_unihan_append_infos (array,
+                                         _tomoe_unihan_data0 (),
+                                         _tomoe_unihan_data0_size (),
+                                         offset);
+    offset = _tomoe_unihan_append_infos (array,
+                                         _tomoe_unihan_data1 (),
+                                         _tomoe_unihan_data1_size (),
+                                         offset);
+    offset = _tomoe_unihan_append_infos (array,
+                                         _tomoe_unihan_data2 (),
+                                         _tomoe_unihan_data2_size (),
+                                         offset);
+    offset = _tomoe_unihan_append_infos (array,
+                                         _tomoe_unihan_data3 (),
+                                         _tomoe_unihan_data3_size (),
+                                         offset);
+    offset = _tomoe_unihan_append_infos (array,
+                                         _tomoe_unihan_data4 (),
+                                         _tomoe_unihan_data4_size (),
+                                         offset);
+    offset = _tomoe_unihan_append_infos (array,
+                                         _tomoe_unihan_data5 (),
+                                         _tomoe_unihan_data5_size (),
+                                         offset);
+    offset = _tomoe_unihan_append_infos (array,
+                                         _tomoe_unihan_data6 (),
+                                         _tomoe_unihan_data6_size (),
+                                         offset);
+    offset = _tomoe_unihan_append_infos (array,
+                                         _tomoe_unihan_data7 (),
+                                         _tomoe_unihan_data7_size (),
+                                         offset);
+    offset = _tomoe_unihan_append_infos (array,
+                                         _tomoe_unihan_data8 (),
+                                         _tomoe_unihan_data8_size (),
+                                         offset);
+    offset = _tomoe_unihan_append_infos (array,
+                                         _tomoe_unihan_data9 (),
+                                         _tomoe_unihan_data9_size (),
+                                         offset);
 }

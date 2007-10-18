@@ -70,10 +70,20 @@ endif
 if USE_UNIHAN
 dict_module_LTLIBRARIES += unihan.la
 
-unihan_built_sources = tomoe-unihan-data.h
+unihan_built_sources =				\
+	tomoe-unihan-data0.c			\
+	tomoe-unihan-data1.c			\
+	tomoe-unihan-data2.c			\
+	tomoe-unihan-data3.c			\
+	tomoe-unihan-data4.c			\
+	tomoe-unihan-data5.c			\
+	tomoe-unihan-data6.c			\
+	tomoe-unihan-data7.c			\
+	tomoe-unihan-data8.c			\
+	tomoe-unihan-data9.c
 
 CLEANFILES += Unihan.txt.cache
-MAINTAINERCLEANFILES = Unihan.stamp Unihan.txt
+MAINTAINERCLEANFILES = Unihan.stamp Unihan.txt tomoe-unihan-data-stamp
 DISTCLEANFILES = Unihan.zip
 BUILT_SOURCES = $(unihan_built_sources)
 
@@ -84,19 +94,32 @@ unihan_la_SOURCES =		\
 	tomoe-dict-unihan.c	\
 	tomoe-unihan.c		\
 	tomoe-unihan.h		\
+	tomoe-unihan-data.h	\
 	$(unihan_built_sources)
-unihan_la_LIBADD = $(LIBADD) 
+unihan_la_LIBADD = $(LIBADD)
 
 unihan-compiler.rb: xml.la
 
 $(top_builddir)/data/kanjidic2.xml:
 	cd $(top_builddir)/data && $(MAKE) $(AM_MAKEFLAGS) kanjidic2.xml
 
-tomoe-unihan-data.h: unihan-compiler.rb Unihan.stamp $(top_builddir)/data/kanjidic2.xml
+tomoe-unihan-data-stamp: unihan-compiler.rb Unihan.stamp $(top_builddir)/data/kanjidic2.xml
 	$(RUBY) -I$(top_srcdir)/bindings/ruby -I$(top_builddir)/bindings/ruby/.libs \
 	  -I$(top_srcdir)/test unihan-compiler.rb \
-	  Unihan.txt $(top_builddir)/data/kanjidic2.xml > $@.tmp || exit 1;
-	mv $@.tmp $@
+	  Unihan.txt $(top_builddir)/data/kanjidic2.xml \
+	  tomoe-unihan-data%d.c 10 && \
+	  touch $@
+
+tomoe-unihan-data0.c: tomoe-unihan-data-stamp
+tomoe-unihan-data1.c: tomoe-unihan-data-stamp
+tomoe-unihan-data2.c: tomoe-unihan-data-stamp
+tomoe-unihan-data3.c: tomoe-unihan-data-stamp
+tomoe-unihan-data4.c: tomoe-unihan-data-stamp
+tomoe-unihan-data5.c: tomoe-unihan-data-stamp
+tomoe-unihan-data6.c: tomoe-unihan-data-stamp
+tomoe-unihan-data7.c: tomoe-unihan-data-stamp
+tomoe-unihan-data8.c: tomoe-unihan-data-stamp
+tomoe-unihan-data9.c: tomoe-unihan-data-stamp
 
 Unihan_URL = ftp://ftp.unicode.org/Public/UNIDATA/Unihan.zip
 Unihan.stamp:
