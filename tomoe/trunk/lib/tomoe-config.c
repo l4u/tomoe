@@ -124,7 +124,6 @@ tomoe_config_class_init (TomoeConfigClass *klass)
 static GObject *
 constructor (GType type, guint n_props, GObjectConstructParam *props)
 {
-
     GObject *object;
     GObjectClass *klass = G_OBJECT_CLASS (tomoe_config_parent_class);
 
