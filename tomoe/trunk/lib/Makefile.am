@@ -58,10 +58,6 @@ lib_LTLIBRARIES = libtomoe.la
 libtomoe_la_SOURCES =		\
 	glib-utils.c		\
 	glib-utils.h		\
-	glib-compat-file-utilities.c	\
-	glib-compat-file-utilities.h	\
-	glib-compat-key-file.c	\
-	glib-compat-key-file.h	\
 	tomoe-enum-types.c	\
 	tomoe.c			\
 	tomoe-candidate.c	\
