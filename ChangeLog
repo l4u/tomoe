@@ -1,3 +1,8 @@
+2007-11-09  Hiroyuki Ikezoe  <poincare@ikezoe.net>
+
+	* configure.ac: Define GLIB_REQUIRED.
+	* tomoe.pc.in: Use GLIB_REQUIRED.
+
 2007-10-18  Kouhei Sutou  <kou@cozmixng.org>
 
 	* module/dict/Makefile.am, module/dict/unihan-compiler.rb,

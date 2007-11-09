@@ -8,6 +8,6 @@ datadir=@datadir@
 Name: Tomoe
 Description: Tegaki Online MOji-ninshiki Engine
 Version: @VERSION@
-Requires: glib-2.0 >= 2.4
+Requires: glib-2.0 >= @GLIB_REQUIRED@
 Libs: -L${libdir} -ltomoe
 Cflags: -I${includedir}/tomoe

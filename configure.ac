@@ -146,7 +146,9 @@ AC_CHECK_FUNCS([setlocale strchr strtol uname memmove strerror])
 dnl **************************************************************
 dnl Check for GLib.
 dnl **************************************************************
-AM_PATH_GLIB_2_0(2.4.0, [], [], [gmodule gobject])
+GLIB_REQUIRED=2.4.0
+AC_SUBST(GLIB_REQUIRED)
+AM_PATH_GLIB_2_0($GLIB_REQUIRED, [], [], [gmodule gobject])
 
 dnl **************************************************************
 dnl Check for Hyper Estraier.
