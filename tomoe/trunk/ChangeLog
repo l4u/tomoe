@@ -1,3 +1,7 @@
+2007-11-14  Kouhei Sutou  <kou@cozmixng.org>
+
+	* po/POTFILES.in: removed needless entries.
+
 2007-11-09  Hiroyuki Ikezoe  <poincare@ikezoe.net>
 
 	* configure.ac: Requirement glib-2.8.0.
