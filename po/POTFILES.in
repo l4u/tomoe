@@ -1,6 +1,4 @@
 lib/glib-utils.c
-lib/glib-compat-file-utilities.c
-lib/glib-compat-key-file.c
 lib/tomoe-candidate.c
 lib/tomoe-char.c
 lib/tomoe-config.c
