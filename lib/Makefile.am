@@ -53,6 +53,29 @@ pkginclude_HEADERS =			\
 	$(tomoe_public_h_sources)	\
 	$(enum_source_prefix).h
 
+if OS_WIN32
+libtomoe_def = libtomoe.def
+export_symbols = -export-symbols $(libtomoe_def)
+def_sources = $(tomoe_public_h_sources)
+BUILT_SOURCES += $(libtomoe_def)
+CLEANFILES += $(libtomoe_def)
+libtomoe.def: $(def_sources)
+	((cd $(srcdir);							\
+	  cat $(def_sources) ||	echo 'tomoe_ERROR ()') |		\
+	  grep -v -E '^# *include' |					\
+	  ($(CC) $(CPPFLAGS) -E - || echo 'tomoe_ERROR ()') |		\
+	  grep -E 'tomoe_.*[ 	]\(' |					\
+	  sed -e 's/^.*[* 	]\(tomoe_[^ 	]\+\).*/\1/' |		\
+	  grep -v -E '^tomoe_module_impl_' |				\
+	  sort;								\
+	  echo LIBRARY libtomoe-$(LT_CURRENT_MINUS_AGE).dll;		\
+	) >$@
+	! grep -q tomoe_ERROR $@ || ($(RM) $@; false)
+else
+export_symbols = $(LIBTOOL_EXPORT_OPTIONS)
+libtomoe_def =
+endif
+
 lib_LTLIBRARIES = libtomoe.la
 
 libtomoe_la_SOURCES =		\
@@ -76,14 +99,16 @@ libtomoe_la_SOURCES =		\
 	tomoe-xml-parser.c	\
 	tomoe-xml-parser.h
 
-libtomoe_la_LDFLAGS =						\
-  -version-info $(LT_VERSION_INFO)				\
-  -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)
+libtomoe_la_LDFLAGS =				\
+	-version-info $(LT_VERSION_INFO)	\
+	-no-undefined $(export_symbols)
 
 libtomoe_la_LD_ADD = \
 	-lm
 
 libtomoe_la_LIBADD = $(TOMOE_LIBS)
+
+libtomoe_la_DEPENDENCIES = $(libtomoe_def)
 
 
 MAINTAINERCLEANFILES =			\

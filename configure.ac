@@ -11,16 +11,55 @@ AC_INIT(tomoe, [tomoe_version])
 AM_INIT_AUTOMAKE(tomoe, [tomoe_version])
 AM_CONFIG_HEADER(config.h)
 
+AC_CANONICAL_HOST
+
+AC_MSG_CHECKING([for native Win32])
+case "$host" in
+  *-*-mingw*)
+    os_win32=yes
+    ;;
+  *)
+    os_win32=no
+    ;;
+esac
+AC_MSG_RESULT([$os_win32])
+
+AC_MSG_CHECKING([for some Win32 platform])
+case "$host" in
+  *-*-mingw*|*-*-cygwin*)
+    platform_win32=yes
+    ;;
+  *)
+    platform_win32=no
+    ;;
+esac
+AC_MSG_RESULT([$platform_win32])
+
+AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
+AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
+
 AC_ENABLE_SHARED(yes)
 AC_ENABLE_STATIC(yes)
+
+AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 TOMOE_VERSION=tomoe_version
 AC_SUBST(TOMOE_VERSION)
 
-LT_VERSION_INFO="1:0:1"
-LIBTOOL_EXPORT_OPTIONS='-export-symbols-regex "^[[^_]].*"'
+LT_CURRENT=1
+LT_REVISION=0
+LT_AGE=1
+LT_VERSION_INFO="$LT_CURRENT:$LT_REVISION:$LT_AGE"
+AC_SUBST(LT_CURRENT)
+AC_SUBST(LT_REVISION)
+AC_SUBST(LT_AGE)
 AC_SUBST(LT_VERSION_INFO)
+
+LT_CURRENT_MINUS_AGE=`expr $LT_CURRENT - $LT_AGE`
+AC_SUBST(LT_CURRENT_MINUS_AGE)
+
+LIBTOOL_EXPORT_OPTIONS='-export-symbols-regex "^[[^_]].*"'
 AC_SUBST(LIBTOOL_EXPORT_OPTIONS)
 
 
@@ -142,6 +181,25 @@ dnl **************************************************************
 dnl Checks for library functions.
 dnl **************************************************************
 AC_CHECK_FUNCS([setlocale strchr strtol uname memmove strerror])
+
+
+dnl **************************************************************
+dnl Check for MinGW
+dnl **************************************************************
+
+AC_ARG_ENABLE([mingw-debug],
+              AS_HELP_STRING([--enable-mingw-debug],
+	                     [Enable MinGW debug]))
+case $host_os in
+mingw*)
+  if test "x$enable_mingw_debug" != "xno"; then
+    LDFLAGS="$LDFLAGS -mwindows"
+  fi
+  AC_CHECK_TOOL(WINDRES, windres)
+  ;;
+esac
+AM_CONDITIONAL([HAVE_WINDRES], [test x"$WINDRES" != x])
+
 
 dnl **************************************************************
 dnl Check for GLib.
