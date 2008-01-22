@@ -60,8 +60,10 @@ void            tomoe_context_load_config     (TomoeContext       *ctx,
 
 GList          *tomoe_context_search          (TomoeContext       *ctx,
                                                TomoeQuery         *query);
+/*
 GList          *tomoe_context_multi_search    (TomoeContext       *ctx,
                                                GList              *queries);
+*/
 
 TomoeChar      *tomoe_context_get_char        (TomoeContext       *ctx,
                                                const gchar        *utf8);
