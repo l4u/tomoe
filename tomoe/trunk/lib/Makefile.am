@@ -30,13 +30,15 @@ tomoe_public_h_sources =		\
 	tomoe-context.h			\
 	tomoe-config.h			\
 	tomoe-dict.h			\
+	tomoe-dict-ptr-array.h		\
 	tomoe-module.h			\
 	tomoe-module-impl.h		\
 	tomoe-query.h			\
 	tomoe-reading.h			\
 	tomoe-recognizer.h		\
 	tomoe-shelf.h			\
-	tomoe-writing.h
+	tomoe-writing.h			\
+	tomoe-xml-parser.h
 
 enum_source_prefix = tomoe-enum-types
 
@@ -103,15 +105,13 @@ libtomoe_la_SOURCES =		\
 	tomoe-config.c		\
 	tomoe-dict.c		\
 	tomoe-dict-ptr-array.c	\
-	tomoe-dict-ptr-array.h	\
 	tomoe-module.c		\
 	tomoe-query.c		\
 	tomoe-reading.c		\
 	tomoe-recognizer.c	\
 	tomoe-shelf.c		\
 	tomoe-writing.c         \
-	tomoe-xml-parser.c	\
-	tomoe-xml-parser.h
+	tomoe-xml-parser.c
 
 libtomoe_la_LDFLAGS =				\
 	-version-info $(LT_VERSION_INFO)	\

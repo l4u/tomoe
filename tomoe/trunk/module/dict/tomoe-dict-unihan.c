@@ -193,7 +193,7 @@ constructor (GType type, guint n_props,
         object = klass->constructor (type, n_props, props);
         the_singleton = TOMOE_DICT_UNIHAN (object);
 
-        chars = _tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (object));
+        chars = tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (object));
         _tomoe_unihan_create (chars);
     } else {
         object = g_object_ref (G_OBJECT (the_singleton));

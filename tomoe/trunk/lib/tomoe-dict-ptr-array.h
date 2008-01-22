@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 
 #include "tomoe-dict.h"
 
-#define TOMOE_TYPE_DICT_PTR_ARRAY            (_tomoe_dict_ptr_array_get_type ())
+#define TOMOE_TYPE_DICT_PTR_ARRAY            (tomoe_dict_ptr_array_get_type ())
 #define TOMOE_DICT_PTR_ARRAY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_DICT_PTR_ARRAY, TomoeDictPtrArray))
 #define TOMOE_DICT_PTR_ARRAY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_DICT_PTR_ARRAY, TomoeDictPtrArrayClass))
 #define TOMOE_IS_DICT_PTR_ARRAY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TOMOE_TYPE_DICT_PTR_ARRAY))
@@ -49,9 +49,9 @@ struct _TomoeDictPtrArrayClass
     TomoeDictClass parent_class;
 };
 
-GType     _tomoe_dict_ptr_array_get_type        (void) G_GNUC_CONST;
-void      _tomoe_dict_ptr_array_sort            (TomoeDictPtrArray *dict);
-GPtrArray *_tomoe_dict_ptr_array_get_array      (TomoeDictPtrArray *dict);
+GType      tomoe_dict_ptr_array_get_type        (void) G_GNUC_CONST;
+void       tomoe_dict_ptr_array_sort            (TomoeDictPtrArray *dict);
+GPtrArray *tomoe_dict_ptr_array_get_array       (TomoeDictPtrArray *dict);
 
 G_END_DECLS
 

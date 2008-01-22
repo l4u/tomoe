@@ -428,8 +428,8 @@ init_parse_data (ParseData *data, TomoeXMLParsedData *result,
 }
 
 gboolean
-_tomoe_xml_parser_parse_dictionary_file (const gchar *filename,
-                                         TomoeXMLParsedData *result)
+tomoe_xml_parser_parse_dictionary_file (const gchar *filename,
+                                        TomoeXMLParsedData *result)
 {
     GMarkupParseContext *context;
     FILE *f;
@@ -469,7 +469,7 @@ _tomoe_xml_parser_parse_dictionary_file (const gchar *filename,
 }
 
 TomoeChar *
-_tomoe_xml_parser_parse_char_data (const gchar *xml, gssize len)
+tomoe_xml_parser_parse_char_data (const gchar *xml, gssize len)
 {
     GMarkupParseContext *context;
     TomoeXMLParsedData result;

@@ -1,7 +1,14 @@
 2008-01-22  Kouhei Sutou  <kou@cozmixng.org>
 
-	* configure.ac, lib/Makefile.am, module/recognizer/Makefile.am:
-	supported cross compile with MinGW on GNU/Linux.
+	* module/dict/tomoe-dict-xml.c, module/dict/tomoe-dict-binary.c:
+	used exported symbols.
+
+	* lib/tomoe-dict-ptr-array.[ch], lib/tomoe-xml-parser.[ch]:
+	exported symbols.
+
+	* configure.ac, lib/Makefile.am, module/recognizer/Makefile.am,
+	module/dict/Makefile.am: supported cross compile with MinGW on
+	GNU/Linux.
 
 2007-11-14  Kouhei Sutou  <kou@cozmixng.org>
 
