@@ -55,13 +55,16 @@ pkginclude_HEADERS =			\
 
 if OS_WIN32
 libtomoe_def = libtomoe.def
+libtomoe_module_def = libtomoe-module.def
 export_symbols = -export-symbols $(libtomoe_def)
-def_sources = $(tomoe_public_h_sources)
-BUILT_SOURCES += $(libtomoe_def)
-CLEANFILES += $(libtomoe_def)
-libtomoe.def: $(def_sources)
+libtomoe_def_sources = $(tomoe_public_h_sources)
+libtomoe_module_def_sources = tomoe-module-impl.h
+BUILT_SOURCES += $(libtomoe_def) $(libtomoe_module_def)
+CLEANFILES += $(libtomoe_def) $(libtomoe_module_def)
+
+libtomoe.def: $(libtomoe_def_sources)
 	((cd $(srcdir);							\
-	  cat $(def_sources) ||	echo 'tomoe_ERROR ()') |		\
+	  cat $(libtomoe_def_sources) || echo 'tomoe_ERROR ()') |	\
 	  grep -v -E '^# *include' |					\
 	  ($(CC) $(CPPFLAGS) -E - || echo 'tomoe_ERROR ()') |		\
 	  grep -E 'tomoe_.*[ 	]\(' |					\
@@ -69,6 +72,17 @@ libtomoe.def: $(def_sources)
 	  grep -v -E '^tomoe_module_impl_' |				\
 	  sort;								\
 	  echo LIBRARY libtomoe-$(LT_CURRENT_MINUS_AGE).dll;		\
+	) >$@
+	! grep -q tomoe_ERROR $@ || ($(RM) $@; false)
+
+libtomoe-module.def: $(libtomoe_module_def_sources)
+	((cd $(srcdir);							\
+	  cat $(libtomoe_module_def_sources) || echo 'tomoe_ERROR ()') |\
+	  grep -v -E '^# *include' |					\
+	  ($(CC) $(CPPFLAGS) -E - || echo 'tomoe_ERROR ()') |		\
+	  grep -E 'tomoe_.*[ 	]\(' |					\
+	  sed -e 's/^.*[* 	]\(tomoe_[^ 	]\+\).*/\1/' |		\
+	  sort;								\
 	) >$@
 	! grep -q tomoe_ERROR $@ || ($(RM) $@; false)
 else
