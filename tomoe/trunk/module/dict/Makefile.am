@@ -34,9 +34,16 @@ INCLUDES =				\
 
 LIBADD = $(TOMOE_LIBS)			\
 	$(top_builddir)/lib/libtomoe.la
+
+if OS_WIN32
+export_symbols = -export-symbols $(top_srcdir)/lib/libtomoe-module.def
+else
+export_symbols = $(LIBTOOL_EXPORT_OPTIONS)
+endif
+
 LDFLAGS =							\
-  -rpath $(dict_moduledir) -avoid-version -module		\
-  -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)
+	-rpath $(dict_moduledir) -avoid-version -module		\
+	-export-dynamic -no-undefined $(export_symbols)
 
 dict_module_LTLIBRARIES = xml.la
 

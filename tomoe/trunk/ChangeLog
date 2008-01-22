@@ -1,7 +1,7 @@
 2008-01-22  Kouhei Sutou  <kou@cozmixng.org>
 
-	* configure.ac, lib/Makefile.am: supported cross compile with
-	MinGW on GNU/Linux.
+	* configure.ac, lib/Makefile.am, module/recognizer/Makefile.am:
+	supported cross compile with MinGW on GNU/Linux.
 
 2007-11-14  Kouhei Sutou  <kou@cozmixng.org>
 
