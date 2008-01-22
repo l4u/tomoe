@@ -50,7 +50,7 @@ struct _TomoeDictPtrArrayPrivate
 
 static TomoeDictClass *parent_class;
 
-G_DEFINE_ABSTRACT_TYPE (TomoeDictPtrArray, _tomoe_dict_ptr_array, TOMOE_TYPE_DICT)
+G_DEFINE_ABSTRACT_TYPE (TomoeDictPtrArray, tomoe_dict_ptr_array, TOMOE_TYPE_DICT)
 
 static void         dispose                    (GObject       *object);
 static void         set_property               (GObject       *object,
@@ -75,7 +75,7 @@ static gboolean     is_editable                (TomoeDict     *dict);
 static gchar       *get_available_private_utf8 (TomoeDict     *dict);
 
 static void
-_tomoe_dict_ptr_array_class_init (TomoeDictPtrArrayClass *klass)
+tomoe_dict_ptr_array_class_init (TomoeDictPtrArrayClass *klass)
 {
     GObjectClass *gobject_class;
     TomoeDictClass *dict_class;
@@ -123,7 +123,7 @@ _tomoe_dict_ptr_array_class_init (TomoeDictPtrArrayClass *klass)
 }
 
 static void
-_tomoe_dict_ptr_array_init (TomoeDictPtrArray *dict)
+tomoe_dict_ptr_array_init (TomoeDictPtrArray *dict)
 {
     TomoeDictPtrArrayPrivate *priv = TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dict);
     priv->chars    = g_ptr_array_new();
@@ -196,7 +196,7 @@ char_compare_func (gconstpointer a, gconstpointer b)
 }
 
 void
-_tomoe_dict_ptr_array_sort (TomoeDictPtrArray *dict)
+tomoe_dict_ptr_array_sort (TomoeDictPtrArray *dict)
 {
     TomoeDictPtrArrayPrivate *priv;
 
@@ -219,7 +219,7 @@ register_char (TomoeDict *dict, TomoeChar *chr)
 
     unregister_char (dict, tomoe_char_get_utf8 (chr));
     g_ptr_array_add (priv->chars, g_object_ref (G_OBJECT (chr)));
-    _tomoe_dict_ptr_array_sort (TOMOE_DICT_PTR_ARRAY (dict));
+    tomoe_dict_ptr_array_sort (TOMOE_DICT_PTR_ARRAY (dict));
 
     priv->modified = TRUE;
 
@@ -449,7 +449,7 @@ copy_all_chars (gpointer data, gpointer user_data)
     g_ptr_array_add (*dest_chars, tomoe_char_dup (chr));
 }
 
-gboolean
+static gboolean
 copy (TomoeDict *src_dict, TomoeDict *dest_dict)
 {
     TomoeDictPtrArrayPrivate *src_priv, *dest_priv;
@@ -487,7 +487,7 @@ is_editable (TomoeDict *dict)
     return TOMOE_DICT_PTR_ARRAY_GET_PRIVATE (dict)->editable;
 }
 
-gchar *
+static gchar *
 get_available_private_utf8 (TomoeDict *dict)
 {
     TomoeDictPtrArrayPrivate *priv;
@@ -523,7 +523,7 @@ get_available_private_utf8 (TomoeDict *dict)
 }
 
 GPtrArray *
-_tomoe_dict_ptr_array_get_array (TomoeDictPtrArray *dict)
+tomoe_dict_ptr_array_get_array (TomoeDictPtrArray *dict)
 {
     g_return_val_if_fail (TOMOE_IS_DICT_PTR_ARRAY (dict), NULL);
 

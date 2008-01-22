@@ -37,10 +37,10 @@ struct _TomoeXMLParsedData
     GPtrArray *chars;
 };
 
-gboolean   _tomoe_xml_parser_parse_dictionary_file (const gchar *filename,
-                                                    TomoeXMLParsedData *result);
-TomoeChar *_tomoe_xml_parser_parse_char_data       (const gchar *xml,
-                                                    gssize      len);
+gboolean   tomoe_xml_parser_parse_dictionary_file (const gchar *filename,
+                                                   TomoeXMLParsedData *result);
+TomoeChar *tomoe_xml_parser_parse_char_data       (const gchar *xml,
+                                                   gssize      len);
 
 
 G_END_DECLS

@@ -29,6 +29,7 @@
 #include <string.h>
 #include <errno.h>
 #include <glib.h>
+#include <glib/gstdio.h>
 #include <glib/gi18n-lib.h>
 #include <gmodule.h>
 
@@ -337,7 +338,7 @@ tomoe_dict_binary_load (TomoeDictBinary *dict)
         return success;
 
     name = NULL;
-    chars = _tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (dict));
+    chars = tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (dict));
 
     /*
     Binary file format structure
@@ -397,7 +398,7 @@ tomoe_dict_binary_load (TomoeDictBinary *dict)
 
     g_mapped_file_free (file);
 
-    _tomoe_dict_ptr_array_sort (TOMOE_DICT_PTR_ARRAY (dict));
+    tomoe_dict_ptr_array_sort (TOMOE_DICT_PTR_ARRAY (dict));
 
     return success;
 }
@@ -453,7 +454,7 @@ tomoe_dict_binary_save (TomoeDictBinary *dict)
         put_ushort (file, 0);
     }
 
-    chars = _tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (dict));
+    chars = tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (dict));
     put_ulong (file, chars->len);
 
     for (i = 0; i < chars->len; i++) {

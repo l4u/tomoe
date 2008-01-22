@@ -23,9 +23,15 @@ CLEANFILES = *~ *.bak
 AM_CPPFLAGS =
 INCLUDES = $(TOMOE_CFLAGS)
 
+if OS_WIN32
+export_symbols = -export-symbols $(top_srcdir)/lib/libtomoe-module.def
+else
+export_symbols = $(LIBTOOL_EXPORT_OPTIONS)
+endif
+
 LDFLAGS =							\
   -rpath $(recognizer_moduledir) -avoid-version -module		\
-  -export-dynamic $(no_undefined) $(LIBTOOL_EXPORT_OPTIONS)
+  -no-undefined $(export_symbols)
 
 recognizer_module_LTLIBRARIES = simple.la
 
@@ -37,4 +43,4 @@ simple_la_SOURCES = \
 
 simple_la_LD_ADD = -lm
 
-simple_la_LIBADD = $(TOMOE_LIBS)
+simple_la_LIBADD = $(TOMOE_LIBS) $(top_builddir)/lib/libtomoe.la

@@ -143,7 +143,7 @@ tomoe_char_new (void)
 TomoeChar*
 tomoe_char_new_from_xml_data (const gchar *data, gssize len)
 {
-    return _tomoe_xml_parser_parse_char_data (data, len);
+    return tomoe_xml_parser_parse_char_data (data, len);
 }
 
 static void

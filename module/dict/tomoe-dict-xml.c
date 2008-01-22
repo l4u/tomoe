@@ -303,14 +303,14 @@ tomoe_dict_xml_load (TomoeDictXML *dict)
         return success;
 
     result.name = NULL;
-    result.chars = _tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (dict));
-    success = _tomoe_xml_parser_parse_dictionary_file (dict->filename, &result);
+    result.chars = tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (dict));
+    success = tomoe_xml_parser_parse_dictionary_file (dict->filename, &result);
     if (result.name) {
         g_free (dict->name);
         dict->name = g_strdup (result.name);
         g_free (result.name);
     }
-    _tomoe_dict_ptr_array_sort (TOMOE_DICT_PTR_ARRAY (dict));
+    tomoe_dict_ptr_array_sort (TOMOE_DICT_PTR_ARRAY (dict));
 
     return success;
 }
@@ -343,7 +343,7 @@ tomoe_dict_xml_save (TomoeDictXML *dict)
     else
         g_string_append (xml, "<dictionary>\n");
 
-    chars = _tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (dict));
+    chars = tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (dict));
     for (i = 0; i < chars->len; i++) {
         gchar *chr_xml;
         TomoeChar *chr = g_ptr_array_index (chars, i);
