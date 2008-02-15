@@ -1,3 +1,12 @@
+2008-02-15  Mathieu Blondel  <mblondel@rubyforge.org>
+
+	* benchmark/data/set[1|2]/*.xml: 50 kanji written by 2 different 
+	people. This can be used as evaluation data.
+
+	* benchmark/evaluation.rb: The evaluation script, using the Ruby
+	bindings for tomoe. This evaluation should be used to measure the
+	accuracy of recognizers. 
+
 2008-01-22  Kouhei Sutou  <kou@cozmixng.org>
 
 	* module/dict/tomoe-dict-xml.c, module/dict/tomoe-dict-binary.c:
