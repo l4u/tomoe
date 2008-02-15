@@ -34,7 +34,7 @@ class Evaluation
     @match5 = []
     @match10 = []
 
-    for xml_file in xml_files
+    xml_files.each do |xml_file|
       char = Tomoe::Char.new(IO.read(xml_file))
       char_utf8 = char.utf8
       query.writing = char.writing
@@ -80,19 +80,19 @@ detailed = ARGV.length >= 1 and ARGV[0] == "-d"
 puts "Run with -d for a detailed report" unless detailed
 
 
-for recognizer in [Tomoe::RecognizerSimple]
+[Tomoe::RecognizerSimple].each do |recognizer|
   sets = ["set1", "set2"]
 
   match1, match5, match10 = 0, 0, 0
 
-  for set in sets
+  sets.each do |set|
     puts "#{recognizer.to_s}, #{set}"
     evaluation = Evaluation.new(recognizer, set)
     puts "1st match: #{evaluation.first_match_accuracy.to_s}%"
     puts "5th match: #{evaluation.fith_match_accuracy.to_s}%"
     puts "10th match: #{evaluation.tenth_match_accuracy.to_s}%"
 
-    for char in evaluation.characters
+    evaluation.characters.each do |char|
       puts evaluation.character_details(char)
     end if detailed
 
