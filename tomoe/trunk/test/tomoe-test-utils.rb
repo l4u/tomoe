@@ -69,12 +69,24 @@ module TomoeTestUtils
       File.join(db_dir, "config.yml")
     end
 
+    def benchmark_dir
+      File.join(top_dir, "benchmark")
+    end
+
+    def benchmark_data_dir
+      File.join(benchmark_dir, "data")
+    end
+
     def test_data_files
       Dir.glob(File.join(test_data_dir, "*.data"))
     end
 
     def dictionary
       File.join(data_dir, "kanjidic2.xml")
+    end
+
+    def handwriting_dictionary(lang="ja")
+      File.join(data_dir, "handwriting-#{lang}.xml")
     end
   end
 

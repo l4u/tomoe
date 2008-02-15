@@ -10,20 +10,15 @@ $LOAD_PATH.unshift(File.join(test_dir))
 require 'tomoe-test-utils'
 
 class Evaluation
-
-    BENCHMARK_DIR = File.expand_path(File.dirname(__FILE__))
-    EVALUATION_DATA_DIR = File.join(BENCHMARK_DIR, "data")
-    TOP_DIR = File.expand_path(File.join(BENCHMARK_DIR, ".."))
-    DATA_DIR = File.join(TOP_DIR, "data")
-    JAPANESE_DICTIONARY = File.join(DATA_DIR, "handwriting-ja.xml")
+    include TomoeTestUtils::Path
 
     def initialize(recognizer_class, set)
-        data_folder = File.join(EVALUATION_DATA_DIR, set)
+        data_folder = File.join(benchmark_data_dir, set)
 
         xml_files = Dir.glob(File.join(data_folder, "*.xml"))
         @n_files = xml_files.length
 
-        dict = Tomoe::DictXML.new("filename" => JAPANESE_DICTIONARY,
+        dict = Tomoe::DictXML.new("filename" => handwriting_dictionary("ja"),
                                   "editable" => false)
 
         recognizer = recognizer_class.new("dictionary" => dict)
