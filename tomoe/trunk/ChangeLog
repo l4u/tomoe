@@ -8,6 +8,7 @@
 	- used TomoeTestUtils::Path.
 	- used 2 spaces for indentation. (it's natural for Ruby script.)
 	- used each rather than for ... in. (it's natural for Ruby script.)
+	- created run to split initialize.
 
 	* benchmark/search-by-recognizer.rb: TomoeSpecUtils -> TomoeTestUtils.
 
