@@ -6,6 +6,7 @@
 	- used tomoe-test-utils.
 	- fixed strange method definition level.
 	- used TomoeTestUtils::Path.
+	- used 2 spaces for indentation. (it's natural for Ruby script.)
 
 	* benchmark/search-by-recognizer.rb: TomoeSpecUtils -> TomoeTestUtils.
 
