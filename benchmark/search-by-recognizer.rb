@@ -21,13 +21,13 @@ else
 end
 recognizer = Tomoe::RecognizerSimple.new("dictionary" => dict)
 context = Tomoe::Context.new("recognizer" => recognizer)
-config_file = TomoeSpecUtils::Config.make_config_file
+config_file = TomoeTestUtils::Config.make_config_file
 context.load_config(config_file.path)
 
 n = 10
 Benchmark.bmbm do |x|
-  TomoeSpecUtils::Path.test_data_files.sort.each do |file|
-    expected, writing = TomoeSpecUtils::TestData.parse(file)
+  TomoeTestUtils::Path.test_data_files.sort.each do |file|
+    expected, writing = TomoeTestUtils::TestData.parse(file)
     query = Tomoe::Query.new
     query.writing = writing
     base = File.basename(file)

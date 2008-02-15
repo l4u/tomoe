@@ -1,3 +1,7 @@
+2008-02-15  Kouhei Sutou  <kou@cozmixng.org>
+
+	* benchmark/search-by-recognizer.rb: TomoeSpecUtils -> TomoeTestUtils.
+
 2008-02-15  Mathieu Blondel  <mblondel@rubyforge.org>
 
 	* benchmark/data/set[1|2]/*.xml: 50 kanji written by 2 different 
