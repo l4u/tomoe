@@ -52,33 +52,32 @@ class Evaluation
             @match5 << char_utf8 if ten_candidates[0...5].include? char_utf8
             @match10 << char_utf8 if ten_candidates.include? char_utf8
         end
+    end
 
-        def first_match_accuracy
-            @match1.length.to_f / @n_files * 100
+    def first_match_accuracy
+        @match1.length.to_f / @n_files * 100
+    end
+
+    def fith_match_accuracy
+        @match5.length.to_f / @n_files * 100
+    end
+
+    def tenth_match_accuracy
+        @match10.length.to_f / @n_files * 100
+    end
+
+    def character_details(char_utf8)
+        ret = char_utf8 + "\t"
+        ret << if i = @results[char_utf8].index(char_utf8)
+            "%d\t" % (i + 1)
+        else
+            "X\t"
         end
+        ret << @results[char_utf8][0...5].join(", ")
+    end
 
-        def fith_match_accuracy
-            @match5.length.to_f / @n_files * 100
-        end
-
-        def tenth_match_accuracy
-            @match10.length.to_f / @n_files * 100
-        end
-
-        def character_details(char_utf8)
-            ret = char_utf8 + "\t"
-            ret << if i = @results[char_utf8].index(char_utf8)
-                "%d\t" % (i + 1)
-            else
-                "X\t"
-            end
-            ret << @results[char_utf8][0...5].join(", ")
-        end
-
-        def characters
-            @results.keys
-        end
-
+    def characters
+        @results.keys
     end
 
 end

@@ -1,6 +1,8 @@
 2008-02-15  Kouhei Sutou  <kou@cozmixng.org>
 
-	* benchmark/evaluation.rb: used tomoe-test-utils.
+	* benchmark/evaluation.rb:
+	- used tomoe-test-utils.
+	- fixed strange method definition level.
 
 	* benchmark/search-by-recognizer.rb: TomoeSpecUtils -> TomoeTestUtils.
 
