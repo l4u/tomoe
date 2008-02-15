@@ -1,4 +1,13 @@
-$KCODE="u"
+#!/usr/bin/env ruby
+
+benchmark_dir = File.expand_path(File.dirname(__FILE__))
+top_dir = File.expand_path(File.join(benchmark_dir, ".."))
+test_dir = File.join(top_dir, "test")
+$LOAD_PATH.unshift(File.join(top_dir, "bindings", "ruby", ".libs"))
+$LOAD_PATH.unshift(File.join(top_dir, "bindings", "ruby"))
+$LOAD_PATH.unshift(File.join(test_dir))
+
+require 'tomoe-test-utils'
 
 class Evaluation
 
@@ -73,11 +82,6 @@ class Evaluation
     end
 
 end
-
-$LOAD_PATH.unshift(File.join(Evaluation::TOP_DIR, "bindings", "ruby", ".libs"))
-$LOAD_PATH.unshift(File.join(Evaluation::TOP_DIR, "bindings", "ruby"))
-
-require "tomoe"
 
 detailed = ARGV.length >= 1 and ARGV[0] == "-d"
 puts "Run with -d for a detailed report" unless detailed
