@@ -1,3 +1,9 @@
+2008-03-25  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* module/dict/tomoe-unihan.[ch], module/dict/tomoe-dict-unihan.c:
+	  Reduce heavy, very heavy wasted memories.
+	  It's not completed yet but already works with tomoe-gtk.
+	
 2008-02-15  Kouhei Sutou  <kou@cozmixng.org>
 
 	* test/tomoe-test-utils.rb: added benchmark related paths.
