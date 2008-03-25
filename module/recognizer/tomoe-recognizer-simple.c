@@ -186,12 +186,12 @@ constructor (GType type, guint n_props,
 
         language = tomoe_recognizer_get_language (TOMOE_RECOGNIZER (object));
         if (language)
-            dict_name = g_strconcat ("handwriting-", language, ".xml", NULL);
+            dict_name = g_strconcat ("handwriting-", language, ".bin", NULL);
         else
-            dict_name = g_strdup ("handwriting.xml");
+            dict_name = g_strdup ("handwriting.bin");
 
         filename = g_build_filename (RECOGNIZER_DATADIR, dict_name, NULL);
-        recognizer->dict = tomoe_dict_new ("xml",
+        recognizer->dict = tomoe_dict_new ("binary",
                                            "filename", filename,
                                            NULL);
         if (recognizer->dict && !tomoe_dict_is_available (recognizer->dict)) {
