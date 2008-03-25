@@ -24,10 +24,13 @@
 #define __TOMOE_UNIHAN_H__
 
 #include <glib.h>
+#include <tomoe-char.h>
+#include <tomoe-query.h>
 
 G_BEGIN_DECLS
 
-void _tomoe_unihan_create (GPtrArray *array);
+TomoeChar *_tomoe_unihan_get_char (const gchar *utf8);
+GList     *_tomoe_unihan_search   (TomoeQuery  *query);
 
 G_END_DECLS
 

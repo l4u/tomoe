@@ -38,7 +38,6 @@
 #include <glib-utils.h>
 
 #include "tomoe-unihan.h"
-#include "tomoe-dict-ptr-array.h"
 
 #define TOMOE_TYPE_DICT_UNIHAN            tomoe_type_dict_unihan
 #define TOMOE_DICT_UNIHAN(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_DICT_UNIHAN, TomoeDictUnihan))
@@ -58,17 +57,17 @@ typedef struct _TomoeDictUnihan TomoeDictUnihan;
 typedef struct _TomoeDictUnihanClass TomoeDictUnihanClass;
 struct _TomoeDictUnihan
 {
-    TomoeDictPtrArray    object;
-    gchar               *name;
+    TomoeDict    object;
+    gchar       *name;
 };
 
 struct _TomoeDictUnihanClass
 {
-    TomoeDictPtrArrayClass parent_class;
+    TomoeDictClass parent_class;
 };
 
 static GType tomoe_type_dict_unihan = 0;
-static TomoeDictPtrArray *parent_class;
+static TomoeDict *parent_class;
 static TomoeDictUnihan *the_singleton = NULL;
 
 static GObject     *constructor               (GType                  type,
@@ -89,6 +88,17 @@ static gboolean     is_editable               (TomoeDict     *dict);
 static gboolean     is_available              (TomoeDict     *dict);
 static gchar       *get_available_private_utf8 (TomoeDict    *dict);
 
+static gboolean     register_char             (TomoeDict     *dict,
+                                               TomoeChar     *chr);
+static gboolean     unregister_char           (TomoeDict     *dict,
+                                               const gchar   *utf8);
+static TomoeChar   *get_char                  (TomoeDict     *dict,
+                                               const gchar   *utf8);
+static GList       *search                    (TomoeDict     *dict,
+                                               TomoeQuery    *query);
+static gboolean     copy                      (TomoeDict     *src_dict,
+                                               TomoeDict     *dest_dict);
+
 static void
 class_init (TomoeDictUnihanClass *klass)
 {
@@ -106,6 +116,13 @@ class_init (TomoeDictUnihanClass *klass)
 
     dict_class = TOMOE_DICT_CLASS (klass);
     dict_class->get_name        = get_name;
+#if 1
+    dict_class->register_char   = register_char;
+    dict_class->unregister_char = unregister_char;
+    dict_class->get_char        = get_char;
+    dict_class->search          = search;
+    dict_class->copy            = copy;
+#endif
     dict_class->flush           = flush;
     dict_class->is_editable     = is_editable;
     dict_class->is_available    = is_available;
@@ -145,7 +162,7 @@ register_type (GTypeModule *type_module)
         };
 
     tomoe_type_dict_unihan = g_type_module_register_type (type_module,
-                                                          TOMOE_TYPE_DICT_PTR_ARRAY,
+                                                          TOMOE_TYPE_DICT,
                                                           "TomoeDictUnihan",
                                                           &info, 0);
 }
@@ -189,12 +206,8 @@ constructor (GType type, guint n_props,
     GObjectClass *klass = G_OBJECT_CLASS (parent_class);
 
     if (!the_singleton) {
-        GPtrArray *chars;
         object = klass->constructor (type, n_props, props);
         the_singleton = TOMOE_DICT_UNIHAN (object);
-
-        chars = tomoe_dict_ptr_array_get_array (TOMOE_DICT_PTR_ARRAY (object));
-        _tomoe_unihan_create (chars);
     } else {
         object = g_object_ref (G_OBJECT (the_singleton));
     }
@@ -286,6 +299,44 @@ static gchar *
 get_available_private_utf8 (TomoeDict *_dict)
 {
     return NULL;
+}
+
+
+static gboolean
+register_char (TomoeDict *dict, TomoeChar *chr)
+{
+    /* FIXME: need? */
+    return FALSE;
+}
+
+static gboolean
+unregister_char (TomoeDict *dict, const gchar *utf8)
+{
+    /* FIXME: need? */
+    return FALSE;
+}
+
+static TomoeChar *
+get_char (TomoeDict *dict, const gchar *utf8)
+{
+    g_return_val_if_fail (TOMOE_IS_DICT (dict), NULL);
+
+    return _tomoe_unihan_get_char (utf8);
+}
+
+static GList *
+search (TomoeDict *dict, TomoeQuery *query)
+{
+    g_return_val_if_fail (TOMOE_IS_DICT (dict), NULL);
+
+    return _tomoe_unihan_search (query);
+}
+
+static gboolean
+copy (TomoeDict *src_dict, TomoeDict *dest_dict)
+{
+    /* FIXME */
+    return FALSE;
 }
 
 /*

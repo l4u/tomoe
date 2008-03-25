@@ -6,122 +6,214 @@
 */
 
 
+#include <tomoe-candidate.h>
 #include "tomoe-unihan.h"
 #include "tomoe-unihan-data.h"
 
-static gint
-_tomoe_unihan_append_infos (GPtrArray *array, TomoeUnihanInfo *infos,
-                            gint infos_size, gint offset)
+static struct UnihanArray {
+    TomoeUnihanInfo *(*get)  (void);
+    gint             (*size) (void);
+} unihan_array[] = {
+    { _tomoe_unihan_data0, _tomoe_unihan_data0_size},
+    { _tomoe_unihan_data1, _tomoe_unihan_data1_size},
+    { _tomoe_unihan_data2, _tomoe_unihan_data2_size},
+    { _tomoe_unihan_data3, _tomoe_unihan_data3_size},
+    { _tomoe_unihan_data4, _tomoe_unihan_data4_size},
+    { _tomoe_unihan_data5, _tomoe_unihan_data5_size},
+    { _tomoe_unihan_data6, _tomoe_unihan_data6_size},
+    { _tomoe_unihan_data7, _tomoe_unihan_data7_size},
+    { _tomoe_unihan_data8, _tomoe_unihan_data8_size},
+    { _tomoe_unihan_data9, _tomoe_unihan_data9_size},
+};
+
+static TomoeChar *
+_tomoe_char_from_unihan (TomoeUnihanInfo *info)
+{
+    TomoeChar *chr;
+    gint j, len;
+
+    g_return_val_if_fail(info, NULL);
+
+    chr = tomoe_char_new ();
+    tomoe_char_set_utf8 (chr, info->utf8);
+
+    if (info->n_strokes)
+        tomoe_char_set_n_strokes (chr, info->n_strokes);
+
+    len = info->readings_size;
+    for (j = 0; j < len; j++) {
+        TomoeReading *reading;
+        TomoeUnihanReading *reading_info;
+
+        reading_info = &info->readings[j];
+        reading = tomoe_reading_new (reading_info->type,
+                                     reading_info->reading);
+        tomoe_char_add_reading (chr, reading);
+        g_object_unref (reading);
+    }
+
+    len = info->radicals_size;
+    for (j = 0; j < len; j++) {
+        tomoe_char_add_radical (chr, info->radicals[j]);
+    }
+
+    len = info->variants_size;
+    for (j = 0; j < len; j++) {
+        tomoe_char_set_variant (chr, info->variants[j]);
+    }
+
+    len = info->meta_data_size;
+    for (j = 0; j < len; j++) {
+        TomoeUnihanMetaData meta_data;
+
+        meta_data = info->meta_data[j];
+        tomoe_char_register_meta_data (chr, meta_data.key, meta_data.value);
+    }
+
+    return chr;
+}
+
+static gboolean
+does_match_char_with_utf8 (TomoeUnihanInfo *info, const gchar *utf8)
+{
+    if (!utf8)
+        return TRUE;
+
+    return g_utf8_collate (info->utf8, utf8) == 0;
+}
+
+static gboolean
+does_match_char_with_n_strokes (TomoeUnihanInfo *info, gint min, gint max)
+{
+    gint n_strokes;
+
+    if (min < 0 && max < 0)
+        return TRUE;
+
+    n_strokes = info->n_strokes;
+    if (n_strokes < 0)
+        return FALSE;
+
+    return ((min < 0 || min <= n_strokes) &&
+            (max < 0 || max >= n_strokes));
+}
+
+static gboolean
+does_match_char_with_reading (TomoeUnihanInfo *info, TomoeReading *reading)
+{
+    TomoeReadingType type;
+    gint j;
+
+    if (!reading)
+        return TRUE;
+    if (!tomoe_reading_get_reading (reading))
+        return TRUE;
+
+    type = tomoe_reading_get_reading_type (reading);
+
+    for (j = 0; j < info->readings_size; j++) {
+        TomoeUnihanReading *reading_info;
+
+        reading_info = &info->readings[j];
+
+        if (type != reading_info->type &&
+            (type != TOMOE_READING_UNKNOWN &&
+             reading_info->type != TOMOE_READING_UNKNOWN))
+        {
+            return FALSE;
+        }
+
+        if (g_str_has_prefix (reading_info->reading,
+                              tomoe_reading_get_reading(reading)))
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
+static gboolean
+does_match_char_with_readings (TomoeUnihanInfo *info, const GList *readings)
+{
+    GList *node;
+
+    for (node = (GList *)readings; node; node = g_list_next (node)) {
+        TomoeReading *reading = node->data;
+        if (!does_match_char_with_reading (info, reading))
+            return FALSE;
+    }
+
+    return TRUE;
+}
+
+static void
+collect_chars_by_query (TomoeUnihanInfo *infos,
+                        gint size,
+                        TomoeQuery *q,
+                        GList **list)
 {
     gint i;
 
-    for (i = 0; i < infos_size; i++) {
-        TomoeUnihanInfo info;
-        TomoeChar *chr;
-        gint j, len;
+    for (i = size - 1; i >= 0; i--) {
+        TomoeUnihanInfo *info = &infos[i];
 
-        info = infos[i];
-
-        chr = tomoe_char_new ();
-        tomoe_char_set_utf8 (chr, info.utf8);
-
-        if (info.n_strokes)
-            tomoe_char_set_n_strokes (chr, info.n_strokes);
-
-        len = info.readings_size;
-        for (j = 0; j < len; j++) {
-            TomoeReading *reading;
-            TomoeUnihanReading reading_info;
-
-            reading_info = info.readings[j];
-            reading = tomoe_reading_new (reading_info.type,
-                                         reading_info.reading);
-            tomoe_char_add_reading (chr, reading);
-            g_object_unref (reading);
+        /* FIXME: add remaining properties */
+        if (does_match_char_with_utf8 (
+                info, tomoe_query_get_utf8 (q)) &&
+            does_match_char_with_n_strokes (
+                info,
+                tomoe_query_get_min_n_strokes (q),
+                tomoe_query_get_max_n_strokes (q)) &&
+            does_match_char_with_readings (
+                info,
+                tomoe_query_get_readings (q)))
+        {
+            TomoeChar *chr = _tomoe_char_from_unihan(info);
+            if (!chr) continue;
+            *list = g_list_prepend (*list, tomoe_candidate_new (chr));
+            g_object_unref(G_OBJECT(chr));
         }
-
-        len = info.radicals_size;
-        for (j = 0; j < len; j++) {
-            tomoe_char_add_radical (chr, info.radicals[j]);
-        }
-
-        len = info.variants_size;
-        for (j = 0; j < len; j++) {
-            tomoe_char_set_variant (chr, info.variants[j]);
-        }
-
-        len = info.meta_data_size;
-        for (j = 0; j < len; j++) {
-            TomoeUnihanMetaData meta_data;
-
-            meta_data = info.meta_data[j];
-            tomoe_char_register_meta_data (chr, meta_data.key, meta_data.value);
-        }
-
-        array->pdata[i + offset] = chr;
     }
-
-    return i + offset;
 }
 
-void
-_tomoe_unihan_create (GPtrArray *array)
+static void
+collect_all_chars (TomoeUnihanInfo *infos,
+                   gint size,
+                   GList **list)
 {
-    gint offset, infos_size;
+    gint i;
 
-    infos_size =
-        _tomoe_unihan_data0_size () +
-        _tomoe_unihan_data1_size () +
-        _tomoe_unihan_data2_size () +
-        _tomoe_unihan_data3_size () +
-        _tomoe_unihan_data4_size () +
-        _tomoe_unihan_data5_size () +
-        _tomoe_unihan_data6_size () +
-        _tomoe_unihan_data7_size () +
-        _tomoe_unihan_data8_size () +
-        _tomoe_unihan_data9_size ();
-    g_ptr_array_set_size (array, infos_size);
-    array->len = infos_size;
+    for (i = size - 1; i >= 0; i--) {
+        TomoeUnihanInfo *info = &infos[i];
+        TomoeChar *chr = _tomoe_char_from_unihan(info);
+        if (!chr) continue;
+        *list = g_list_prepend (*list, tomoe_candidate_new (chr));
+        g_object_unref(G_OBJECT(chr));
+    }
+}
 
-    offset = 0;
-    offset = _tomoe_unihan_append_infos (array,
-                                         _tomoe_unihan_data0 (),
-                                         _tomoe_unihan_data0_size (),
-                                         offset);
-    offset = _tomoe_unihan_append_infos (array,
-                                         _tomoe_unihan_data1 (),
-                                         _tomoe_unihan_data1_size (),
-                                         offset);
-    offset = _tomoe_unihan_append_infos (array,
-                                         _tomoe_unihan_data2 (),
-                                         _tomoe_unihan_data2_size (),
-                                         offset);
-    offset = _tomoe_unihan_append_infos (array,
-                                         _tomoe_unihan_data3 (),
-                                         _tomoe_unihan_data3_size (),
-                                         offset);
-    offset = _tomoe_unihan_append_infos (array,
-                                         _tomoe_unihan_data4 (),
-                                         _tomoe_unihan_data4_size (),
-                                         offset);
-    offset = _tomoe_unihan_append_infos (array,
-                                         _tomoe_unihan_data5 (),
-                                         _tomoe_unihan_data5_size (),
-                                         offset);
-    offset = _tomoe_unihan_append_infos (array,
-                                         _tomoe_unihan_data6 (),
-                                         _tomoe_unihan_data6_size (),
-                                         offset);
-    offset = _tomoe_unihan_append_infos (array,
-                                         _tomoe_unihan_data7 (),
-                                         _tomoe_unihan_data7_size (),
-                                         offset);
-    offset = _tomoe_unihan_append_infos (array,
-                                         _tomoe_unihan_data8 (),
-                                         _tomoe_unihan_data8_size (),
-                                         offset);
-    offset = _tomoe_unihan_append_infos (array,
-                                         _tomoe_unihan_data9 (),
-                                         _tomoe_unihan_data9_size (),
-                                         offset);
+TomoeChar *_tomoe_unihan_get_char (const gchar *utf8)
+{
+    /* FIXME */
+    return NULL;
+}
+
+GList *
+_tomoe_unihan_search (TomoeQuery *query)
+{
+    GList *list = NULL;
+    guint i;
+
+    if (tomoe_query_is_empty (query)) {
+        for (i = 0; i < G_N_ELEMENTS(unihan_array); i++)
+            collect_all_chars(unihan_array[i].get (),
+                              unihan_array[i].size (),
+                              &list);
+    } else {
+        for (i = 0; i < G_N_ELEMENTS(unihan_array); i++)
+            collect_chars_by_query(unihan_array[i].get (),
+                                   unihan_array[i].size (),
+                                   query,
+                                   &list);
+    }
+    return list;
 }
