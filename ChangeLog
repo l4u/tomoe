@@ -1,3 +1,7 @@
+2008-03-26  Takuro Ashie  <ashie@homa.ne.jp>
+
+	* module/dict/tomoe-unihan.c: Reverse search order.
+
 2008-03-25  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* module/recognizer/tomoe-recognizer-simple.c
