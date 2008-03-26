@@ -201,15 +201,15 @@ GList *
 _tomoe_unihan_search (TomoeQuery *query)
 {
     GList *list = NULL;
-    guint i;
+    gint i;
 
     if (tomoe_query_is_empty (query)) {
-        for (i = 0; i < G_N_ELEMENTS(unihan_array); i++)
+        for (i = (gint) G_N_ELEMENTS(unihan_array) - 1; i >= 0; i--)
             collect_all_chars(unihan_array[i].get (),
                               unihan_array[i].size (),
                               &list);
     } else {
-        for (i = 0; i < G_N_ELEMENTS(unihan_array); i++)
+        for (i = (gint) G_N_ELEMENTS(unihan_array) - 1; i >= 0; i--)
             collect_chars_by_query(unihan_array[i].get (),
                                    unihan_array[i].size (),
                                    query,
