@@ -22,7 +22,7 @@ CLEANFILES = *~ *.bak *.valid
 
 INCLUDES = $(TOMOE_CFLAGS)
 noinst_PROGRAMS = xml2binary
-xml2binary_LDADD = $(TOMOE_LIBS) ../lib/.libs/libtomoe.la
+xml2binary_LDADD = $(TOMOE_LIBS) ../lib/libtomoe.la
 xml2binary_SOURCES = xml2binary.c
 
 pkgdata_DATA = dict.dtd xml2est.rb kanjidic2xml.rb
