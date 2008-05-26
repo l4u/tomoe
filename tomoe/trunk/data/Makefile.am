@@ -20,6 +20,11 @@
 
 CLEANFILES = *~ *.bak *.valid
 
+INCLUDES = $(TOMOE_CFLAGS)
+noinst_PROGRAMS = xml2binary
+xml2binary_LDADD = $(TOMOE_LIBS) ../lib/.libs/libtomoe.la
+xml2binary_SOURCES = xml2binary.c
+
 pkgdata_DATA = dict.dtd xml2est.rb kanjidic2xml.rb
 dict_data_DATA =
 recognizer_data_DATA = handwriting-zh_CN.xml handwriting-ja.xml
@@ -52,6 +57,8 @@ SUFFIXES: .xml .valid
 .PHONY: validate
 
 validate: handwriting-zh_CN.valid handwriting-ja.valid kanjidic2.valid
+
+
 
 
 # temporary added for hardcoded test code.
