@@ -1,3 +1,8 @@
+2008-05-26  Kouhei Sutou  <kou@cozmixng.org>
+
+	* data/xml2binary.c: add. (need more work (e.g. data/Makefile.am
+	and so on...) but maybe work.)
+
 2008-03-26  Takuro Ashie  <ashie@homa.ne.jp>
 
 	* module/dict/tomoe-unihan.c: Reverse search order.
