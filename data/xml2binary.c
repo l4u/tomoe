@@ -41,8 +41,8 @@ main (gint argc, gchar **argv)
 
     tomoe_dict_copy (xml_dict, binary_dict);
 
-    g_free (xml_dict);
-    g_free (binary_dict);
+    g_object_unref (xml_dict);
+    g_object_unref (binary_dict);
 
     tomoe_quit ();
 
