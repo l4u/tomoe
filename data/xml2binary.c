@@ -1,6 +1,7 @@
 /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 
 #include <stdlib.h>
+#include <string.h>
 #include <glib/gstdio.h>
 
 #include <tomoe.h>
@@ -20,8 +21,8 @@ main (gint argc, gchar **argv)
     tomoe_init ();
 
     xml_dict = tomoe_dict_new ("xml",
-                               "filename" => argv[1],
-                               "editable" => FALSE,
+                               "filename", argv[1],
+                               "editable", FALSE,
                                NULL);
 
     if (g_str_has_suffix (argv[1], ".xml")) {
@@ -33,8 +34,8 @@ main (gint argc, gchar **argv)
         binary_file_name = g_strconcat (argv[1], ".bin", NULL);
     }
     binary_dict = tomoe_dict_new ("binary",
-                                  "filename" => binary_file_name,
-                                  "editable" => TRUE,
+                                  "filename", binary_file_name,
+                                  "editable", TRUE,
                                   NULL);
     g_free(binary_file_name);
 
