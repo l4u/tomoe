@@ -167,6 +167,32 @@ TOMOE_MODULE_IMPL_GET_LOG_DOMAIN (void)
     return g_strdup (G_LOG_DOMAIN);
 }
 
+static TomoeDict *
+load_dictionary (const gchar *type, const gchar *suffix, const gchar *language)
+{
+    TomoeDict *dict = NULL;
+    gchar *dict_name;
+    gchar *filename;
+
+    if (language)
+        dict_name = g_strconcat ("handwriting-", language, suffix, NULL);
+    else
+        dict_name = g_strconcat ("handwriting", suffix, NULL);
+
+    filename = g_build_filename (RECOGNIZER_DATADIR, dict_name, NULL);
+    dict = tomoe_dict_new (type,
+                           "filename", filename,
+                           NULL);
+    if (dict && !tomoe_dict_is_available (dict)) {
+        g_object_unref (dict);
+        dict = NULL;
+    }
+
+    g_free(dict_name);
+    g_free(filename);
+
+    return dict;
+}
 
 static GObject *
 constructor (GType type, guint n_props,
@@ -181,26 +207,12 @@ constructor (GType type, guint n_props,
 
     if (!recognizer->dict) {
         const gchar *language;
-        gchar *dict_name;
-        gchar *filename;
 
         language = tomoe_recognizer_get_language (TOMOE_RECOGNIZER (object));
-        if (language)
-            dict_name = g_strconcat ("handwriting-", language, ".bin", NULL);
-        else
-            dict_name = g_strdup ("handwriting.bin");
 
-        filename = g_build_filename (RECOGNIZER_DATADIR, dict_name, NULL);
-        recognizer->dict = tomoe_dict_new ("binary",
-                                           "filename", filename,
-                                           NULL);
-        if (recognizer->dict && !tomoe_dict_is_available (recognizer->dict)) {
-            g_object_unref (recognizer->dict);
-            recognizer->dict = NULL;
-        }
-
-        g_free(dict_name);
-        g_free(filename);
+        recognizer->dict = load_dictionary ("binary", ".bin", language);
+        if (!recognizer->dict)
+            recognizer->dict = load_dictionary ("xml", ".xml", language);
     }
 
     return object;
