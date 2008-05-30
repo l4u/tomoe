@@ -1,3 +1,8 @@
+2008-05-30  Kouhei Sutou  <kou@cozmixng.org>
+
+	* module/recognizer/tomoe-recognizer-simple.c: load XML dictionary
+	as fallback.
+
 2008-05-26  Kouhei Sutou  <kou@cozmixng.org>
 
 	* data/xml2binary.c: add. (need more work (e.g. data/Makefile.am
