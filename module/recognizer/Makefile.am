@@ -57,4 +57,7 @@ zinnia_la_CFLAGS =		\
 zinnia_la_SOURCES = 			\
 	tomoe-recognizer-zinnia.c
 
-zinnia_la_LIBADD = $(TOMOE_LIBS) $(top_builddir)/lib/libtomoe.la $(ZINNIA_LIB)
+zinnia_la_LIBADD =			\
+	$(TOMOE_LIBS)			\
+	$(top_builddir)/lib/libtomoe.la	\
+	$(ZINNIA_LIBS)

@@ -1,3 +1,7 @@
+2008-09-20  Kouhei Sutou  <kou@cozmixng.org>
+
+	* module/recognizer/Makefile.am (zinnia_la_LIBADD): fix a typo.
+
 2008-09-19  Kouhei Sutou  <kou@cozmixng.org>
 
 	* configure.ac, data/Makefile.am, data/xml2zinnia.c,
