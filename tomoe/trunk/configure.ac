@@ -260,6 +260,29 @@ recognizer_moduledir="\${moduledir}/recognizer"
 AC_SUBST(recognizer_moduledir)
 
 dnl **************************************************************
+dnl Configure for Zinnia recognizer modules.
+dnl **************************************************************
+
+use_zinnia=no
+ZINNIA_CFLAGS=
+ZINNIA_LIBS=
+AC_SUBST(ZINNIA_CFLAGS)
+AC_SUBST(ZINNIA_LIBS)
+PKG_CHECK_MODULES(ZINNIA, zinnia,
+                  [use_zinnia=yes],
+                  [use_zinnia=no
+                   AC_MSG_NOTICE([Zinnia doesn't support pkg-config. :(])])
+if test x"$use_zinnia" != x"yes"; then
+  AC_CHECK_HEADERS([zinnia.h], [use_zinnia=yes], [use_zinnia=no])
+  if test x"$use_zinnia" = x"yes"; then
+    AC_CHECK_LIB([zinnia], [zinnia_version],
+                 [ZINNIA_LIBS="-lzinnia"],
+                 [use_zinnia=no])
+  fi
+fi
+AM_CONDITIONAL(USE_ZINNIA, [test x"$use_zinnia" = x"yes"])
+
+dnl **************************************************************
 dnl Configure for dictionary modules.
 dnl **************************************************************
 
@@ -407,6 +430,11 @@ echo "      Hyper Estraier  : ${use_est}"
 echo "      Subversion      : ${use_svn}"
 echo "      MySQL           : ${use_mysql}"
 echo "      Ruby            : ${use_dict_ruby}"
+echo
+echo "  * Recognizer Backends"
+echo
+echo "      Simple          : yes"
+echo "      Zinnia          : ${use_zinnia}"
 echo
 echo "  * Other Features"
 echo

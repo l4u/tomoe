@@ -1,3 +1,10 @@
+2008-09-19  Kouhei Sutou  <kou@cozmixng.org>
+
+	* configure.ac, data/Makefile.am, data/xml2zinnia.c,
+	module/recognizer/Makefile.am,
+	module/recognizer/tomoe-recognizer-zinnia.c: partially support
+	Zinnia.
+
 2008-05-30  Kouhei Sutou  <kou@cozmixng.org>
 
 	* module/recognizer/tomoe-recognizer-simple.c: load XML dictionary
