@@ -32,8 +32,12 @@ generate_binary_data (zinnia_trainer_t *trainer, const gchar *model_file)
     }
     close (fd);
 
-    zinnia_trainer_train (trainer, text_file);
-    zinnia_trainer_convert_model (text_file, model_file, 0.001);
+    if (!zinnia_trainer_train (trainer, text_file))
+        g_warning ("zinnia_trainer_train() is failed: %s",
+                   zinnia_trainer_strerror (trainer));
+    if (!zinnia_trainer_convert_model (text_file, model_file, 0.001))
+        g_warning ("zinnia_trainer_convert_model() is failed: %s",
+                   zinnia_trainer_strerror (trainer));
     g_remove (text_file);
 }
 
