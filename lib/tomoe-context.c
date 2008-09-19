@@ -299,6 +299,35 @@ _candidate_compare_func (gconstpointer a, gconstpointer b)
     return tomoe_candidate_compare (ca, cb);
 }
 
+static void
+setup_recognizer (TomoeContextPrivate *priv)
+{
+    gchar **languages;
+    guint i, n_languages;
+
+    languages = priv->languages;
+    n_languages = g_strv_length (languages);
+    for (i = 0; i <= n_languages && priv->recognizer == NULL; i++) {
+        gchar *recognizer_names[] = {"zinnia", "simple", NULL};
+        gchar **names;
+
+        for (names = recognizer_names; *names; names++) {
+            priv->recognizer = tomoe_recognizer_new (*names,
+                                                     "language", languages[i],
+                                                     NULL);
+
+            if (priv->recognizer) {
+                if (!tomoe_recognizer_is_available (priv->recognizer)) {
+                    g_object_unref (priv->recognizer);
+                    priv->recognizer = NULL;
+                }
+            }
+
+            if (priv->recognizer)
+                break;
+        }
+    }
+}
 
 static GList *
 tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
@@ -310,29 +339,12 @@ tomoe_context_search_by_strokes (TomoeContext *context, TomoeWriting *input)
     if (!input) return matched;
 
     priv = TOMOE_CONTEXT_GET_PRIVATE (context);
-    if (!priv->recognizer) {
-        gchar **languages;
+    if (!priv->recognizer)
+        setup_recognizer (priv);
 
-        languages = priv->languages;
-        while (*languages && priv->recognizer == NULL) {
-            priv->recognizer = tomoe_recognizer_new ("simple",
-                                                     "language", *languages,
-                                                     NULL);
-            languages++;
-
-            if (!priv->recognizer)
-                continue;
-
-            if (!tomoe_recognizer_is_available (priv->recognizer)) {
-                g_object_unref (priv->recognizer);
-                priv->recognizer = NULL;
-            }
-        }
-
-        if (!priv->recognizer)
-            priv->recognizer = tomoe_recognizer_new ("simple", NULL);
+    if (!priv->recognizer)
         g_return_val_if_fail (TOMOE_IS_RECOGNIZER (priv->recognizer), matched);
-    }
+
 
     if (tomoe_recognizer_is_available (priv->recognizer))
         matched = g_list_sort (tomoe_recognizer_search (priv->recognizer, input),

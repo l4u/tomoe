@@ -1,5 +1,7 @@
 2008-09-20  Kouhei Sutou  <kou@cozmixng.org>
 
+	* lib/tomoe-context.c: use zinnia recognizer if available.
+
 	* data/xml2zinnia.c (generate_binary_data):
 	- add error check.
 	- add ".txt" suffix. :<
