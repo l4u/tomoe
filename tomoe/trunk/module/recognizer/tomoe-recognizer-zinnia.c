@@ -35,6 +35,8 @@
 
 #include <zinnia.h>
 
+#define N_CANDIDATES 15 /* small? */
+
 #define TOMOE_TYPE_RECOGNIZER_ZINNIA            tomoe_type_recognizer_zinnia
 #define TOMOE_RECOGNIZER_ZINNIA(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TOMOE_TYPE_RECOGNIZER_ZINNIA, TomoeRecognizerZinnia))
 #define TOMOE_RECOGNIZER_ZINNIA_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), TOMOE_TYPE_RECOGNIZER_ZINNIA, TomoeRecognizerZinniaClass))
@@ -237,7 +239,8 @@ search (TomoeRecognizer *_recognizer, TomoeWriting *input)
     }
 
     recognizer = TOMOE_RECOGNIZER_ZINNIA (_recognizer);
-    result = zinnia_recognizer_classify (recognizer->zinnia, character, 10);
+    result = zinnia_recognizer_classify (recognizer->zinnia, character,
+                                         N_CANDIDATES);
     zinnia_character_destroy (character);
 
     if (!result)

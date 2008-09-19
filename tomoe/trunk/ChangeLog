@@ -1,5 +1,8 @@
 2008-09-20  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/recognizer/tomoe-recognizer-zinnia.c: search top 15
+	entries not 10 entries.
+
 	* module/recognizer/tomoe-recognizer-zinnia.c (constructor): just
 	ignore error.
 
