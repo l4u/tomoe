@@ -3,6 +3,7 @@
 	* data/xml2zinnia.c (generate_binary_data):
 	- add error check.
 	- add ".txt" suffix. :<
+	- remove model data if fail.
 
 	* module/recognizer/tomoe-recognizer-zinnia.c (constructor): use
 	constructor() to use property on initialize.
