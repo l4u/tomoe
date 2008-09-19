@@ -1,5 +1,7 @@
 2008-09-20  Kouhei Sutou  <kou@cozmixng.org>
 
+	* data/xml2zinnia.c (generate_binary_data): add error check.
+
 	* module/recognizer/tomoe-recognizer-zinnia.c (constructor): use
 	constructor() to use property on initialize.
 
