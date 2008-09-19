@@ -186,8 +186,6 @@ constructor (GType type, guint n_props,
         _recognizer = TOMOE_RECOGNIZER (object);
         if (!open_recognizer (recognizer->zinnia,
                               tomoe_recognizer_get_language (_recognizer))) {
-            g_warning ("failed to open Zinnia model: %s",
-                       zinnia_recognizer_strerror (recognizer->zinnia));
             zinnia_recognizer_destroy (recognizer->zinnia);
             recognizer->zinnia = NULL;
         }

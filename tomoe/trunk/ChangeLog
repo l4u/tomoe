@@ -1,5 +1,8 @@
 2008-09-20  Kouhei Sutou  <kou@cozmixng.org>
 
+	* module/recognizer/tomoe-recognizer-zinnia.c (constructor): just
+	ignore error.
+
 	* lib/tomoe-context.c: use zinnia recognizer if available.
 
 	* data/xml2zinnia.c (generate_binary_data):
