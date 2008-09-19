@@ -32,13 +32,17 @@ generate_binary_data (zinnia_trainer_t *trainer, const gchar *model_file)
     }
     close (fd);
 
-    if (!zinnia_trainer_train (trainer, temp_file))
+    text_file = g_strconcat (temp_file, ".txt", NULL);
+    if (zinnia_trainer_train (trainer, temp_file)) {
+        if (!zinnia_trainer_convert_model (text_file, model_file, 0.001)) {
+            g_warning ("zinnia_trainer_convert_model() is failed: %s",
+                       zinnia_trainer_strerror (trainer));
+            g_remove (model_file);
+        }
+    } else {
         g_warning ("zinnia_trainer_train() is failed: %s",
                    zinnia_trainer_strerror (trainer));
-    text_file = g_strconcat (temp_file, ".txt", NULL);
-    if (!zinnia_trainer_convert_model (text_file, model_file, 0.001))
-        g_warning ("zinnia_trainer_convert_model() is failed: %s",
-                   zinnia_trainer_strerror (trainer));
+    }
     g_remove (temp_file);
     g_remove (text_file);
 
