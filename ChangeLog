@@ -1,6 +1,8 @@
 2008-09-20  Kouhei Sutou  <kou@cozmixng.org>
 
-	* data/xml2zinnia.c (generate_binary_data): add error check.
+	* data/xml2zinnia.c (generate_binary_data):
+	- add error check.
+	- add ".txt" suffix. :<
 
 	* module/recognizer/tomoe-recognizer-zinnia.c (constructor): use
 	constructor() to use property on initialize.

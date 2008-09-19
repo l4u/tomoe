@@ -20,11 +20,11 @@
 static void
 generate_binary_data (zinnia_trainer_t *trainer, const gchar *model_file)
 {
-    gchar *text_file;
+    gchar *temp_file, *text_file;
     gint fd;
     GError *error = NULL;
 
-    fd = g_file_open_tmp (NULL, &text_file, &error);
+    fd = g_file_open_tmp (NULL, &temp_file, &error);
     if (fd == -1) {
         g_warning ("g_file_open_tmp() is failed: %s", error->message);
         g_error_free (error);
@@ -32,13 +32,18 @@ generate_binary_data (zinnia_trainer_t *trainer, const gchar *model_file)
     }
     close (fd);
 
-    if (!zinnia_trainer_train (trainer, text_file))
+    if (!zinnia_trainer_train (trainer, temp_file))
         g_warning ("zinnia_trainer_train() is failed: %s",
                    zinnia_trainer_strerror (trainer));
+    text_file = g_strconcat (temp_file, ".txt", NULL);
     if (!zinnia_trainer_convert_model (text_file, model_file, 0.001))
         g_warning ("zinnia_trainer_convert_model() is failed: %s",
                    zinnia_trainer_strerror (trainer));
+    g_remove (temp_file);
     g_remove (text_file);
+
+    g_free (temp_file);
+    g_free (text_file);
 }
 
 int
