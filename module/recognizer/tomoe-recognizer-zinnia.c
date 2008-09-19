@@ -59,6 +59,9 @@ struct _TomoeRecognizerZinniaClass
 static GType tomoe_type_recognizer_zinnia = 0;
 static GObjectClass *parent_class;
 
+static GObject     *constructor               (GType                  type,
+                                               guint                  n_props,
+                                               GObjectConstructParam *props);
 static void         dispose                   (GObject       *object);
 static GList       *search                    (TomoeRecognizer *recognizer,
                                                TomoeWriting    *input);
@@ -73,31 +76,12 @@ class_init (TomoeRecognizerZinniaClass *klass)
     parent_class = g_type_class_peek_parent (klass);
 
     gobject_class = G_OBJECT_CLASS (klass);
+    gobject_class->constructor  = constructor;
     gobject_class->dispose      = dispose;
 
     recognizer_class = TOMOE_RECOGNIZER_CLASS (klass);
     recognizer_class->search = search;
     recognizer_class->is_available = is_available;
-}
-
-static gboolean
-open_recognizer (zinnia_recognizer_t *zinnia, const gchar *language)
-{
-    gboolean success;
-    gchar *model_name;
-    gchar *filename;
-
-    if (language)
-        model_name = g_strconcat ("handwriting-", language, ".model", NULL);
-    else
-        model_name = g_strdup ("handwriting.model");
-
-    filename = g_build_filename (RECOGNIZER_DATADIR, model_name, NULL);
-    success = zinnia_recognizer_open (zinnia, filename);
-    g_free(model_name);
-    g_free(filename);
-
-    return success;
 }
 
 static void
@@ -106,14 +90,7 @@ init (TomoeRecognizerZinnia *recognizer)
     TomoeRecognizer *_recognizer;
 
     _recognizer = TOMOE_RECOGNIZER (recognizer);
-    recognizer->zinnia = zinnia_recognizer_new();
-    if (!open_recognizer (recognizer->zinnia,
-                          tomoe_recognizer_get_language (_recognizer))) {
-        g_warning ("failed to open Zinnia model: %s",
-                   zinnia_recognizer_strerror (recognizer->zinnia));
-        zinnia_recognizer_destroy (recognizer->zinnia);
-        recognizer->zinnia = NULL;
-    }
+    recognizer->zinnia = NULL;
 }
 
 static void
@@ -169,6 +146,54 @@ G_MODULE_EXPORT gchar *
 TOMOE_MODULE_IMPL_GET_LOG_DOMAIN (void)
 {
     return g_strdup (G_LOG_DOMAIN);
+}
+
+static gboolean
+open_recognizer (zinnia_recognizer_t *zinnia, const gchar *language)
+{
+    gboolean success;
+    gchar *model_name;
+    gchar *filename;
+
+    if (language)
+        model_name = g_strconcat ("handwriting-", language, ".model", NULL);
+    else
+        model_name = g_strdup ("handwriting.model");
+
+    filename = g_build_filename (RECOGNIZER_DATADIR, model_name, NULL);
+    success = zinnia_recognizer_open (zinnia, filename);
+    g_free(model_name);
+    g_free(filename);
+
+    return success;
+}
+
+static GObject *
+constructor (GType type, guint n_props,
+             GObjectConstructParam *props)
+{
+    GObject *object;
+    GObjectClass *klass = G_OBJECT_CLASS (parent_class);
+    TomoeRecognizerZinnia *recognizer;
+
+    object = klass->constructor (type, n_props, props);
+    recognizer = TOMOE_RECOGNIZER_ZINNIA (object);
+
+    if (!recognizer->zinnia) {
+        TomoeRecognizer *_recognizer;
+
+        recognizer->zinnia = zinnia_recognizer_new();
+        _recognizer = TOMOE_RECOGNIZER (object);
+        if (!open_recognizer (recognizer->zinnia,
+                              tomoe_recognizer_get_language (_recognizer))) {
+            g_warning ("failed to open Zinnia model: %s",
+                       zinnia_recognizer_strerror (recognizer->zinnia));
+            zinnia_recognizer_destroy (recognizer->zinnia);
+            recognizer->zinnia = NULL;
+        }
+    }
+
+    return object;
 }
 
 static void
