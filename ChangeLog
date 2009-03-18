@@ -1,3 +1,7 @@
+2009-03-16  Benoit Cerrina <benoitcerrina@gmail.com>
+    * data/handwriting-ja.xml: added as variants the correct stroke order
+	for several characters.  The erroneous variants was left in to enable
+	character recognition when people make common mistakes
 2008-09-20  Kouhei Sutou  <kou@cozmixng.org>
 
 	* module/recognizer/tomoe-recognizer-zinnia.c: search top 15
